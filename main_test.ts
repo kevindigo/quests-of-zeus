@@ -25,26 +25,7 @@ Deno.test("Game logic - terrain generation", () => {
   }
 });
 
-Deno.test("Game logic - movement costs", () => {
-  // Test movement cost logic
-  const movementCosts = {
-    "sea": Infinity,
-    "coast": 1,
-    "plains": 1,
-    "hills": 2,
-    "mountains": 3,
-    "forest": 2,
-    "desert": 1,
-    "oracle": 1,
-    "port": 1,
-    "sanctuary": 1
-  };
-  
-  for (const [terrain, cost] of Object.entries(movementCosts)) {
-    assertEquals(typeof cost, "number");
-    assertEquals(cost > 0 || cost === Infinity, true);
-  }
-});
+
 
 Deno.test("Game logic - hex distance calculation", () => {
   // Test hex distance calculation
@@ -87,16 +68,12 @@ Deno.test("Game logic - serialization", () => {
   assertEquals(serialized[0][0].terrain, "plains");
 });
 
-Deno.test("Game logic - passable terrain", () => {
-  // Test that sea is not passable
-  const passableTerrains = ["coast", "plains", "hills", "mountains", "forest", "desert", "oracle", "port", "sanctuary"];
-  const nonPassableTerrains = ["sea"];
+Deno.test("Game logic - terrain types", () => {
+  // Test that all terrain types are valid
+  const terrainTypes = ["sea", "coast", "plains", "hills", "mountains", "forest", "desert", "oracle", "port", "sanctuary"];
   
-  for (const terrain of passableTerrains) {
-    assertEquals(terrain !== "sea", true);
-  }
-  
-  for (const terrain of nonPassableTerrains) {
-    assertEquals(terrain === "sea", true);
+  for (const terrain of terrainTypes) {
+    assertEquals(typeof terrain, "string");
+    assertEquals(terrain.length > 0, true);
   }
 });

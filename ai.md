@@ -11,7 +11,7 @@
 
 ## Hex Characteristics Requirements
 Each hex in the game must have the following characteristics:
-1) **Color**: red, pink, blue, black, green, yellow
+1) **Color**: none, red, pink, blue, black, green, yellow
 2) **Type**: zeus, sea, shallow, monsters, cubes, temple, clouds, city, foundations
 
 ## Guidelines

@@ -79,29 +79,11 @@ export interface HexCell {
   // Cell characteristics
   terrain: TerrainType;
   
-  // Game-specific properties
-  isPassable: boolean;           // Whether units can move through this cell
-  movementCost: number;          // Movement cost for traversing this terrain
-  
   // Oracle of Delphi specific properties
   hasOracle?: boolean;           // Contains an oracle temple
   hasPort?: boolean;             // Contains a port
   hasSanctuary?: boolean;        // Contains a sanctuary
   hasOffering?: boolean;         // Contains an offering site
-  
-  // Resource properties
-  resources?: {
-    gold?: number;               // Gold resource
-    offerings?: number;          // Offering resources
-    divineFavor?: number;        // Divine favor points
-  };
-  
-  // Visual properties
-  elevation: number;             // Height/elevation (0-100)
-  
-  // State properties
-  visited: boolean;              // Whether this cell has been visited
-  visible: boolean;              // Whether this cell is currently visible
 }
 
 export class HexMap {
@@ -134,12 +116,7 @@ export class HexMap {
         const cell: HexCell = {
           q,
           r,
-          terrain,
-          isPassable: terrain !== "sea", // Sea is not passable
-          movementCost: this.getMovementCost(terrain),
-          elevation: this.generateElevation(terrain, distanceFromCenter),
-          visited: false,
-          visible: false
+          terrain
         };
         
         // Add special locations based on terrain and position
@@ -196,46 +173,7 @@ export class HexMap {
     }
   }
 
-  /**
-   * Get movement cost for a given terrain type
-   */
-  private getMovementCost(terrain: TerrainType): number {
-    const costs: Record<TerrainType, number> = {
-      sea: Infinity,      // Not passable
-      coast: 1,
-      plains: 1,
-      hills: 2,
-      mountains: 3,
-      forest: 2,
-      desert: 1,
-      oracle: 1,
-      port: 1,
-      sanctuary: 1
-    };
-    return costs[terrain];
-  }
 
-  /**
-   * Generate elevation based on terrain and position
-   */
-  private generateElevation(terrain: TerrainType, distanceFromCenter: number): number {
-    const baseElevation: Record<TerrainType, number> = {
-      sea: 0,
-      coast: 10,
-      plains: 20,
-      hills: 60,
-      mountains: 90,
-      forest: 30,
-      desert: 25,
-      oracle: 50,
-      port: 15,
-      sanctuary: 40
-    };
-    
-    // Add some variation
-    const variation = Math.random() * 20 - 10;
-    return Math.max(0, Math.min(100, baseElevation[terrain] + variation));
-  }
 
   /**
    * Add special locations like oracles, ports, and sanctuaries
@@ -246,38 +184,21 @@ export class HexMap {
     // Oracle temples are typically in central, elevated areas
     if (cell.terrain === "oracle" && distanceFromCenter < maxDistance * 0.4) {
       cell.hasOracle = true;
-      cell.resources = {
-        divineFavor: 3,
-        offerings: 2
-      };
     }
     
     // Ports are on coastlines
     if (cell.terrain === "coast" && Math.random() < 0.1) {
       cell.hasPort = true;
-      cell.resources = {
-        ...cell.resources,
-        gold: 2
-      };
     }
     
     // Sanctuaries in appropriate terrain
     if (cell.terrain === "sanctuary" && distanceFromCenter < maxDistance * 0.6) {
       cell.hasSanctuary = true;
-      cell.resources = {
-        ...cell.resources,
-        divineFavor: 2,
-        offerings: 1
-      };
     }
     
     // Offering sites in various locations
     if (!cell.hasOracle && !cell.hasSanctuary && Math.random() < 0.05) {
       cell.hasOffering = true;
-      cell.resources = {
-        ...cell.resources,
-        offerings: 1
-      };
     }
   }
 
