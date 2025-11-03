@@ -2,6 +2,9 @@
 
 ## Context
 - This is a PWA app using deno 2.5
+  - Important: Deno 2.5 does not support emit
+  - We must not use regexp-based transpilations
+  - We should use esbuild native (not WASM)
 - It implements the boardgame Oracle of Delphi
 - It will be clientside only; no server code
 - UI code can be javascript; all logic should be typescript
