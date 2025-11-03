@@ -25,3 +25,6 @@ Thumbs.db
 # Build artifacts (if any)
 dist/
 build/
+
+# Old JavaScript files that have been converted to TypeScript
+game.js

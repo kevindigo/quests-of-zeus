@@ -13,6 +13,64 @@ export type TerrainType =
   | "port"          // Port cities
   | "sanctuary";    // Sanctuary locations
 
+// Game state
+let gameMap: HexMap = new HexMap();
+
+// UI Functions
+export function generateNewMap(): HexMap {
+  gameMap = new HexMap();
+  console.log('New map generated');
+  return gameMap;
+}
+
+export function getMapStatistics() {
+  const terrainCounts: Record<string, number> = {};
+  let oracleCount = 0;
+  let portCount = 0;
+  let sanctuaryCount = 0;
+  let offeringCount = 0;
+  
+  for (let q = 0; q < gameMap.width; q++) {
+    for (let r = 0; r < gameMap.height; r++) {
+      const cell = gameMap.grid[q][r];
+      terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
+      if (cell.hasOracle) oracleCount++;
+      if (cell.hasPort) portCount++;
+      if (cell.hasSanctuary) sanctuaryCount++;
+      if (cell.hasOffering) offeringCount++;
+    }
+  }
+  
+  return {
+    dimensions: {
+      width: gameMap.width,
+      height: gameMap.height
+    },
+    terrainCounts,
+    specialLocations: {
+      oracles: oracleCount,
+      ports: portCount,
+      sanctuaries: sanctuaryCount,
+      offerings: offeringCount
+    },
+    totalCells: gameMap.width * gameMap.height
+  };
+}
+
+export function getSpecialCells(): HexCell[] {
+  return gameMap.getSpecialCells();
+}
+
+export function getMap() {
+  return {
+    map: gameMap.serialize(),
+    dimensions: {
+      width: gameMap.width,
+      height: gameMap.height
+    }
+  };
+}
+
 export interface HexCell {
   // Coordinates using axial coordinate system for hex grids
   q: number;        // Column coordinate

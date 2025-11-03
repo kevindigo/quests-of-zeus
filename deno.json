@@ -5,6 +5,7 @@
   "tasks": {
     "dev": "deno run --watch --allow-net --allow-read main.ts",
     "start": "deno run --allow-net --allow-read main.ts",
+    "build": "deno run -A build.ts",
     "test": "deno test --allow-read",
     "lint": "deno lint",
     "fmt": "deno fmt"
