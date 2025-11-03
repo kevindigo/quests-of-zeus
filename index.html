@@ -90,6 +90,7 @@
         <div class="status">
             <p>🚀 Project skeleton loaded successfully</p>
             <p>📱 PWA ready for installation</p>
+            <p>🗺️ Hex Map Engine loaded (21x21 grid)</p>
         </div>
 
         <div class="features">
@@ -105,6 +106,15 @@
                 <h3>📱 PWA Ready</h3>
                 <p>Install on any device</p>
             </div>
+            <div class="feature">
+                <h3>🗺️ Hex Map</h3>
+                <p>21x21 procedurally generated terrain</p>
+            </div>
+        </div>
+
+        <div class="map-demo" style="margin: 2rem 0;">
+            <button id="loadMap" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Load Map Data</button>
+            <div id="mapInfo" style="margin-top: 1rem; background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; backdrop-filter: blur(10px); display: none;"></div>
         </div>
 
         <footer>
@@ -132,6 +142,65 @@
             e.preventDefault();
             deferredPrompt = e;
             console.log('PWA installation available');
+        });
+
+        // Map Demo
+        document.getElementById('loadMap').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/map');
+                const data = await response.json();
+                
+                const mapInfo = document.getElementById('mapInfo');
+                mapInfo.style.display = 'block';
+                
+                // Count terrain types
+                const terrainCounts = {};
+                let oracleCount = 0;
+                let portCount = 0;
+                let sanctuaryCount = 0;
+                
+                for (const row of data.map) {
+                    for (const cell of row) {
+                        terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
+                        if (cell.hasOracle) oracleCount++;
+                        if (cell.hasPort) portCount++;
+                        if (cell.hasSanctuary) sanctuaryCount++;
+                    }
+                }
+                
+                mapInfo.innerHTML = `
+                    <h3>Map Statistics</h3>
+                    <p><strong>Dimensions:</strong> ${data.dimensions.width} × ${data.dimensions.height}</p>
+                    <p><strong>Total Cells:</strong> ${data.dimensions.width * data.dimensions.height}</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; margin: 1rem 0;">
+                        ${Object.entries(terrainCounts).map(([terrain, count]) => 
+                            `<div style="background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 4px;">
+                                <strong>${terrain}:</strong> ${count}
+                            </div>`
+                        ).join('')}
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem;">
+                        <div style="background: rgba(255,215,0,0.2); padding: 0.5rem; border-radius: 4px;">
+                            <strong>Oracle Temples:</strong> ${oracleCount}
+                        </div>
+                        <div style="background: rgba(0,191,255,0.2); padding: 0.5rem; border-radius: 4px;">
+                            <strong>Ports:</strong> ${portCount}
+                        </div>
+                        <div style="background: rgba(50,205,50,0.2); padding: 0.5rem; border-radius: 4px;">
+                            <strong>Sanctuaries:</strong> ${sanctuaryCount}
+                        </div>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                        Check console for full map data structure
+                    </p>
+                `;
+                
+                console.log('Full map data:', data);
+                
+            } catch (error) {
+                console.error('Failed to load map:', error);
+                document.getElementById('mapInfo').innerHTML = '<p style="color: #ff6b6b;">Failed to load map data</p>';
+            }
         });
     </script>
 </body>
