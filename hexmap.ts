@@ -25,19 +25,11 @@ export function generateNewMap(): HexMap {
 
 export function getMapStatistics() {
   const terrainCounts: Record<string, number> = {};
-  let oracleCount = 0;
-  let portCount = 0;
-  let sanctuaryCount = 0;
-  let offeringCount = 0;
   
   for (let q = 0; q < gameMap.width; q++) {
     for (let r = 0; r < gameMap.height; r++) {
       const cell = gameMap.grid[q][r];
       terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
-      if (cell.hasOracle) oracleCount++;
-      if (cell.hasPort) portCount++;
-      if (cell.hasSanctuary) sanctuaryCount++;
-      if (cell.hasOffering) offeringCount++;
     }
   }
   
@@ -47,12 +39,6 @@ export function getMapStatistics() {
       height: gameMap.height
     },
     terrainCounts,
-    specialLocations: {
-      oracles: oracleCount,
-      ports: portCount,
-      sanctuaries: sanctuaryCount,
-      offerings: offeringCount
-    },
     totalCells: gameMap.width * gameMap.height
   };
 }
@@ -78,12 +64,6 @@ export interface HexCell {
   
   // Cell characteristics
   terrain: TerrainType;
-  
-  // Oracle of Delphi specific properties
-  hasOracle?: boolean;           // Contains an oracle temple
-  hasPort?: boolean;             // Contains a port
-  hasSanctuary?: boolean;        // Contains a sanctuary
-  hasOffering?: boolean;         // Contains an offering site
 }
 
 export class HexMap {
@@ -177,29 +157,11 @@ export class HexMap {
 
   /**
    * Add special locations like oracles, ports, and sanctuaries
+   * Note: Special locations are now represented by terrain types
    */
   private addSpecialLocations(cell: HexCell, q: number, r: number, distanceFromCenter: number): void {
-    const maxDistance = Math.min(this.width, this.height) / 2;
-    
-    // Oracle temples are typically in central, elevated areas
-    if (cell.terrain === "oracle" && distanceFromCenter < maxDistance * 0.4) {
-      cell.hasOracle = true;
-    }
-    
-    // Ports are on coastlines
-    if (cell.terrain === "coast" && Math.random() < 0.1) {
-      cell.hasPort = true;
-    }
-    
-    // Sanctuaries in appropriate terrain
-    if (cell.terrain === "sanctuary" && distanceFromCenter < maxDistance * 0.6) {
-      cell.hasSanctuary = true;
-    }
-    
-    // Offering sites in various locations
-    if (!cell.hasOracle && !cell.hasSanctuary && Math.random() < 0.05) {
-      cell.hasOffering = true;
-    }
+    // Special locations are now handled through terrain types
+    // oracles, ports, and sanctuaries are represented by their respective terrain types
   }
 
   /**
@@ -249,13 +211,16 @@ export class HexMap {
 
   /**
    * Get all cells with special locations
+   * Special locations are now represented by terrain types
    */
   getSpecialCells(): HexCell[] {
     const specialCells: HexCell[] = [];
+    const specialTerrains: TerrainType[] = ["oracle", "port", "sanctuary"];
+    
     for (let q = 0; q < this.width; q++) {
       for (let r = 0; r < this.height; r++) {
         const cell = this.grid[q][r];
-        if (cell.hasOracle || cell.hasPort || cell.hasSanctuary || cell.hasOffering) {
+        if (specialTerrains.includes(cell.terrain)) {
           specialCells.push(cell);
         }
       }

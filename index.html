@@ -246,16 +246,13 @@
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem;">
                     <div style="background: rgba(255,215,0,0.2); padding: 0.5rem; border-radius: 4px;">
-                        <strong>Oracle Temples:</strong> ${stats.specialLocations.oracles}
+                        <strong>Oracle Temples:</strong> ${stats.terrainCounts.oracle || 0}
                     </div>
                     <div style="background: rgba(0,191,255,0.2); padding: 0.5rem; border-radius: 4px;">
-                        <strong>Ports:</strong> ${stats.specialLocations.ports}
+                        <strong>Ports:</strong> ${stats.terrainCounts.port || 0}
                     </div>
                     <div style="background: rgba(50,205,50,0.2); padding: 0.5rem; border-radius: 4px;">
-                        <strong>Sanctuaries:</strong> ${stats.specialLocations.sanctuaries}
-                    </div>
-                    <div style="background: rgba(255,165,0,0.2); padding: 0.5rem; border-radius: 4px;">
-                        <strong>Offerings:</strong> ${stats.specialLocations.offerings}
+                        <strong>Sanctuaries:</strong> ${stats.terrainCounts.sanctuary || 0}
                     </div>
                 </div>
                 <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
@@ -280,17 +277,15 @@
                     ${specialCells.map(cell => {
                         let type = '';
                         let icon = '';
-                        if (cell.hasOracle) { type = 'Oracle Temple'; icon = '🏛️'; }
-                        else if (cell.hasPort) { type = 'Port'; icon = '⚓'; }
-                        else if (cell.hasSanctuary) { type = 'Sanctuary'; icon = '🛐'; }
-                        else if (cell.hasOffering) { type = 'Offering Site'; icon = '🎁'; }
+                        if (cell.terrain === 'oracle') { type = 'Oracle Temple'; icon = '🏛️'; }
+                        else if (cell.terrain === 'port') { type = 'Port'; icon = '⚓'; }
+                        else if (cell.terrain === 'sanctuary') { type = 'Sanctuary'; icon = '🛐'; }
                         
                         return `
                             <div class="cell-item terrain-${cell.terrain}">
                                 ${icon} <strong>${type}</strong><br>
                                 Position: (${cell.q}, ${cell.r})<br>
                                 Terrain: ${cell.terrain}<br>
-
                             </div>
                         `;
                     }).join('')}
