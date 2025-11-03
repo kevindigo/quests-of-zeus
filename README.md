@@ -9,6 +9,7 @@ A Progressive Web App implementation of the Oracle of Delphi boardgame with AI o
 - 📱 Progressive Web App (PWA)
 - ⚡ Built with Deno 2.5
 - 🎨 Modern web technologies
+- 💻 **Now entirely client-side!**
 
 ## Getting Started
 
@@ -36,8 +37,9 @@ deno task dev
 ### Project Structure
 
 ```
-├── main.ts              # Main server entry point
-├── index.html           # Main HTML file
+├── main.ts              # Simple static file server (development only)
+├── index.html           # Main HTML file with game UI
+├── game.js              # Client-side game logic
 ├── manifest.json        # PWA manifest
 ├── sw.js               # Service Worker
 ├── assets/             # Static assets (icons, images)
@@ -49,19 +51,44 @@ deno task dev
 
 This project follows an incremental development approach. The current state is a basic PWA skeleton with:
 
-- ✅ Deno 2.5 server setup
+- ✅ Deno 2.5 server setup (static files only)
 - ✅ PWA manifest and service worker
-- ✅ Basic HTML structure
+- ✅ **Client-side game logic**
+- ✅ Hex map generation (21x21 grid)
+- ✅ Procedural terrain generation
+- ✅ Special locations (oracles, ports, sanctuaries)
 - ✅ Development tasks configured
 - ✅ Testing setup
 
+## Architecture
+
+**Client-Side Only**: The game now runs entirely in the browser:
+- Game logic is implemented in JavaScript/TypeScript
+- No server-side API dependencies
+- Map generation happens in the browser
+- Works offline with service worker caching
+
+**Key Components**:
+- `game.js` - Core game logic, hex map, terrain generation
+- `index.html` - Game UI and controls
+- `main.ts` - Simple static file server (development)
+
+## Game Features
+
+- **21x21 Hex Map**: Procedurally generated terrain
+- **Terrain Types**: Sea, coast, plains, hills, mountains, forest, desert
+- **Special Locations**: Oracle temples, ports, sanctuaries, offering sites
+- **Movement System**: Different movement costs per terrain
+- **Resource System**: Gold, offerings, divine favor
+
 ## Next Steps
 
-1. Implement basic game state management
-2. Add game board visualization
-3. Implement core game mechanics
-4. Add AI opponent logic
-5. Enhance UI/UX
+1. Add interactive hex map visualization
+2. Implement player movement and actions
+3. Add game state management
+4. Implement core game mechanics
+5. Add AI opponent logic
+6. Enhance UI/UX
 
 ## License
 

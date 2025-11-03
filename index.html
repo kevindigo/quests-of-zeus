@@ -80,6 +80,69 @@
             opacity: 0.7;
             font-size: 0.9rem;
         }
+
+        .game-ui {
+            margin: 2rem 0;
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .map-display {
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .cell-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .cell-item {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .terrain-sea { background: rgba(0, 119, 190, 0.3); }
+        .terrain-coast { background: rgba(173, 216, 230, 0.3); }
+        .terrain-plains { background: rgba(144, 238, 144, 0.3); }
+        .terrain-hills { background: rgba(139, 69, 19, 0.3); }
+        .terrain-mountains { background: rgba(128, 128, 128, 0.3); }
+        .terrain-forest { background: rgba(34, 139, 34, 0.3); }
+        .terrain-desert { background: rgba(238, 203, 173, 0.3); }
+        .terrain-oracle { background: rgba(255, 215, 0, 0.3); }
+        .terrain-port { background: rgba(0, 191, 255, 0.3); }
+        .terrain-sanctuary { background: rgba(50, 205, 50, 0.3); }
     </style>
 </head>
 <body>
@@ -91,6 +154,7 @@
             <p>🚀 Project skeleton loaded successfully</p>
             <p>📱 PWA ready for installation</p>
             <p>🗺️ Hex Map Engine loaded (21x21 grid)</p>
+            <p>💻 Now entirely client-side!</p>
         </div>
 
         <div class="features">
@@ -112,17 +176,26 @@
             </div>
         </div>
 
-        <div class="map-demo" style="margin: 2rem 0;">
-            <button id="loadMap" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Load Map Data</button>
-            <div id="mapInfo" style="margin-top: 1rem; background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; backdrop-filter: blur(10px); display: none;"></div>
+        <div class="game-ui">
+            <h3>Game Controls</h3>
+            <div class="game-controls">
+                <button id="generateMap">Generate New Map</button>
+                <button id="showMapData">Show Map Data</button>
+                <button id="showSpecialCells">Show Special Locations</button>
+            </div>
+            
+            <div id="mapInfo" class="map-display" style="display: none;"></div>
+            <div id="specialCells" class="map-display" style="display: none;"></div>
         </div>
 
         <footer>
-            <p>Built with Deno 2.5 • Progressive Web App</p>
+            <p>Built with Deno 2.5 • Progressive Web App • Client-Side Only</p>
         </footer>
     </div>
 
-    <script>
+    <script type="module">
+        import { generateNewMap, getMapStatistics, getSpecialCells, getMap } from './game.js';
+
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -144,63 +217,85 @@
             console.log('PWA installation available');
         });
 
-        // Map Demo
-        document.getElementById('loadMap').addEventListener('click', async () => {
-            try {
-                const response = await fetch('/api/map');
-                const data = await response.json();
-                
-                const mapInfo = document.getElementById('mapInfo');
-                mapInfo.style.display = 'block';
-                
-                // Count terrain types
-                const terrainCounts = {};
-                let oracleCount = 0;
-                let portCount = 0;
-                let sanctuaryCount = 0;
-                
-                for (const row of data.map) {
-                    for (const cell of row) {
-                        terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
-                        if (cell.hasOracle) oracleCount++;
-                        if (cell.hasPort) portCount++;
-                        if (cell.hasSanctuary) sanctuaryCount++;
-                    }
-                }
-                
-                mapInfo.innerHTML = `
-                    <h3>Map Statistics</h3>
-                    <p><strong>Dimensions:</strong> ${data.dimensions.width} × ${data.dimensions.height}</p>
-                    <p><strong>Total Cells:</strong> ${data.dimensions.width * data.dimensions.height}</p>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; margin: 1rem 0;">
-                        ${Object.entries(terrainCounts).map(([terrain, count]) => 
-                            `<div style="background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 4px;">
-                                <strong>${terrain}:</strong> ${count}
-                            </div>`
-                        ).join('')}
+        // Game UI Event Handlers
+        document.getElementById('generateMap').addEventListener('click', () => {
+            generateNewMap();
+            document.getElementById('mapInfo').style.display = 'none';
+            document.getElementById('specialCells').style.display = 'none';
+            alert('New map generated!');
+        });
+
+        document.getElementById('showMapData').addEventListener('click', () => {
+            const stats = getMapStatistics();
+            const mapInfo = document.getElementById('mapInfo');
+            const specialCells = document.getElementById('specialCells');
+            
+            mapInfo.style.display = 'block';
+            specialCells.style.display = 'none';
+            
+            mapInfo.innerHTML = `
+                <h3>Map Statistics</h3>
+                <p><strong>Dimensions:</strong> ${stats.dimensions.width} × ${stats.dimensions.height}</p>
+                <p><strong>Total Cells:</strong> ${stats.totalCells}</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; margin: 1rem 0;">
+                    ${Object.entries(stats.terrainCounts).map(([terrain, count]) => 
+                        `<div class="cell-item terrain-${terrain}">
+                            <strong>${terrain}:</strong> ${count}
+                        </div>`
+                    ).join('')}
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem;">
+                    <div style="background: rgba(255,215,0,0.2); padding: 0.5rem; border-radius: 4px;">
+                        <strong>Oracle Temples:</strong> ${stats.specialLocations.oracles}
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem;">
-                        <div style="background: rgba(255,215,0,0.2); padding: 0.5rem; border-radius: 4px;">
-                            <strong>Oracle Temples:</strong> ${oracleCount}
-                        </div>
-                        <div style="background: rgba(0,191,255,0.2); padding: 0.5rem; border-radius: 4px;">
-                            <strong>Ports:</strong> ${portCount}
-                        </div>
-                        <div style="background: rgba(50,205,50,0.2); padding: 0.5rem; border-radius: 4px;">
-                            <strong>Sanctuaries:</strong> ${sanctuaryCount}
-                        </div>
+                    <div style="background: rgba(0,191,255,0.2); padding: 0.5rem; border-radius: 4px;">
+                        <strong>Ports:</strong> ${stats.specialLocations.ports}
                     </div>
-                    <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
-                        Check console for full map data structure
-                    </p>
-                `;
-                
-                console.log('Full map data:', data);
-                
-            } catch (error) {
-                console.error('Failed to load map:', error);
-                document.getElementById('mapInfo').innerHTML = '<p style="color: #ff6b6b;">Failed to load map data</p>';
-            }
+                    <div style="background: rgba(50,205,50,0.2); padding: 0.5rem; border-radius: 4px;">
+                        <strong>Sanctuaries:</strong> ${stats.specialLocations.sanctuaries}
+                    </div>
+                    <div style="background: rgba(255,165,0,0.2); padding: 0.5rem; border-radius: 4px;">
+                        <strong>Offerings:</strong> ${stats.specialLocations.offerings}
+                    </div>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                    Check console for full map data structure
+                </p>
+            `;
+            
+            console.log('Full map data:', getMap());
+        });
+
+        document.getElementById('showSpecialCells').addEventListener('click', () => {
+            const specialCells = getSpecialCells();
+            const specialCellsDiv = document.getElementById('specialCells');
+            const mapInfo = document.getElementById('mapInfo');
+            
+            specialCellsDiv.style.display = 'block';
+            mapInfo.style.display = 'none';
+            
+            specialCellsDiv.innerHTML = `
+                <h3>Special Locations (${specialCells.length})</h3>
+                <div class="cell-grid">
+                    ${specialCells.map(cell => {
+                        let type = '';
+                        let icon = '';
+                        if (cell.hasOracle) { type = 'Oracle Temple'; icon = '🏛️'; }
+                        else if (cell.hasPort) { type = 'Port'; icon = '⚓'; }
+                        else if (cell.hasSanctuary) { type = 'Sanctuary'; icon = '🛐'; }
+                        else if (cell.hasOffering) { type = 'Offering Site'; icon = '🎁'; }
+                        
+                        return `
+                            <div class="cell-item terrain-${cell.terrain}">
+                                ${icon} <strong>${type}</strong><br>
+                                Position: (${cell.q}, ${cell.r})<br>
+                                Terrain: ${cell.terrain}<br>
+                                Elevation: ${Math.round(cell.elevation)}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
         });
     </script>
 </body>

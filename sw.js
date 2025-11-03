@@ -1,7 +1,8 @@
-const CACHE_NAME = 'oracle-delphi-v1';
+const CACHE_NAME = 'oracle-delphi-v2';
 const urlsToCache = [
   '/',
   '/index.html',
+  '/game.js',
   '/manifest.json',
   '/assets/icon-192.png',
   '/assets/icon-512.png'
