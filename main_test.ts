@@ -57,12 +57,23 @@ Deno.test("Game logic - hex distance calculation", () => {
 
 Deno.test("Game logic - map dimensions", () => {
   // Test that our map has the expected dimensions
-  const width = 21;
-  const height = 21;
+  const hexMap = new HexMap();
   
-  assertEquals(width, 21);
-  assertEquals(height, 21);
-  assertEquals(width * height, 441);
+  assertEquals(hexMap.width, 23);  // -11 to +11 inclusive
+  assertEquals(hexMap.height, 23); // -11 to +11 inclusive
+  
+  // For hexagon with radius 11, total cells should be 397
+  // Formula: 3 * radius * (radius + 1) + 1 = 3 * 11 * 12 + 1 = 397
+  const grid = hexMap.getGrid();
+  let totalCells = 0;
+  for (let q = 0; q < hexMap.width; q++) {
+    for (let r = 0; r < hexMap.height; r++) {
+      if (grid[q]?.[r]) {
+        totalCells++;
+      }
+    }
+  }
+  assertEquals(totalCells, 397);
 });
 
 Deno.test("Game logic - serialization", () => {
@@ -93,12 +104,17 @@ Deno.test("Game logic - terrain distribution", () => {
   const grid = hexMap.getGrid();
   
   const terrainCounts: Record<string, number> = {};
+  let totalCells = 0;
   
   // Count occurrences of each terrain type
   for (let q = 0; q < hexMap.width; q++) {
     for (let r = 0; r < hexMap.height; r++) {
-      const terrain = grid[q][r].terrain;
-      terrainCounts[terrain] = (terrainCounts[terrain] || 0) + 1;
+      const cell = grid[q]?.[r];
+      if (cell) {
+        const terrain = cell.terrain;
+        terrainCounts[terrain] = (terrainCounts[terrain] || 0) + 1;
+        totalCells++;
+      }
     }
   }
   
@@ -109,9 +125,9 @@ Deno.test("Game logic - terrain distribution", () => {
     assertEquals(terrainCounts[terrainType] > 0, true, `Terrain type "${terrainType}" should appear at least once`);
   }
   
-  // Total cells should match expected
-  const totalCells = Object.values(terrainCounts).reduce((sum, count) => sum + count, 0);
-  assertEquals(totalCells, hexMap.width * hexMap.height);
+  // Total cells should match expected (hexagon with radius 11 has 397 cells)
+  const expectedTotalCells = 397; // Formula: 3 * radius * (radius + 1) + 1 = 3 * 11 * 12 + 1 = 397
+  assertEquals(totalCells, expectedTotalCells);
   
   // Log the distribution for verification
   console.log("Terrain distribution:");

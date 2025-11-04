@@ -103,8 +103,12 @@ export class HexMapSVG {
    */
   private calculateCellPosition(q: number, r: number): { x: number, y: number } {
     const { cellSize } = this.options;
-    const x = cellSize * 1.5 * q;
-    const y = cellSize * Math.sqrt(3) * (r + q / 2);
+    // Add offset to center the hexagon
+    const offsetX = cellSize * 1.5 * 11;  // Center at q=0
+    const offsetY = cellSize * Math.sqrt(3) * 11;  // Center at r=0
+    
+    const x = cellSize * 1.5 * q + offsetX;
+    const y = cellSize * Math.sqrt(3) * (r + q / 2) + offsetY;
     return { x, y };
   }
 
@@ -172,17 +176,11 @@ export class HexMapSVG {
    */
   generateSVG(grid: HexCell[][]): string {
     const { cellSize, interactive } = this.options;
-    const width = grid.length;
     
-    // Find the maximum height by checking all rows
-    let maxHeight = 0;
-    for (let q = 0; q < width; q++) {
-      maxHeight = Math.max(maxHeight, grid[q]?.length || 0);
-    }
-    
-    // Calculate SVG dimensions
-    const svgWidth = cellSize * 2 + cellSize * 1.5 * (width - 1);
-    const svgHeight = cellSize * 2 + cellSize * Math.sqrt(3) * (maxHeight - 0.5);
+    // For hexagon with radius 11, the dimensions are fixed
+    const radius = 11;
+    const svgWidth = cellSize * 2 + cellSize * 1.5 * (radius * 2);
+    const svgHeight = cellSize * 2 + cellSize * Math.sqrt(3) * (radius * 2);
     
     let svgContent = `
 <svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg" class="hex-map-svg">
@@ -210,12 +208,12 @@ export class HexMapSVG {
   <g class="hex-grid">`;
 
     // Generate all hex cells
-    for (let q = 0; q < width; q++) {
+    for (let q = 0; q < grid.length; q++) {
       const row = grid[q] || [];
       for (let r = 0; r < row.length; r++) {
         const cell = row[r];
         if (cell) {
-          const { x, y } = this.calculateCellPosition(q, r);
+          const { x, y } = this.calculateCellPosition(cell.q, cell.r);
           svgContent += this.generateHexCell(cell, x, y);
         }
       }

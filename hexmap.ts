@@ -1,5 +1,5 @@
 // Hexagonal map representation for Oracle of Delphi
-// The game uses a 21x21 hex grid with various terrain types
+// The game uses a hexagon-shaped grid with radius 11 and various terrain types
 
 export type TerrainType = 
   | "zeus"          // Zeus locations
@@ -33,8 +33,8 @@ export interface HexCell {
 
 export class HexMap {
   private grid: HexCell[][];
-  readonly width: number = 21;
-  readonly height: number = 21;
+  readonly width: number = 23;  // -11 to +11 inclusive
+  readonly height: number = 23;  // -11 to +11 inclusive
 
   constructor() {
     this.grid = this.generateGrid();
@@ -48,19 +48,22 @@ export class HexMap {
   }
 
   /**
-   * Generate a 21x21 hex grid with appropriate terrain distribution
+   * Generate a hexagon-shaped grid with radius 11
    * for the Oracle of Delphi game
    */
   private generateGrid(): HexCell[][] {
     const grid: HexCell[][] = [];
+    const radius = 11;
     
-    for (let q = 0; q < this.width; q++) {
+    // Generate hexagon-shaped grid
+    for (let q = -radius; q <= radius; q++) {
       const row: HexCell[] = [];
-      for (let r = 0; r < this.height; r++) {
-        // Calculate distance from center to create a roughly circular map
-        const centerQ = Math.floor(this.width / 2);
-        const centerR = Math.floor(this.height / 2);
-        const distanceFromCenter = this.hexDistance(q, r, centerQ, centerR);
+      const r1 = Math.max(-radius, -q - radius);
+      const r2 = Math.min(radius, -q + radius);
+      
+      for (let r = r1; r <= r2; r++) {
+        // Calculate distance from center
+        const distanceFromCenter = this.hexDistance(q, r, 0, 0);
         
         // Generate terrain based on distance from center
         const terrain = this.generateTerrain(q, r, distanceFromCenter);
@@ -121,8 +124,12 @@ export class HexMap {
    * Get a cell at specific coordinates
    */
   getCell(q: number, r: number): HexCell | null {
-    if (q >= 0 && q < this.width && r >= 0 && r < this.height) {
-      return this.grid[q][r];
+    // Convert axial coordinates to array indices
+    const arrayQ = q + 11;  // Offset to make coordinates non-negative
+    const arrayR = r + 11;  // Offset to make coordinates non-negative
+    
+    if (arrayQ >= 0 && arrayQ < this.width && arrayR >= 0 && arrayR < this.height) {
+      return this.grid[arrayQ]?.[arrayR] || null;
     }
     return null;
   }
@@ -154,8 +161,9 @@ export class HexMap {
     const cells: HexCell[] = [];
     for (let q = 0; q < this.width; q++) {
       for (let r = 0; r < this.height; r++) {
-        if (this.grid[q][r].terrain === terrain) {
-          cells.push(this.grid[q][r]);
+        const cell = this.grid[q]?.[r];
+        if (cell && cell.terrain === terrain) {
+          cells.push(cell);
         }
       }
     }
@@ -209,11 +217,15 @@ export function generateNewMap(): HexMap {
 export function getMapStatistics() {
   const terrainCounts: Record<string, number> = {};
   const grid = gameMap.getGrid();
+  let totalCells = 0;
   
   for (let q = 0; q < gameMap.width; q++) {
     for (let r = 0; r < gameMap.height; r++) {
-      const cell = grid[q][r];
-      terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
+      const cell = grid[q]?.[r];
+      if (cell) {
+        terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
+        totalCells++;
+      }
     }
   }
   
@@ -223,7 +235,7 @@ export function getMapStatistics() {
       height: gameMap.height
     },
     terrainCounts,
-    totalCells: gameMap.width * gameMap.height
+    totalCells
   };
 }
 
