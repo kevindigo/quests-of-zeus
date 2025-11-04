@@ -1,4 +1,2 @@
-- Next step: comply with ai.md. 
-- Then add color to HexCell. 
 - Zeus, shallows, cubes, and foundations should not have colors; all other hexes should
-- Display the hex map
+Hex map should be the right shape. 
