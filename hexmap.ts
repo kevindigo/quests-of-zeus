@@ -486,6 +486,9 @@ export class HexMap {
   }
 }
 
+// Import the new map generator
+import { NewMapGenerator } from './new-map-generator.ts';
+
 // Game state
 let gameMap: HexMap = new HexMap();
 
@@ -497,7 +500,18 @@ export function getCurrentMap(): HexMap {
 // UI Functions
 export function generateNewMap(): HexMap {
   gameMap = new HexMap();
-  console.log('New map generated');
+  console.log('New map generated (old method)');
+  return gameMap;
+}
+
+// New map generation function using the hybrid algorithm
+export function generateNewMapWithHybridAlgorithm(): HexMap {
+  const newGenerator = new NewMapGenerator();
+  
+  // Create a new HexMap instance with the generated grid using deserialize
+  gameMap = HexMap.deserialize(newGenerator.getGrid());
+  
+  console.log('New map generated (hybrid algorithm)');
   return gameMap;
 }
 
