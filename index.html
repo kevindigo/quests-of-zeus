@@ -198,11 +198,11 @@
             <div class="game-controls">
                 <button id="generateMap">Generate New Map</button>
                 <button id="showMapData">Show Map Data</button>
-                <button id="showHexMap">Show Hex Map</button>
+                <button id="showHexMap" style="display: none;">Show Hex Map</button>
             </div>
             
             <div id="mapInfo" class="map-display" style="display: none;"></div>
-            <div id="hexMapContainer" class="hex-map-container" style="display: none;">
+            <div id="hexMapContainer" class="hex-map-container">
                 <div class="svg-controls">
                     <button id="toggleCoordinates">Hide Coordinates</button>
                     <button id="toggleLabels">Hide Labels</button>
@@ -230,6 +230,9 @@
             // Generate initial map
             generateNewMap();
             console.log('Initial map generated');
+            
+            // Display the hex map by default
+            renderHexMap();
         });
 
         // Service Worker Registration
@@ -257,6 +260,7 @@
         document.getElementById('generateMap').addEventListener('click', () => {
             generateNewMap();
             document.getElementById('mapInfo').style.display = 'none';
+            renderHexMap();
             alert('New map generated!');
         });
 
