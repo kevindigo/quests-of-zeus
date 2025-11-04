@@ -180,6 +180,7 @@ export class HexMap {
     for (const [terrainType, count] of terrainPlacements) {
       let placed = 0;
       
+      // First pass: try to place with landmass constraints
       while (placed < count && cellIndex < availableCells.length) {
         const cell = availableCells[cellIndex];
         cellIndex++;
@@ -194,8 +195,27 @@ export class HexMap {
         }
       }
       
+      // Second pass: if we couldn't place enough, relax constraints for remaining cells
       if (placed < count) {
-        console.warn(`Could only place ${placed} of ${count} ${terrainType} cells`);
+        console.warn(`Could only place ${placed} of ${count} ${terrainType} cells with constraints, relaxing constraints for remaining ${count - placed}`);
+        
+        // Reset cellIndex to start from beginning for fallback placement
+        cellIndex = 0;
+        
+        while (placed < count && cellIndex < availableCells.length) {
+          const cell = availableCells[cellIndex];
+          cellIndex++;
+          
+          // Fallback: place on any shallow cell without landmass constraint
+          if (cell.terrain === "shallow") {
+            cell.terrain = terrainType;
+            placed++;
+          }
+        }
+      }
+      
+      if (placed < count) {
+        console.warn(`Could only place ${placed} of ${count} ${terrainType} cells even with relaxed constraints`);
       }
     }
     
@@ -204,11 +224,50 @@ export class HexMap {
   }
 
   /**
+   * Calculate the size of the landmass (contiguous set of hexes that are neither sea nor shallows)
+   * that contains the given hex using breadth-first search
+   */
+  private landmassSize(startHex: HexCell, grid: HexCell[][]): number {
+    const visited = new Set<string>();
+    const queue: HexCell[] = [startHex];
+    visited.add(`${startHex.q},${startHex.r}`);
+    
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      
+      // Check all 6 adjacent cells
+      for (let direction = 0; direction < 6; direction++) {
+        const adjacentCoords = this.getAdjacent(current.q, current.r, direction);
+        if (!adjacentCoords) {
+          continue; // Skip if adjacent cell is off the map
+        }
+        
+        const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        if (!adjacentCell) {
+          continue; // Skip if adjacent cell is off the map
+        }
+        
+        const cellKey = `${adjacentCell.q},${adjacentCell.r}`;
+        
+        // If we haven't visited this cell and it's part of the landmass (neither sea nor shallows)
+        if (!visited.has(cellKey) && 
+            (adjacentCell.terrain !== "shallow" && adjacentCell.terrain !== "sea")) {
+          visited.add(cellKey);
+          queue.push(adjacentCell);
+        }
+      }
+    }
+    
+    return visited.size;
+  }
+
+  /**
    * Check if a cell is a valid candidate for placing special terrain
    * - If it is not shallows, reject it
    * - If it is shallows, check all 6 adjacent cells
    * - For each adjacent cell, make sure they will still be adjacent to either a shallows or sea
    * - If any adjacent cell is off the map, skip it (treat it as non-shallows and non-sea)
+   * - Also check that placing special terrain here won't create a landmass larger than 4 hexes
    */
   private isValidTerrainPlacement(cell: HexCell, grid: HexCell[][]): boolean {
     // If it is not shallows, reject it
@@ -233,6 +292,43 @@ export class HexMap {
       if (!this.hasShallowsOrSeaNeighbor(adjacentCell, cell, grid)) {
         return false;
       }
+    }
+    
+    // Check landmass size constraint: placing special terrain here shouldn't create
+    // a landmass larger than 4 hexes
+    // First, temporarily change the cell's terrain to simulate the placement
+    const originalTerrain = cell.terrain;
+    cell.terrain = "cubes"; // Use any special terrain type for simulation
+    
+    // Find the largest landmass among the adjacent cells
+    let maxLandmassSize = 0;
+    for (let direction = 0; direction < 6; direction++) {
+      const adjacentCoords = this.getAdjacent(cell.q, cell.r, direction);
+      if (!adjacentCoords) {
+        continue;
+      }
+      
+      const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+      if (!adjacentCell) {
+        continue;
+      }
+      
+      // Only check landmass for cells that are NOT sea or shallows (actual landmass)
+      if (adjacentCell.terrain !== "shallow" && adjacentCell.terrain !== "sea") {
+        const size = this.landmassSize(adjacentCell, grid);
+        if (size > maxLandmassSize) {
+          maxLandmassSize = size;
+        }
+      }
+    }
+    
+    // Restore the original terrain
+    cell.terrain = originalTerrain;
+    
+    // Reject if placing special terrain would create a landmass larger than 4 hexes
+    // But only if there are adjacent landmasses to check (maxLandmassSize > 0)
+    if (maxLandmassSize > 0 && maxLandmassSize > 4) {
+      return false;
     }
     
     return true;
