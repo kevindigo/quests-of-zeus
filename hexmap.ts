@@ -96,38 +96,16 @@ export class HexMap {
    * Generate terrain type based on position and distance from center
    */
   private generateTerrain(q: number, r: number, distanceFromCenter: number): TerrainType {
-    // Create a roughly circular map with sea around the edges
-    const maxDistance = Math.min(this.width, this.height) / 2;
-    
-    if (distanceFromCenter > maxDistance * 0.8) {
-      return "sea";
-    } else if (distanceFromCenter > maxDistance * 0.7) {
-      return "shallow";
-    }
+    // Simply assign a random terrain to each hex
+    const terrainTypes: TerrainType[] = [
+      "zeus", "sea", "shallow", "monsters", "cubes", 
+      "temple", "clouds", "city", "foundations"
+    ];
     
     // Use seeded random for consistent terrain generation
-    const seed = (q * 31 + r * 37) % 100;
+    const seed = (q * 31 + r * 37) % terrainTypes.length;
     
-    if (distanceFromCenter < maxDistance * 0.3) {
-      // Center area - more varied terrain
-      if (seed < 15) return "zeus";
-      if (seed < 30) return "monsters";
-      if (seed < 45) return "cubes";
-      if (seed < 60) return "temple";
-      if (seed < 75) return "clouds";
-      if (seed < 90) return "city";
-      return "foundations";
-    } else {
-      // Outer areas - more varied terrain
-      if (seed < 10) return "zeus";
-      if (seed < 20) return "monsters";
-      if (seed < 35) return "cubes";
-      if (seed < 50) return "temple";
-      if (seed < 65) return "clouds";
-      if (seed < 80) return "city";
-      if (seed < 95) return "foundations";
-      return "shallow";
-    }
+    return terrainTypes[seed];
   }
 
   /**
