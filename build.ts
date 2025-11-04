@@ -18,9 +18,9 @@ async function build() {
     
     // Build hexmap.ts to dist/hexmap.js
     const result = await esbuild.build({
-      entryPoints: ["hexmap.ts"],
+      entryPoints: ["hexmap.ts", "hexmap-svg.ts"],
       bundle: true,
-      outfile: "dist/hexmap.js",
+      outdir: "dist",
       format: "esm",
       platform: "browser",
       target: "es2020",
@@ -33,6 +33,7 @@ async function build() {
     console.log("✓ Build completed successfully!");
     console.log("✓ All TypeScript logic compiled to JavaScript");
     console.log("✓ Source: hexmap.ts → Output: dist/hexmap.js");
+    console.log("✓ Source: hexmap-svg.ts → Output: dist/hexmap-svg.js");
     
     if (result.warnings.length > 0) {
       console.log("Warnings:");

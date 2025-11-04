@@ -94,6 +94,7 @@
             gap: 1rem;
             justify-content: center;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
         }
 
         button {
@@ -117,6 +118,44 @@
             margin-top: 1rem;
             max-height: 300px;
             overflow-y: auto;
+        }
+
+        .hex-map-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            backdrop-filter: blur(10px);
+            overflow: auto;
+            max-height: 600px;
+        }
+
+        .hex-map-svg {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .svg-controls {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .svg-controls button {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+        }
+
+        .cell-info {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
         }
 
         .cell-grid {
@@ -182,10 +221,22 @@
                 <button id="generateMap">Generate New Map</button>
                 <button id="showMapData">Show Map Data</button>
                 <button id="showSpecialCells">Show Special Locations</button>
+                <button id="showHexMap">Show Hex Map</button>
             </div>
             
             <div id="mapInfo" class="map-display" style="display: none;"></div>
             <div id="specialCells" class="map-display" style="display: none;"></div>
+            <div id="hexMapContainer" class="hex-map-container" style="display: none;">
+                <div class="svg-controls">
+                    <button id="toggleCoordinates">Hide Coordinates</button>
+                    <button id="toggleLabels">Hide Labels</button>
+                    <button id="zoomIn">Zoom In</button>
+                    <button id="zoomOut">Zoom Out</button>
+                    <button id="resetZoom">Reset Zoom</button>
+                </div>
+                <div id="hexMapSVG"></div>
+                <div id="cellInfo" class="cell-info" style="display: none;"></div>
+            </div>
         </div>
 
         <footer>
@@ -194,7 +245,16 @@
     </div>
 
     <script type="module">
-        import { generateNewMap, getMapStatistics, getSpecialCells, getMap } from './dist/hexmap.js';
+        import { generateNewMap, getMapStatistics, getSpecialCells, getMap, getCurrentMap } from './dist/hexmap.js';
+        import { HexMapSVG } from './dist/hexmap-svg.js';
+
+        // Initialize the map when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Page loaded, initializing map...');
+            // Generate initial map
+            generateNewMap();
+            console.log('Initial map generated');
+        });
 
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
@@ -267,9 +327,11 @@
             const specialCells = getSpecialCells();
             const specialCellsDiv = document.getElementById('specialCells');
             const mapInfo = document.getElementById('mapInfo');
+            const hexMapContainer = document.getElementById('hexMapContainer');
             
             specialCellsDiv.style.display = 'block';
             mapInfo.style.display = 'none';
+            hexMapContainer.style.display = 'none';
             
             specialCellsDiv.innerHTML = `
                 <h3>Special Locations (${specialCells.length})</h3>
@@ -291,6 +353,92 @@
                     }).join('')}
                 </div>
             `;
+        });
+
+        // Hex Map SVG functionality
+        let hexMapSVG;
+        let currentOptions = {
+            showCoordinates: true,
+            showTerrainLabels: true,
+            cellSize: 30
+        };
+
+        document.getElementById('showHexMap').addEventListener('click', () => {
+            const hexMapContainer = document.getElementById('hexMapContainer');
+            const mapInfo = document.getElementById('mapInfo');
+            const specialCells = document.getElementById('specialCells');
+            
+            hexMapContainer.style.display = 'block';
+            mapInfo.style.display = 'none';
+            specialCells.style.display = 'none';
+            
+            renderHexMap();
+        });
+
+        function renderHexMap() {
+            const gameMap = getCurrentMap();
+            const grid = gameMap.serialize();
+            
+            hexMapSVG = new HexMapSVG({
+                cellSize: currentOptions.cellSize,
+                showCoordinates: currentOptions.showCoordinates,
+                showTerrainLabels: currentOptions.showTerrainLabels,
+                interactive: true
+            });
+            
+            const { svg, script } = hexMapSVG.generateInteractiveSVG(grid);
+            const hexMapSVGElement = document.getElementById('hexMapSVG');
+            hexMapSVGElement.innerHTML = svg;
+            
+            // Execute the script directly instead of creating a script element
+            try {
+                eval(script);
+            } catch (error) {
+                console.error('Error executing hex map script:', error);
+            }
+            
+            // Listen for hex cell clicks
+            document.addEventListener('hexCellClick', (event) => {
+                const { q, r, terrain } = event.detail;
+                const cellInfo = document.getElementById('cellInfo');
+                cellInfo.style.display = 'block';
+                cellInfo.innerHTML = `
+                    <h4>Selected Cell</h4>
+                    <p><strong>Position:</strong> (${q}, ${r})</p>
+                    <p><strong>Terrain:</strong> ${terrain}</p>
+                    <p><strong>Coordinates:</strong> Axial (q=${q}, r=${r})</p>
+                `;
+            });
+        }
+
+        // SVG Controls
+        document.getElementById('toggleCoordinates').addEventListener('click', () => {
+            currentOptions.showCoordinates = !currentOptions.showCoordinates;
+            document.getElementById('toggleCoordinates').textContent = 
+                currentOptions.showCoordinates ? 'Hide Coordinates' : 'Show Coordinates';
+            renderHexMap();
+        });
+
+        document.getElementById('toggleLabels').addEventListener('click', () => {
+            currentOptions.showTerrainLabels = !currentOptions.showTerrainLabels;
+            document.getElementById('toggleLabels').textContent = 
+                currentOptions.showTerrainLabels ? 'Hide Labels' : 'Show Labels';
+            renderHexMap();
+        });
+
+        document.getElementById('zoomIn').addEventListener('click', () => {
+            currentOptions.cellSize = Math.min(currentOptions.cellSize + 5, 60);
+            renderHexMap();
+        });
+
+        document.getElementById('zoomOut').addEventListener('click', () => {
+            currentOptions.cellSize = Math.max(currentOptions.cellSize - 5, 20);
+            renderHexMap();
+        });
+
+        document.getElementById('resetZoom').addEventListener('click', () => {
+            currentOptions.cellSize = 30;
+            renderHexMap();
         });
     </script>
 </body>

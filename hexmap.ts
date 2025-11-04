@@ -13,50 +13,6 @@ export type TerrainType =
   | "port"          // Port cities
   | "sanctuary";    // Sanctuary locations
 
-// Game state
-let gameMap: HexMap = new HexMap();
-
-// UI Functions
-export function generateNewMap(): HexMap {
-  gameMap = new HexMap();
-  console.log('New map generated');
-  return gameMap;
-}
-
-export function getMapStatistics() {
-  const terrainCounts: Record<string, number> = {};
-  
-  for (let q = 0; q < gameMap.width; q++) {
-    for (let r = 0; r < gameMap.height; r++) {
-      const cell = gameMap.grid[q][r];
-      terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
-    }
-  }
-  
-  return {
-    dimensions: {
-      width: gameMap.width,
-      height: gameMap.height
-    },
-    terrainCounts,
-    totalCells: gameMap.width * gameMap.height
-  };
-}
-
-export function getSpecialCells(): HexCell[] {
-  return gameMap.getSpecialCells();
-}
-
-export function getMap() {
-  return {
-    map: gameMap.serialize(),
-    dimensions: {
-      width: gameMap.width,
-      height: gameMap.height
-    }
-  };
-}
-
 export type HexColor = 
   | "none"
   | "red"
@@ -83,6 +39,13 @@ export class HexMap {
 
   constructor() {
     this.grid = this.generateGrid();
+  }
+
+  /**
+   * Get the grid for external access
+   */
+  getGrid(): HexCell[][] {
+    return this.grid;
   }
 
   /**
@@ -163,8 +126,6 @@ export class HexMap {
       return "plains";
     }
   }
-
-
 
   /**
    * Add special locations like oracles, ports, and sanctuaries
@@ -264,4 +225,54 @@ export class HexMap {
     map.grid = data;
     return map;
   }
+}
+
+// Game state
+let gameMap: HexMap = new HexMap();
+
+// Export the current game map instance for SVG generation
+export function getCurrentMap(): HexMap {
+  return gameMap;
+}
+
+// UI Functions
+export function generateNewMap(): HexMap {
+  gameMap = new HexMap();
+  console.log('New map generated');
+  return gameMap;
+}
+
+export function getMapStatistics() {
+  const terrainCounts: Record<string, number> = {};
+  const grid = gameMap.getGrid();
+  
+  for (let q = 0; q < gameMap.width; q++) {
+    for (let r = 0; r < gameMap.height; r++) {
+      const cell = grid[q][r];
+      terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
+    }
+  }
+  
+  return {
+    dimensions: {
+      width: gameMap.width,
+      height: gameMap.height
+    },
+    terrainCounts,
+    totalCells: gameMap.width * gameMap.height
+  };
+}
+
+export function getSpecialCells(): HexCell[] {
+  return gameMap.getSpecialCells();
+}
+
+export function getMap() {
+  return {
+    map: gameMap.serialize(),
+    dimensions: {
+      width: gameMap.width,
+      height: gameMap.height
+    }
+  };
 }
