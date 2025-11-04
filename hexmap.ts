@@ -99,7 +99,24 @@ export class HexMap {
    * Generate terrain type based on position and distance from center
    */
   private generateTerrain(q: number, r: number, distanceFromCenter: number): TerrainType {
-    // Simply assign a random terrain to each hex
+    // Center hex (q=0, r=0) should always be zeus
+    if (q === 0 && r === 0) {
+      return "zeus";
+    }
+    
+    // The six hexes surrounding the center should always be sea
+    const surroundingHexes = [
+      [1, 0], [1, -1], [0, -1],
+      [-1, 0], [-1, 1], [0, 1]
+    ];
+    
+    for (const [dq, dr] of surroundingHexes) {
+      if (q === dq && r === dr) {
+        return "sea";
+      }
+    }
+    
+    // For other hexes, use random terrain generation
     const terrainTypes: TerrainType[] = [
       "zeus", "sea", "shallow", "monsters", "cubes", 
       "temple", "clouds", "city", "foundations"
