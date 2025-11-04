@@ -200,41 +200,80 @@ export class HexMap {
    * Cities should be placed according to specific game rules
    */
   private placeCities(grid: HexCell[][]): void {
-    const availableCells: HexCell[] = [];
+    // Use getCorner function for each direction to identify corners
+    const cornerCandidates: HexCell[] = [];
     
-    // Collect all cells that are still shallows after other placements
-    for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-      const row = grid[arrayQ];
-      if (row) {
-        for (let arrayR = 0; arrayR < row.length; arrayR++) {
-          const cell = row[arrayR];
-          if (cell && cell.terrain === "shallow") {
-            availableCells.push(cell);
+    // For each direction from the center, get the corner position
+    for (let direction = 0; direction < 6; direction++) {
+      const cornerCoords = this.getCorner(direction);
+      let cell = this.getCellFromGrid(grid, cornerCoords.q, cornerCoords.r);
+      
+      // If the corner cell is not shallows, use getAdjacent in direction + 2 until we find a shallow hex
+      if (cell && cell.terrain !== "shallow") {
+        // Calculate the search direction: corner direction + 2 (mod 6)
+        const searchDirection = (direction + 2) % 6;
+        let currentCoords = cornerCoords;
+        
+        // Move in the search direction until we find a shallow hex
+        while (cell && cell.terrain !== "shallow") {
+          const adjacentCoords = this.getAdjacent(currentCoords.q, currentCoords.r, searchDirection);
+          if (!adjacentCoords) break;
+          
+          currentCoords = adjacentCoords;
+          cell = this.getCellFromGrid(grid, currentCoords.q, currentCoords.r);
+        }
+      }
+      
+      // If we found a shallow water cell (either at corner or after moving), add it as a candidate
+      if (cell && cell.terrain === "shallow") {
+        cornerCandidates.push(cell);
+      }
+    }
+    
+    // If we found exactly 6 corner candidates, place cities on them
+    if (cornerCandidates.length === 6) {
+      for (const cell of cornerCandidates) {
+        cell.terrain = "city";
+      }
+    } else {
+      // Fallback: use the original random placement method
+      console.warn(`Found ${cornerCandidates.length} corner candidates, expected 6. Using fallback placement.`);
+      const availableCells: HexCell[] = [];
+      
+      // Collect all cells that are still shallows after other placements
+      for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+        const row = grid[arrayQ];
+        if (row) {
+          for (let arrayR = 0; arrayR < row.length; arrayR++) {
+            const cell = row[arrayR];
+            if (cell && cell.terrain === "shallow") {
+              availableCells.push(cell);
+            }
           }
         }
       }
-    }
-    
-    // Shuffle available cells for random placement
-    this.shuffleArray(availableCells);
-    
-    // Place 6 cities
-    let placed = 0;
-    let cellIndex = 0;
-    
-    while (placed < 6 && cellIndex < availableCells.length) {
-      const cell = availableCells[cellIndex];
-      cellIndex++;
       
-      // Only place if the cell is still shallows
-      if (cell.terrain === "shallow") {
-        cell.terrain = "city";
-        placed++;
+      // Shuffle available cells for random placement
+      this.shuffleArray(availableCells);
+      
+      // Place 6 cities
+      let placed = 0;
+      let cellIndex = 0;
+      
+      while (placed < 6 && cellIndex < availableCells.length) {
+        const cell = availableCells[cellIndex];
+        cellIndex++;
+        
+        // Only place if the cell is still shallows
+        if (cell.terrain === "shallow") {
+          cell.terrain = "city";
+          placed++;
+        }
       }
-    }
-    
-    if (placed < 6) {
-      console.warn(`Could only place ${placed} of 6 city cells`);
+      
+      if (placed < 6) {
+        console.warn(`Could only place ${placed} of 6 city cells`);
+      }
     }
   }
 
@@ -249,17 +288,38 @@ export class HexMap {
   }
 
   /**
+   * Get a cell at specific coordinates from a provided grid
+   */
+  private getCellFromGrid(grid: HexCell[][], q: number, r: number): HexCell | null {
+    // Convert axial coordinates to array indices
+    const arrayQ = q + 6;  // Offset to make coordinates non-negative
+    
+    // Check if q coordinate is within bounds
+    if (arrayQ < 0 || arrayQ >= grid.length) {
+      return null;
+    }
+    
+    const row = grid[arrayQ];
+    if (!row) {
+      return null;
+    }
+    
+    // For hexagonal grid, we need to find the cell with matching r coordinate
+    // Since each row only contains valid r coordinates for that q
+    for (const cell of row) {
+      if (cell.r === r) {
+        return cell;
+      }
+    }
+    
+    return null;
+  }
+
+  /**
    * Get a cell at specific coordinates
    */
   getCell(q: number, r: number): HexCell | null {
-    // Convert axial coordinates to array indices
-    const arrayQ = q + 6;  // Offset to make coordinates non-negative
-    const arrayR = r + 6;  // Offset to make coordinates non-negative
-    
-    if (arrayQ >= 0 && arrayQ < this.width && arrayR >= 0 && arrayR < this.height) {
-      return this.grid[arrayQ]?.[arrayR] || null;
-    }
-    return null;
+    return this.getCellFromGrid(this.grid, q, r);
   }
 
   /**
@@ -334,6 +394,34 @@ export class HexMap {
       }
     }
     return cells;
+  }
+
+  /**
+   * Get the corner coordinates for a given direction by starting at center (0,0)
+   * and traversing outward to the edge of the map
+   * @param direction - Direction (0-5) where:
+   *   0: Northeast (q+1, r-1)
+   *   1: East (q+1, r+0)
+   *   2: Southeast (q+0, r+1)
+   *   3: Southwest (q-1, r+1)
+   *   4: West (q-1, r+0)
+   *   5: Northwest (q+0, r-1)
+   * @returns The corner coordinates {q, r} at the edge of the map in the specified direction
+   */
+  private getCorner(direction: number): {q: number, r: number} {
+    let currentQ = 0;
+    let currentR = 0;
+    
+    // Traverse outward in the specified direction to the edge of the map
+    for (let distance = 1; distance <= 6; distance++) {
+      const adjacent = this.getAdjacent(currentQ, currentR, direction);
+      if (!adjacent) break;
+      
+      currentQ = adjacent.q;
+      currentR = adjacent.r;
+    }
+    
+    return { q: currentQ, r: currentR };
   }
 
   /**
