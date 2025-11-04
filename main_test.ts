@@ -55,6 +55,74 @@ Deno.test("Game logic - hex distance calculation", () => {
   assertEquals(hexDistance(0, 0, 2, -1), 2);
 });
 
+Deno.test("Game logic - getAdjacent function", () => {
+  const hexMap = new HexMap();
+  
+  // Test valid directions from center (0,0)
+  const expectedDirections = [
+    { direction: 0, expected: { q: 1, r: -1 } },  // Northeast
+    { direction: 1, expected: { q: 1, r: 0 } },   // East
+    { direction: 2, expected: { q: 0, r: 1 } },   // Southeast
+    { direction: 3, expected: { q: -1, r: 1 } },  // Southwest
+    { direction: 4, expected: { q: -1, r: 0 } },  // West
+    { direction: 5, expected: { q: 0, r: -1 } }   // Northwest
+  ];
+  
+  for (const { direction, expected } of expectedDirections) {
+    const result = hexMap.getAdjacent(0, 0, direction);
+    assertEquals(result, expected, `Direction ${direction} should return ${JSON.stringify(expected)}`);
+  }
+  
+  // Test invalid directions
+  assertEquals(hexMap.getAdjacent(0, 0, -1), null, "Direction -1 should return null");
+  assertEquals(hexMap.getAdjacent(0, 0, 6), null, "Direction 6 should return null");
+  assertEquals(hexMap.getAdjacent(0, 0, 10), null, "Direction 10 should return null");
+  
+  // Test from different starting positions
+  assertEquals(hexMap.getAdjacent(3, 2, 1), { q: 4, r: 2 }, "Direction 1 from (3,2) should return (4,2)");
+  assertEquals(hexMap.getAdjacent(-2, 4, 3), { q: -3, r: 5 }, "Direction 3 from (-2,4) should return (-3,5)");
+  
+  // Test that coordinates are returned even if they would be off the map
+  // This allows the caller to detect out-of-bounds conditions
+  const offMapResult = hexMap.getAdjacent(6, 0, 1);
+  assertEquals(offMapResult, { q: 7, r: 0 }, "Should return coordinates even if off map");
+});
+
+Deno.test("Game logic - getAdjacent direction consistency", () => {
+  const hexMap = new HexMap();
+  
+  // Test that all directions are consistent and form a complete ring
+  const center = { q: 2, r: 2 };
+  const directions = [0, 1, 2, 3, 4, 5];
+  
+  // Get all adjacent coordinates
+  const adjacentCoords = directions.map(dir => hexMap.getAdjacent(center.q, center.r, dir));
+  
+  // All should be valid (not null)
+  for (let i = 0; i < adjacentCoords.length; i++) {
+    assertEquals(adjacentCoords[i] !== null, true, `Direction ${i} should return coordinates`);
+  }
+  
+  // All coordinates should be unique
+  const coordStrings = adjacentCoords.map(coord => JSON.stringify(coord));
+  const uniqueCoords = new Set(coordStrings);
+  assertEquals(uniqueCoords.size, 6, "All 6 adjacent coordinates should be unique");
+  
+  // Each adjacent cell should be exactly 1 hex distance from center
+  const hexDistance = (q1: number, r1: number, q2: number, r2: number): number => {
+    const s1 = -q1 - r1;
+    const s2 = -q2 - r2;
+    return (Math.abs(q1 - q2) + Math.abs(r1 - r2) + Math.abs(s1 - s2)) / 2;
+  };
+  
+  for (const coord of adjacentCoords) {
+    if (coord) {
+      const distance = hexDistance(center.q, center.r, coord.q, coord.r);
+      assertEquals(distance, 1, `Cell at (${coord.q},${coord.r}) should be distance 1 from center`);
+    }
+  }
+});
+
 Deno.test("Game logic - map dimensions", () => {
   // Test that our map has the expected dimensions
   const hexMap = new HexMap();

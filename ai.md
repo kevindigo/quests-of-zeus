@@ -23,6 +23,13 @@ Each hex in the game must have the following characteristics:
 - Build incrementally with small, testable changes
 - Cleanly separate UI elements from "engine" elements
 
+## City Placement Rules
+- `placeCities` should place each city near one of the 6 corners of the hex map
+- For each corner, start at the corner hex
+- If the corner hex is already a non-shallows hex, try the next hex clockwise along the edge
+- Keep going clockwise until finding a shallows hex, and put the city there
+- Do the same for each of the other 5 cities/corners
+
 ## Main Files:
 - main.ts (primary game code)
 - main_test.ts (unit tests)

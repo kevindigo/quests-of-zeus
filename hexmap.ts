@@ -263,19 +263,53 @@ export class HexMap {
   }
 
   /**
+   * Get the coordinates of an adjacent hex in a specific direction
+   * @param q - The q coordinate of the starting hex
+   * @param r - The r coordinate of the starting hex
+   * @param direction - Direction (0-5) where:
+   *   0: Northeast (q+1, r-1)
+   *   1: East (q+1, r+0)
+   *   2: Southeast (q+0, r+1)
+   *   3: Southwest (q-1, r+1)
+   *   4: West (q-1, r+0)
+   *   5: Northwest (q+0, r-1)
+   * @returns Object with {q, r} coordinates of the adjacent hex, or null if direction is invalid
+   */
+  getAdjacent(q: number, r: number, direction: number): {q: number, r: number} | null {
+    if (direction < 0 || direction > 5) {
+      return null;
+    }
+    
+    const directionVectors = [
+      [1, -1],  // 0: Northeast
+      [1, 0],   // 1: East
+      [0, 1],   // 2: Southeast
+      [-1, 1],  // 3: Southwest
+      [-1, 0],  // 4: West
+      [0, -1]   // 5: Northwest
+    ];
+    
+    const [dq, dr] = directionVectors[direction];
+    return {
+      q: q + dq,
+      r: r + dr
+    };
+  }
+
+  /**
    * Get all neighboring cells for a given cell
    */
   getNeighbors(q: number, r: number): HexCell[] {
     const neighbors: HexCell[] = [];
-    const directions = [
-      [1, 0], [1, -1], [0, -1],
-      [-1, 0], [-1, 1], [0, 1]
-    ];
     
-    for (const [dq, dr] of directions) {
-      const neighbor = this.getCell(q + dq, r + dr);
-      if (neighbor) {
-        neighbors.push(neighbor);
+    // Check all 6 directions using getAdjacent
+    for (let direction = 0; direction < 6; direction++) {
+      const adjacentCoords = this.getAdjacent(q, r, direction);
+      if (adjacentCoords) {
+        const neighbor = this.getCell(adjacentCoords.q, adjacentCoords.r);
+        if (neighbor) {
+          neighbors.push(neighbor);
+        }
       }
     }
     
