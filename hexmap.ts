@@ -161,14 +161,13 @@ export class HexMap {
     // Shuffle available cells for random placement
     this.shuffleArray(availableCells);
     
-    // Place terrain types with their required counts
+    // Place terrain types with their required counts (excluding cities)
     const terrainPlacements: [TerrainType, number][] = [
       ["cubes", 6],
       ["temple", 6], 
       ["foundations", 6],
       ["monsters", 9],
-      ["clouds", 12],
-      ["city", 6]  // Add city terrain type
+      ["clouds", 12]
     ];
     
     let cellIndex = 0;
@@ -192,7 +191,51 @@ export class HexMap {
       }
     }
 
+    // Place cities separately with special rules
+    this.placeCities(grid);
+  }
 
+  /**
+   * Place the 6 city tiles with special rules
+   * Cities should be placed according to specific game rules
+   */
+  private placeCities(grid: HexCell[][]): void {
+    const availableCells: HexCell[] = [];
+    
+    // Collect all cells that are still shallows after other placements
+    for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+      const row = grid[arrayQ];
+      if (row) {
+        for (let arrayR = 0; arrayR < row.length; arrayR++) {
+          const cell = row[arrayR];
+          if (cell && cell.terrain === "shallow") {
+            availableCells.push(cell);
+          }
+        }
+      }
+    }
+    
+    // Shuffle available cells for random placement
+    this.shuffleArray(availableCells);
+    
+    // Place 6 cities
+    let placed = 0;
+    let cellIndex = 0;
+    
+    while (placed < 6 && cellIndex < availableCells.length) {
+      const cell = availableCells[cellIndex];
+      cellIndex++;
+      
+      // Only place if the cell is still shallows
+      if (cell.terrain === "shallow") {
+        cell.terrain = "city";
+        placed++;
+      }
+    }
+    
+    if (placed < 6) {
+      console.warn(`Could only place ${placed} of 6 city cells`);
+    }
   }
 
   /**
