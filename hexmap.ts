@@ -183,10 +183,13 @@ export class HexMap {
         const cell = availableCells[cellIndex];
         cellIndex++;
         
-        // Only place if the cell is still shallows (not already taken by previous placement)
-        if (cell.terrain === "shallow") {
-          cell.terrain = terrainType;
-          placed++;
+        // Check if this cell is a valid candidate for placement
+        if (this.isValidTerrainPlacement(cell, grid)) {
+          // Only place if the cell is still shallows (not already taken by previous placement)
+          if (cell.terrain === "shallow") {
+            cell.terrain = terrainType;
+            placed++;
+          }
         }
       }
       
@@ -194,6 +197,71 @@ export class HexMap {
         console.warn(`Could only place ${placed} of ${count} ${terrainType} cells`);
       }
     }
+  }
+
+  /**
+   * Check if a cell is a valid candidate for placing special terrain
+   * - If it is not shallows, reject it
+   * - If it is shallows, check all 6 adjacent cells
+   * - For each adjacent cell, make sure they will still be adjacent to either a shallows or sea
+   * - If any adjacent cell is off the map, skip it (treat it as non-shallows and non-sea)
+   */
+  private isValidTerrainPlacement(cell: HexCell, grid: HexCell[][]): boolean {
+    // If it is not shallows, reject it
+    if (cell.terrain !== "shallow") {
+      return false;
+    }
+    
+    // Check all 6 adjacent cells
+    for (let direction = 0; direction < 6; direction++) {
+      const adjacentCoords = this.getAdjacent(cell.q, cell.r, direction);
+      if (!adjacentCoords) {
+        continue; // Skip if adjacent cell is off the map
+      }
+      
+      const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+      if (!adjacentCell) {
+        continue; // Skip if adjacent cell is off the map
+      }
+      
+      // Check if this adjacent cell will still have at least one shallows or sea neighbor
+      // after we place the special terrain here
+      if (!this.hasShallowsOrSeaNeighbor(adjacentCell, cell, grid)) {
+        return false;
+      }
+    }
+    
+    return true;
+  }
+
+  /**
+   * Check if a cell has at least one shallows or sea neighbor, excluding the candidate cell
+   * that we're considering placing special terrain on
+   */
+  private hasShallowsOrSeaNeighbor(cell: HexCell, candidateCell: HexCell, grid: HexCell[][]): boolean {
+    for (let direction = 0; direction < 6; direction++) {
+      const adjacentCoords = this.getAdjacent(cell.q, cell.r, direction);
+      if (!adjacentCoords) {
+        continue; // Skip if adjacent cell is off the map
+      }
+      
+      const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+      if (!adjacentCell) {
+        continue; // Skip if adjacent cell is off the map
+      }
+      
+      // Skip the candidate cell (the one we're considering placing special terrain on)
+      if (adjacentCell.q === candidateCell.q && adjacentCell.r === candidateCell.r) {
+        continue;
+      }
+      
+      // Check if this neighbor is shallows or sea
+      if (adjacentCell.terrain === "shallow" || adjacentCell.terrain === "sea") {
+        return true;
+      }
+    }
+    
+    return false;
   }
 
   /**
