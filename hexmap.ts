@@ -192,13 +192,7 @@ export class HexMap {
       }
     }
 
-    // After placing all other types, each remaining shallow has a 90% chance of becoming sea
-    for (let i = cellIndex; i < availableCells.length; i++) {
-      const cell = availableCells[i];
-      if (cell.terrain === "shallow" && Math.random() < 0.9) {
-        cell.terrain = "sea";
-      }
-    }
+
   }
 
   /**

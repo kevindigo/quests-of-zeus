@@ -147,39 +147,7 @@ Deno.test("Game logic - terrain distribution", () => {
   }
 });
 
-Deno.test("Game logic - sea vs shallows ratio", () => {
-  // Test that after placing all other types, sea spaces > shallows
-  // This verifies the 90% conversion rule for remaining shallow cells
-  
-  // Test multiple maps to account for randomness
-  for (let testRun = 0; testRun < 5; testRun++) {
-    const hexMap = new HexMap();
-    const grid = hexMap.getGrid();
-    
-    const terrainCounts: Record<string, number> = {};
-    
-    // Count occurrences of each terrain type
-    for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-      const row = grid[arrayQ];
-      if (row) {
-        for (let arrayR = 0; arrayR < row.length; arrayR++) {
-          const cell = row[arrayR];
-          if (cell) {
-            const terrain = cell.terrain;
-            terrainCounts[terrain] = (terrainCounts[terrain] || 0) + 1;
-          }
-        }
-      }
-    }
-    
-    const seaCount = terrainCounts["sea"] || 0;
-    const shallowsCount = terrainCounts["shallow"] || 0;
-    
-    // After 90% conversion, sea should be more common than shallows
-    console.log(`Test run ${testRun + 1}: Sea: ${seaCount}, Shallows: ${shallowsCount}`);
-    assertEquals(seaCount > shallowsCount, true, `Sea count (${seaCount}) should be greater than shallows count (${shallowsCount})`);
-  }
-});
+
 
 Deno.test("Game logic - hex cell colors", () => {
   // Test that all color types are valid
