@@ -25,7 +25,7 @@ Deno.test("Dependencies test", () => {
 // Test the game logic (simulating the client-side behavior)
 Deno.test("Game logic - terrain generation", () => {
   // Test terrain type mapping
-  const terrainTypes = ["sea", "coast", "plains", "hills", "mountains", "forest", "desert", "oracle", "port", "sanctuary"];
+  const terrainTypes = ["sea", "coast", "plains", "hills", "mountains", "forest", "desert"];
   
   for (const terrain of terrainTypes) {
     assertEquals(typeof terrain, "string");
@@ -79,7 +79,7 @@ Deno.test("Game logic - serialization", () => {
 
 Deno.test("Game logic - terrain types", () => {
   // Test that all terrain types are valid
-  const terrainTypes = ["sea", "coast", "plains", "hills", "mountains", "forest", "desert", "oracle", "port", "sanctuary"];
+  const terrainTypes = ["sea", "coast", "plains", "hills", "mountains", "forest", "desert"];
   
   for (const terrain of terrainTypes) {
     assertEquals(typeof terrain, "string");
@@ -217,8 +217,8 @@ Deno.test("SVG Generator - generateHexCell basic functionality", () => {
 Deno.test("SVG Generator - generateHexCell with different terrains", () => {
   const svgGenerator = new HexMapSVG({ cellSize: 40 });
   
-  const terrains: Array<"sea" | "coast" | "plains" | "hills" | "mountains" | "forest" | "desert" | "oracle" | "port" | "sanctuary"> = [
-    "sea", "coast", "plains", "hills", "mountains", "forest", "desert", "oracle", "port", "sanctuary"
+  const terrains: Array<"sea" | "coast" | "plains" | "hills" | "mountains" | "forest" | "desert"> = [
+    "sea", "coast", "plains", "hills", "mountains", "forest", "desert"
   ];
   
   for (const terrain of terrains) {
@@ -323,7 +323,7 @@ Deno.test("SVG Generator - generateHexCell with both coordinates and labels enab
   const testCell: HexCell = {
     q: 3,
     r: 4,
-    terrain: "oracle",
+    terrain: "mountains",
     color: "yellow"
   };
   
@@ -331,7 +331,7 @@ Deno.test("SVG Generator - generateHexCell with both coordinates and labels enab
   
   // Should contain both coordinate and terrain label text
   assertEquals(svgContent.includes("3,4"), true);
-  assertEquals(svgContent.includes("Oracle"), true);
+  assertEquals(svgContent.includes("Mount"), true);
   
   // Should contain both CSS classes
   assertEquals(svgContent.includes("hex-coord"), true);
@@ -469,7 +469,7 @@ Deno.test("SVG Generator - generateSVG with single cell", () => {
       {
         q: 0,
         r: 0,
-        terrain: "oracle",
+        terrain: "mountains",
         color: "yellow"
       }
     ]
@@ -480,11 +480,8 @@ Deno.test("SVG Generator - generateSVG with single cell", () => {
   // Should contain the single hex cell
   assertEquals(svg.includes('data-q="0"'), true);
   assertEquals(svg.includes('data-r="0"'), true);
-  assertEquals(svg.includes('data-terrain="oracle"'), true);
-  assertEquals(svg.includes('class="hex-cell terrain-oracle"'), true);
-  
-  // Should contain oracle-specific styling
-  assertEquals(svg.includes('filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.5))'), true);
+  assertEquals(svg.includes('data-terrain="mountains"'), true);
+  assertEquals(svg.includes('class="hex-cell terrain-mountains"'), true);
 });
 
 Deno.test("SVG Generator - generateSVG with different cell sizes", () => {
@@ -593,10 +590,7 @@ Deno.test("SVG Generator - generateSVG CSS styles verification", () => {
   assertEquals(svg.includes('stroke-width: 3;'), true);
   assertEquals(svg.includes('stroke: #ff0000;'), true);
   
-  // Should contain special terrain effects
-  assertEquals(svg.includes('.terrain-oracle {'), true);
-  assertEquals(svg.includes('.terrain-port {'), true);
-  assertEquals(svg.includes('.terrain-sanctuary {'), true);
+
   
   // Should contain text styling
   assertEquals(svg.includes('.hex-coord, .hex-terrain-label {'), true);
@@ -734,34 +728,7 @@ Deno.test("SVG Generator - generateInteractiveSVG with different options", () =>
 // Note: The irregular grid test has been removed as it requires undefined cell handling
 // which is not currently implemented in the SVG generator
 
-Deno.test("SVG Generator - generateSVG with special terrain types", () => {
-  const svgGenerator = new HexMapSVG({ cellSize: 40 });
-  
-  const grid: HexCell[][] = [
-    [
-      { q: 0, r: 0, terrain: "oracle", color: "yellow" },
-      { q: 0, r: 1, terrain: "port", color: "blue" },
-      { q: 0, r: 2, terrain: "sanctuary", color: "green" }
-    ]
-  ];
-  
-  const svg = svgGenerator.generateSVG(grid);
-  
-  // Should contain special terrain effects in CSS
-  assertEquals(svg.includes('filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.5))'), true);
-  assertEquals(svg.includes('filter: drop-shadow(0 0 4px rgba(30, 144, 255, 0.5))'), true);
-  assertEquals(svg.includes('filter: drop-shadow(0 0 4px rgba(50, 205, 50, 0.5))'), true);
-  
-  // Should contain correct terrain classes
-  assertEquals(svg.includes('class="hex-cell terrain-oracle"'), true);
-  assertEquals(svg.includes('class="hex-cell terrain-port"'), true);
-  assertEquals(svg.includes('class="hex-cell terrain-sanctuary"'), true);
-  
-  // Should contain correct colors
-  assertEquals(svg.includes('fill="#ffd700"'), true); // oracle
-  assertEquals(svg.includes('fill="#1e90ff"'), true); // port
-  assertEquals(svg.includes('fill="#32cd32"'), true); // sanctuary
-});
+
 
 Deno.test("SVG Generator - generateSVG with all color types", () => {
   const svgGenerator = new HexMapSVG({ cellSize: 40 });

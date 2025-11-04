@@ -119,10 +119,7 @@ export class HexMapSVG {
       hills: '#daa520',
       mountains: '#a9a9a9',
       forest: '#228b22',
-      desert: '#f0e68c',
-      oracle: '#ffd700',
-      port: '#1e90ff',
-      sanctuary: '#32cd32'
+      desert: '#f0e68c'
     };
     return colors[terrain] || '#cccccc';
   }
@@ -161,10 +158,7 @@ export class HexMapSVG {
       hills: 'Hills',
       mountains: 'Mount',
       forest: 'Forest',
-      desert: 'Desert',
-      oracle: 'Oracle',
-      port: 'Port',
-      sanctuary: 'Sanctuary'
+      desert: 'Desert'
     };
     return labels[terrain] || terrain;
   }
@@ -201,15 +195,7 @@ export class HexMapSVG {
         stroke-width: 3;
         stroke: #ff0000;
       }
-      .terrain-oracle {
-        filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.5));
-      }
-      .terrain-port {
-        filter: drop-shadow(0 0 4px rgba(30, 144, 255, 0.5));
-      }
-      .terrain-sanctuary {
-        filter: drop-shadow(0 0 4px rgba(50, 205, 50, 0.5));
-      }
+
       .hex-coord, .hex-terrain-label {
         pointer-events: none;
         user-select: none;

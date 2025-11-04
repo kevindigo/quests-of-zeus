@@ -8,10 +8,7 @@ export type TerrainType =
   | "hills"         // Hilly terrain
   | "mountains"     // Mountainous areas
   | "forest"        // Forested areas
-  | "desert"        // Desert terrain
-  | "oracle"        // Oracle temple locations
-  | "port"          // Port cities
-  | "sanctuary";    // Sanctuary locations
+  | "desert";       // Desert terrain
 
 export type HexColor = 
   | "none"
@@ -110,12 +107,11 @@ export class HexMap {
     const seed = (q * 31 + r * 37) % 100;
     
     if (distanceFromCenter < maxDistance * 0.3) {
-      // Center area - more likely to have important locations
-      if (seed < 5) return "oracle";
-      if (seed < 15) return "sanctuary";
-      if (seed < 30) return "hills";
-      if (seed < 50) return "plains";
-      return "forest";
+      // Center area - more varied terrain
+      if (seed < 20) return "hills";
+      if (seed < 40) return "plains";
+      if (seed < 60) return "forest";
+      return "plains";
     } else {
       // Outer areas - more varied terrain
       if (seed < 10) return "mountains";
@@ -191,24 +187,7 @@ export class HexMap {
     }
   }
 
-  /**
-   * Get all cells with special locations
-   * Special locations are now represented by terrain types
-   */
-  getSpecialCells(): HexCell[] {
-    const specialCells: HexCell[] = [];
-    const specialTerrains: TerrainType[] = ["oracle", "port", "sanctuary"];
-    
-    for (let q = 0; q < this.width; q++) {
-      for (let r = 0; r < this.height; r++) {
-        const cell = this.grid[q][r];
-        if (specialTerrains.includes(cell.terrain)) {
-          specialCells.push(cell);
-        }
-      }
-    }
-    return specialCells;
-  }
+
 
   /**
    * Serialize the map for storage or transmission
@@ -263,9 +242,7 @@ export function getMapStatistics() {
   };
 }
 
-export function getSpecialCells(): HexCell[] {
-  return gameMap.getSpecialCells();
-}
+
 
 export function getMap() {
   return {
