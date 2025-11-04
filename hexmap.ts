@@ -197,21 +197,45 @@ export class HexMap {
   }
 
   /**
-   * Place the 6 city tiles with the new approach: place all cities first in the corners
-   * For each corner, find the corner hex and put the city there
-   * No checks for shallows needed - just always put the city in the corner
+   * Place the 6 city tiles near the corners of the hex map
+   * For each corner, pick a random direction (+2 or +4) and a random distance (0 to 2)
+   * Place the city there
    */
   private placeCities(grid: HexCell[][]): void {
-    // Place cities directly in the 6 corners without any shallows checks
-    for (let direction = 0; direction < 6; direction++) {
-      const cornerCoords = this.getCorner(direction);
-      const cell = this.getCellFromGrid(grid, cornerCoords.q, cornerCoords.r);
+    for (let cornerDirection = 0; cornerDirection < 6; cornerDirection++) {
+      // Get the corner coordinates
+      const cornerCoords = this.getCorner(cornerDirection);
       
-      // If we found a cell at the corner, place a city there
-      if (cell) {
+      // Pick a random direction offset: either +2 or +4
+      const directionOffset = Math.random() < 0.5 ? 2 : 4;
+      const placementDirection = (cornerDirection + directionOffset) % 6;
+      
+      // Pick a random distance: 0 to 2
+      const distance = Math.floor(Math.random() * 3);
+      
+      // Calculate placement coordinates
+      let placementQ = cornerCoords.q;
+      let placementR = cornerCoords.r;
+      
+      // Move from the corner in the chosen direction for the chosen distance
+      for (let i = 0; i < distance; i++) {
+        const adjacent = this.getAdjacent(placementQ, placementR, placementDirection);
+        if (!adjacent) break;
+        
+        placementQ = adjacent.q;
+        placementR = adjacent.r;
+      }
+      
+      // Place the city if the cell exists
+      const cell = this.getCellFromGrid(grid, placementQ, placementR);
+      if (cell && cell.terrain === "shallow") {
         cell.terrain = "city";
       } else {
-        console.warn(`Could not find cell at corner direction ${direction}: (${cornerCoords.q}, ${cornerCoords.r})`);
+        // Fallback: place at the corner if the randomized placement failed
+        const cornerCell = this.getCellFromGrid(grid, cornerCoords.q, cornerCoords.r);
+        if (cornerCell && cornerCell.terrain === "shallow") {
+          cornerCell.terrain = "city";
+        }
       }
     }
   }

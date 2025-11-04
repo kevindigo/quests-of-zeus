@@ -215,6 +215,57 @@ Deno.test("Game logic - terrain distribution", () => {
   }
 });
 
+Deno.test("Game logic - city placement near corners", () => {
+  // Test that cities are placed near the corners of the hex map
+  const hexMap = new HexMap();
+  const grid = hexMap.getGrid();
+  
+  // Get all city cells
+  const cityCells: HexCell[] = [];
+  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+    const row = grid[arrayQ];
+    if (row) {
+      for (let arrayR = 0; arrayR < row.length; arrayR++) {
+        const cell = row[arrayR];
+        if (cell && cell.terrain === "city") {
+          cityCells.push(cell);
+        }
+      }
+    }
+  }
+  
+  // Should have exactly 6 cities
+  assertEquals(cityCells.length, 6, "Should have exactly 6 cities");
+  
+  // Define the 6 corner coordinates
+  const corners = [
+    { q: 6, r: 0 },   // East corner
+    { q: 6, r: -6 },  // Northeast corner
+    { q: 0, r: -6 },  // Northwest corner
+    { q: -6, r: 0 },  // West corner
+    { q: -6, r: 6 },  // Southwest corner
+    { q: 0, r: 6 }    // Southeast corner
+  ];
+  
+  // For each city, verify it's near one of the corners
+  // A city is "near" a corner if it's within 2 hex distance
+  for (const cityCell of cityCells) {
+    const isNearCorner = corners.some(corner => {
+      // Calculate hex distance using the same formula as the private method
+      const q1 = cityCell.q;
+      const r1 = cityCell.r;
+      const q2 = corner.q;
+      const r2 = corner.r;
+      const s1 = -q1 - r1;
+      const s2 = -q2 - r2;
+      const distance = (Math.abs(q1 - q2) + Math.abs(r1 - r2) + Math.abs(s1 - s2)) / 2;
+      return distance <= 2;
+    });
+    
+    assertEquals(isNearCorner, true, `City at (${cityCell.q}, ${cityCell.r}) should be near a corner (within 2 hex distance)`);
+  }
+});
+
 
 
 Deno.test("Game logic - hex cell colors", () => {
