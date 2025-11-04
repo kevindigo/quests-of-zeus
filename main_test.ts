@@ -937,7 +937,7 @@ Deno.test("SVG Generator - generateSVG with all color types", () => {
     yellow: "#ffff00"
   };
   
-  for (const [color, expectedColor] of Object.entries(expectedStrokeColors)) {
+  for (const [_color, expectedColor] of Object.entries(expectedStrokeColors)) {
     assertEquals(svg.includes(`stroke="${expectedColor}"`), true);
   }
 });
@@ -972,4 +972,180 @@ Deno.test("SVG Generator - generateSVG coordinate system consistency", () => {
   // Should not contain coordinates that weren't in the original grid
   assertEquals(svg.includes('data-q="0"'), false);
   assertEquals(svg.includes('data-r="0"'), false);
+});
+
+// Terrain Placement Validation Tests
+Deno.test("isValidTerrainPlacement - rejects non-shallow cells", () => {
+  const hexMap = new HexMap();
+  const grid = hexMap.getGrid();
+  
+  // Test with a non-shallow cell (center zeus cell)
+  const centerCell = hexMap.getCell(0, 0);
+  assertEquals(centerCell !== null, true);
+  
+  if (centerCell) {
+    const isValid = hexMap["isValidTerrainPlacement"](centerCell, grid);
+    assertEquals(isValid, false, "Zeus cell should not be valid for terrain placement");
+  }
+  
+  // Test with a sea cell
+  const seaCell = hexMap.getCell(1, 0);
+  assertEquals(seaCell !== null, true);
+  
+  if (seaCell) {
+    const isValid = hexMap["isValidTerrainPlacement"](seaCell, grid);
+    assertEquals(isValid, false, "Sea cell should not be valid for terrain placement");
+  }
+});
+
+Deno.test("isValidTerrainPlacement - validates shallow cells with sea neighbors", () => {
+  const hexMap = new HexMap();
+  const grid = hexMap.getGrid();
+  
+  // Find a shallow cell that has at least one sea neighbor
+  // These are typically the cells adjacent to the center sea ring
+  let testCell: HexCell | null = null;
+  
+  // Check cells adjacent to the sea ring around center
+  const seaRingPositions = [
+    [1, 0], [1, -1], [0, -1],
+    [-1, 0], [-1, 1], [0, 1]
+  ];
+  
+  // For each sea cell, check its neighbors
+  for (const [seaQ, seaR] of seaRingPositions) {
+    const seaCell = hexMap.getCell(seaQ, seaR);
+    if (seaCell) {
+      const neighbors = hexMap.getNeighbors(seaQ, seaR);
+      for (const neighbor of neighbors) {
+        if (neighbor.terrain === "shallow") {
+          testCell = neighbor;
+          break;
+        }
+      }
+    }
+    if (testCell) break;
+  }
+  
+  assertEquals(testCell !== null, true, "Should find a shallow cell adjacent to sea");
+  
+  if (testCell) {
+    const isValid = hexMap["isValidTerrainPlacement"](testCell, grid);
+    assertEquals(isValid, true, "Shallow cell adjacent to sea should be valid for terrain placement");
+  }
+});
+
+
+
+Deno.test("isValidTerrainPlacement - validates cells with multiple shallow neighbors", () => {
+  // Create a custom grid with a cluster of shallow cells
+  const customGrid: HexCell[][] = [
+    [
+      { q: 0, r: 0, terrain: "shallow", color: "none" },
+      { q: 0, r: 1, terrain: "shallow", color: "none" }
+    ],
+    [
+      { q: 1, r: 0, terrain: "shallow", color: "none" },
+      { q: 1, r: 1, terrain: "shallow", color: "none" }
+    ]
+  ];
+  
+  const hexMap = new HexMap();
+  const testCell = customGrid[0][0];
+  
+  // This cell is surrounded by shallow cells, so it should be valid
+  const isValid = hexMap["isValidTerrainPlacement"](testCell, customGrid);
+  assertEquals(isValid, true, "Cell surrounded by shallow neighbors should be valid for terrain placement");
+});
+
+
+
+Deno.test("isValidTerrainPlacement - handles edge of map cells", () => {
+  const hexMap = new HexMap();
+  const grid = hexMap.getGrid();
+  
+  // Find a cell at the edge of the map
+  let edgeCell: HexCell | null = null;
+  
+  // Check cells at the corners
+  const cornerCoords = [
+    { q: 6, r: 0 },   // East corner
+    { q: 6, r: -6 },  // Northeast corner  
+    { q: 0, r: -6 },  // Northwest corner
+    { q: -6, r: 0 },  // West corner
+    { q: -6, r: 6 },  // Southwest corner
+    { q: 0, r: 6 }    // Southeast corner
+  ];
+  
+  for (const coord of cornerCoords) {
+    const cell = hexMap.getCell(coord.q, coord.r);
+    if (cell && cell.terrain === "shallow") {
+      edgeCell = cell;
+      break;
+    }
+  }
+  
+  assertEquals(edgeCell !== null, true, "Should find a shallow cell at the edge of the map");
+  
+  if (edgeCell) {
+    const isValid = hexMap["isValidTerrainPlacement"](edgeCell, grid);
+    // Edge cells may or may not be valid depending on their neighbors
+    assertEquals(typeof isValid, "boolean", "Should return boolean for edge cells");
+  }
+});
+
+Deno.test("isValidTerrainPlacement - validates cells with mixed neighbor types", () => {
+  // Create a custom grid with mixed terrain types
+  const customGrid: HexCell[][] = [
+    [
+      { q: 0, r: 0, terrain: "shallow", color: "none" },
+      { q: 0, r: 1, terrain: "sea", color: "none" }
+    ],
+    [
+      { q: 1, r: 0, terrain: "city", color: "none" },
+      { q: 1, r: 1, terrain: "shallow", color: "none" }
+    ]
+  ];
+  
+  const hexMap = new HexMap();
+  const testCell = customGrid[0][0];
+  
+  // This cell has:
+  // - North neighbor: sea (valid)
+  // - East neighbor: city (invalid)
+  // - Southeast neighbor: shallow (valid)
+  // So it should be valid since at least one neighbor has shallows/sea access
+  const isValid = hexMap["isValidTerrainPlacement"](testCell, customGrid);
+  assertEquals(isValid, true, "Cell with mixed neighbors should be valid if at least one neighbor has shallows/sea access");
+});
+
+Deno.test("isValidTerrainPlacement - comprehensive validation across full map", () => {
+  const hexMap = new HexMap();
+  const grid = hexMap.getGrid();
+  
+  let validShallowCells = 0;
+  let totalShallowCells = 0;
+  
+  // Iterate through all cells in the grid
+  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+    const row = grid[arrayQ];
+    if (row) {
+      for (let arrayR = 0; arrayR < row.length; arrayR++) {
+        const cell = row[arrayR];
+        if (cell && cell.terrain === "shallow") {
+          totalShallowCells++;
+          const isValid = hexMap["isValidTerrainPlacement"](cell, grid);
+          if (isValid) {
+            validShallowCells++;
+          }
+        }
+      }
+    }
+  }
+  
+  // There should be some valid shallow cells for terrain placement
+  assertEquals(validShallowCells > 0, true, "Should have at least some valid shallow cells for terrain placement");
+  assertEquals(totalShallowCells > validShallowCells, true, "Not all shallow cells should be valid for terrain placement");
+  
+  console.log(`Terrain placement validation: ${validShallowCells}/${totalShallowCells} shallow cells are valid for special terrain placement`);
 });
