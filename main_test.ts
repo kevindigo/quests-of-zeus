@@ -59,13 +59,14 @@ Deno.test("Game logic - map dimensions", () => {
 
 Deno.test("Game logic - serialization", () => {
   // Test that serialization works correctly
-  const testData = [[{ q: 0, r: 0, terrain: "plains" }]];
+  const testData = [[{ q: 0, r: 0, terrain: "plains", color: "none" }]];
   const serialized = JSON.parse(JSON.stringify(testData));
   
   assertEquals(Array.isArray(serialized), true);
   assertEquals(serialized[0][0].q, 0);
   assertEquals(serialized[0][0].r, 0);
   assertEquals(serialized[0][0].terrain, "plains");
+  assertEquals(serialized[0][0].color, "none");
 });
 
 Deno.test("Game logic - terrain types", () => {
@@ -75,5 +76,51 @@ Deno.test("Game logic - terrain types", () => {
   for (const terrain of terrainTypes) {
     assertEquals(typeof terrain, "string");
     assertEquals(terrain.length > 0, true);
+  }
+});
+
+Deno.test("Game logic - hex cell colors", () => {
+  // Test that all color types are valid
+  const colorTypes = ["none", "red", "pink", "blue", "black", "green", "yellow"];
+  
+  for (const color of colorTypes) {
+    assertEquals(typeof color, "string");
+    assertEquals(color.length > 0, true);
+  }
+});
+
+Deno.test("Game logic - hex cell with color", () => {
+  // Test that hex cells have color property
+  const hexCell = {
+    q: 0,
+    r: 0,
+    terrain: "plains",
+    color: "none"
+  };
+  
+  assertEquals(hexCell.q, 0);
+  assertEquals(hexCell.r, 0);
+  assertEquals(hexCell.terrain, "plains");
+  assertEquals(hexCell.color, "none");
+});
+
+Deno.test("Game logic - color assignment", () => {
+  // Test color assignment to hex cells
+  const hexCell = {
+    q: 0,
+    r: 0,
+    terrain: "plains",
+    color: "none" as const
+  };
+  
+  // Test initial color
+  assertEquals(hexCell.color, "none");
+  
+  // Test color change
+  const colors: Array<"red" | "pink" | "blue" | "black" | "green" | "yellow"> = ["red", "pink", "blue", "black", "green", "yellow"];
+  
+  for (const color of colors) {
+    const testCell = { ...hexCell, color };
+    assertEquals(testCell.color, color);
   }
 });

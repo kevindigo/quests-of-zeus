@@ -57,6 +57,15 @@ export function getMap() {
   };
 }
 
+export type HexColor = 
+  | "none"
+  | "red"
+  | "pink"
+  | "blue"
+  | "black"
+  | "green"
+  | "yellow";
+
 export interface HexCell {
   // Coordinates using axial coordinate system for hex grids
   q: number;        // Column coordinate
@@ -64,6 +73,7 @@ export interface HexCell {
   
   // Cell characteristics
   terrain: TerrainType;
+  color: HexColor;
 }
 
 export class HexMap {
@@ -96,7 +106,8 @@ export class HexMap {
         const cell: HexCell = {
           q,
           r,
-          terrain
+          terrain,
+          color: "none"
         };
         
         // Add special locations based on terrain and position
@@ -207,6 +218,16 @@ export class HexMap {
       }
     }
     return cells;
+  }
+
+  /**
+   * Set the color of a specific cell
+   */
+  setCellColor(q: number, r: number, color: HexColor): void {
+    const cell = this.getCell(q, r);
+    if (cell) {
+      cell.color = color;
+    }
   }
 
   /**
