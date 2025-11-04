@@ -46,7 +46,7 @@ export class NewMapGenerator {
 
     const totalCells = this.countCells(grid);
     const targetNonSeaTiles = Math.floor(totalCells * 0.6);
-    const stopShortTarget = Math.floor(targetNonSeaTiles * 0.9);
+    const stopShortTarget = Math.floor(targetNonSeaTiles * 0.85);
 
     const startPositions = [
       [1, 0], [1, -1], [0, -1],
@@ -126,7 +126,7 @@ export class NewMapGenerator {
     }
     
     this.shuffleArray(availableCells);
-    const landCount = Math.floor(availableCells.length * 0.7);
+    const landCount = Math.floor(availableCells.length * 0.5);
     for (let i = 0; i < availableCells.length; i++) {
       if (i < landCount) {
         availableCells[i].terrain = "shallow";
@@ -135,16 +135,26 @@ export class NewMapGenerator {
   }
 
   private placeSpecialTerrain(grid: HexCell[][]): void {
+    // Only convert foundations to shallow if they're adjacent to sea/shallows
+    // This prevents creating too many extra shallow tiles
+    const foundationsToConvert: HexCell[] = [];
     for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
       const row = grid[arrayQ];
       if (row) {
         for (let arrayR = 0; arrayR < row.length; arrayR++) {
           const cell = row[arrayR];
-          if (cell && cell.terrain === "foundations") {
-            cell.terrain = "shallow";
+          if (cell && cell.terrain === "foundations" && this.isAdjacentToSeaOrShallows(cell, grid)) {
+            foundationsToConvert.push(cell);
           }
         }
       }
+    }
+    
+    // Convert only a portion of the eligible foundations to shallow
+    this.shuffleArray(foundationsToConvert);
+    const convertCount = Math.min(foundationsToConvert.length, 10); // Target about 10 extra shallows
+    for (let i = 0; i < convertCount; i++) {
+      foundationsToConvert[i].terrain = "shallow";
     }
 
     this.placeCities(grid);
