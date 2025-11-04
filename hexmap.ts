@@ -2,13 +2,15 @@
 // The game uses a 21x21 hex grid with various terrain types
 
 export type TerrainType = 
-  | "sea"           // Water tiles
-  | "coast"         // Coastal areas
-  | "plains"        // Open plains
-  | "hills"         // Hilly terrain
-  | "mountains"     // Mountainous areas
-  | "forest"        // Forested areas
-  | "desert";       // Desert terrain
+  | "zeus"          // Zeus locations
+  | "sea"           // Sea tiles
+  | "shallow"       // Shallow water
+  | "monsters"      // Monster locations
+  | "cubes"         // Cube locations
+  | "temple"        // Temple locations
+  | "clouds"        // Cloud locations
+  | "city"          // City locations
+  | "foundations";  // Foundation locations
 
 export type HexColor = 
   | "none"
@@ -100,7 +102,7 @@ export class HexMap {
     if (distanceFromCenter > maxDistance * 0.8) {
       return "sea";
     } else if (distanceFromCenter > maxDistance * 0.7) {
-      return "coast";
+      return "shallow";
     }
     
     // Use seeded random for consistent terrain generation
@@ -108,18 +110,23 @@ export class HexMap {
     
     if (distanceFromCenter < maxDistance * 0.3) {
       // Center area - more varied terrain
-      if (seed < 20) return "hills";
-      if (seed < 40) return "plains";
-      if (seed < 60) return "forest";
-      return "plains";
+      if (seed < 15) return "zeus";
+      if (seed < 30) return "monsters";
+      if (seed < 45) return "cubes";
+      if (seed < 60) return "temple";
+      if (seed < 75) return "clouds";
+      if (seed < 90) return "city";
+      return "foundations";
     } else {
       // Outer areas - more varied terrain
-      if (seed < 10) return "mountains";
-      if (seed < 25) return "hills";
-      if (seed < 45) return "forest";
-      if (seed < 60) return "plains";
-      if (seed < 70) return "desert";
-      return "plains";
+      if (seed < 10) return "zeus";
+      if (seed < 20) return "monsters";
+      if (seed < 35) return "cubes";
+      if (seed < 50) return "temple";
+      if (seed < 65) return "clouds";
+      if (seed < 80) return "city";
+      if (seed < 95) return "foundations";
+      return "shallow";
     }
   }
 

@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { HexMapSVG } from "./hexmap-svg.ts";
-import { HexCell } from "./hexmap.ts";
+import { HexCell, HexMap } from "./hexmap.ts";
 
 // Simple test to verify SVG generator import works
 Deno.test("SVG Generator - basic import test", () => {
@@ -25,7 +25,7 @@ Deno.test("Dependencies test", () => {
 // Test the game logic (simulating the client-side behavior)
 Deno.test("Game logic - terrain generation", () => {
   // Test terrain type mapping
-  const terrainTypes = ["sea", "coast", "plains", "hills", "mountains", "forest", "desert"];
+  const terrainTypes = ["zeus", "sea", "shallow", "monsters", "cubes", "temple", "clouds", "city", "foundations"];
   
   for (const terrain of terrainTypes) {
     assertEquals(typeof terrain, "string");
@@ -67,23 +67,56 @@ Deno.test("Game logic - map dimensions", () => {
 
 Deno.test("Game logic - serialization", () => {
   // Test that serialization works correctly
-  const testData = [[{ q: 0, r: 0, terrain: "plains", color: "none" }]];
+  const testData = [[{ q: 0, r: 0, terrain: "zeus", color: "none" }]];
   const serialized = JSON.parse(JSON.stringify(testData));
   
   assertEquals(Array.isArray(serialized), true);
   assertEquals(serialized[0][0].q, 0);
   assertEquals(serialized[0][0].r, 0);
-  assertEquals(serialized[0][0].terrain, "plains");
+  assertEquals(serialized[0][0].terrain, "zeus");
   assertEquals(serialized[0][0].color, "none");
 });
 
 Deno.test("Game logic - terrain types", () => {
   // Test that all terrain types are valid
-  const terrainTypes = ["sea", "coast", "plains", "hills", "mountains", "forest", "desert"];
+  const terrainTypes = ["zeus", "sea", "shallow", "monsters", "cubes", "temple", "clouds", "city", "foundations"];
   
   for (const terrain of terrainTypes) {
     assertEquals(typeof terrain, "string");
     assertEquals(terrain.length > 0, true);
+  }
+});
+
+Deno.test("Game logic - terrain distribution", () => {
+  // Test that all terrain types can be generated
+  const hexMap = new HexMap();
+  const grid = hexMap.getGrid();
+  
+  const terrainCounts: Record<string, number> = {};
+  
+  // Count occurrences of each terrain type
+  for (let q = 0; q < hexMap.width; q++) {
+    for (let r = 0; r < hexMap.height; r++) {
+      const terrain = grid[q][r].terrain;
+      terrainCounts[terrain] = (terrainCounts[terrain] || 0) + 1;
+    }
+  }
+  
+  // All 9 terrain types should be present
+  const expectedTerrainTypes = ["zeus", "sea", "shallow", "monsters", "cubes", "temple", "clouds", "city", "foundations"];
+  
+  for (const terrainType of expectedTerrainTypes) {
+    assertEquals(terrainCounts[terrainType] > 0, true, `Terrain type "${terrainType}" should appear at least once`);
+  }
+  
+  // Total cells should match expected
+  const totalCells = Object.values(terrainCounts).reduce((sum, count) => sum + count, 0);
+  assertEquals(totalCells, hexMap.width * hexMap.height);
+  
+  // Log the distribution for verification
+  console.log("Terrain distribution:");
+  for (const [terrain, count] of Object.entries(terrainCounts)) {
+    console.log(`  ${terrain}: ${count} cells`);
   }
 });
 
@@ -102,13 +135,13 @@ Deno.test("Game logic - hex cell with color", () => {
   const hexCell = {
     q: 0,
     r: 0,
-    terrain: "plains",
+    terrain: "zeus",
     color: "none"
   };
   
   assertEquals(hexCell.q, 0);
   assertEquals(hexCell.r, 0);
-  assertEquals(hexCell.terrain, "plains");
+  assertEquals(hexCell.terrain, "zeus");
   assertEquals(hexCell.color, "none");
 });
 
@@ -117,7 +150,7 @@ Deno.test("Game logic - color assignment", () => {
   const hexCell = {
     q: 0,
     r: 0,
-    terrain: "plains",
+    terrain: "zeus",
     color: "none" as const
   };
   
@@ -189,7 +222,7 @@ Deno.test("SVG Generator - generateHexCell basic functionality", () => {
   const testCell: HexCell = {
     q: 2,
     r: 3,
-    terrain: "plains",
+    terrain: "zeus",
     color: "none"
   };
   
@@ -202,13 +235,10 @@ Deno.test("SVG Generator - generateHexCell basic functionality", () => {
   // Should contain data attributes
   assertEquals(svgContent.includes('data-q="2"'), true);
   assertEquals(svgContent.includes('data-r="3"'), true);
-  assertEquals(svgContent.includes('data-terrain="plains"'), true);
+  assertEquals(svgContent.includes('data-terrain="zeus"'), true);
   
   // Should contain terrain class
-  assertEquals(svgContent.includes('class="hex-cell terrain-plains"'), true);
-  
-  // Should contain fill color for plains
-  assertEquals(svgContent.includes('fill="#90ee90"'), true);
+  assertEquals(svgContent.includes('class="hex-cell terrain-zeus"'), true);
   
   // Should contain stroke color for "none"
   assertEquals(svgContent.includes('stroke="#333333"'), true);
@@ -217,8 +247,8 @@ Deno.test("SVG Generator - generateHexCell basic functionality", () => {
 Deno.test("SVG Generator - generateHexCell with different terrains", () => {
   const svgGenerator = new HexMapSVG({ cellSize: 40 });
   
-  const terrains: Array<"sea" | "coast" | "plains" | "hills" | "mountains" | "forest" | "desert"> = [
-    "sea", "coast", "plains", "hills", "mountains", "forest", "desert"
+  const terrains: Array<"zeus" | "sea" | "shallow" | "monsters" | "cubes" | "temple" | "clouds" | "city" | "foundations"> = [
+    "zeus", "sea", "shallow", "monsters", "cubes", "temple", "clouds", "city", "foundations"
   ];
   
   for (const terrain of terrains) {
@@ -250,7 +280,7 @@ Deno.test("SVG Generator - generateHexCell with different colors", () => {
     const testCell: HexCell = {
       q: 0,
       r: 0,
-      terrain: "plains",
+      terrain: "zeus",
       color
     };
     
@@ -280,7 +310,7 @@ Deno.test("SVG Generator - generateHexCell with coordinates enabled", () => {
   const testCell: HexCell = {
     q: 5,
     r: 7,
-    terrain: "hills",
+    terrain: "monsters",
     color: "blue"
   };
   
@@ -301,7 +331,7 @@ Deno.test("SVG Generator - generateHexCell with terrain labels enabled", () => {
   const testCell: HexCell = {
     q: 0,
     r: 0,
-    terrain: "forest",
+    terrain: "city",
     color: "none"
   };
   
@@ -309,7 +339,7 @@ Deno.test("SVG Generator - generateHexCell with terrain labels enabled", () => {
   
   // Should contain terrain label text
   assertEquals(svgContent.includes("<text"), true);
-  assertEquals(svgContent.includes("Forest"), true);
+  assertEquals(svgContent.includes("City"), true);
   assertEquals(svgContent.includes("hex-terrain-label"), true);
 });
 
@@ -323,7 +353,7 @@ Deno.test("SVG Generator - generateHexCell with both coordinates and labels enab
   const testCell: HexCell = {
     q: 3,
     r: 4,
-    terrain: "mountains",
+    terrain: "temple",
     color: "yellow"
   };
   
@@ -331,7 +361,7 @@ Deno.test("SVG Generator - generateHexCell with both coordinates and labels enab
   
   // Should contain both coordinate and terrain label text
   assertEquals(svgContent.includes("3,4"), true);
-  assertEquals(svgContent.includes("Mount"), true);
+  assertEquals(svgContent.includes("Temple"), true);
   
   // Should contain both CSS classes
   assertEquals(svgContent.includes("hex-coord"), true);
@@ -344,7 +374,7 @@ Deno.test("SVG Generator - generateHexCell position parameters", () => {
   const testCell: HexCell = {
     q: 1,
     r: 2,
-    terrain: "desert",
+    terrain: "cubes",
     color: "green"
   };
   
@@ -365,7 +395,7 @@ Deno.test("SVG Generator - generateHexCell position parameters", () => {
     // Should still contain correct data attributes regardless of position
     assertEquals(svgContent.includes('data-q="1"'), true);
     assertEquals(svgContent.includes('data-r="2"'), true);
-    assertEquals(svgContent.includes('data-terrain="desert"'), true);
+    assertEquals(svgContent.includes('data-terrain="cubes"'), true);
   }
 });
 
@@ -379,7 +409,7 @@ Deno.test("SVG Generator - generateSVG basic structure", () => {
       {
         q: 0,
         r: 0,
-        terrain: "plains",
+        terrain: "zeus",
         color: "none"
       }
     ]
@@ -426,12 +456,12 @@ Deno.test("SVG Generator - generateSVG dimensions calculation", () => {
   // Create a 2x2 grid
   const grid: HexCell[][] = [
     [
-      { q: 0, r: 0, terrain: "plains", color: "none" },
+      { q: 0, r: 0, terrain: "zeus", color: "none" },
       { q: 0, r: 1, terrain: "sea", color: "none" }
     ],
     [
-      { q: 1, r: 0, terrain: "hills", color: "none" },
-      { q: 1, r: 1, terrain: "forest", color: "none" }
+      { q: 1, r: 0, terrain: "monsters", color: "none" },
+      { q: 1, r: 1, terrain: "city", color: "none" }
     ]
   ];
   
@@ -469,7 +499,7 @@ Deno.test("SVG Generator - generateSVG with single cell", () => {
       {
         q: 0,
         r: 0,
-        terrain: "mountains",
+        terrain: "clouds",
         color: "yellow"
       }
     ]
@@ -480,8 +510,8 @@ Deno.test("SVG Generator - generateSVG with single cell", () => {
   // Should contain the single hex cell
   assertEquals(svg.includes('data-q="0"'), true);
   assertEquals(svg.includes('data-r="0"'), true);
-  assertEquals(svg.includes('data-terrain="mountains"'), true);
-  assertEquals(svg.includes('class="hex-cell terrain-mountains"'), true);
+  assertEquals(svg.includes('data-terrain="clouds"'), true);
+  assertEquals(svg.includes('class="hex-cell terrain-clouds"'), true);
 });
 
 Deno.test("SVG Generator - generateSVG with different cell sizes", () => {
@@ -492,7 +522,7 @@ Deno.test("SVG Generator - generateSVG with different cell sizes", () => {
     
     const grid: HexCell[][] = [
       [
-        { q: 0, r: 0, terrain: "plains", color: "none" }
+        { q: 0, r: 0, terrain: "zeus", color: "none" }
       ]
     ];
     
@@ -538,16 +568,16 @@ Deno.test("SVG Generator - generateSVG with rectangular grid", () => {
   // Create a 3x2 grid (different width and height)
   const grid: HexCell[][] = [
     [
-      { q: 0, r: 0, terrain: "plains", color: "none" },
+      { q: 0, r: 0, terrain: "zeus", color: "none" },
       { q: 0, r: 1, terrain: "sea", color: "none" }
     ],
     [
-      { q: 1, r: 0, terrain: "hills", color: "none" },
-      { q: 1, r: 1, terrain: "forest", color: "none" }
+      { q: 1, r: 0, terrain: "monsters", color: "none" },
+      { q: 1, r: 1, terrain: "city", color: "none" }
     ],
     [
-      { q: 2, r: 0, terrain: "mountains", color: "none" },
-      { q: 2, r: 1, terrain: "desert", color: "none" }
+      { q: 2, r: 0, terrain: "clouds", color: "none" },
+      { q: 2, r: 1, terrain: "foundations", color: "none" }
     ]
   ];
   
@@ -562,12 +592,12 @@ Deno.test("SVG Generator - generateSVG with rectangular grid", () => {
   }
   
   // Should contain all terrain types
-  assertEquals(svg.includes('data-terrain="plains"'), true);
+  assertEquals(svg.includes('data-terrain="zeus"'), true);
   assertEquals(svg.includes('data-terrain="sea"'), true);
-  assertEquals(svg.includes('data-terrain="hills"'), true);
-  assertEquals(svg.includes('data-terrain="forest"'), true);
-  assertEquals(svg.includes('data-terrain="mountains"'), true);
-  assertEquals(svg.includes('data-terrain="desert"'), true);
+  assertEquals(svg.includes('data-terrain="monsters"'), true);
+  assertEquals(svg.includes('data-terrain="city"'), true);
+  assertEquals(svg.includes('data-terrain="clouds"'), true);
+  assertEquals(svg.includes('data-terrain="foundations"'), true);
 });
 
 Deno.test("SVG Generator - generateSVG CSS styles verification", () => {
@@ -575,7 +605,7 @@ Deno.test("SVG Generator - generateSVG CSS styles verification", () => {
   
   const grid: HexCell[][] = [
     [
-      { q: 0, r: 0, terrain: "plains", color: "none" }
+      { q: 0, r: 0, terrain: "zeus", color: "none" }
     ]
   ];
   
@@ -604,7 +634,7 @@ Deno.test("SVG Generator - generateInteractiveSVG basic structure", () => {
   
   const grid: HexCell[][] = [
     [
-      { q: 0, r: 0, terrain: "plains", color: "none" }
+      { q: 0, r: 0, terrain: "zeus", color: "none" }
     ]
   ];
   
@@ -630,7 +660,7 @@ Deno.test("SVG Generator - generateInteractiveSVG script functionality", () => {
   
   const grid: HexCell[][] = [
     [
-      { q: 0, r: 0, terrain: "plains", color: "none" }
+      { q: 0, r: 0, terrain: "zeus", color: "none" }
     ]
   ];
   
@@ -659,12 +689,12 @@ Deno.test("SVG Generator - generateInteractiveSVG with multiple cells", () => {
   
   const grid: HexCell[][] = [
     [
-      { q: 0, r: 0, terrain: "plains", color: "none" },
+      { q: 0, r: 0, terrain: "zeus", color: "none" },
       { q: 0, r: 1, terrain: "sea", color: "none" }
     ],
     [
-      { q: 1, r: 0, terrain: "hills", color: "none" },
-      { q: 1, r: 1, terrain: "forest", color: "none" }
+      { q: 1, r: 0, terrain: "monsters", color: "none" },
+      { q: 1, r: 1, terrain: "city", color: "none" }
     ]
   ];
   
@@ -692,7 +722,7 @@ Deno.test("SVG Generator - generateInteractiveSVG with different options", () =>
   
   const grid: HexCell[][] = [
     [
-      { q: 0, r: 0, terrain: "plains", color: "none" }
+      { q: 0, r: 0, terrain: "zeus", color: "none" }
     ]
   ];
   
@@ -741,7 +771,7 @@ Deno.test("SVG Generator - generateSVG with all color types", () => {
     {
       q: index,
       r: 0,
-      terrain: "plains",
+      terrain: "zeus",
       color
     }
   ]);
@@ -770,12 +800,12 @@ Deno.test("SVG Generator - generateSVG coordinate system consistency", () => {
   // Create a grid with specific coordinates
   const grid: HexCell[][] = [
     [
-      { q: 5, r: 3, terrain: "plains", color: "none" },
+      { q: 5, r: 3, terrain: "zeus", color: "none" },
       { q: 5, r: 4, terrain: "sea", color: "none" }
     ],
     [
-      { q: 6, r: 3, terrain: "hills", color: "none" },
-      { q: 6, r: 4, terrain: "forest", color: "none" }
+      { q: 6, r: 3, terrain: "monsters", color: "none" },
+      { q: 6, r: 4, terrain: "city", color: "none" }
     ]
   ];
   

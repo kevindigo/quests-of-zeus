@@ -113,13 +113,15 @@ export class HexMapSVG {
    */
   private getTerrainColor(terrain: TerrainType): string {
     const colors: Record<TerrainType, string> = {
-      sea: '#4a90e2',
-      coast: '#87ceeb',
-      plains: '#90ee90',
-      hills: '#daa520',
-      mountains: '#a9a9a9',
-      forest: '#228b22',
-      desert: '#f0e68c'
+      zeus: '#ffd700',      // Gold for Zeus
+      sea: '#4a90e2',       // Blue for sea
+      shallow: '#87ceeb',   // Light blue for shallow water
+      monsters: '#8b0000',  // Dark red for monsters
+      cubes: '#ffa500',     // Orange for cubes
+      temple: '#800080',    // Purple for temple
+      clouds: '#f0f8ff',    // Light blue-white for clouds
+      city: '#696969',      // Gray for city
+      foundations: '#8b4513' // Brown for foundations
     };
     return colors[terrain] || '#cccccc';
   }
@@ -152,13 +154,15 @@ export class HexMapSVG {
    */
   private getTerrainLabel(terrain: TerrainType): string {
     const labels: Record<TerrainType, string> = {
+      zeus: 'Zeus',
       sea: 'Sea',
-      coast: 'Coast',
-      plains: 'Plains',
-      hills: 'Hills',
-      mountains: 'Mount',
-      forest: 'Forest',
-      desert: 'Desert'
+      shallow: 'Shallow',
+      monsters: 'Monsters',
+      cubes: 'Cubes',
+      temple: 'Temple',
+      clouds: 'Clouds',
+      city: 'City',
+      foundations: 'Foundations'
     };
     return labels[terrain] || terrain;
   }
