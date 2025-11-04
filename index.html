@@ -196,8 +196,7 @@
         <div class="game-ui">
             <h3>Game Controls</h3>
             <div class="game-controls">
-                <button id="generateMap">Generate New Map (Old Method)</button>
-                <button id="generateNewMap">Generate New Map (Hybrid Algorithm)</button>
+                <button id="generateMap">Generate New Map</button>
                 <button id="showMapData">Show Map Data</button>
                 <button id="showHexMap" style="display: none;">Show Hex Map</button>
             </div>
@@ -222,7 +221,7 @@
     </div>
 
     <script type="module">
-        import { generateNewMap, generateNewMapWithHybridAlgorithm, getMapStatistics, getMap, getCurrentMap } from './dist/hexmap.js';
+        import { generateNewMap, getMapStatistics, getMap, getCurrentMap } from './dist/hexmap.js';
         import { HexMapSVG } from './dist/hexmap-svg.js';
 
         // Initialize the map when the page loads
@@ -264,11 +263,7 @@
             renderHexMap();
         });
 
-        document.getElementById('generateNewMap').addEventListener('click', () => {
-            generateNewMapWithHybridAlgorithm();
-            document.getElementById('mapInfo').style.display = 'none';
-            renderHexMap();
-        });
+
 
         document.getElementById('showMapData').addEventListener('click', () => {
             const stats = getMapStatistics();

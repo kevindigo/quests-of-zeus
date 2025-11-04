@@ -18,7 +18,7 @@ async function build() {
     
     // Build hexmap.ts to dist/hexmap.js
     const result = await esbuild.build({
-      entryPoints: ["hexmap.ts", "hexmap-svg.ts", "new-map-generator.ts"],
+      entryPoints: ["hexmap.ts", "hexmap-svg.ts"],
       bundle: true,
       outdir: "dist",
       format: "esm",
