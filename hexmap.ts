@@ -198,6 +198,7 @@ export class HexMap {
   /**
    * Place the 6 city tiles with special rules
    * Cities should be placed according to specific game rules
+   * New rule: The target has to be a shallows AND it has to be adjacent to a shallows
    */
   private placeCities(grid: HexCell[][]): void {
     // Use getCorner function for each direction to identify corners
@@ -224,9 +225,36 @@ export class HexMap {
         }
       }
       
-      // If we found a shallow water cell (either at corner or after moving), add it as a candidate
-      if (cell && cell.terrain === "shallow") {
+      // If we found a shallow water cell (either at corner or after moving), 
+      // check if it's adjacent to at least one other shallows
+      if (cell && cell.terrain === "shallow" && this.hasAdjacentShallows(cell, grid)) {
         cornerCandidates.push(cell);
+      } else if (cell && cell.terrain === "shallow") {
+        // If the corner cell is shallows but not adjacent to any shallows, 
+        // search clockwise for a shallows that is adjacent to shallows
+        const searchDirection = (direction + 2) % 6;
+        let currentCoords = { q: cell.q, r: cell.r };
+        let foundValidCandidate = false;
+        
+        // Search clockwise up to 5 positions (avoiding going all the way around)
+        for (let searchCount = 0; searchCount < 5; searchCount++) {
+          const adjacentCoords = this.getAdjacent(currentCoords.q, currentCoords.r, searchDirection);
+          if (!adjacentCoords) break;
+          
+          currentCoords = adjacentCoords;
+          const searchCell = this.getCellFromGrid(grid, currentCoords.q, currentCoords.r);
+          
+          if (searchCell && searchCell.terrain === "shallow" && this.hasAdjacentShallows(searchCell, grid)) {
+            cornerCandidates.push(searchCell);
+            foundValidCandidate = true;
+            break;
+          }
+        }
+        
+        // If no valid candidate found in clockwise search, use the original shallows cell
+        if (!foundValidCandidate && cell.terrain === "shallow") {
+          cornerCandidates.push(cell);
+        }
       }
     }
     
@@ -236,18 +264,36 @@ export class HexMap {
         cell.terrain = "city";
       }
     } else {
-      // Fallback: use the original random placement method
+      // Fallback: use the original random placement method with adjacency requirement
       console.warn(`Found ${cornerCandidates.length} corner candidates, expected 6. Using fallback placement.`);
       const availableCells: HexCell[] = [];
       
-      // Collect all cells that are still shallows after other placements
+      // Collect all cells that are still shallows after other placements AND adjacent to at least one shallows
       for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
         const row = grid[arrayQ];
         if (row) {
           for (let arrayR = 0; arrayR < row.length; arrayR++) {
             const cell = row[arrayR];
-            if (cell && cell.terrain === "shallow") {
+            if (cell && cell.terrain === "shallow" && this.hasAdjacentShallows(cell, grid)) {
               availableCells.push(cell);
+            }
+          }
+        }
+      }
+      
+      // If we don't have enough cells with adjacency requirement, relax the requirement
+      if (availableCells.length < 6) {
+        console.warn(`Only found ${availableCells.length} shallows cells adjacent to shallows. Relaxing adjacency requirement.`);
+        // Collect all shallows cells without adjacency requirement
+        availableCells.length = 0; // Clear the array
+        for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+          const row = grid[arrayQ];
+          if (row) {
+            for (let arrayR = 0; arrayR < row.length; arrayR++) {
+              const cell = row[arrayR];
+              if (cell && cell.terrain === "shallow") {
+                availableCells.push(cell);
+              }
             }
           }
         }
@@ -275,6 +321,23 @@ export class HexMap {
         console.warn(`Could only place ${placed} of 6 city cells`);
       }
     }
+  }
+
+  /**
+   * Check if a cell is adjacent to at least one shallows cell
+   */
+  private hasAdjacentShallows(cell: HexCell, grid: HexCell[][]): boolean {
+    // Check all 6 adjacent directions
+    for (let direction = 0; direction < 6; direction++) {
+      const adjacentCoords = this.getAdjacent(cell.q, cell.r, direction);
+      if (adjacentCoords) {
+        const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        if (adjacentCell && adjacentCell.terrain === "shallow") {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**

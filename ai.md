@@ -27,8 +27,10 @@ Each hex in the game must have the following characteristics:
 - `placeCities` should place each city near one of the 6 corners of the hex map
 - For each corner, start at the corner hex
 - If the corner hex is already a non-shallows hex, try the next hex clockwise along the edge
-- Keep going clockwise until finding a shallows hex, and put the city there
+- Keep going clockwise until finding a shallows hex that is adjacent to at least one other shallows hex
+- If no such shallows hex is found, place the city on the first shallows hex found
 - Do the same for each of the other 5 cities/corners
+- **New rule**: The target has to be a shallows AND it has to be adjacent to a shallows
 
 ## Main Files:
 - main.ts (primary game code)
