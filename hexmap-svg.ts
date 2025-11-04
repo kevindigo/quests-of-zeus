@@ -104,8 +104,8 @@ export class HexMapSVG {
   private calculateCellPosition(q: number, r: number): { x: number, y: number } {
     const { cellSize } = this.options;
     // Add offset to center the hexagon
-    const offsetX = cellSize * 1.5 * 11;  // Center at q=0
-    const offsetY = cellSize * Math.sqrt(3) * 11;  // Center at r=0
+    const offsetX = cellSize * 1.5 * 6;  // Center at q=0
+    const offsetY = cellSize * Math.sqrt(3) * 6;  // Center at r=0
     
     const x = cellSize * 1.5 * q + offsetX;
     const y = cellSize * Math.sqrt(3) * (r + q / 2) + offsetY;
@@ -177,8 +177,8 @@ export class HexMapSVG {
   generateSVG(grid: HexCell[][]): string {
     const { cellSize, interactive } = this.options;
     
-    // For hexagon with radius 11, the dimensions are fixed
-    const radius = 11;
+    // For hexagon with radius 6, the dimensions are fixed
+    const radius = 6;
     const svgWidth = cellSize * 2 + cellSize * 1.5 * (radius * 2);
     const svgHeight = cellSize * 2 + cellSize * Math.sqrt(3) * (radius * 2);
     

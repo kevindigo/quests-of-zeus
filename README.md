@@ -54,7 +54,7 @@ This project follows an incremental development approach. The current state is a
 - ✅ Deno 2.5 server setup (static files only)
 - ✅ PWA manifest and service worker
 - ✅ **Client-side game logic**
-- ✅ Hex map generation (hexagon radius 11)
+- ✅ Hex map generation (hexagon radius 6)
 - ✅ Procedural terrain generation
 - ✅ Special locations (oracles, ports, sanctuaries)
 - ✅ Development tasks configured
@@ -75,7 +75,7 @@ This project follows an incremental development approach. The current state is a
 
 ## Game Features
 
-- **Hexagon Map (radius 11)**: Procedurally generated terrain
+- **Hexagon Map (radius 6)**: Procedurally generated terrain
 - **Terrain Types**: Sea, coast, plains, hills, mountains, forest, desert
 - **Special Locations**: Oracle temples, ports, sanctuaries, offering sites
 - **Movement System**: Different movement costs per terrain

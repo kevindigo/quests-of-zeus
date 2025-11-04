@@ -1,5 +1,5 @@
 // Hexagonal map representation for Oracle of Delphi
-// The game uses a hexagon-shaped grid with radius 11 and various terrain types
+// The game uses a hexagon-shaped grid with radius 6 and various terrain types
 
 export type TerrainType = 
   | "zeus"          // Zeus locations
@@ -33,8 +33,8 @@ export interface HexCell {
 
 export class HexMap {
   private grid: HexCell[][];
-  readonly width: number = 23;  // -11 to +11 inclusive
-  readonly height: number = 23;  // -11 to +11 inclusive
+  readonly width: number = 13;  // -6 to +6 inclusive
+  readonly height: number = 13;  // -6 to +6 inclusive
 
   constructor() {
     this.grid = this.generateGrid();
@@ -48,12 +48,12 @@ export class HexMap {
   }
 
   /**
-   * Generate a hexagon-shaped grid with radius 11
+   * Generate a hexagon-shaped grid with radius 6
    * for the Oracle of Delphi game
    */
   private generateGrid(): HexCell[][] {
     const grid: HexCell[][] = [];
-    const radius = 11;
+    const radius = 6;
     
     // Generate hexagon-shaped grid
     for (let q = -radius; q <= radius; q++) {
@@ -208,8 +208,8 @@ export class HexMap {
    */
   getCell(q: number, r: number): HexCell | null {
     // Convert axial coordinates to array indices
-    const arrayQ = q + 11;  // Offset to make coordinates non-negative
-    const arrayR = r + 11;  // Offset to make coordinates non-negative
+    const arrayQ = q + 6;  // Offset to make coordinates non-negative
+    const arrayR = r + 6;  // Offset to make coordinates non-negative
     
     if (arrayQ >= 0 && arrayQ < this.width && arrayR >= 0 && arrayR < this.height) {
       return this.grid[arrayQ]?.[arrayR] || null;

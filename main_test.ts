@@ -59,11 +59,11 @@ Deno.test("Game logic - map dimensions", () => {
   // Test that our map has the expected dimensions
   const hexMap = new HexMap();
   
-  assertEquals(hexMap.width, 23);  // -11 to +11 inclusive
-  assertEquals(hexMap.height, 23); // -11 to +11 inclusive
+  assertEquals(hexMap.width, 13);  // -6 to +6 inclusive
+  assertEquals(hexMap.height, 13); // -6 to +6 inclusive
   
-  // For hexagon with radius 11, total cells should be 397
-  // Formula: 3 * radius * (radius + 1) + 1 = 3 * 11 * 12 + 1 = 397
+  // For hexagon with radius 6, total cells should be 127
+  // Formula: 3 * radius * (radius + 1) + 1 = 3 * 6 * 7 + 1 = 127
   const grid = hexMap.getGrid();
   let totalCells = 0;
   
@@ -74,7 +74,7 @@ Deno.test("Game logic - map dimensions", () => {
       totalCells += row.length;
     }
   }
-  assertEquals(totalCells, 397);
+  assertEquals(totalCells, 127);
 });
 
 Deno.test("Game logic - serialization", () => {
@@ -136,8 +136,8 @@ Deno.test("Game logic - terrain distribution", () => {
     assertEquals(terrainCounts[terrainType] > 0, true, `Terrain type "${terrainType}" should appear at least once`);
   }
   
-  // Total cells should match expected (hexagon with radius 11 has 397 cells)
-  const expectedTotalCells = 397; // Formula: 3 * radius * (radius + 1) + 1 = 3 * 11 * 12 + 1 = 397
+  // Total cells should match expected (hexagon with radius 6 has 127 cells)
+  const expectedTotalCells = 127; // Formula: 3 * radius * (radius + 1) + 1 = 3 * 6 * 7 + 1 = 127
   assertEquals(totalCells, expectedTotalCells);
   
   // Log the distribution for verification
