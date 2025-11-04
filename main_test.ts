@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { HexMapSVG } from "./hexmap-svg.ts";
-import { HexCell, HexMap } from "./hexmap.ts";
+import { type HexCell, HexMap } from "./hexmap.ts";
 
 // Simple test to verify SVG generator import works
 Deno.test("SVG Generator - basic import test", () => {
