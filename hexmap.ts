@@ -140,6 +140,7 @@ export class HexMap {
    * - 6 foundations
    * - 9 monsters
    * - 12 clouds
+   * - Convert 90% of remaining shallows to sea
    * None of these should overlap with each other or with the center 7 hexes
    */
   private placeSpecialTerrain(grid: HexCell[][]): void {
@@ -197,6 +198,9 @@ export class HexMap {
         console.warn(`Could only place ${placed} of ${count} ${terrainType} cells`);
       }
     }
+    
+    // Final step: Convert 90% of remaining shallows to sea
+    this.convertShallowsToSea(grid);
   }
 
   /**
@@ -262,6 +266,38 @@ export class HexMap {
     }
     
     return false;
+  }
+
+  /**
+   * Convert 90% of remaining shallows to sea hexes
+   * This is the final step after placing all special terrain types
+   */
+  private convertShallowsToSea(grid: HexCell[][]): void {
+    const shallowCells: HexCell[] = [];
+    
+    // Collect all remaining shallow cells
+    for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+      const row = grid[arrayQ];
+      if (row) {
+        for (let arrayR = 0; arrayR < row.length; arrayR++) {
+          const cell = row[arrayR];
+          if (cell && cell.terrain === "shallow") {
+            shallowCells.push(cell);
+          }
+        }
+      }
+    }
+    
+    // Shuffle the shallow cells for random conversion
+    this.shuffleArray(shallowCells);
+    
+    // Calculate how many cells to convert (90% rounded down)
+    const cellsToConvert = Math.floor(shallowCells.length * 0.9);
+    
+    // Convert the first 90% of shuffled shallow cells to sea
+    for (let i = 0; i < cellsToConvert && i < shallowCells.length; i++) {
+      shallowCells[i].terrain = "sea";
+    }
   }
 
   /**

@@ -3,7 +3,8 @@
 import { HexMap } from "./hexmap.ts";
 
 function checkTerrainDistribution() {
-  console.log("Checking terrain distribution for 10 generated maps...\n");
+  console.log("Checking terrain distribution for 10 generated maps...");
+  console.log("Note: 90% of remaining shallows are converted to sea in the final step\n");
   
   for (let i = 0; i < 10; i++) {
     console.log(`=== Map ${i + 1} ===`);
@@ -25,15 +26,15 @@ function checkTerrainDistribution() {
       }
     }
     
-    // Check expected counts
+    // Check expected counts (after 90% shallows to sea conversion)
     const expectedCounts = {
       "zeus": 1,
-      "sea": 6,
       "cubes": 6,
       "temple": 6,
       "foundations": 6,
       "monsters": 9,
-      "clouds": 12
+      "clouds": 12,
+      "city": 6
     };
     
     console.log("Terrain Distribution:");
@@ -41,6 +42,17 @@ function checkTerrainDistribution() {
       const expected = expectedCounts[terrain as keyof typeof expectedCounts];
       const status = expected !== undefined && count === expected ? "✓" : "✗";
       console.log(`  ${status} ${terrain}: ${count}${expected ? ` (expected: ${expected})` : ''}`);
+    }
+    
+    // Verify that sea tiles outnumber shallow tiles significantly (90% conversion)
+    const seaCount = terrainCounts["sea"] || 0;
+    const shallowCount = terrainCounts["shallow"] || 0;
+    console.log(`  Sea vs Shallows: ${seaCount} sea, ${shallowCount} shallows`);
+    
+    if (seaCount > shallowCount * 5) { // Sea should be at least 5x more than shallows
+      console.log("  ✓ Sea tiles significantly outnumber shallow tiles (90% conversion working)");
+    } else {
+      console.log("  ✗ Sea tiles should significantly outnumber shallow tiles");
     }
     
     console.log(`  Total cells: ${totalCells}\n`);
