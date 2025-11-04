@@ -66,11 +66,12 @@ Deno.test("Game logic - map dimensions", () => {
   // Formula: 3 * radius * (radius + 1) + 1 = 3 * 11 * 12 + 1 = 397
   const grid = hexMap.getGrid();
   let totalCells = 0;
-  for (let q = 0; q < hexMap.width; q++) {
-    for (let r = 0; r < hexMap.height; r++) {
-      if (grid[q]?.[r]) {
-        totalCells++;
-      }
+  
+  // The grid is a jagged array (hexagon shape), so we need to iterate through each row
+  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+    const row = grid[arrayQ];
+    if (row) {
+      totalCells += row.length;
     }
   }
   assertEquals(totalCells, 397);
@@ -107,19 +108,29 @@ Deno.test("Game logic - terrain distribution", () => {
   let totalCells = 0;
   
   // Count occurrences of each terrain type
-  for (let q = 0; q < hexMap.width; q++) {
-    for (let r = 0; r < hexMap.height; r++) {
-      const cell = grid[q]?.[r];
-      if (cell) {
-        const terrain = cell.terrain;
-        terrainCounts[terrain] = (terrainCounts[terrain] || 0) + 1;
-        totalCells++;
+  // The grid is a jagged array (hexagon shape), so we need to iterate through each row
+  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+    const row = grid[arrayQ];
+    if (row) {
+      for (let arrayR = 0; arrayR < row.length; arrayR++) {
+        const cell = row[arrayR];
+        if (cell) {
+          const terrain = cell.terrain;
+          terrainCounts[terrain] = (terrainCounts[terrain] || 0) + 1;
+          totalCells++;
+        }
       }
     }
   }
   
   // All 9 terrain types should be present
   const expectedTerrainTypes = ["zeus", "sea", "shallow", "monsters", "cubes", "temple", "clouds", "city", "foundations"];
+  
+  // Debug: Log which terrain types are missing
+  const missingTerrainTypes = expectedTerrainTypes.filter(terrain => !terrainCounts[terrain] || terrainCounts[terrain] === 0);
+  if (missingTerrainTypes.length > 0) {
+    console.log("Missing terrain types:", missingTerrainTypes);
+  }
   
   for (const terrainType of expectedTerrainTypes) {
     assertEquals(terrainCounts[terrainType] > 0, true, `Terrain type "${terrainType}" should appear at least once`);

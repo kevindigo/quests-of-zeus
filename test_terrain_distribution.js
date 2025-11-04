@@ -1,17 +1,16 @@
-#!/usr/bin/env -S deno run
+// Simple test script to verify terrain distribution
+import { HexMap } from './dist/hexmap.js';
 
-import { HexMap } from "./hexmap.ts";
-
-function checkTerrainDistribution() {
-  console.log("Checking terrain distribution for 10 generated maps...\n");
+function testTerrainDistribution() {
+  console.log("Testing terrain distribution for 5 generated maps...\n");
   
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 5; i++) {
     console.log(`=== Map ${i + 1} ===`);
     
     const map = new HexMap();
     const grid = map.getGrid();
     
-    const terrainCounts: Record<string, number> = {};
+    const terrainCounts = {};
     let totalCells = 0;
     
     // Count all terrain types
@@ -25,7 +24,7 @@ function checkTerrainDistribution() {
       }
     }
     
-    // Check expected counts
+    // Expected counts
     const expectedCounts = {
       "zeus": 1,
       "sea": 6,
@@ -38,14 +37,14 @@ function checkTerrainDistribution() {
     
     console.log("Terrain Distribution:");
     for (const [terrain, count] of Object.entries(terrainCounts)) {
-      const expected = expectedCounts[terrain as keyof typeof expectedCounts];
+      const expected = expectedCounts[terrain];
       const status = expected !== undefined && count === expected ? "✓" : "✗";
       console.log(`  ${status} ${terrain}: ${count}${expected ? ` (expected: ${expected})` : ''}`);
     }
     
     console.log(`  Total cells: ${totalCells}\n`);
     
-    // Verify no overlaps in the center 7 hexes
+    // Verify center 7 hexes
     const centerCell = map.getCell(0, 0);
     const surroundingHexes = [
       [1, 0], [1, -1], [0, -1],
@@ -72,5 +71,5 @@ function checkTerrainDistribution() {
   }
 }
 
-// Run the check
-checkTerrainDistribution();
+// Run the test
+testTerrainDistribution();

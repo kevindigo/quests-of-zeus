@@ -83,6 +83,9 @@ export class HexMap {
       grid.push(row);
     }
     
+    // Place special terrain types randomly
+    this.placeSpecialTerrain(grid);
+    
     return grid;
   }
 
@@ -116,16 +119,8 @@ export class HexMap {
       }
     }
     
-    // For other hexes, use random terrain generation
-    const terrainTypes: TerrainType[] = [
-      "zeus", "sea", "shallow", "monsters", "cubes", 
-      "temple", "clouds", "city", "foundations"
-    ];
-    
-    // Use seeded random for consistent terrain generation
-    const seed = (q * 31 + r * 37) % terrainTypes.length;
-    
-    return terrainTypes[seed];
+    // For all other hexes, default to shallows
+    return "shallow";
   }
 
   /**
@@ -135,6 +130,77 @@ export class HexMap {
   private addSpecialLocations(cell: HexCell, q: number, r: number, distanceFromCenter: number): void {
     // Special locations are now handled through terrain types
     // oracles, ports, and sanctuaries are represented by their respective terrain types
+  }
+
+  /**
+   * Place special terrain types randomly across the map
+   * - 6 cubes
+   * - 6 temples  
+   * - 6 foundations
+   * - 9 monsters
+   * - 12 clouds
+   * None of these should overlap with each other or with the center 7 hexes
+   */
+  private placeSpecialTerrain(grid: HexCell[][]): void {
+    const availableCells: HexCell[] = [];
+    
+    // Collect all cells that are shallows (not the center 7 hexes)
+    // We need to iterate through the grid array directly since getCell expects a different structure
+    for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+      const row = grid[arrayQ];
+      if (row) {
+        for (let arrayR = 0; arrayR < row.length; arrayR++) {
+          const cell = row[arrayR];
+          if (cell && cell.terrain === "shallow") {
+            availableCells.push(cell);
+          }
+        }
+      }
+    }
+    
+    // Shuffle available cells for random placement
+    this.shuffleArray(availableCells);
+    
+    // Place terrain types with their required counts
+    const terrainPlacements: [TerrainType, number][] = [
+      ["cubes", 6],
+      ["temple", 6], 
+      ["foundations", 6],
+      ["monsters", 9],
+      ["clouds", 12],
+      ["city", 6]  // Add city terrain type
+    ];
+    
+    let cellIndex = 0;
+    
+    for (const [terrainType, count] of terrainPlacements) {
+      let placed = 0;
+      
+      while (placed < count && cellIndex < availableCells.length) {
+        const cell = availableCells[cellIndex];
+        cellIndex++;
+        
+        // Only place if the cell is still shallows (not already taken by previous placement)
+        if (cell.terrain === "shallow") {
+          cell.terrain = terrainType;
+          placed++;
+        }
+      }
+      
+      if (placed < count) {
+        console.warn(`Could only place ${placed} of ${count} ${terrainType} cells`);
+      }
+    }
+  }
+
+  /**
+   * Shuffle array using Fisher-Yates algorithm
+   */
+  private shuffleArray<T>(array: T[]): void {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
   }
 
   /**
@@ -176,11 +242,15 @@ export class HexMap {
    */
   getCellsByTerrain(terrain: TerrainType): HexCell[] {
     const cells: HexCell[] = [];
-    for (let q = 0; q < this.width; q++) {
-      for (let r = 0; r < this.height; r++) {
-        const cell = this.grid[q]?.[r];
-        if (cell && cell.terrain === terrain) {
-          cells.push(cell);
+    // The grid is a jagged array (hexagon shape), so we need to iterate through each row
+    for (let arrayQ = 0; arrayQ < this.grid.length; arrayQ++) {
+      const row = this.grid[arrayQ];
+      if (row) {
+        for (let arrayR = 0; arrayR < row.length; arrayR++) {
+          const cell = row[arrayR];
+          if (cell && cell.terrain === terrain) {
+            cells.push(cell);
+          }
         }
       }
     }
@@ -236,12 +306,16 @@ export function getMapStatistics() {
   const grid = gameMap.getGrid();
   let totalCells = 0;
   
-  for (let q = 0; q < gameMap.width; q++) {
-    for (let r = 0; r < gameMap.height; r++) {
-      const cell = grid[q]?.[r];
-      if (cell) {
-        terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
-        totalCells++;
+  // The grid is a jagged array (hexagon shape), so we need to iterate through each row
+  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+    const row = grid[arrayQ];
+    if (row) {
+      for (let arrayR = 0; arrayR < row.length; arrayR++) {
+        const cell = row[arrayR];
+        if (cell) {
+          terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
+          totalCells++;
+        }
       }
     }
   }
