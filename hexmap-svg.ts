@@ -1,7 +1,7 @@
 // SVG Hex Map Generator for Oracle of Delphi
 // Generates an SVG representation of the hex map
 
-import { HexCell, TerrainType, HexColor } from './hexmap.ts';
+import type { HexCell, TerrainType, HexColor } from './hexmap.ts';
 
 export interface HexMapSVGOptions {
   cellSize?: number;
@@ -175,7 +175,7 @@ export class HexMapSVG {
    * Generate complete SVG for the hex map
    */
   generateSVG(grid: HexCell[][]): string {
-    const { cellSize, interactive } = this.options;
+    const { cellSize } = this.options;
     
     // For hexagon with radius 6, the dimensions are fixed
     const radius = 6;

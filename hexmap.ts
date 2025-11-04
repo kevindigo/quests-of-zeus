@@ -101,7 +101,7 @@ export class HexMap {
   /**
    * Generate terrain type based on position and distance from center
    */
-  private generateTerrain(q: number, r: number, distanceFromCenter: number): TerrainType {
+  private generateTerrain(q: number, r: number, _distanceFromCenter: number): TerrainType {
     // Center hex (q=0, r=0) should always be zeus
     if (q === 0 && r === 0) {
       return "zeus";
@@ -127,7 +127,7 @@ export class HexMap {
    * Add special locations like oracles, ports, and sanctuaries
    * Note: Special locations are now represented by terrain types
    */
-  private addSpecialLocations(cell: HexCell, q: number, r: number, distanceFromCenter: number): void {
+  private addSpecialLocations(_cell: HexCell, _q: number, _r: number, _distanceFromCenter: number): void {
     // Special locations are now handled through terrain types
     // oracles, ports, and sanctuaries are represented by their respective terrain types
   }
