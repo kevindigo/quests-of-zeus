@@ -48,30 +48,36 @@ export class HexMapSVG {
     const centerX = x + cellSize;
     const centerY = y + cellSize;
 
-    // Use thicker stroke for colored hexes (cities with assigned colors)
-    const effectiveStrokeWidth = cell.color !== "none"
-      ? strokeWidth * 3
-      : strokeWidth;
+    // Always start with the basic black outline
+    const basicHexPoints = this.calculateHexPoints(x, y);
+    let cellContent = `
+      <polygon 
+        points="${basicHexPoints}" 
+        fill="${terrainColor}" 
+        stroke="#333333" 
+        stroke-width="${strokeWidth}"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        data-q="${cell.q}" 
+        data-r="${cell.r}"
+        data-terrain="${cell.terrain}"
+        class="hex-cell ${this.getTerrainClass(cell.terrain)}"
+      />`;
 
-    // For thick borders, we need to inset the hex to prevent overlap
-    let hexPoints: string;
+    // For colored hexes, add an inner polygon with thick colored outline
     if (cell.color !== "none") {
-      // For colored hexes, inset the polygon to make room for the thick border
-      // Add 0.5px extra to ensure no overlap with adjacent hexes
-      const insetAmount = (effectiveStrokeWidth / 2) + 0.5;
-      hexPoints = this.calculateHexPoints(
+      const effectiveStrokeWidth = strokeWidth * 3;
+      // Inset the polygon to make room for the thick border inside the basic outline
+      const insetAmount = (effectiveStrokeWidth / 2) + 1;
+      const innerHexPoints = this.calculateHexPoints(
         x + insetAmount,
         y + insetAmount,
         cellSize - insetAmount,
       );
-    } else {
-      // For regular hexes, use normal calculation
-      hexPoints = this.calculateHexPoints(x, y);
-    }
-
-    let cellContent = `
+      
+      cellContent += `
       <polygon 
-        points="${hexPoints}" 
+        points="${innerHexPoints}" 
         fill="${terrainColor}" 
         stroke="${strokeColor}" 
         stroke-width="${effectiveStrokeWidth}"
@@ -80,8 +86,9 @@ export class HexMapSVG {
         data-q="${cell.q}" 
         data-r="${cell.r}"
         data-terrain="${cell.terrain}"
-        class="hex-cell ${this.getTerrainClass(cell.terrain)}"
+        class="hex-cell-inner ${this.getTerrainClass(cell.terrain)}"
       />`;
+    }
 
     // Add Greek god head icon for Zeus hex
     if (cell.terrain === "zeus") {
@@ -259,6 +266,9 @@ export class HexMapSVG {
       .hex-cell {
         transition: all 0.2s ease;
       }
+      .hex-cell-inner {
+        pointer-events: none;
+      }
       .hex-cell:hover {
         filter: brightness(1.1);
         stroke-width: 2;
@@ -311,9 +321,9 @@ export class HexMapSVG {
 // Hex map interaction
 const svg = document.querySelector('.hex-map-svg');
 if (svg) {
-  // Add click handlers to hex cells
+  // Add click handlers to hex cells (only outer cells)
   svg.addEventListener('click', (event) => {
-    const hexCell = event.target.closest('.hex-cell');
+    const hexCell = event.target.closest('.hex-cell:not(.hex-cell-inner)');
     if (hexCell) {
       const q = parseInt(hexCell.dataset.q);
       const r = parseInt(hexCell.dataset.r);
@@ -337,9 +347,9 @@ if (svg) {
     }
   });
 
-  // Add hover effects
+  // Add hover effects (only outer cells)
   svg.addEventListener('mouseover', (event) => {
-    const hexCell = event.target.closest('.hex-cell');
+    const hexCell = event.target.closest('.hex-cell:not(.hex-cell-inner)');
     if (hexCell) {
       hexCell.style.cursor = 'pointer';
     }
