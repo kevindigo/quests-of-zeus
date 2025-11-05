@@ -12,16 +12,16 @@ export interface IconOptions {
  */
 export function generateZeusIcon(options: IconOptions): string {
   const { centerX, centerY, cellSize } = options;
-  
+
   // Scale the icon based on cell size
   const scale = cellSize / 40; // Base scale on default cell size of 40
   const size = 14 * scale * 2.5; // 2.5x larger to fill more space
-  
+
   // Monochrome black color
   const strokeColor = "#000000";
   const circleStrokeWidth = 3 * scale; // Thick circle border
   const zStrokeWidth = 2.5 * scale; // Thick Z stroke
-  
+
   return `
     <g transform="translate(${centerX}, ${centerY})" class="zeus-icon">
       <!-- Thick black circle that almost fills the hex -->
@@ -59,15 +59,15 @@ export function generateZeusIcon(options: IconOptions): string {
  */
 export function generateCityIcon(options: IconOptions): string {
   const { centerX, centerY, cellSize } = options;
-  
+
   // Scale the icon based on cell size - 2.5x larger than before
   const scale = cellSize / 40; // Base scale on default cell size of 40
   const size = 12 * scale * 2.5; // 2.5x larger to fill more space
-  
+
   // Monochrome black color with thick strokes
   const strokeColor = "#000000";
   const strokeWidth = 2.5 * scale; // Thick black lines
-  
+
   return `
     <g transform="translate(${centerX}, ${centerY})" class="city-icon">
       <!-- Left building: Temple-style with triangular pediment -->
@@ -156,15 +156,15 @@ export function generateCityIcon(options: IconOptions): string {
  */
 export function generateTempleIcon(options: IconOptions): string {
   const { centerX, centerY, cellSize } = options;
-  
+
   // Scale the icon based on cell size - same scale as city icon
   const scale = cellSize / 40; // Base scale on default cell size of 40
   const size = 12 * scale * 2.5; // 2.5x larger to fill more space
-  
+
   // Monochrome black color with thick strokes
   const strokeColor = "#000000";
   const strokeWidth = 2.5 * scale; // Thick black lines
-  
+
   return `
     <g transform="translate(${centerX}, ${centerY})" class="temple-icon">
       <!-- Square base with bottom line and no top line -->
@@ -203,22 +203,26 @@ export function generateTempleIcon(options: IconOptions): string {
  */
 export function generateMonsterIcon(options: IconOptions): string {
   const { centerX, centerY, cellSize } = options;
-  
+
   // Scale the icon based on cell size - 2.5x larger than before
   const scale = cellSize / 40; // Base scale on default cell size of 40
   const size = 12 * scale * 2.5; // 2.5x larger to fill more space
-  
+
   // Monochrome black color with thick strokes
   const strokeColor = "#000000";
   const strokeWidth = 2.5 * scale; // Thick black lines
-  
+
   return `
     <g transform="translate(${centerX}, ${centerY})" class="monster-icon">
       <!-- Large main paw pad (heart-shaped for realism) -->
       <path d="
         M ${-size * 0.5} ${size * 0.1}
-        C ${-size * 0.3} ${size * 0.5}, ${size * 0.3} ${size * 0.5}, ${size * 0.5} ${size * 0.1}
-        C ${size * 0.4} ${-size * 0.1}, ${-size * 0.4} ${-size * 0.1}, ${-size * 0.5} ${size * 0.1}
+        C ${-size * 0.3} ${size * 0.5}, ${size * 0.3} ${size * 0.5}, ${
+    size * 0.5
+  } ${size * 0.1}
+        C ${size * 0.4} ${-size * 0.1}, ${-size * 0.4} ${-size * 0.1}, ${
+    -size * 0.5
+  } ${size * 0.1}
         Z
       " 
         fill="none" 
@@ -323,15 +327,15 @@ export function generateMonsterIcon(options: IconOptions): string {
  */
 export function generateCubesIcon(options: IconOptions): string {
   const { centerX, centerY, cellSize } = options;
-  
+
   // Scale the icon based on cell size - larger than other icons for better visibility
   const scale = cellSize / 40; // Base scale on default cell size of 40
   const size = 14 * scale * 2.5; // Larger size to fill more space
-  
+
   // Monochrome black color with thick strokes
   const strokeColor = "#000000";
   const strokeWidth = 2.5 * scale; // Thick black lines
-  
+
   return `
     <g transform="translate(${centerX}, ${centerY})" class="cubes-icon">
       <!-- 3D Cube - front face (larger and more prominent) -->
@@ -424,7 +428,9 @@ export function generateCubesIcon(options: IconOptions): string {
       <!-- Bow loops on top (larger and more prominent) -->
       <path d="
         M ${-size * 0.1} ${-size * 0.4}
-        C ${-size * 0.25} ${-size * 0.55}, ${-size * 0.4} ${-size * 0.45}, ${-size * 0.1} ${-size * 0.4}
+        C ${-size * 0.25} ${-size * 0.55}, ${-size * 0.4} ${-size * 0.45}, ${
+    -size * 0.1
+  } ${-size * 0.4}
       " 
         fill="none" 
         stroke="${strokeColor}" 
@@ -434,7 +440,9 @@ export function generateCubesIcon(options: IconOptions): string {
       
       <path d="
         M ${size * 0.1} ${-size * 0.4}
-        C ${size * 0.25} ${-size * 0.55}, ${size * 0.4} ${-size * 0.45}, ${size * 0.1} ${-size * 0.4}
+        C ${size * 0.25} ${-size * 0.55}, ${size * 0.4} ${-size * 0.45}, ${
+    size * 0.1
+  } ${-size * 0.4}
       " 
         fill="none" 
         stroke="${strokeColor}" 
@@ -472,26 +480,38 @@ export function generateCubesIcon(options: IconOptions): string {
  */
 export function generateCloudsIcon(options: IconOptions): string {
   const { centerX, centerY, cellSize } = options;
-  
+
   // Scale the icon based on cell size - same scale as other icons
   const scale = cellSize / 40; // Base scale on default cell size of 40
   const size = 12 * scale * 2.5; // 2.5x larger to fill more space
-  
+
   // Monochrome black color with thick strokes
   const strokeColor = "#000000";
   const strokeWidth = 2.5 * scale; // Thick black lines
-  
+
   return `
     <g transform="translate(${centerX}, ${centerY})" class="clouds-icon">
       <!-- Simplified cloud shape - single clean outline -->
       <path d="
         M ${-size * 0.6} ${-size * 0.1}
-        C ${-size * 0.8} ${-size * 0.3}, ${-size * 0.4} ${-size * 0.5}, ${-size * 0.2} ${-size * 0.3}
-        C ${0} ${-size * 0.5}, ${size * 0.2} ${-size * 0.5}, ${size * 0.4} ${-size * 0.3}
-        C ${size * 0.6} ${-size * 0.5}, ${size * 0.8} ${-size * 0.3}, ${size * 0.6} ${-size * 0.1}
-        C ${size * 0.8} ${0}, ${size * 0.6} ${size * 0.2}, ${size * 0.4} ${size * 0.1}
-        C ${size * 0.2} ${size * 0.3}, ${0} ${size * 0.2}, ${-size * 0.2} ${size * 0.1}
-        C ${-size * 0.4} ${size * 0.3}, ${-size * 0.6} ${size * 0.2}, ${-size * 0.6} ${-size * 0.1}
+        C ${-size * 0.8} ${-size * 0.3}, ${-size * 0.4} ${-size * 0.5}, ${
+    -size * 0.2
+  } ${-size * 0.3}
+        C ${0} ${-size * 0.5}, ${size * 0.2} ${-size * 0.5}, ${size * 0.4} ${
+    -size * 0.3
+  }
+        C ${size * 0.6} ${-size * 0.5}, ${size * 0.8} ${-size * 0.3}, ${
+    size * 0.6
+  } ${-size * 0.1}
+        C ${size * 0.8} ${0}, ${size * 0.6} ${size * 0.2}, ${size * 0.4} ${
+    size * 0.1
+  }
+        C ${size * 0.2} ${size * 0.3}, ${0} ${size * 0.2}, ${-size * 0.2} ${
+    size * 0.1
+  }
+        C ${-size * 0.4} ${size * 0.3}, ${-size * 0.6} ${size * 0.2}, ${
+    -size * 0.6
+  } ${-size * 0.1}
         Z
       " 
         fill="none" 
@@ -510,22 +530,22 @@ export function generateCloudsIcon(options: IconOptions): string {
  */
 export function generateFoundationsIcon(options: IconOptions): string {
   const { centerX, centerY, cellSize } = options;
-  
+
   // Scale the icon based on cell size - same scale as other icons
   const scale = cellSize / 40; // Base scale on default cell size of 40
   const size = 12 * scale * 2.5; // 2.5x larger to fill more space
-  
+
   // Monochrome black color with thick strokes
   const strokeColor = "#000000";
   const strokeWidth = 2.5 * scale; // Thick black lines
-  
+
   // Consistent parallelogram dimensions - all oriented with top lines to left, bottom lines to right
   const parallelogramWidth = size * 0.6;
   const parallelogramHeight = size * 0.3;
   const perspectiveOffset = size * 0.2; // Amount of perspective shift
   const verticalShift = parallelogramHeight * 0.5; // 50% of parallelogram height
   const horizontalShift = verticalShift * 2; // Twice the vertical shift amount
-  
+
   return `
     <g transform="translate(${centerX}, ${centerY})" class="foundations-icon">
       <!-- Top parallelogram (near top of hex) - moved up by 50% of height -->
@@ -546,8 +566,12 @@ export function generateFoundationsIcon(options: IconOptions): string {
       <polygon points="
         ${-size * 0.1 + horizontalShift} ${-size * 0.1 - verticalShift},
         ${size * 0.7 + horizontalShift} ${-size * 0.1 - verticalShift},
-        ${size * 0.7 - perspectiveOffset + horizontalShift} ${size * 0.2 - verticalShift},
-        ${-size * 0.1 - perspectiveOffset + horizontalShift} ${size * 0.2 - verticalShift}
+        ${size * 0.7 - perspectiveOffset + horizontalShift} ${
+    size * 0.2 - verticalShift
+  },
+        ${-size * 0.1 - perspectiveOffset + horizontalShift} ${
+    size * 0.2 - verticalShift
+  }
       " 
         fill="none" 
         stroke="${strokeColor}" 

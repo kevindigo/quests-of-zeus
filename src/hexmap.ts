@@ -108,8 +108,6 @@ export class HexMap {
     return (Math.abs(q1 - q2) + Math.abs(r1 - r2) + Math.abs(s1 - s2)) / 2;
   }
 
-
-
   /**
    * Add special locations like oracles, ports, and sanctuaries
    * Note: Special locations are now represented by terrain types
@@ -141,7 +139,7 @@ export class HexMap {
       console.error("placeSpecialTerrain: Invalid grid provided", grid);
       return;
     }
-    
+
     // Place cities first in the corners
     this.placeCities(grid);
 
@@ -450,7 +448,7 @@ export class HexMap {
     const attempts = 10;
     const shuffledSeaCells = [...seaCells];
     this.shuffleArray(shuffledSeaCells);
-    
+
     let successfulConversions = 0;
     let attemptsMade = 0;
 
@@ -473,14 +471,20 @@ export class HexMap {
       candidateCell.terrain = "shallow";
 
       // 4. Check all neighbors of the candidate cell
-      const allNeighbors = this.getNeighborsFromGrid(candidateCell.q, candidateCell.r, grid);
+      const allNeighbors = this.getNeighborsFromGrid(
+        candidateCell.q,
+        candidateCell.r,
+        grid,
+      );
       let conversionValid = true;
 
       for (const neighbor of allNeighbors) {
         if (neighbor.terrain === "sea") {
           // For sea neighbors: check if they can trace a path back to zeus
           // using only sea tiles (excluding the candidate cell which is now shallows)
-          if (!this.canReachZeusFromSeaNeighbor(neighbor, candidateCell, grid)) {
+          if (
+            !this.canReachZeusFromSeaNeighbor(neighbor, candidateCell, grid)
+          ) {
             conversionValid = false;
             break;
           }
@@ -505,14 +509,20 @@ export class HexMap {
       successfulConversions++;
     }
 
-    console.log(`Made ${attemptsMade} attempts to convert sea to shallows, ${successfulConversions} successful conversions`);
+    console.log(
+      `Made ${attemptsMade} attempts to convert sea to shallows, ${successfulConversions} successful conversions`,
+    );
   }
 
   /**
    * Check if a sea neighbor can reach zeus, considering that the candidate cell
    * might be converted to shallows (so we exclude it from the path)
    */
-  private canReachZeusFromSeaNeighbor(seaNeighbor: HexCell, candidateCell: HexCell, grid: HexCell[][]): boolean {
+  private canReachZeusFromSeaNeighbor(
+    seaNeighbor: HexCell,
+    candidateCell: HexCell,
+    grid: HexCell[][],
+  ): boolean {
     const visited = new Set<string>();
     const queue: HexCell[] = [seaNeighbor];
     visited.add(`${seaNeighbor.q},${seaNeighbor.r}`);
@@ -522,12 +532,20 @@ export class HexMap {
 
       // Check all 6 adjacent cells
       for (let direction = 0; direction < 6; direction++) {
-        const adjacentCoords = this.getAdjacent(current.q, current.r, direction);
+        const adjacentCoords = this.getAdjacent(
+          current.q,
+          current.r,
+          direction,
+        );
         if (!adjacentCoords) {
           continue; // Skip if adjacent cell is off the map
         }
 
-        const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        const adjacentCell = this.getCellFromGrid(
+          grid,
+          adjacentCoords.q,
+          adjacentCoords.r,
+        );
         if (!adjacentCell) {
           continue; // Skip if adjacent cell is off the map
         }
@@ -535,7 +553,10 @@ export class HexMap {
         const cellKey = `${adjacentCell.q},${adjacentCell.r}`;
 
         // Skip the candidate cell (it will become shallows, not part of sea path)
-        if (adjacentCell.q === candidateCell.q && adjacentCell.r === candidateCell.r) {
+        if (
+          adjacentCell.q === candidateCell.q &&
+          adjacentCell.r === candidateCell.r
+        ) {
           continue;
         }
 
@@ -559,17 +580,29 @@ export class HexMap {
   /**
    * Check if a cell has a neighbor of a specific terrain type
    */
-  private hasNeighborOfType(cell: HexCell, grid: HexCell[][], terrainType: TerrainType): boolean {
+  private hasNeighborOfType(
+    cell: HexCell,
+    grid: HexCell[][],
+    terrainType: TerrainType,
+  ): boolean {
     const neighbors = this.getNeighborsFromGrid(cell.q, cell.r, grid);
-    return neighbors.some(neighbor => neighbor && neighbor.terrain === terrainType);
+    return neighbors.some((neighbor) =>
+      neighbor && neighbor.terrain === terrainType
+    );
   }
 
   /**
    * Get all neighbors of a cell that have a specific terrain type
    */
-  private getNeighborsOfType(cell: HexCell, grid: HexCell[][], terrainType: TerrainType): HexCell[] {
+  private getNeighborsOfType(
+    cell: HexCell,
+    grid: HexCell[][],
+    terrainType: TerrainType,
+  ): HexCell[] {
     const neighbors = this.getNeighborsFromGrid(cell.q, cell.r, grid);
-    return neighbors.filter(neighbor => neighbor && neighbor.terrain === terrainType);
+    return neighbors.filter((neighbor) =>
+      neighbor && neighbor.terrain === terrainType
+    );
   }
 
   /**
@@ -586,12 +619,20 @@ export class HexMap {
 
       // Check all 6 adjacent cells
       for (let direction = 0; direction < 6; direction++) {
-        const adjacentCoords = this.getAdjacent(current.q, current.r, direction);
+        const adjacentCoords = this.getAdjacent(
+          current.q,
+          current.r,
+          direction,
+        );
         if (!adjacentCoords) {
           continue; // Skip if adjacent cell is off the map
         }
 
-        const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        const adjacentCell = this.getCellFromGrid(
+          grid,
+          adjacentCoords.q,
+          adjacentCoords.r,
+        );
         if (!adjacentCell) {
           continue; // Skip if adjacent cell is off the map
         }
@@ -719,12 +760,16 @@ export class HexMap {
   ): void {
     // Get all neighboring cells of the Zeus hex
     const neighbors: HexCell[] = [];
-    
+
     // Check all 6 directions using getAdjacent
     for (let direction = 0; direction < 6; direction++) {
       const adjacentCoords = this.getAdjacent(zeusQ, zeusR, direction);
       if (adjacentCoords) {
-        const neighbor = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        const neighbor = this.getCellFromGrid(
+          grid,
+          adjacentCoords.q,
+          adjacentCoords.r,
+        );
         if (neighbor) {
           neighbors.push(neighbor);
         }
@@ -750,12 +795,16 @@ export class HexMap {
   ): void {
     // Get all neighboring cells using the provided grid
     const neighbors: HexCell[] = [];
-    
+
     // Check all 6 directions using getAdjacent
     for (let direction = 0; direction < 6; direction++) {
       const adjacentCoords = this.getAdjacent(q, r, direction);
       if (adjacentCoords) {
-        const neighbor = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        const neighbor = this.getCellFromGrid(
+          grid,
+          adjacentCoords.q,
+          adjacentCoords.r,
+        );
         if (neighbor) {
           neighbors.push(neighbor);
         }
@@ -882,7 +931,11 @@ export class HexMap {
   /**
    * Get all neighboring cells for a given cell from a specific grid
    */
-  private getNeighborsFromGrid(q: number, r: number, grid: HexCell[][]): HexCell[] {
+  private getNeighborsFromGrid(
+    q: number,
+    r: number,
+    grid: HexCell[][],
+  ): HexCell[] {
     const neighbors: HexCell[] = [];
 
     // Check if grid is valid
@@ -894,7 +947,11 @@ export class HexMap {
     for (let direction = 0; direction < 6; direction++) {
       const adjacentCoords = this.getAdjacent(q, r, direction);
       if (adjacentCoords) {
-        const neighbor = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        const neighbor = this.getCellFromGrid(
+          grid,
+          adjacentCoords.q,
+          adjacentCoords.r,
+        );
         if (neighbor) {
           neighbors.push(neighbor);
         }

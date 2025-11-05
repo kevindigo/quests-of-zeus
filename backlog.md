@@ -1,14 +1,6 @@
-- Change display colors of hex types:
-  - Zeus 
-  - Sea blue
-  - Shallow light blue
-  - City dark gray
-  - Foundations light gray
-  - Cubes dark orange
-  - Temple light orange
-  - Monsters light purple
 - Assign a hex color to certain hexes:
   - City 1 of each color
   - Cloud 2 of each color
   - Sea rougly equal number of each color
-  - Others have no color: Zeus, shallows,Cubes, foundations, monsters, Temple n/a
+  - Others have no color: Zeus, shallows,Cubes, foundations, monsters, Temple
+    n/a
