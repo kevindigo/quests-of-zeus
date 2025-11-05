@@ -201,9 +201,10 @@ Deno.test("Game logic - terrain distribution", () => {
   }
   
   for (const terrainType of expectedTerrainTypes) {
-    // Shallow should have 0 count after 100% conversion to sea
+    // Shallow should have 0 or 1 count after 100% conversion to sea + possible sea-to-shallows conversion
     if (terrainType === "shallow") {
-      assertEquals(terrainCounts[terrainType] || 0, 0, `Terrain type "${terrainType}" should be 0 after 100% conversion to sea`);
+      const shallowCount = terrainCounts[terrainType] || 0;
+      assertEquals(shallowCount <= 1, true, `Terrain type "${terrainType}" should be 0 or 1 after 100% conversion to sea and possible sea-to-shallows conversion`);
     } else {
       assertEquals(terrainCounts[terrainType] > 0, true, `Terrain type "${terrainType}" should appear at least once`);
     }

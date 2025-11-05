@@ -444,6 +444,180 @@ export class HexMap {
         }
       }
     }
+
+    // After converting all shallows to sea, try to convert one random sea back to shallows
+    this.tryConvertSeaToShallows(grid);
+  }
+
+  /**
+   * Try to convert one random sea hex back to shallows with specific constraints
+   * Pick ONE random sea hex and either convert it or not
+   */
+  private tryConvertSeaToShallows(grid: HexCell[][]): void {
+    // Get all sea cells
+    const seaCells: HexCell[] = [];
+    for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+      const row = grid[arrayQ];
+      if (row) {
+        for (let arrayR = 0; arrayR < row.length; arrayR++) {
+          const cell = row[arrayR];
+          if (cell && cell.terrain === "sea") {
+            seaCells.push(cell);
+          }
+        }
+      }
+    }
+
+    // If there are no sea cells, nothing to convert
+    if (seaCells.length === 0) {
+      return;
+    }
+
+    // Pick ONE random sea cell
+    const randomIndex = Math.floor(Math.random() * seaCells.length);
+    const candidateCell = seaCells[randomIndex];
+
+    // 1. If the hex has zeus as its neighbor, don't convert
+    if (this.hasNeighborOfType(candidateCell, grid, "zeus")) {
+      return;
+    }
+
+    // 2. If the hex has a city as its neighbor, don't convert
+    if (this.hasNeighborOfType(candidateCell, grid, "city")) {
+      return;
+    }
+
+    // 3. Tentatively convert the candidate cell to shallows
+    const originalTerrain = candidateCell.terrain;
+    candidateCell.terrain = "shallow";
+
+    // 4. For each sea neighbor of the candidate cell, check if it can trace a path back to zeus
+    // using only sea tiles (excluding the candidate cell which is now shallows)
+    const seaNeighbors = this.getNeighborsOfType(candidateCell, grid, "sea");
+    let allSeaNeighborsCanReachZeus = true;
+
+    for (const seaNeighbor of seaNeighbors) {
+      if (!this.canReachZeusFromSeaNeighbor(seaNeighbor, candidateCell, grid)) {
+        allSeaNeighborsCanReachZeus = false;
+        break;
+      }
+    }
+
+    // 5. If any sea neighbor cannot reach zeus, revert the candidate cell back to sea
+    if (!allSeaNeighborsCanReachZeus) {
+      candidateCell.terrain = originalTerrain;
+      return;
+    }
+
+    // 6. If we get to this point, leave the candidate cell as shallows
+    // (it's already converted from step 3)
+  }
+
+  /**
+   * Check if a sea neighbor can reach zeus, considering that the candidate cell
+   * might be converted to shallows (so we exclude it from the path)
+   */
+  private canReachZeusFromSeaNeighbor(seaNeighbor: HexCell, candidateCell: HexCell, grid: HexCell[][]): boolean {
+    const visited = new Set<string>();
+    const queue: HexCell[] = [seaNeighbor];
+    visited.add(`${seaNeighbor.q},${seaNeighbor.r}`);
+
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+
+      // Check all 6 adjacent cells
+      for (let direction = 0; direction < 6; direction++) {
+        const adjacentCoords = this.getAdjacent(current.q, current.r, direction);
+        if (!adjacentCoords) {
+          continue; // Skip if adjacent cell is off the map
+        }
+
+        const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        if (!adjacentCell) {
+          continue; // Skip if adjacent cell is off the map
+        }
+
+        const cellKey = `${adjacentCell.q},${adjacentCell.r}`;
+
+        // Skip the candidate cell (it will become shallows, not part of sea path)
+        if (adjacentCell.q === candidateCell.q && adjacentCell.r === candidateCell.r) {
+          continue;
+        }
+
+        // If we found zeus, return true
+        if (adjacentCell.terrain === "zeus") {
+          return true;
+        }
+
+        // If we haven't visited this cell and it's sea (valid path)
+        if (!visited.has(cellKey) && adjacentCell.terrain === "sea") {
+          visited.add(cellKey);
+          queue.push(adjacentCell);
+        }
+      }
+    }
+
+    // If we exhausted all possibilities without finding zeus, return false
+    return false;
+  }
+
+  /**
+   * Check if a cell has a neighbor of a specific terrain type
+   */
+  private hasNeighborOfType(cell: HexCell, grid: HexCell[][], terrainType: TerrainType): boolean {
+    const neighbors = this.getNeighborsFromGrid(cell.q, cell.r, grid);
+    return neighbors.some(neighbor => neighbor && neighbor.terrain === terrainType);
+  }
+
+  /**
+   * Get all neighbors of a cell that have a specific terrain type
+   */
+  private getNeighborsOfType(cell: HexCell, grid: HexCell[][], terrainType: TerrainType): HexCell[] {
+    const neighbors = this.getNeighborsFromGrid(cell.q, cell.r, grid);
+    return neighbors.filter(neighbor => neighbor && neighbor.terrain === terrainType);
+  }
+
+  /**
+   * Check if a sea cell can trace a path back to zeus using only sea tiles
+   * Uses breadth-first search to find a path to zeus
+   */
+  private canReachZeus(startCell: HexCell, grid: HexCell[][]): boolean {
+    const visited = new Set<string>();
+    const queue: HexCell[] = [startCell];
+    visited.add(`${startCell.q},${startCell.r}`);
+
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+
+      // Check all 6 adjacent cells
+      for (let direction = 0; direction < 6; direction++) {
+        const adjacentCoords = this.getAdjacent(current.q, current.r, direction);
+        if (!adjacentCoords) {
+          continue; // Skip if adjacent cell is off the map
+        }
+
+        const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        if (!adjacentCell) {
+          continue; // Skip if adjacent cell is off the map
+        }
+
+        const cellKey = `${adjacentCell.q},${adjacentCell.r}`;
+
+        // If we found zeus, return true
+        if (adjacentCell.terrain === "zeus") {
+          return true;
+        }
+
+        // If we haven't visited this cell and it's sea (valid path)
+        if (!visited.has(cellKey) && adjacentCell.terrain === "sea") {
+          visited.add(cellKey);
+          queue.push(adjacentCell);
+        }
+      }
+    }
+
+    // If we exhausted all possibilities without finding zeus, return false
+    return false;
   }
 
   /**
@@ -565,6 +739,11 @@ export class HexMap {
     q: number,
     r: number,
   ): HexCell | null {
+    // Check if grid is valid
+    if (!grid || !Array.isArray(grid) || grid.length === 0) {
+      return null;
+    }
+
     // Convert axial coordinates to array indices
     const arrayQ = q + 6; // Offset to make coordinates non-negative
 
@@ -638,13 +817,25 @@ export class HexMap {
    * Get all neighboring cells for a given cell
    */
   getNeighbors(q: number, r: number): HexCell[] {
+    return this.getNeighborsFromGrid(q, r, this.grid);
+  }
+
+  /**
+   * Get all neighboring cells for a given cell from a specific grid
+   */
+  private getNeighborsFromGrid(q: number, r: number, grid: HexCell[][]): HexCell[] {
     const neighbors: HexCell[] = [];
+
+    // Check if grid is valid
+    if (!grid || !Array.isArray(grid) || grid.length === 0) {
+      return neighbors;
+    }
 
     // Check all 6 directions using getAdjacent
     for (let direction = 0; direction < 6; direction++) {
       const adjacentCoords = this.getAdjacent(q, r, direction);
       if (adjacentCoords) {
-        const neighbor = this.getCell(adjacentCoords.q, adjacentCoords.r);
+        const neighbor = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
         if (neighbor) {
           neighbors.push(neighbor);
         }

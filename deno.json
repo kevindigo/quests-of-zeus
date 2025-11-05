@@ -8,7 +8,8 @@
     "build": "deno run -A build.ts",
     "test": "deno test --allow-read",
     "lint": "deno lint",
-    "fmt": "deno fmt"
+    "fmt": "deno fmt",
+    "manual-sea-test": "deno run --allow-read manual_test_sea_to_shallows.ts"
   },
   "exports": "./main.ts",
   "imports": {
