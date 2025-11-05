@@ -29,39 +29,40 @@ Deno.test("Sea to shallows conversion - basic functionality", () => {
   console.log(`  Shallows: ${shallowCount}`);
   console.log(`  Sea: ${seaCount}`);
   
-  // After sea-to-shallows conversion, we should have exactly 0 or 1 shallows
-  // (we pick ONE random sea hex and either convert it or not)
-  assertEquals(shallowCount <= 1, true, "Should have 0 or 1 shallows after sea-to-shallows conversion");
+  // After sea-to-shallows conversion, we should have between 0 and 10 shallows
+  // (we make 10 attempts on random sea hexes)
+  assertEquals(shallowCount <= 10, true, "Should have between 0 and 10 shallows after sea-to-shallows conversion");
   
-  // If there is a shallow cell, verify it meets the constraints
-  if (shallowCount === 1) {
-    let shallowCell: HexCell | null = null;
+  // If there are shallow cells, verify they all meet the constraints
+  if (shallowCount > 0) {
+    const shallowCells: HexCell[] = [];
     
-    // Find the shallow cell
+    // Find all shallow cells
     for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
       const row = grid[arrayQ];
       if (row) {
         for (let arrayR = 0; arrayR < row.length; arrayR++) {
           const cell = row[arrayR];
           if (cell && cell.terrain === "shallow") {
-            shallowCell = cell;
-            break;
+            shallowCells.push(cell);
           }
         }
       }
-      if (shallowCell) break;
     }
     
-    if (shallowCell) {
-      console.log(`Found shallow cell at (${shallowCell.q}, ${shallowCell.r})`);
+    console.log(`Found ${shallowCells.length} shallow cells`);
+    
+    // Verify each shallow cell meets the constraints
+    for (const shallowCell of shallowCells) {
+      console.log(`Verifying shallow cell at (${shallowCell.q}, ${shallowCell.r})`);
       
       // 1. Should not have zeus as neighbor
       const hasZeusNeighbor = hexMap["hasNeighborOfType"](shallowCell, grid, "zeus");
-      assertEquals(hasZeusNeighbor, false, "Shallow cell should not have zeus neighbor");
+      assertEquals(hasZeusNeighbor, false, `Shallow cell at (${shallowCell.q}, ${shallowCell.r}) should not have zeus neighbor`);
       
       // 2. Should not have city as neighbor
       const hasCityNeighbor = hexMap["hasNeighborOfType"](shallowCell, grid, "city");
-      assertEquals(hasCityNeighbor, false, "Shallow cell should not have city neighbor");
+      assertEquals(hasCityNeighbor, false, `Shallow cell at (${shallowCell.q}, ${shallowCell.r}) should not have city neighbor`);
       
       // 3. All sea neighbors should be able to reach zeus
       const seaNeighbors = hexMap["getNeighborsOfType"](shallowCell, grid, "sea");
@@ -75,12 +76,12 @@ Deno.test("Sea to shallows conversion - basic functionality", () => {
         }
       }
       
-      assertEquals(allCanReachZeus, true, "All sea neighbors of shallow cell should be able to reach zeus");
+      assertEquals(allCanReachZeus, true, `All sea neighbors of shallow cell at (${shallowCell.q}, ${shallowCell.r}) should be able to reach zeus`);
       
-      console.log("All constraints satisfied for the shallow cell!");
+      console.log(`All constraints satisfied for shallow cell at (${shallowCell.q}, ${shallowCell.r})!`);
     }
   } else {
-    console.log("No shallow cell was converted (all constraints were too restrictive)");
+    console.log("No shallow cells were converted (all constraints were too restrictive)");
   }
 });
 

@@ -450,8 +450,8 @@ export class HexMap {
   }
 
   /**
-   * Try to convert one random sea hex back to shallows with specific constraints
-   * Pick ONE random sea hex and either convert it or not
+   * Try to convert random sea hexes back to shallows with specific constraints
+   * Make 10 attempts on random sea hexes. However many work or don't work is fine.
    */
   private tryConvertSeaToShallows(grid: HexCell[][]): void {
     // Get all sea cells
@@ -473,44 +473,56 @@ export class HexMap {
       return;
     }
 
-    // Pick ONE random sea cell
-    const randomIndex = Math.floor(Math.random() * seaCells.length);
-    const candidateCell = seaCells[randomIndex];
+    // Make 10 attempts on random sea tiles
+    const attempts = 10;
+    const shuffledSeaCells = [...seaCells];
+    this.shuffleArray(shuffledSeaCells);
+    
+    let successfulConversions = 0;
+    let attemptsMade = 0;
 
-    // 1. If the hex has zeus as its neighbor, don't convert
-    if (this.hasNeighborOfType(candidateCell, grid, "zeus")) {
-      return;
-    }
+    for (let i = 0; i < Math.min(attempts, shuffledSeaCells.length); i++) {
+      const candidateCell = shuffledSeaCells[i];
+      attemptsMade++;
 
-    // 2. If the hex has a city as its neighbor, don't convert
-    if (this.hasNeighborOfType(candidateCell, grid, "city")) {
-      return;
-    }
-
-    // 3. Tentatively convert the candidate cell to shallows
-    const originalTerrain = candidateCell.terrain;
-    candidateCell.terrain = "shallow";
-
-    // 4. For each sea neighbor of the candidate cell, check if it can trace a path back to zeus
-    // using only sea tiles (excluding the candidate cell which is now shallows)
-    const seaNeighbors = this.getNeighborsOfType(candidateCell, grid, "sea");
-    let allSeaNeighborsCanReachZeus = true;
-
-    for (const seaNeighbor of seaNeighbors) {
-      if (!this.canReachZeusFromSeaNeighbor(seaNeighbor, candidateCell, grid)) {
-        allSeaNeighborsCanReachZeus = false;
-        break;
+      // 1. If the hex has zeus as its neighbor, don't convert
+      if (this.hasNeighborOfType(candidateCell, grid, "zeus")) {
+        continue;
       }
+
+      // 2. If the hex has a city as its neighbor, don't convert
+      if (this.hasNeighborOfType(candidateCell, grid, "city")) {
+        continue;
+      }
+
+      // 3. Tentatively convert the candidate cell to shallows
+      const originalTerrain = candidateCell.terrain;
+      candidateCell.terrain = "shallow";
+
+      // 4. For each sea neighbor of the candidate cell, check if it can trace a path back to zeus
+      // using only sea tiles (excluding the candidate cell which is now shallows)
+      const seaNeighbors = this.getNeighborsOfType(candidateCell, grid, "sea");
+      let allSeaNeighborsCanReachZeus = true;
+
+      for (const seaNeighbor of seaNeighbors) {
+        if (!this.canReachZeusFromSeaNeighbor(seaNeighbor, candidateCell, grid)) {
+          allSeaNeighborsCanReachZeus = false;
+          break;
+        }
+      }
+
+      // 5. If any sea neighbor cannot reach zeus, revert the candidate cell back to sea
+      if (!allSeaNeighborsCanReachZeus) {
+        candidateCell.terrain = originalTerrain;
+        continue;
+      }
+
+      // 6. If we get to this point, leave the candidate cell as shallows
+      // (it's already converted from step 3)
+      successfulConversions++;
     }
 
-    // 5. If any sea neighbor cannot reach zeus, revert the candidate cell back to sea
-    if (!allSeaNeighborsCanReachZeus) {
-      candidateCell.terrain = originalTerrain;
-      return;
-    }
-
-    // 6. If we get to this point, leave the candidate cell as shallows
-    // (it's already converted from step 3)
+    console.log(`Made ${attemptsMade} attempts to convert sea to shallows, ${successfulConversions} successful conversions`);
   }
 
   /**
