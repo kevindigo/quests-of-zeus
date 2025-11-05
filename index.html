@@ -233,6 +233,7 @@
           <button id="generateMap">Generate New Map</button>
           <button id="showMapData">Show Map Data</button>
           <button id="showHexMap" style="display: none">Show Hex Map</button>
+          <button id="installPWA" style="display: none">Install App</button>
         </div>
 
         <div id="mapInfo" class="map-display" style="display: none"></div>
@@ -296,6 +297,28 @@
         e.preventDefault();
         deferredPrompt = e;
         console.log("PWA installation available");
+        
+        // Show install button
+        const installButton = document.getElementById("installPWA");
+        installButton.style.display = "inline-block";
+      });
+
+      // Install button handler
+      document.getElementById("installPWA").addEventListener("click", async () => {
+        if (!deferredPrompt) return;
+        
+        // Show the install prompt
+        deferredPrompt.prompt();
+        
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to the install prompt: ${outcome}`);
+        
+        // We've used the prompt, and can't use it again, clear it
+        deferredPrompt = null;
+        
+        // Hide the install button
+        document.getElementById("installPWA").style.display = "none";
       });
 
       // Helper function to get hex color from color name

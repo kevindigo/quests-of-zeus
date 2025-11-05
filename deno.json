@@ -6,6 +6,7 @@
     "dev": "deno run --watch --allow-net --allow-read src/main.ts",
     "start": "deno run --allow-net --allow-read src/main.ts",
     "build": "deno run -A build.ts",
+    "icons": "deno run -A create-simple-icons.ts",
     "test": "deno test --allow-read",
     "lint": "deno lint",
     "fmt": "deno fmt",
