@@ -188,7 +188,7 @@ export class HexMapSVG {
   private getTerrainColor(terrain: TerrainType): string {
     const colors: Record<TerrainType, string> = {
       zeus: "#ffd700", // Gold for Zeus
-      sea: "#4a90e2", // Blue for sea
+      sea: "#87ceeb", // Pale blue for sea
       shallow: "#000000", // Black for shallow water
       monsters: "#e05050", // Red for monsters
       cubes: "#f9d9a9", // Yellow-tan for cubes
