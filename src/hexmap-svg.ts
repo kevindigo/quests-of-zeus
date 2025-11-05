@@ -2,15 +2,7 @@
 // Generates an SVG representation of the hex map
 
 import type { HexCell, HexColor, TerrainType } from "./hexmap.ts";
-import {
-  generateCityIcon,
-  generateCloudsIcon,
-  generateCubesIcon,
-  generateFoundationsIcon,
-  generateMonsterIcon,
-  generateTempleIcon,
-  generateZeusIcon,
-} from "./icons-svg.ts";
+import { generateZeusIcon, generateCityIcon, generateMonsterIcon, generateTempleIcon, generateCloudsIcon, generateCubesIcon, generateFoundationsIcon } from "./icons-svg.ts";
 
 export interface HexMapSVGOptions {
   cellSize?: number;
@@ -39,8 +31,7 @@ export class HexMapSVG {
   public generateHexCell(cell: HexCell, x: number, y: number): string {
     const { cellSize, strokeWidth, showCoordinates, showTerrainLabels } =
       this.options;
-    const hexPoints = this.calculateHexPoints(x, y);
-
+    
     // Get terrain color
     const terrainColor = this.getTerrainColor(cell.terrain);
     const strokeColor = this.getStrokeColor(cell.color);
@@ -49,12 +40,29 @@ export class HexMapSVG {
     const centerX = x + cellSize;
     const centerY = y + cellSize;
 
+    // Use thicker stroke for colored hexes (cities with assigned colors)
+    const effectiveStrokeWidth = cell.color !== "none" ? strokeWidth * 3 : strokeWidth;
+    
+    // For thick borders, we need to inset the hex to prevent overlap
+    let hexPoints: string;
+    if (cell.color !== "none") {
+      // For colored hexes, inset the polygon to make room for the thick border
+      // Add 0.5px extra to ensure no overlap with adjacent hexes
+      const insetAmount = (effectiveStrokeWidth / 2) + 0.5;
+      hexPoints = this.calculateHexPoints(x + insetAmount, y + insetAmount, cellSize - insetAmount);
+    } else {
+      // For regular hexes, use normal calculation
+      hexPoints = this.calculateHexPoints(x, y);
+    }
+
     let cellContent = `
       <polygon 
         points="${hexPoints}" 
         fill="${terrainColor}" 
         stroke="${strokeColor}" 
-        stroke-width="${strokeWidth}"
+        stroke-width="${effectiveStrokeWidth}"
+        stroke-linejoin="round"
+        stroke-linecap="round"
         data-q="${cell.q}" 
         data-r="${cell.r}"
         data-terrain="${cell.terrain}"
@@ -129,8 +137,8 @@ export class HexMapSVG {
   /**
    * Calculate the six points of a hexagon
    */
-  public calculateHexPoints(x: number, y: number): string {
-    const { cellSize } = this.options;
+  public calculateHexPoints(x: number, y: number, size?: number): string {
+    const cellSize = size ?? this.options.cellSize;
     const points: string[] = [];
 
     for (let i = 0; i < 6; i++) {
@@ -190,6 +198,7 @@ export class HexMapSVG {
       black: "#000000",
       green: "#008000",
       yellow: "#ffff00",
+      teal: "#008080",
     };
     return colors[color] || "#333333";
   }
@@ -218,6 +227,8 @@ export class HexMapSVG {
     };
     return labels[terrain] || terrain;
   }
+
+
 
   /**
    * Generate complete SVG for the hex map
