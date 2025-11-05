@@ -330,8 +330,6 @@ Deno.test("Game logic - city placement sets 2 random neighbors to sea", () => {
   }
   
   // Also verify that cities are not adjacent to each other (they should be spaced out)
-  const cityCoordinates = new Set(cityCells.map(cell => `${cell.q},${cell.r}`));
-  
   for (const cityCell of cityCells) {
     const neighbors = hexMap.getNeighbors(cityCell.q, cityCell.r);
     const adjacentCities = neighbors.filter(neighbor => neighbor.terrain === "city");
