@@ -1,4 +1,3 @@
-- Place zeus in a neighbor of the center hex
 - Change display colors of hex types:
   - Zeus 
   - Sea blue
