@@ -198,7 +198,6 @@ export class HexMapSVG {
       black: "#000000",
       green: "#008000",
       yellow: "#ffff00",
-      teal: "#008080",
     };
     return colors[color] || "#333333";
   }

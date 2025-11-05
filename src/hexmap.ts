@@ -19,14 +19,13 @@ export type HexColor =
   | "blue"
   | "black"
   | "green"
-  | "yellow"
-  | "teal";
+  | "yellow";
 
 // Color constants for the 6 fundamental colors
 // These colors are used to power actions in the game
 export const COLORS = {
   BLACK: "black" as HexColor,
-  TEAL: "teal" as HexColor,
+  BLUE: "blue" as HexColor,
   RED: "red" as HexColor,
   YELLOW: "yellow" as HexColor,
   GREEN: "green" as HexColor,
@@ -35,7 +34,7 @@ export const COLORS = {
 
 export const ALL_COLORS: HexColor[] = [
   COLORS.BLACK,
-  COLORS.TEAL,
+  COLORS.BLUE,
   COLORS.RED,
   COLORS.YELLOW,
   COLORS.GREEN,
@@ -199,6 +198,13 @@ export class HexMap {
     for (const [terrainType, count] of terrainPlacements) {
       let placed = 0;
 
+      // For temples, create a shuffled color array to assign random colors
+      let templeColors: HexColor[] = [];
+      if (terrainType === "temple") {
+        templeColors = [...ALL_COLORS];
+        this.shuffleArray(templeColors);
+      }
+
       // First pass: try to place with landmass constraints
       while (placed < count && cellIndex < availableCells.length) {
         const cell = availableCells[cellIndex];
@@ -209,6 +215,12 @@ export class HexMap {
           // Only place if the cell is still shallows (not already taken by previous placement)
           if (cell.terrain === "shallow") {
             cell.terrain = terrainType;
+            
+            // Assign random color to temples, similar to cities
+            if (terrainType === "temple") {
+              cell.color = templeColors[placed];
+            }
+            
             placed++;
           }
         }
@@ -232,6 +244,12 @@ export class HexMap {
           // Fallback: place on any shallow cell without landmass constraint
           if (cell.terrain === "shallow") {
             cell.terrain = terrainType;
+            
+            // Assign random color to temples, similar to cities
+            if (terrainType === "temple") {
+              cell.color = templeColors[placed];
+            }
+            
             placed++;
           }
         }
