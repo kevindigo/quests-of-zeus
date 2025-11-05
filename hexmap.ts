@@ -1,18 +1,18 @@
 // Hexagonal map representation for Oracle of Delphi
 // The game uses a hexagon-shaped grid with radius 6 and various terrain types
 
-export type TerrainType = 
-  | "zeus"          // Zeus locations
-  | "sea"           // Sea tiles
-  | "shallow"       // Shallow water
-  | "monsters"      // Monster locations
-  | "cubes"         // Cube locations
-  | "temple"        // Temple locations
-  | "clouds"        // Cloud locations
-  | "city"          // City locations
-  | "foundations";  // Foundation locations
+export type TerrainType =
+  | "zeus" // Zeus locations
+  | "sea" // Sea tiles
+  | "shallow" // Shallow water
+  | "monsters" // Monster locations
+  | "cubes" // Cube locations
+  | "temple" // Temple locations
+  | "clouds" // Cloud locations
+  | "city" // City locations
+  | "foundations"; // Foundation locations
 
-export type HexColor = 
+export type HexColor =
   | "none"
   | "red"
   | "pink"
@@ -23,9 +23,9 @@ export type HexColor =
 
 export interface HexCell {
   // Coordinates using axial coordinate system for hex grids
-  q: number;        // Column coordinate
-  r: number;        // Row coordinate
-  
+  q: number; // Column coordinate
+  r: number; // Row coordinate
+
   // Cell characteristics
   terrain: TerrainType;
   color: HexColor;
@@ -33,8 +33,8 @@ export interface HexCell {
 
 export class HexMap {
   private grid: HexCell[][];
-  readonly width: number = 13;  // -6 to +6 inclusive
-  readonly height: number = 13;  // -6 to +6 inclusive
+  readonly width: number = 13; // -6 to +6 inclusive
+  readonly height: number = 13; // -6 to +6 inclusive
 
   constructor() {
     this.grid = this.generateGrid();
@@ -54,38 +54,44 @@ export class HexMap {
   private generateGrid(): HexCell[][] {
     const grid: HexCell[][] = [];
     const radius = 6;
-    
+
     // Generate hexagon-shaped grid
     for (let q = -radius; q <= radius; q++) {
       const row: HexCell[] = [];
       const r1 = Math.max(-radius, -q - radius);
       const r2 = Math.min(radius, -q + radius);
-      
+
       for (let r = r1; r <= r2; r++) {
         // Calculate distance from center
         const distanceFromCenter = this.hexDistance(q, r, 0, 0);
-        
+
         // Generate terrain based on distance from center
         const terrain = this.generateTerrain(q, r, distanceFromCenter);
-        
+
         const cell: HexCell = {
           q,
           r,
           terrain,
-          color: "none"
+          color: "none",
         };
-        
+
         // Add special locations based on terrain and position
         this.addSpecialLocations(cell, q, r, distanceFromCenter);
-        
+
         row.push(cell);
       }
       grid.push(row);
     }
-    
+
+    // Ensure grid is valid before placing special terrain
+    if (!grid || grid.length === 0) {
+      console.error("generateGrid: Grid generation failed, grid is empty");
+      return grid;
+    }
+
     // Place special terrain types randomly
     this.placeSpecialTerrain(grid);
-    
+
     return grid;
   }
 
@@ -101,24 +107,32 @@ export class HexMap {
   /**
    * Generate terrain type based on position and distance from center
    */
-  private generateTerrain(q: number, r: number, _distanceFromCenter: number): TerrainType {
+  private generateTerrain(
+    q: number,
+    r: number,
+    _distanceFromCenter: number,
+  ): TerrainType {
     // Center hex (q=0, r=0) should always be zeus
     if (q === 0 && r === 0) {
       return "zeus";
     }
-    
+
     // The six hexes surrounding the center should always be sea
     const surroundingHexes = [
-      [1, 0], [1, -1], [0, -1],
-      [-1, 0], [-1, 1], [0, 1]
+      [1, 0],
+      [1, -1],
+      [0, -1],
+      [-1, 0],
+      [-1, 1],
+      [0, 1],
     ];
-    
+
     for (const [dq, dr] of surroundingHexes) {
       if (q === dq && r === dr) {
         return "sea";
       }
     }
-    
+
     // For all other hexes, default to shallows
     return "shallow";
   }
@@ -127,7 +141,12 @@ export class HexMap {
    * Add special locations like oracles, ports, and sanctuaries
    * Note: Special locations are now represented by terrain types
    */
-  private addSpecialLocations(_cell: HexCell, _q: number, _r: number, _distanceFromCenter: number): void {
+  private addSpecialLocations(
+    _cell: HexCell,
+    _q: number,
+    _r: number,
+    _distanceFromCenter: number,
+  ): void {
     // Special locations are now handled through terrain types
     // oracles, ports, and sanctuaries are represented by their respective terrain types
   }
@@ -136,7 +155,7 @@ export class HexMap {
    * Place special terrain types randomly across the map
    * - 6 cities (placed first in corners)
    * - 6 cubes
-   * - 6 temples  
+   * - 6 temples
    * - 6 foundations
    * - 9 monsters
    * - 12 clouds
@@ -144,11 +163,17 @@ export class HexMap {
    * None of these should overlap with each other or with the center 7 hexes
    */
   private placeSpecialTerrain(grid: HexCell[][]): void {
+    // Ensure grid is valid before proceeding
+    if (!grid || !Array.isArray(grid) || grid.length === 0) {
+      console.error("placeSpecialTerrain: Invalid grid provided", grid);
+      return;
+    }
+    
     // Place cities first in the corners
     this.placeCities(grid);
-    
+
     const availableCells: HexCell[] = [];
-    
+
     // Collect all cells that are shallows (not the center 7 hexes and not cities)
     // We need to iterate through the grid array directly since getCell expects a different structure
     for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
@@ -162,29 +187,29 @@ export class HexMap {
         }
       }
     }
-    
+
     // Shuffle available cells for random placement
     this.shuffleArray(availableCells);
-    
+
     // Place terrain types with their required counts (excluding cities which are already placed)
     const terrainPlacements: [TerrainType, number][] = [
       ["cubes", 6],
-      ["temple", 6], 
+      ["temple", 6],
       ["foundations", 6],
       ["monsters", 9],
-      ["clouds", 12]
+      ["clouds", 12],
     ];
-    
+
     let cellIndex = 0;
-    
+
     for (const [terrainType, count] of terrainPlacements) {
       let placed = 0;
-      
+
       // First pass: try to place with landmass constraints
       while (placed < count && cellIndex < availableCells.length) {
         const cell = availableCells[cellIndex];
         cellIndex++;
-        
+
         // Check if this cell is a valid candidate for placement
         if (this.isValidTerrainPlacement(cell, grid)) {
           // Only place if the cell is still shallows (not already taken by previous placement)
@@ -194,18 +219,22 @@ export class HexMap {
           }
         }
       }
-      
+
       // Second pass: if we couldn't place enough, relax constraints for remaining cells
       if (placed < count) {
-        console.warn(`Could only place ${placed} of ${count} ${terrainType} cells with constraints, relaxing constraints for remaining ${count - placed}`);
-        
+        console.warn(
+          `Could only place ${placed} of ${count} ${terrainType} cells with constraints, relaxing constraints for remaining ${
+            count - placed
+          }`,
+        );
+
         // Reset cellIndex to start from beginning for fallback placement
         cellIndex = 0;
-        
+
         while (placed < count && cellIndex < availableCells.length) {
           const cell = availableCells[cellIndex];
           cellIndex++;
-          
+
           // Fallback: place on any shallow cell without landmass constraint
           if (cell.terrain === "shallow") {
             cell.terrain = terrainType;
@@ -213,12 +242,14 @@ export class HexMap {
           }
         }
       }
-      
+
       if (placed < count) {
-        console.warn(`Could only place ${placed} of ${count} ${terrainType} cells even with relaxed constraints`);
+        console.warn(
+          `Could only place ${placed} of ${count} ${terrainType} cells even with relaxed constraints`,
+        );
       }
     }
-    
+
     // Final step: Convert 90% of remaining shallows to sea
     this.convertShallowsToSea(grid);
   }
@@ -231,33 +262,43 @@ export class HexMap {
     const visited = new Set<string>();
     const queue: HexCell[] = [startHex];
     visited.add(`${startHex.q},${startHex.r}`);
-    
+
     while (queue.length > 0) {
       const current = queue.shift()!;
-      
+
       // Check all 6 adjacent cells
       for (let direction = 0; direction < 6; direction++) {
-        const adjacentCoords = this.getAdjacent(current.q, current.r, direction);
+        const adjacentCoords = this.getAdjacent(
+          current.q,
+          current.r,
+          direction,
+        );
         if (!adjacentCoords) {
           continue; // Skip if adjacent cell is off the map
         }
-        
-        const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+
+        const adjacentCell = this.getCellFromGrid(
+          grid,
+          adjacentCoords.q,
+          adjacentCoords.r,
+        );
         if (!adjacentCell) {
           continue; // Skip if adjacent cell is off the map
         }
-        
+
         const cellKey = `${adjacentCell.q},${adjacentCell.r}`;
-        
+
         // If we haven't visited this cell and it's part of the landmass (neither sea nor shallows)
-        if (!visited.has(cellKey) && 
-            (adjacentCell.terrain !== "shallow" && adjacentCell.terrain !== "sea")) {
+        if (
+          !visited.has(cellKey) &&
+          (adjacentCell.terrain !== "shallow" && adjacentCell.terrain !== "sea")
+        ) {
           visited.add(cellKey);
           queue.push(adjacentCell);
         }
       }
     }
-    
+
     return visited.size;
   }
 
@@ -274,32 +315,36 @@ export class HexMap {
     if (cell.terrain !== "shallow") {
       return false;
     }
-    
+
     // Check all 6 adjacent cells
     for (let direction = 0; direction < 6; direction++) {
       const adjacentCoords = this.getAdjacent(cell.q, cell.r, direction);
       if (!adjacentCoords) {
         continue; // Skip if adjacent cell is off the map
       }
-      
-      const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+
+      const adjacentCell = this.getCellFromGrid(
+        grid,
+        adjacentCoords.q,
+        adjacentCoords.r,
+      );
       if (!adjacentCell) {
         continue; // Skip if adjacent cell is off the map
       }
-      
+
       // Check if this adjacent cell will still have at least one shallows or sea neighbor
       // after we place the special terrain here
       if (!this.hasShallowsOrSeaNeighbor(adjacentCell, cell, grid)) {
         return false;
       }
     }
-    
+
     // Check landmass size constraint: placing special terrain here shouldn't create
     // a landmass larger than 4 hexes
     // First, temporarily change the cell's terrain to simulate the placement
     const originalTerrain = cell.terrain;
     cell.terrain = "cubes"; // Use any special terrain type for simulation
-    
+
     // Find the largest landmass among the adjacent cells
     let maxLandmassSize = 0;
     for (let direction = 0; direction < 6; direction++) {
@@ -307,30 +352,36 @@ export class HexMap {
       if (!adjacentCoords) {
         continue;
       }
-      
-      const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+
+      const adjacentCell = this.getCellFromGrid(
+        grid,
+        adjacentCoords.q,
+        adjacentCoords.r,
+      );
       if (!adjacentCell) {
         continue;
       }
-      
+
       // Only check landmass for cells that are NOT sea or shallows (actual landmass)
-      if (adjacentCell.terrain !== "shallow" && adjacentCell.terrain !== "sea") {
+      if (
+        adjacentCell.terrain !== "shallow" && adjacentCell.terrain !== "sea"
+      ) {
         const size = this.landmassSize(adjacentCell, grid);
         if (size > maxLandmassSize) {
           maxLandmassSize = size;
         }
       }
     }
-    
+
     // Restore the original terrain
     cell.terrain = originalTerrain;
-    
+
     // Reject if placing special terrain would create a landmass larger than 4 hexes
     // But only if there are adjacent landmasses to check (maxLandmassSize > 0)
     if (maxLandmassSize > 0 && maxLandmassSize > 4) {
       return false;
     }
-    
+
     return true;
   }
 
@@ -338,29 +389,41 @@ export class HexMap {
    * Check if a cell has at least one shallows or sea neighbor, excluding the candidate cell
    * that we're considering placing special terrain on
    */
-  private hasShallowsOrSeaNeighbor(cell: HexCell, candidateCell: HexCell, grid: HexCell[][]): boolean {
+  private hasShallowsOrSeaNeighbor(
+    cell: HexCell,
+    candidateCell: HexCell,
+    grid: HexCell[][],
+  ): boolean {
     for (let direction = 0; direction < 6; direction++) {
       const adjacentCoords = this.getAdjacent(cell.q, cell.r, direction);
       if (!adjacentCoords) {
         continue; // Skip if adjacent cell is off the map
       }
-      
-      const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+
+      const adjacentCell = this.getCellFromGrid(
+        grid,
+        adjacentCoords.q,
+        adjacentCoords.r,
+      );
       if (!adjacentCell) {
         continue; // Skip if adjacent cell is off the map
       }
-      
+
       // Skip the candidate cell (the one we're considering placing special terrain on)
-      if (adjacentCell.q === candidateCell.q && adjacentCell.r === candidateCell.r) {
+      if (
+        adjacentCell.q === candidateCell.q && adjacentCell.r === candidateCell.r
+      ) {
         continue;
       }
-      
+
       // Check if this neighbor is shallows or sea
-      if (adjacentCell.terrain === "shallow" || adjacentCell.terrain === "sea") {
+      if (
+        adjacentCell.terrain === "shallow" || adjacentCell.terrain === "sea"
+      ) {
         return true;
       }
     }
-    
+
     return false;
   }
 
@@ -370,7 +433,7 @@ export class HexMap {
    */
   private convertShallowsToSea(grid: HexCell[][]): void {
     const shallowCells: HexCell[] = [];
-    
+
     // Collect all remaining shallow cells
     for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
       const row = grid[arrayQ];
@@ -383,13 +446,13 @@ export class HexMap {
         }
       }
     }
-    
+
     // Shuffle the shallow cells for random conversion
     this.shuffleArray(shallowCells);
-    
+
     // Calculate how many cells to convert (90% rounded down)
     const cellsToConvert = Math.floor(shallowCells.length * 0.9);
-    
+
     // Convert the first 90% of shuffled shallow cells to sea
     for (let i = 0; i < cellsToConvert && i < shallowCells.length; i++) {
       shallowCells[i].terrain = "sea";
@@ -399,48 +462,103 @@ export class HexMap {
   /**
    * Place the 6 city tiles near the corners of the hex map
    * For each corner, pick a random direction (+2 or +4) and a random distance (0 to 2)
-   * Place the city there
+   * Place the city there, then set 2 random neighboring hexes to sea
    */
   private placeCities(grid: HexCell[][]): void {
     for (let cornerDirection = 0; cornerDirection < 6; cornerDirection++) {
       // Get the corner coordinates
       const cornerCoords = this.getCorner(cornerDirection);
-      
+
       // Pick a random direction offset: either +2 or +4
       const directionOffset = Math.random() < 0.5 ? 2 : 4;
       const placementDirection = (cornerDirection + directionOffset) % 6;
-      
+
       // Pick a random distance: 0 to 2
       const distance = Math.floor(Math.random() * 3);
-      
+
       // Calculate placement coordinates
       let placementQ = cornerCoords.q;
       let placementR = cornerCoords.r;
-      
+
       // Move from the corner in the chosen direction for the chosen distance
       for (let i = 0; i < distance; i++) {
-        const adjacent = this.getAdjacent(placementQ, placementR, placementDirection);
+        const adjacent = this.getAdjacent(
+          placementQ,
+          placementR,
+          placementDirection,
+        );
         if (!adjacent) break;
-        
+
         placementQ = adjacent.q;
         placementR = adjacent.r;
       }
-      
+
       // Place the city if the cell exists
       const cell = this.getCellFromGrid(grid, placementQ, placementR);
       if (cell && cell.terrain === "shallow") {
         cell.terrain = "city";
+
+        // After placing city, set 2 random neighboring hexes to sea
+        this.setRandomNeighborsToSea(grid, placementQ, placementR);
       } else {
         // Fallback: place at the corner if the randomized placement failed
-        const cornerCell = this.getCellFromGrid(grid, cornerCoords.q, cornerCoords.r);
+        const cornerCell = this.getCellFromGrid(
+          grid,
+          cornerCoords.q,
+          cornerCoords.r,
+        );
         if (cornerCell && cornerCell.terrain === "shallow") {
           cornerCell.terrain = "city";
+
+          // After placing city, set 2 random neighboring hexes to sea
+          this.setRandomNeighborsToSea(grid, cornerCoords.q, cornerCoords.r);
         }
       }
     }
   }
 
+  /**
+   * Set 2 random neighboring hexes of a given cell to sea
+   * @param grid - The grid containing all cells
+   * @param q - The q coordinate of the center cell
+   * @param r - The r coordinate of the center cell
+   */
+  private setRandomNeighborsToSea(
+    grid: HexCell[][],
+    q: number,
+    r: number,
+  ): void {
+    // Get all neighboring cells using the provided grid
+    const neighbors: HexCell[] = [];
+    
+    // Check all 6 directions using getAdjacent
+    for (let direction = 0; direction < 6; direction++) {
+      const adjacentCoords = this.getAdjacent(q, r, direction);
+      if (adjacentCoords) {
+        const neighbor = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        if (neighbor) {
+          neighbors.push(neighbor);
+        }
+      }
+    }
 
+    // Filter neighbors that are currently shallows (eligible to become sea)
+    const eligibleNeighbors = neighbors.filter((cell) =>
+      cell.terrain === "shallow"
+    );
+
+    // If there are eligible neighbors, randomly select 2 of them
+    if (eligibleNeighbors.length > 0) {
+      // Shuffle the eligible neighbors
+      this.shuffleArray(eligibleNeighbors);
+
+      // Set up to 2 random neighbors to sea
+      const neighborsToConvert = Math.min(2, eligibleNeighbors.length);
+      for (let i = 0; i < neighborsToConvert; i++) {
+        eligibleNeighbors[i].terrain = "sea";
+      }
+    }
+  }
 
   /**
    * Shuffle array using Fisher-Yates algorithm
@@ -455,20 +573,24 @@ export class HexMap {
   /**
    * Get a cell at specific coordinates from a provided grid
    */
-  private getCellFromGrid(grid: HexCell[][], q: number, r: number): HexCell | null {
+  private getCellFromGrid(
+    grid: HexCell[][],
+    q: number,
+    r: number,
+  ): HexCell | null {
     // Convert axial coordinates to array indices
-    const arrayQ = q + 6;  // Offset to make coordinates non-negative
-    
+    const arrayQ = q + 6; // Offset to make coordinates non-negative
+
     // Check if q coordinate is within bounds
     if (arrayQ < 0 || arrayQ >= grid.length) {
       return null;
     }
-    
+
     const row = grid[arrayQ];
     if (!row) {
       return null;
     }
-    
+
     // For hexagonal grid, we need to find the cell with matching r coordinate
     // Since each row only contains valid r coordinates for that q
     for (const cell of row) {
@@ -476,7 +598,7 @@ export class HexMap {
         return cell;
       }
     }
-    
+
     return null;
   }
 
@@ -500,24 +622,28 @@ export class HexMap {
    *   5: Northwest (q+0, r-1)
    * @returns Object with {q, r} coordinates of the adjacent hex, or null if direction is invalid
    */
-  getAdjacent(q: number, r: number, direction: number): {q: number, r: number} | null {
+  getAdjacent(
+    q: number,
+    r: number,
+    direction: number,
+  ): { q: number; r: number } | null {
     if (direction < 0 || direction > 5) {
       return null;
     }
-    
+
     const directionVectors = [
-      [1, -1],  // 0: Northeast
-      [1, 0],   // 1: East
-      [0, 1],   // 2: Southeast
-      [-1, 1],  // 3: Southwest
-      [-1, 0],  // 4: West
-      [0, -1]   // 5: Northwest
+      [1, -1], // 0: Northeast
+      [1, 0], // 1: East
+      [0, 1], // 2: Southeast
+      [-1, 1], // 3: Southwest
+      [-1, 0], // 4: West
+      [0, -1], // 5: Northwest
     ];
-    
+
     const [dq, dr] = directionVectors[direction];
     return {
       q: q + dq,
-      r: r + dr
+      r: r + dr,
     };
   }
 
@@ -526,7 +652,7 @@ export class HexMap {
    */
   getNeighbors(q: number, r: number): HexCell[] {
     const neighbors: HexCell[] = [];
-    
+
     // Check all 6 directions using getAdjacent
     for (let direction = 0; direction < 6; direction++) {
       const adjacentCoords = this.getAdjacent(q, r, direction);
@@ -537,7 +663,7 @@ export class HexMap {
         }
       }
     }
-    
+
     return neighbors;
   }
 
@@ -573,19 +699,19 @@ export class HexMap {
    *   5: Northwest (q+0, r-1)
    * @returns The corner coordinates {q, r} at the edge of the map in the specified direction
    */
-  private getCorner(direction: number): {q: number, r: number} {
+  private getCorner(direction: number): { q: number; r: number } {
     let currentQ = 0;
     let currentR = 0;
-    
+
     // Traverse outward in the specified direction to the edge of the map
     for (let distance = 1; distance <= 6; distance++) {
       const adjacent = this.getAdjacent(currentQ, currentR, direction);
       if (!adjacent) break;
-      
+
       currentQ = adjacent.q;
       currentR = adjacent.r;
     }
-    
+
     return { q: currentQ, r: currentR };
   }
 
@@ -598,8 +724,6 @@ export class HexMap {
       cell.color = color;
     }
   }
-
-
 
   /**
    * Serialize the map for storage or transmission
@@ -618,8 +742,6 @@ export class HexMap {
   }
 }
 
-
-
 // Game state
 let gameMap: HexMap = new HexMap();
 
@@ -631,17 +753,15 @@ export function getCurrentMap(): HexMap {
 // UI Functions
 export function generateNewMap(): HexMap {
   gameMap = new HexMap();
-  console.log('New map generated (old method)');
+  console.log("New map generated (old method)");
   return gameMap;
 }
-
-
 
 export function getMapStatistics() {
   const terrainCounts: Record<string, number> = {};
   const grid = gameMap.getGrid();
   let totalCells = 0;
-  
+
   // The grid is a jagged array (hexagon shape), so we need to iterate through each row
   for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
     const row = grid[arrayQ];
@@ -655,25 +775,23 @@ export function getMapStatistics() {
       }
     }
   }
-  
+
   return {
     dimensions: {
       width: gameMap.width,
-      height: gameMap.height
+      height: gameMap.height,
     },
     terrainCounts,
-    totalCells
+    totalCells,
   };
 }
-
-
 
 export function getMap() {
   return {
     map: gameMap.serialize(),
     dimensions: {
       width: gameMap.width,
-      height: gameMap.height
-    }
+      height: gameMap.height,
+    },
   };
 }

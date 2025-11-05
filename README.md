@@ -1,6 +1,7 @@
 # Oracle of Delphi PWA
 
-A Progressive Web App implementation of the Oracle of Delphi boardgame with AI opponents, built with Deno 2.5.
+A Progressive Web App implementation of the Oracle of Delphi boardgame with AI
+opponents, built with Deno 2.5.
 
 ## Features
 
@@ -49,7 +50,8 @@ deno task dev
 
 ## Development
 
-This project follows an incremental development approach. The current state is a basic PWA skeleton with:
+This project follows an incremental development approach. The current state is a
+basic PWA skeleton with:
 
 - ✅ Deno 2.5 server setup (static files only)
 - ✅ PWA manifest and service worker
@@ -63,12 +65,14 @@ This project follows an incremental development approach. The current state is a
 ## Architecture
 
 **Client-Side Only**: The game now runs entirely in the browser:
+
 - Game logic is implemented in JavaScript/TypeScript
 - No server-side API dependencies
 - Map generation happens in the browser
 - Works offline with service worker caching
 
 **Key Components**:
+
 - `game.js` - Core game logic, hex map, terrain generation
 - `index.html` - Game UI and controls
 - `main.ts` - Simple static file server (development)

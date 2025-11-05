@@ -1,6 +1,7 @@
 # Instructions for AI
 
 ## Context
+
 - This is a PWA app using deno 2.5
   - Important: Deno 2.5 does not support emit
   - We must not use regexp-based transpilations
@@ -10,13 +11,17 @@
 - UI code can be javascript; all logic should be typescript
 
 ## Hex Characteristics Requirements
+
 Each hex in the game must have the following characteristics:
-1) **Color**: none, red, pink, blue, black, green, yellow
-2) **Type**: zeus, sea, shallow, monsters, cubes, temple, clouds, city, foundations
+
+1. **Color**: none, red, pink, blue, black, green, yellow
+2. **Type**: zeus, sea, shallow, monsters, cubes, temple, clouds, city,
+   foundations
 
 ## Guidelines
+
 - Keep code simple and readable
-- Always update unit tests when adding features  
+- Always update unit tests when adding features
 - Use consistent naming conventions
 - Prefer composition over inheritance
 - Only use comments for workarounds or confusing code
@@ -24,11 +29,14 @@ Each hex in the game must have the following characteristics:
 - Cleanly separate UI elements from "engine" elements
 
 ## City Placement Rules
+
 - `placeCities` should place each city near one of the 6 corners of the hex map
-- For each corner, pick a random direction (+2 or +4) and a random distance (0 to 2)
+- For each corner, pick a random direction (+2 or +4) and a random distance (0
+  to 2)
 - Place the city there
 
 ## Main Files:
+
 - main.ts (primary game code)
 - main_test.ts (unit tests)
 - index.html (entry point)
