@@ -85,12 +85,3 @@ Deno.test("Sea to shallows conversion - basic functionality", () => {
   }
 });
 
-// Run the test
-if (import.meta.main) {
-  Deno.test({
-    name: "Sea to shallows conversion test",
-    fn: async () => {
-      await Deno.runTests();
-    },
-  });
-}
