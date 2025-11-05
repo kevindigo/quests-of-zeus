@@ -689,7 +689,9 @@ export class HexMap {
 
   /**
    * Place the 6 city tiles near the corners of the hex map
-   * For each corner, pick a random direction (+2 or +4) and a random distance (0 to 2)
+   * For each corner, pick a random direction (+2 or +4) and a random distance
+   * - For clockwise direction (+2): distance can be 0 to 2
+   * - For counter-clockwise direction (+4): distance can be 0 to 1
    * Place the city there, then set 2 random neighboring hexes to sea
    * Each city is randomly assigned one of the 6 fundamental colors
    */
@@ -702,12 +704,15 @@ export class HexMap {
       // Get the corner coordinates
       const cornerCoords = this.getCorner(cornerDirection);
 
-      // Pick a random direction offset: either +2 or +4
+      // Pick a random direction offset: either +2 (clockwise) or +4 (counter-clockwise)
       const directionOffset = Math.random() < 0.5 ? 2 : 4;
       const placementDirection = (cornerDirection + directionOffset) % 6;
 
-      // Pick a random distance: 0 to 2
-      const distance = Math.floor(Math.random() * 3);
+      // Pick a random distance based on direction:
+      // - For clockwise direction (+2): distance can be 0 to 2
+      // - For counter-clockwise direction (+4): distance can be 0 to 1
+      const maxDistance = directionOffset === 2 ? 2 : 1;
+      const distance = Math.floor(Math.random() * (maxDistance + 1));
 
       // Calculate placement coordinates
       let placementQ = cornerCoords.q;

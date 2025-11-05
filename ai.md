@@ -31,8 +31,9 @@ Each hex in the game must have the following characteristics:
 ## City Placement Rules
 
 - `placeCities` should place each city near one of the 6 corners of the hex map
-- For each corner, pick a random direction (+2 or +4) and a random distance (0
-  to 2)
+- For each corner, pick a random direction (+2 or +4) and a random distance
+  - For clockwise direction (+2): distance can be 0 to 2
+  - For counter-clockwise direction (+4): distance can be 0 to 1
 - Place the city there
 
 ## Main Files:
