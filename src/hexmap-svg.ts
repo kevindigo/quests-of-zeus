@@ -159,7 +159,7 @@ export class HexMapSVG {
     const colors: Record<TerrainType, string> = {
       zeus: "#ffd700", // Gold for Zeus
       sea: "#4a90e2", // Blue for sea
-      shallow: "#87ceeb", // Light blue for shallow water
+      shallow: "#000000", // Black for shallow water
       monsters: "#8b0000", // Dark red for monsters
       cubes: "#ffa500", // Orange for cubes
       temple: "#800080", // Purple for temple
