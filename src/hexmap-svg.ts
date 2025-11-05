@@ -164,8 +164,8 @@ export class HexMapSVG {
       cubes: "#ffa500", // Orange for cubes
       temple: "#800080", // Purple for temple
       clouds: "#f0f8ff", // Light blue-white for clouds
-      city: "#696969", // Gray for city
-      foundations: "#8b4513", // Brown for foundations
+      city: "#b0b0b0", // Light gray for city
+      foundations: "#b0b0b0", // Light gray for foundations
     };
     return colors[terrain] || "#cccccc";
   }
