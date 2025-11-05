@@ -151,6 +151,53 @@ export function generateCityIcon(options: IconOptions): string {
 }
 
 /**
+ * Generate a temple icon with a square base (no top line) and sloped roof
+ * Simple thick black line drawing matching the city icon style
+ */
+export function generateTempleIcon(options: IconOptions): string {
+  const { centerX, centerY, cellSize } = options;
+  
+  // Scale the icon based on cell size - same scale as city icon
+  const scale = cellSize / 40; // Base scale on default cell size of 40
+  const size = 12 * scale * 2.5; // 2.5x larger to fill more space
+  
+  // Monochrome black color with thick strokes
+  const strokeColor = "#000000";
+  const strokeWidth = 2.5 * scale; // Thick black lines
+  
+  return `
+    <g transform="translate(${centerX}, ${centerY})" class="temple-icon">
+      <!-- Square base with bottom line and no top line -->
+      <path d="
+        M ${-size * 0.4} ${-size * 0.3}
+        L ${-size * 0.4} ${size * 0.3}
+        L ${size * 0.4} ${size * 0.3}
+        L ${size * 0.4} ${-size * 0.3}
+      " 
+        fill="none" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth}" 
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      
+      <!-- Sloped roof with two lines at ~15 degree angle, extending 20% past each side -->
+      <path d="
+        M ${-size * 0.48} ${-size * 0.3}
+        L ${0} ${-size * 0.5}
+        L ${size * 0.48} ${-size * 0.3}
+      " 
+        fill="none" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth}" 
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </g>
+  `;
+}
+
+/**
  * Generate a monster icon with a realistic paw print design
  * Features a large main pad, four toe pads above, and claw marks
  */
