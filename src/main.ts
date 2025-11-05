@@ -21,5 +21,4 @@ app.use(async (context, next) => {
 
 const PORT = 8000;
 console.log(`Static file server running on http://localhost:${PORT}`);
-console.log(`The game is now entirely client-side!`);
 await app.listen({ port: PORT });
