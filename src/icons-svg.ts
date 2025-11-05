@@ -232,52 +232,52 @@ export function generateMonsterIcon(options: IconOptions): string {
         stroke-linejoin="round"
       />
       
-      <!-- Four evenly spaced toe pads above the main pad -->
-      <!-- Leftmost toe -->
+      <!-- Four toe pads above the main pad - middle toes higher, outer toes lower -->
+      <!-- Leftmost toe - moved down -->
       <circle 
         cx="${-size * 0.45}" 
-        cy="${-size * 0.3}" 
+        cy="${-size * 0.25}" 
         r="${size * 0.12}" 
         fill="none" 
         stroke="${strokeColor}" 
         stroke-width="${strokeWidth}"
       />
       
-      <!-- Left middle toe -->
+      <!-- Left middle toe - moved up -->
       <circle 
         cx="${-size * 0.15}" 
-        cy="${-size * 0.3}" 
+        cy="${-size * 0.35}" 
         r="${size * 0.12}" 
         fill="none" 
         stroke="${strokeColor}" 
         stroke-width="${strokeWidth}"
       />
       
-      <!-- Right middle toe -->
+      <!-- Right middle toe - moved up -->
       <circle 
         cx="${size * 0.15}" 
-        cy="${-size * 0.3}" 
+        cy="${-size * 0.35}" 
         r="${size * 0.12}" 
         fill="none" 
         stroke="${strokeColor}" 
         stroke-width="${strokeWidth}"
       />
       
-      <!-- Rightmost toe -->
+      <!-- Rightmost toe - moved down -->
       <circle 
         cx="${size * 0.45}" 
-        cy="${-size * 0.3}" 
+        cy="${-size * 0.25}" 
         r="${size * 0.12}" 
         fill="none" 
         stroke="${strokeColor}" 
         stroke-width="${strokeWidth}"
       />
       
-      <!-- Claw ticks above each toe pad -->
-      <!-- Leftmost claw -->
+      <!-- Claw ticks above each toe pad - adjusted for new toe positions -->
+      <!-- Leftmost claw - moved down with toe -->
       <path d="
-        M ${-size * 0.45} ${-size * 0.45}
-        L ${-size * 0.45} ${-size * 0.55}
+        M ${-size * 0.45} ${-size * 0.4}
+        L ${-size * 0.45} ${-size * 0.5}
       " 
         fill="none" 
         stroke="${strokeColor}" 
@@ -285,10 +285,10 @@ export function generateMonsterIcon(options: IconOptions): string {
         stroke-linecap="round"
       />
       
-      <!-- Left middle claw -->
+      <!-- Left middle claw - moved up with toe -->
       <path d="
-        M ${-size * 0.15} ${-size * 0.45}
-        L ${-size * 0.15} ${-size * 0.55}
+        M ${-size * 0.15} ${-size * 0.5}
+        L ${-size * 0.15} ${-size * 0.6}
       " 
         fill="none" 
         stroke="${strokeColor}" 
@@ -296,10 +296,10 @@ export function generateMonsterIcon(options: IconOptions): string {
         stroke-linecap="round"
       />
       
-      <!-- Right middle claw -->
+      <!-- Right middle claw - moved up with toe -->
       <path d="
-        M ${size * 0.15} ${-size * 0.45}
-        L ${size * 0.15} ${-size * 0.55}
+        M ${size * 0.15} ${-size * 0.5}
+        L ${size * 0.15} ${-size * 0.6}
       " 
         fill="none" 
         stroke="${strokeColor}" 
@@ -307,10 +307,10 @@ export function generateMonsterIcon(options: IconOptions): string {
         stroke-linecap="round"
       />
       
-      <!-- Rightmost claw -->
+      <!-- Rightmost claw - moved down with toe -->
       <path d="
-        M ${size * 0.45} ${-size * 0.45}
-        L ${size * 0.45} ${-size * 0.55}
+        M ${size * 0.45} ${-size * 0.4}
+        L ${size * 0.45} ${-size * 0.5}
       " 
         fill="none" 
         stroke="${strokeColor}" 
