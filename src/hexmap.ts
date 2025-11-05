@@ -198,11 +198,22 @@ export class HexMap {
     for (const [terrainType, count] of terrainPlacements) {
       let placed = 0;
 
-      // For temples, create a shuffled color array to assign random colors
+      // For temples and clouds, create shuffled color arrays to assign random colors
       let templeColors: HexColor[] = [];
+      let cloudColors: HexColor[] = [];
       if (terrainType === "temple") {
         templeColors = [...ALL_COLORS];
         this.shuffleArray(templeColors);
+      } else if (terrainType === "clouds") {
+        // For clouds, we need 12 hexes with 6 colors, so each color appears twice
+        // Create an array with each color repeated twice
+        cloudColors = [];
+        for (const color of ALL_COLORS) {
+          cloudColors.push(color);
+          cloudColors.push(color);
+        }
+        // Shuffle the colors to distribute them randomly
+        this.shuffleArray(cloudColors);
       }
 
       // First pass: try to place with landmass constraints
@@ -219,6 +230,10 @@ export class HexMap {
             // Assign random color to temples, similar to cities
             if (terrainType === "temple") {
               cell.color = templeColors[placed];
+            }
+            // Assign colors to clouds - each color appears on exactly 2 cloud hexes
+            else if (terrainType === "clouds") {
+              cell.color = cloudColors[placed];
             }
             
             placed++;
@@ -248,6 +263,10 @@ export class HexMap {
             // Assign random color to temples, similar to cities
             if (terrainType === "temple") {
               cell.color = templeColors[placed];
+            }
+            // Assign colors to clouds - each color appears on exactly 2 cloud hexes
+            else if (terrainType === "clouds") {
+              cell.color = cloudColors[placed];
             }
             
             placed++;
