@@ -37,6 +37,8 @@ Each hex in the game must have the following characteristics:
 
 ## Main Files:
 
-- main.ts (primary game code)
-- main_test.ts (unit tests)
+- src/main.ts (static file server)
+- src/hexmap.ts (primary game logic)
+- src/hexmap-svg.ts (SVG visualization)
+- tests/ (unit tests)
 - index.html (entry point)

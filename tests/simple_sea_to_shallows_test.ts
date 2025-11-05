@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { HexMap } from "../hexmap.ts";
+import { HexMap } from "../src/hexmap.ts";
 
 function testSimpleSeaToShallows() {
   console.log("Testing simple sea-to-shallows conversion...\n");

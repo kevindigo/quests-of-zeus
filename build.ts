@@ -5,7 +5,7 @@ import { denoPlugins } from "https://deno.land/x/esbuild_deno_loader@0.9.0/mod.t
 
 async function build() {
   console.log("Building TypeScript logic to JavaScript...");
-  console.log("✓ Converting hexmap.ts → dist/hexmap.js");
+  console.log("✓ Converting src/hexmap.ts → dist/hexmap.js");
 
   try {
     // Clean the dist directory first
@@ -16,9 +16,9 @@ async function build() {
     }
     await Deno.mkdir("dist", { recursive: true });
 
-    // Build hexmap.ts to dist/hexmap.js
+    // Build src/hexmap.ts to dist/hexmap.js
     const result = await esbuild.build({
-      entryPoints: ["hexmap.ts", "hexmap-svg.ts"],
+      entryPoints: ["src/hexmap.ts", "src/hexmap-svg.ts"],
       bundle: true,
       outdir: "dist",
       format: "esm",
@@ -32,8 +32,8 @@ async function build() {
 
     console.log("✓ Build completed successfully!");
     console.log("✓ All TypeScript logic compiled to JavaScript");
-    console.log("✓ Source: hexmap.ts → Output: dist/hexmap.js");
-    console.log("✓ Source: hexmap-svg.ts → Output: dist/hexmap-svg.js");
+    console.log("✓ Source: src/hexmap.ts → Output: dist/hexmap.js");
+    console.log("✓ Source: src/hexmap-svg.ts → Output: dist/hexmap-svg.js");
 
     if (result.warnings.length > 0) {
       console.log("Warnings:");

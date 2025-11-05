@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run --allow-read
 
 import { assertEquals } from "@std/assert";
-import { type HexCell, HexMap } from "../hexmap.ts";
+import { type HexCell, HexMap } from "../src/hexmap.ts";
 
 // Test the sea-to-shallows conversion functionality
 Deno.test("Sea to shallows conversion - basic functionality", () => {

@@ -2,7 +2,8 @@ const CACHE_NAME = "oracle-delphi-v2";
 const urlsToCache = [
   "/",
   "/index.html",
-  "/game.js",
+  "/dist/hexmap.js",
+  "/dist/hexmap-svg.js",
   "/manifest.json",
   "/assets/icon-192.png",
   "/assets/icon-512.png",

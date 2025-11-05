@@ -38,14 +38,17 @@ deno task dev
 ### Project Structure
 
 ```
-├── main.ts              # Simple static file server (development only)
-├── index.html           # Main HTML file with game UI
-├── game.js              # Client-side game logic
-├── manifest.json        # PWA manifest
-├── sw.js               # Service Worker
-├── assets/             # Static assets (icons, images)
-├── deno.json           # Deno configuration
-└── README.md           # This file
+├── src/
+│   ├── main.ts         # Simple static file server (development only)
+│   ├── hexmap.ts       # Hex map generation and game logic
+│   └── hexmap-svg.ts   # SVG visualization for hex maps
+├── index.html          # Main HTML file with game UI
+├── dist/               # Compiled JavaScript files
+├── manifest.json       # PWA manifest
+├── sw.js              # Service Worker
+├── assets/            # Static assets (icons, images)
+├── deno.json          # Deno configuration
+└── README.md          # This file
 ```
 
 ## Development
@@ -73,9 +76,10 @@ basic PWA skeleton with:
 
 **Key Components**:
 
-- `game.js` - Core game logic, hex map, terrain generation
+- `src/hexmap.ts` - Core game logic, hex map, terrain generation
+- `src/hexmap-svg.ts` - SVG visualization for hex maps
 - `index.html` - Game UI and controls
-- `main.ts` - Simple static file server (development)
+- `src/main.ts` - Simple static file server (development)
 
 ## Game Features
 

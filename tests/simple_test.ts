@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { HexMap } from "../hexmap.ts";
+import { HexMap } from "../src/hexmap.ts";
 
 function testSimple() {
   console.log("Testing simple grid creation...\n");

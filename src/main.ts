@@ -3,7 +3,7 @@
 // This file is now a simple static file server for development
 // In production, this would be replaced by a proper static file server
 
-import { Application } from "https://deno.land/x/oak@v12.6.1/mod.ts";
+import { Application } from "@oak/oak";
 
 const app = new Application();
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { HexMap } from "../hexmap.ts";
+import { HexMap } from "../src/hexmap.ts";
 
 function testCityNeighborsSimple() {
   console.log("Testing city neighbor sea placement (simple test)...\n");
