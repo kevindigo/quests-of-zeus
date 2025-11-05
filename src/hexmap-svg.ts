@@ -2,7 +2,15 @@
 // Generates an SVG representation of the hex map
 
 import type { HexCell, HexColor, TerrainType } from "./hexmap.ts";
-import { generateZeusIcon, generateCityIcon, generateMonsterIcon, generateTempleIcon, generateCloudsIcon, generateCubesIcon, generateFoundationsIcon } from "./icons-svg.ts";
+import {
+  generateCityIcon,
+  generateCloudsIcon,
+  generateCubesIcon,
+  generateFoundationsIcon,
+  generateMonsterIcon,
+  generateTempleIcon,
+  generateZeusIcon,
+} from "./icons-svg.ts";
 
 export interface HexMapSVGOptions {
   cellSize?: number;
@@ -31,7 +39,7 @@ export class HexMapSVG {
   public generateHexCell(cell: HexCell, x: number, y: number): string {
     const { cellSize, strokeWidth, showCoordinates, showTerrainLabels } =
       this.options;
-    
+
     // Get terrain color
     const terrainColor = this.getTerrainColor(cell.terrain);
     const strokeColor = this.getStrokeColor(cell.color);
@@ -41,15 +49,21 @@ export class HexMapSVG {
     const centerY = y + cellSize;
 
     // Use thicker stroke for colored hexes (cities with assigned colors)
-    const effectiveStrokeWidth = cell.color !== "none" ? strokeWidth * 3 : strokeWidth;
-    
+    const effectiveStrokeWidth = cell.color !== "none"
+      ? strokeWidth * 3
+      : strokeWidth;
+
     // For thick borders, we need to inset the hex to prevent overlap
     let hexPoints: string;
     if (cell.color !== "none") {
       // For colored hexes, inset the polygon to make room for the thick border
       // Add 0.5px extra to ensure no overlap with adjacent hexes
       const insetAmount = (effectiveStrokeWidth / 2) + 0.5;
-      hexPoints = this.calculateHexPoints(x + insetAmount, y + insetAmount, cellSize - insetAmount);
+      hexPoints = this.calculateHexPoints(
+        x + insetAmount,
+        y + insetAmount,
+        cellSize - insetAmount,
+      );
     } else {
       // For regular hexes, use normal calculation
       hexPoints = this.calculateHexPoints(x, y);
@@ -226,8 +240,6 @@ export class HexMapSVG {
     };
     return labels[terrain] || terrain;
   }
-
-
 
   /**
    * Generate complete SVG for the hex map

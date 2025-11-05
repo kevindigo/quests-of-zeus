@@ -43,7 +43,6 @@ function testCityPlacementDistances() {
     console.log("Cities can now be placed:");
     console.log("  - Up to 2 spaces away in clockwise direction (+2)");
     console.log("  - Up to 1 space away in counter-clockwise direction (+4)");
-
   } catch (error) {
     console.error("❌ Error during test:", error);
   }

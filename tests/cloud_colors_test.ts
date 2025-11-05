@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { HexMap, HexColor } from "../src/hexmap.ts";
+import { HexColor, HexMap } from "../src/hexmap.ts";
 
 function testCloudColors() {
   console.log("Testing cloud hex color assignment...\n");
@@ -10,10 +10,10 @@ function testCloudColors() {
     console.log("✓ HexMap created successfully");
 
     const grid = hexMap.getGrid();
-    
+
     // Find all cloud hexes
     const cloudHexes: { q: number; r: number; color: HexColor }[] = [];
-    
+
     for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
       const row = grid[arrayQ];
       if (row) {
@@ -23,7 +23,7 @@ function testCloudColors() {
             cloudHexes.push({
               q: cell.q,
               r: cell.r,
-              color: cell.color
+              color: cell.color,
             });
           }
         }
@@ -31,7 +31,7 @@ function testCloudColors() {
     }
 
     console.log(`Found ${cloudHexes.length} cloud hexes`);
-    
+
     // Count colors
     const colorCounts: Record<HexColor, number> = {
       "none": 0,
@@ -40,7 +40,7 @@ function testCloudColors() {
       "blue": 0,
       "black": 0,
       "green": 0,
-      "yellow": 0
+      "yellow": 0,
     };
 
     for (const cloudHex of cloudHexes) {
@@ -82,9 +82,10 @@ function testCloudColors() {
     if (colorCounts["none"] === 0) {
       console.log("✅ All cloud hexes have colors assigned");
     } else {
-      console.log(`❌ ${colorCounts["none"]} cloud hexes have no color assigned`);
+      console.log(
+        `❌ ${colorCounts["none"]} cloud hexes have no color assigned`,
+      );
     }
-
   } catch (error) {
     console.error("❌ Error:", error);
   }

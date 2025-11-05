@@ -32,15 +32,17 @@ function testTempleColors() {
     }
 
     console.log(`Found ${templeCells.length} temple cells`);
-    
+
     // Check if temples have colors assigned
-    const coloredTemples = templeCells.filter(cell => cell.color !== "none");
+    const coloredTemples = templeCells.filter((cell) => cell.color !== "none");
     console.log(`Temples with colors: ${coloredTemples.length}`);
-    
+
     // Show individual temple colors
     console.log("\nTemple colors:");
     templeCells.forEach((cell, index) => {
-      console.log(`  Temple ${index + 1}: ${cell.color} at (${cell.q}, ${cell.r})`);
+      console.log(
+        `  Temple ${index + 1}: ${cell.color} at (${cell.q}, ${cell.r})`,
+      );
     });
 
     // Check if we have the expected number of unique colors
@@ -57,11 +59,15 @@ function testTempleColors() {
     if (coloredTemples.length === 6) {
       console.log("✅ All temples have colors assigned");
     } else {
-      console.log(`❌ Expected all 6 temples to have colors, but ${coloredTemples.length} have colors`);
+      console.log(
+        `❌ Expected all 6 temples to have colors, but ${coloredTemples.length} have colors`,
+      );
     }
 
     if (templeColors.size >= 1) {
-      console.log("✅ Temples have colored outlines (at least one unique color)");
+      console.log(
+        "✅ Temples have colored outlines (at least one unique color)",
+      );
     } else {
       console.log("❌ No temple colors found - outlines may not be visible");
     }
@@ -69,8 +75,8 @@ function testTempleColors() {
     // Check that no two temples share the same coordinates
     const coordinateSet = new Set<string>();
     const duplicateCoordinates = new Set<string>();
-    
-    templeCells.forEach(cell => {
+
+    templeCells.forEach((cell) => {
       const coord = `${cell.q},${cell.r}`;
       if (coordinateSet.has(coord)) {
         duplicateCoordinates.add(coord);
@@ -81,9 +87,12 @@ function testTempleColors() {
     if (duplicateCoordinates.size === 0) {
       console.log("✅ All temples have unique coordinates");
     } else {
-      console.log(`❌ Found duplicate temple coordinates: ${Array.from(duplicateCoordinates).join(", ")}`);
+      console.log(
+        `❌ Found duplicate temple coordinates: ${
+          Array.from(duplicateCoordinates).join(", ")
+        }`,
+      );
     }
-
   } catch (error) {
     console.error("❌ Error:", error);
   }

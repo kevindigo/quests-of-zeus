@@ -128,8 +128,6 @@ export class HexMap {
     return (Math.abs(q1 - q2) + Math.abs(r1 - r2) + Math.abs(s1 - s2)) / 2;
   }
 
-
-
   /**
    * Add special locations like oracles, ports, and sanctuaries
    * Note: Special locations are now represented by terrain types
@@ -161,7 +159,7 @@ export class HexMap {
       console.error("placeSpecialTerrain: Invalid grid provided", grid);
       return;
     }
-    
+
     // Place cities first in the corners
     this.placeCities(grid);
 
@@ -226,16 +224,15 @@ export class HexMap {
           // Only place if the cell is still shallows (not already taken by previous placement)
           if (cell.terrain === "shallow") {
             cell.terrain = terrainType;
-            
+
             // Assign random color to temples, similar to cities
             if (terrainType === "temple") {
               cell.color = templeColors[placed];
-            }
-            // Assign colors to clouds - each color appears on exactly 2 cloud hexes
+            } // Assign colors to clouds - each color appears on exactly 2 cloud hexes
             else if (terrainType === "clouds") {
               cell.color = cloudColors[placed];
             }
-            
+
             placed++;
           }
         }
@@ -259,16 +256,15 @@ export class HexMap {
           // Fallback: place on any shallow cell without landmass constraint
           if (cell.terrain === "shallow") {
             cell.terrain = terrainType;
-            
+
             // Assign random color to temples, similar to cities
             if (terrainType === "temple") {
               cell.color = templeColors[placed];
-            }
-            // Assign colors to clouds - each color appears on exactly 2 cloud hexes
+            } // Assign colors to clouds - each color appears on exactly 2 cloud hexes
             else if (terrainType === "clouds") {
               cell.color = cloudColors[placed];
             }
-            
+
             placed++;
           }
         }
@@ -511,7 +507,7 @@ export class HexMap {
     const attempts = 10;
     const shuffledSeaCells = [...seaCells];
     this.shuffleArray(shuffledSeaCells);
-    
+
     let successfulConversions = 0;
     let attemptsMade = 0;
 
@@ -536,14 +532,20 @@ export class HexMap {
       candidateCell.color = "none"; // Reset color for shallows
 
       // 4. Check all neighbors of the candidate cell
-      const allNeighbors = this.getNeighborsFromGrid(candidateCell.q, candidateCell.r, grid);
+      const allNeighbors = this.getNeighborsFromGrid(
+        candidateCell.q,
+        candidateCell.r,
+        grid,
+      );
       let conversionValid = true;
 
       for (const neighbor of allNeighbors) {
         if (neighbor.terrain === "sea") {
           // For sea neighbors: check if they can trace a path back to zeus
           // using only sea tiles (excluding the candidate cell which is now shallows)
-          if (!this.canReachZeusFromSeaNeighbor(neighbor, candidateCell, grid)) {
+          if (
+            !this.canReachZeusFromSeaNeighbor(neighbor, candidateCell, grid)
+          ) {
             conversionValid = false;
             break;
           }
@@ -569,14 +571,20 @@ export class HexMap {
       successfulConversions++;
     }
 
-    console.log(`Made ${attemptsMade} attempts to convert sea to shallows, ${successfulConversions} successful conversions`);
+    console.log(
+      `Made ${attemptsMade} attempts to convert sea to shallows, ${successfulConversions} successful conversions`,
+    );
   }
 
   /**
    * Check if a sea neighbor can reach zeus, considering that the candidate cell
    * might be converted to shallows (so we exclude it from the path)
    */
-  private canReachZeusFromSeaNeighbor(seaNeighbor: HexCell, candidateCell: HexCell, grid: HexCell[][]): boolean {
+  private canReachZeusFromSeaNeighbor(
+    seaNeighbor: HexCell,
+    candidateCell: HexCell,
+    grid: HexCell[][],
+  ): boolean {
     const visited = new Set<string>();
     const queue: HexCell[] = [seaNeighbor];
     visited.add(`${seaNeighbor.q},${seaNeighbor.r}`);
@@ -586,12 +594,20 @@ export class HexMap {
 
       // Check all 6 adjacent cells
       for (let direction = 0; direction < 6; direction++) {
-        const adjacentCoords = this.getAdjacent(current.q, current.r, direction);
+        const adjacentCoords = this.getAdjacent(
+          current.q,
+          current.r,
+          direction,
+        );
         if (!adjacentCoords) {
           continue; // Skip if adjacent cell is off the map
         }
 
-        const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        const adjacentCell = this.getCellFromGrid(
+          grid,
+          adjacentCoords.q,
+          adjacentCoords.r,
+        );
         if (!adjacentCell) {
           continue; // Skip if adjacent cell is off the map
         }
@@ -599,7 +615,10 @@ export class HexMap {
         const cellKey = `${adjacentCell.q},${adjacentCell.r}`;
 
         // Skip the candidate cell (it will become shallows, not part of sea path)
-        if (adjacentCell.q === candidateCell.q && adjacentCell.r === candidateCell.r) {
+        if (
+          adjacentCell.q === candidateCell.q &&
+          adjacentCell.r === candidateCell.r
+        ) {
           continue;
         }
 
@@ -623,17 +642,29 @@ export class HexMap {
   /**
    * Check if a cell has a neighbor of a specific terrain type
    */
-  private hasNeighborOfType(cell: HexCell, grid: HexCell[][], terrainType: TerrainType): boolean {
+  private hasNeighborOfType(
+    cell: HexCell,
+    grid: HexCell[][],
+    terrainType: TerrainType,
+  ): boolean {
     const neighbors = this.getNeighborsFromGrid(cell.q, cell.r, grid);
-    return neighbors.some(neighbor => neighbor && neighbor.terrain === terrainType);
+    return neighbors.some((neighbor) =>
+      neighbor && neighbor.terrain === terrainType
+    );
   }
 
   /**
    * Get all neighbors of a cell that have a specific terrain type
    */
-  private getNeighborsOfType(cell: HexCell, grid: HexCell[][], terrainType: TerrainType): HexCell[] {
+  private getNeighborsOfType(
+    cell: HexCell,
+    grid: HexCell[][],
+    terrainType: TerrainType,
+  ): HexCell[] {
     const neighbors = this.getNeighborsFromGrid(cell.q, cell.r, grid);
-    return neighbors.filter(neighbor => neighbor && neighbor.terrain === terrainType);
+    return neighbors.filter((neighbor) =>
+      neighbor && neighbor.terrain === terrainType
+    );
   }
 
   /**
@@ -650,12 +681,20 @@ export class HexMap {
 
       // Check all 6 adjacent cells
       for (let direction = 0; direction < 6; direction++) {
-        const adjacentCoords = this.getAdjacent(current.q, current.r, direction);
+        const adjacentCoords = this.getAdjacent(
+          current.q,
+          current.r,
+          direction,
+        );
         if (!adjacentCoords) {
           continue; // Skip if adjacent cell is off the map
         }
 
-        const adjacentCell = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        const adjacentCell = this.getCellFromGrid(
+          grid,
+          adjacentCoords.q,
+          adjacentCoords.r,
+        );
         if (!adjacentCell) {
           continue; // Skip if adjacent cell is off the map
         }
@@ -724,7 +763,7 @@ export class HexMap {
     // Create a shuffled copy of the colors to assign randomly to cities
     const shuffledColors = [...ALL_COLORS];
     this.shuffleArray(shuffledColors);
-    
+
     for (let cornerDirection = 0; cornerDirection < 6; cornerDirection++) {
       // Get the corner coordinates
       const cornerCoords = this.getCorner(cornerDirection);
@@ -797,12 +836,16 @@ export class HexMap {
   ): void {
     // Get all neighboring cells of the Zeus hex
     const neighbors: HexCell[] = [];
-    
+
     // Check all 6 directions using getAdjacent
     for (let direction = 0; direction < 6; direction++) {
       const adjacentCoords = this.getAdjacent(zeusQ, zeusR, direction);
       if (adjacentCoords) {
-        const neighbor = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        const neighbor = this.getCellFromGrid(
+          grid,
+          adjacentCoords.q,
+          adjacentCoords.r,
+        );
         if (neighbor) {
           neighbors.push(neighbor);
         }
@@ -828,12 +871,16 @@ export class HexMap {
   ): void {
     // Get all neighboring cells using the provided grid
     const neighbors: HexCell[] = [];
-    
+
     // Check all 6 directions using getAdjacent
     for (let direction = 0; direction < 6; direction++) {
       const adjacentCoords = this.getAdjacent(q, r, direction);
       if (adjacentCoords) {
-        const neighbor = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        const neighbor = this.getCellFromGrid(
+          grid,
+          adjacentCoords.q,
+          adjacentCoords.r,
+        );
         if (neighbor) {
           neighbors.push(neighbor);
         }
@@ -869,9 +916,9 @@ export class HexMap {
   }
 
   /**
-   * Assign random colors to all sea hexes
-   * This ensures all sea hexes have one of the 6 fundamental colors
-   * Colors are assigned randomly to hopefully achieve balanced distribution
+   * Assign colors to all sea hexes using constraint-based placement
+   * This ensures no adjacent sea hexes have the same color (like map coloring algorithm)
+   * and favors the color that has been used least so far for better distribution
    */
   private assignColorsToSeaHexes(grid: HexCell[][]): void {
     const seaCells: HexCell[] = [];
@@ -894,19 +941,172 @@ export class HexMap {
       return;
     }
 
-    // Create a shuffled array of colors that we'll cycle through
-    // This helps ensure a more balanced distribution than pure random assignment
-    const shuffledColors = [...ALL_COLORS];
-    this.shuffleArray(shuffledColors);
+    // Shuffle sea cells to introduce randomness in processing order
+    this.shuffleArray(seaCells);
 
-    // Assign colors to sea cells
-    for (let i = 0; i < seaCells.length; i++) {
-      // Use modulo to cycle through the shuffled colors
-      const colorIndex = i % shuffledColors.length;
-      seaCells[i].color = shuffledColors[colorIndex];
+    // Track color usage counts
+    const colorCounts: Record<HexColor, number> = {
+      none: 0,
+      red: 0,
+      pink: 0,
+      blue: 0,
+      black: 0,
+      green: 0,
+      yellow: 0,
+    };
+
+    // Assign colors using constraint-based approach with least-used color preference
+    for (const cell of seaCells) {
+      // Get colors used by adjacent sea cells
+      const adjacentColors = new Set<HexColor>();
+      const neighbors = this.getNeighborsFromGrid(cell.q, cell.r, grid);
+
+      for (const neighbor of neighbors) {
+        if (neighbor.terrain === "sea" && neighbor.color !== "none") {
+          adjacentColors.add(neighbor.color);
+        }
+      }
+
+      // Find available colors (all colors except those used by adjacent sea cells)
+      const availableColors = ALL_COLORS.filter((color) =>
+        !adjacentColors.has(color)
+      );
+
+      // If there are available colors, choose the one that has been used least so far
+      if (availableColors.length > 0) {
+        // Find the color with the minimum usage count among available colors
+        let leastUsedColor = availableColors[0];
+        let minCount = colorCounts[leastUsedColor];
+
+        for (const color of availableColors) {
+          if (colorCounts[color] < minCount) {
+            leastUsedColor = color;
+            minCount = colorCounts[color];
+          }
+        }
+
+        // If multiple colors have the same minimum count, choose randomly among them
+        const leastUsedColors = availableColors.filter(
+          (color) => colorCounts[color] === minCount
+        );
+        
+        if (leastUsedColors.length > 1) {
+          const randomIndex = Math.floor(Math.random() * leastUsedColors.length);
+          cell.color = leastUsedColors[randomIndex];
+        } else {
+          cell.color = leastUsedColor;
+        }
+
+        // Update the color count
+        colorCounts[cell.color]++;
+      } else {
+        // If no colors available (should be rare), choose the least conflicting color
+        // This minimizes same-color adjacencies when elimination is impossible
+        cell.color = this.getLeastConflictingColor(cell, grid);
+        colorCounts[cell.color]++;
+      }
     }
 
-    console.log(`Assigned colors to ${seaCells.length} sea hexes`);
+    // Count and log adjacent same-color sea hexes for debugging
+    const conflicts = this.countAdjacentSameColorSeaHexes(grid);
+    console.log(
+      `Assigned colors to ${seaCells.length} sea hexes with ${conflicts} same-color adjacencies`,
+    );
+    
+    // Log the final color distribution for debugging
+    console.log("Final sea color distribution:");
+    for (const color of ALL_COLORS) {
+      console.log(`  ${color}: ${colorCounts[color]} tiles`);
+    }
+  }
+
+  /**
+   * Get the color that would cause the fewest conflicts with adjacent sea hexes
+   * Used as fallback when no conflict-free color is available
+   */
+  private getLeastConflictingColor(cell: HexCell, grid: HexCell[][]): HexColor {
+    const neighbors = this.getNeighborsFromGrid(cell.q, cell.r, grid);
+
+    // Initialize conflict counts for all colors using a more TypeScript-friendly approach
+    const colorConflicts = {} as Record<HexColor, number>;
+
+    // Initialize all colors to 0 conflicts
+    for (const color of ALL_COLORS) {
+      colorConflicts[color] = 0;
+    }
+    colorConflicts.none = 0; // Also initialize 'none'
+
+    // Count potential conflicts for each color
+    for (const neighbor of neighbors) {
+      if (neighbor.terrain === "sea" && neighbor.color !== "none") {
+        colorConflicts[neighbor.color]++;
+      }
+    }
+
+    // Find the color with the fewest conflicts
+    let bestColor: HexColor = ALL_COLORS[0];
+    let minConflicts = colorConflicts[bestColor];
+
+    for (const color of ALL_COLORS) {
+      if (colorConflicts[color] < minConflicts) {
+        bestColor = color;
+        minConflicts = colorConflicts[color];
+      }
+    }
+
+    return bestColor;
+  }
+
+  /**
+   * Count the number of adjacent sea hexes that have the same color
+   * Used for debugging and validation
+   */
+  private countAdjacentSameColorSeaHexes(grid: HexCell[][]): number {
+    let conflicts = 0;
+    const processedPairs = new Set<string>();
+
+    for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+      const row = grid[arrayQ];
+      if (row) {
+        for (let arrayR = 0; arrayR < row.length; arrayR++) {
+          const cell = row[arrayR];
+          if (cell && cell.terrain === "sea" && cell.color !== "none") {
+            const neighbors = this.getNeighborsFromGrid(cell.q, cell.r, grid);
+
+            for (const neighbor of neighbors) {
+              if (neighbor.terrain === "sea" && neighbor.color !== "none") {
+                // Create a unique key for this pair to avoid double counting
+                const pairKey = this.getPairKey(cell, neighbor);
+
+                if (
+                  !processedPairs.has(pairKey) && cell.color === neighbor.color
+                ) {
+                  conflicts++;
+                  processedPairs.add(pairKey);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return conflicts;
+  }
+
+  /**
+   * Generate a unique key for a pair of cells to avoid double counting conflicts
+   */
+  private getPairKey(cell1: HexCell, cell2: HexCell): string {
+    const [minQ, maxQ] = [
+      Math.min(cell1.q, cell2.q),
+      Math.max(cell1.q, cell2.q),
+    ];
+    const [minR, maxR] = [
+      Math.min(cell1.r, cell2.r),
+      Math.max(cell1.r, cell2.r),
+    ];
+    return `${minQ},${minR}-${maxQ},${maxR}`;
   }
 
   /**
@@ -1001,7 +1201,11 @@ export class HexMap {
   /**
    * Get all neighboring cells for a given cell from a specific grid
    */
-  private getNeighborsFromGrid(q: number, r: number, grid: HexCell[][]): HexCell[] {
+  private getNeighborsFromGrid(
+    q: number,
+    r: number,
+    grid: HexCell[][],
+  ): HexCell[] {
     const neighbors: HexCell[] = [];
 
     // Check if grid is valid
@@ -1013,7 +1217,11 @@ export class HexMap {
     for (let direction = 0; direction < 6; direction++) {
       const adjacentCoords = this.getAdjacent(q, r, direction);
       if (adjacentCoords) {
-        const neighbor = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        const neighbor = this.getCellFromGrid(
+          grid,
+          adjacentCoords.q,
+          adjacentCoords.r,
+        );
         if (neighbor) {
           neighbors.push(neighbor);
         }
@@ -1135,12 +1343,12 @@ export function getMapStatistics() {
         const cell = row[arrayR];
         if (cell) {
           terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
-          
+
           // Count sea tiles by color
           if (cell.terrain === "sea" && cell.color !== "none") {
             seaColorCounts[cell.color] = (seaColorCounts[cell.color] || 0) + 1;
           }
-          
+
           totalCells++;
         }
       }
