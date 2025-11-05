@@ -219,8 +219,8 @@
         <div id="mapInfo" class="map-display" style="display: none"></div>
         <div id="hexMapContainer" class="hex-map-container">
           <div class="svg-controls">
-            <button id="toggleCoordinates">Hide Coordinates</button>
-            <button id="toggleLabels">Hide Labels</button>
+            <button id="toggleCoordinates">Show Coordinates</button>
+            <button id="toggleLabels">Show Labels</button>
             <button id="zoomIn">Zoom In</button>
             <button id="zoomOut">Zoom Out</button>
             <button id="resetZoom">Reset Zoom</button>
@@ -325,8 +325,8 @@
       // Hex Map SVG functionality
       let hexMapSVG;
       let currentOptions = {
-        showCoordinates: true,
-        showTerrainLabels: true,
+        showCoordinates: false,
+        showTerrainLabels: false,
         cellSize: 30,
       };
 
