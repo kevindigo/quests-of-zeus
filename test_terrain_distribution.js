@@ -1,10 +1,10 @@
-// Test script to verify terrain distribution after 90% shallows to sea conversion
+// Test script to verify terrain distribution after 100% shallows to sea conversion
 import { HexMap } from "./dist/hexmap.js";
 
 function testTerrainDistribution() {
   console.log("Testing terrain distribution for 5 generated maps...");
   console.log(
-    "Note: 90% of remaining shallows are converted to sea in the final step\n",
+    "Note: 100% of remaining shallows are converted to sea in the final step (ALL shallows become sea)\n",
   );
 
   for (let i = 0; i < 5; i++) {
@@ -27,7 +27,7 @@ function testTerrainDistribution() {
       }
     }
 
-    // Expected counts (after 90% shallows to sea conversion)
+    // Expected counts (after 100% shallows to sea conversion)
     const expectedCounts = {
       "zeus": 1,
       "cubes": 6,
@@ -49,17 +49,17 @@ function testTerrainDistribution() {
       );
     }
 
-    // Verify that sea tiles outnumber shallow tiles significantly (90% conversion)
+    // Verify that ALL shallows have been converted to sea (100% conversion)
     const seaCount = terrainCounts["sea"] || 0;
     const shallowCount = terrainCounts["shallow"] || 0;
     console.log(`  Sea vs Shallows: ${seaCount} sea, ${shallowCount} shallows`);
 
-    if (seaCount > shallowCount * 5) { // Sea should be at least 5x more than shallows
+    if (shallowCount === 0) { // ALL shallows should be converted to sea
       console.log(
-        "  ✓ Sea tiles significantly outnumber shallow tiles (90% conversion working)",
+        "  ✓ ALL shallows converted to sea (100% conversion working)",
       );
     } else {
-      console.log("  ✗ Sea tiles should significantly outnumber shallow tiles");
+      console.log("  ✗ ALL shallows should be converted to sea");
     }
 
     console.log(`  Total cells: ${totalCells}\n`);

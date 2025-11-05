@@ -201,7 +201,12 @@ Deno.test("Game logic - terrain distribution", () => {
   }
   
   for (const terrainType of expectedTerrainTypes) {
-    assertEquals(terrainCounts[terrainType] > 0, true, `Terrain type "${terrainType}" should appear at least once`);
+    // Shallow should have 0 count after 100% conversion to sea
+    if (terrainType === "shallow") {
+      assertEquals(terrainCounts[terrainType] || 0, 0, `Terrain type "${terrainType}" should be 0 after 100% conversion to sea`);
+    } else {
+      assertEquals(terrainCounts[terrainType] > 0, true, `Terrain type "${terrainType}" should appear at least once`);
+    }
   }
   
   // Total cells should match expected (hexagon with radius 6 has 127 cells)
@@ -222,17 +227,18 @@ Deno.test("Game logic - terrain distribution", () => {
     assertEquals(cell?.terrain, "sea", `Cell (${dq}, ${dr}) should be sea`);
   }
   
-  // Verify that sea tiles significantly outnumber shallow tiles (90% conversion)
+  // Verify that all shallows have been converted to sea (100% conversion)
   const seaCount = terrainCounts["sea"] || 0;
   const shallowCount = terrainCounts["shallow"] || 0;
-  assertEquals(seaCount > shallowCount * 5, true, "Sea tiles should significantly outnumber shallow tiles (90% conversion working)");
+  assertEquals(shallowCount, 0, "ALL shallows should be converted to sea (100% conversion working)");
+  assertEquals(seaCount > 0, true, "There should be sea tiles after conversion");
   
   // Log the distribution for verification
   console.log("Terrain distribution:");
   for (const [terrain, count] of Object.entries(terrainCounts)) {
     console.log(`  ${terrain}: ${count} cells`);
   }
-  console.log(`  Sea vs Shallows: ${seaCount} sea, ${shallowCount} shallows (${Math.round(seaCount / (seaCount + shallowCount) * 100)}% sea)`);
+  console.log(`  Sea vs Shallows: ${seaCount} sea, ${shallowCount} shallows (100% conversion - ALL shallows converted)`);
 });
 
 Deno.test("Game logic - city placement near corners", () => {
@@ -316,7 +322,7 @@ Deno.test("Game logic - city placement sets 2 random neighbors to sea", () => {
     // Count sea neighbors
     const seaNeighbors = neighbors.filter(neighbor => neighbor.terrain === "sea");
     
-    // Each city should have at least 1 sea neighbor (could be more due to the 90% conversion)
+    // Each city should have at least 1 sea neighbor (could be more due to the 100% conversion)
     // But we expect at least some sea neighbors due to the setRandomNeighborsToSea logic
     assertEquals(seaNeighbors.length >= 1, true, `City at (${cityCell.q}, ${cityCell.r}) should have at least 1 sea neighbor after placement`);
   }
@@ -363,9 +369,8 @@ Deno.test("Game logic - setRandomNeighborsToSea functionality", () => {
     // Count sea neighbors
     const seaNeighbors = neighbors.filter(neighbor => neighbor.terrain === "sea");
     
-    // Each city should have at least 1 sea neighbor due to setRandomNeighborsToSea
-    // (could be more due to the 90% conversion, but should have at least 1)
-    assertEquals(seaNeighbors.length >= 1, true, `City at (${cityCell.q}, ${cityCell.r}) should have at least 1 sea neighbor after setRandomNeighborsToSea`);
+    // Each city should have at least 2 sea neighbors due to setRandomNeighborsToSea
+    assertEquals(seaNeighbors.length >= 2, true, `City at (${cityCell.q}, ${cityCell.r}) should have at least 1 sea neighbor after setRandomNeighborsToSea`);
   }
   
   // Test edge case: create a simple scenario to verify the logic
@@ -373,8 +378,8 @@ Deno.test("Game logic - setRandomNeighborsToSea functionality", () => {
   const testHexMap = new HexMap();
   const testGrid = testHexMap.getGrid();
   
-  // Find a city and count its shallow neighbors before the 90% conversion
-  // This is tricky because the 90% conversion happens after city placement
+  // Find a city and count its shallow neighbors before the 100% conversion
+  // This is tricky because the 100% conversion happens after city placement
   // So we'll focus on verifying the overall behavior
   
   // Count total sea cells to ensure the feature is working
@@ -397,8 +402,8 @@ Deno.test("Game logic - setRandomNeighborsToSea functionality", () => {
   // We should have a significant number of sea cells due to:
   // - 6 center sea cells
   // - 2 sea neighbors for each of 6 cities (12 additional sea cells)
-  // - 90% conversion of remaining shallows
-  assertEquals(seaCells.length > 20, true, "Should have significant number of sea cells due to city neighbor conversion and 90% conversion");
+  // - 100% conversion of remaining shallows (ALL shallows become sea)
+  assertEquals(seaCells.length > 20, true, "Should have significant number of sea cells due to city neighbor conversion and 100% conversion");
   assertEquals(cityCellsCount, 6, "Should have exactly 6 cities");
 });
 
@@ -1112,7 +1117,7 @@ Deno.test("SVG Generator - generateSVG coordinate system consistency", () => {
 
 // Terrain Placement Validation Tests
 // Note: These tests use custom grids to test the validation logic independently
-// of the 90% shallows-to-sea conversion that happens in the final step
+// of the 100% shallows-to-sea conversion that happens in the final step
 
 Deno.test("isValidTerrainPlacement - rejects non-shallow cells", () => {
   const hexMap = new HexMap();
