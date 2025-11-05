@@ -64,19 +64,30 @@ Deno.test("Sea to shallows conversion - basic functionality", () => {
       const hasCityNeighbor = hexMap["hasNeighborOfType"](shallowCell, grid, "city");
       assertEquals(hasCityNeighbor, false, `Shallow cell at (${shallowCell.q}, ${shallowCell.r}) should not have city neighbor`);
       
-      // 3. All sea neighbors should be able to reach zeus
-      const seaNeighbors = hexMap["getNeighborsOfType"](shallowCell, grid, "sea");
-      let allCanReachZeus = true;
+      // 3. Check all neighbors of the shallow cell
+      const allNeighbors = hexMap["getNeighbors"](shallowCell.q, shallowCell.r);
+      let allConstraintsSatisfied = true;
       
-      for (const seaNeighbor of seaNeighbors) {
-        if (!hexMap["canReachZeus"](seaNeighbor, grid)) {
-          allCanReachZeus = false;
-          console.log(`Sea neighbor at (${seaNeighbor.q}, ${seaNeighbor.r}) cannot reach zeus`);
-          break;
+      for (const neighbor of allNeighbors) {
+        if (neighbor.terrain === "sea") {
+          // For sea neighbors: check if they can reach zeus
+          if (!hexMap["canReachZeus"](neighbor, grid)) {
+            allConstraintsSatisfied = false;
+            console.log(`Sea neighbor at (${neighbor.q}, ${neighbor.r}) cannot reach zeus`);
+            break;
+          }
+        } else if (neighbor.terrain !== "shallow") {
+          // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
+          if (!hexMap["hasNeighborOfType"](neighbor, grid, "sea")) {
+            allConstraintsSatisfied = false;
+            console.log(`Land neighbor at (${neighbor.q}, ${neighbor.r}) does not have sea access`);
+            break;
+          }
         }
+        // For shallow neighbors, no additional checks needed
       }
       
-      assertEquals(allCanReachZeus, true, `All sea neighbors of shallow cell at (${shallowCell.q}, ${shallowCell.r}) should be able to reach zeus`);
+      assertEquals(allConstraintsSatisfied, true, `All neighbor constraints should be satisfied for shallow cell at (${shallowCell.q}, ${shallowCell.r})`);
       
       console.log(`All constraints satisfied for shallow cell at (${shallowCell.q}, ${shallowCell.r})!`);
     }

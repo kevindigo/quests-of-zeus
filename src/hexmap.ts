@@ -482,25 +482,35 @@ export class HexMap {
       const originalTerrain = candidateCell.terrain;
       candidateCell.terrain = "shallow";
 
-      // 4. For each sea neighbor of the candidate cell, check if it can trace a path back to zeus
-      // using only sea tiles (excluding the candidate cell which is now shallows)
-      const seaNeighbors = this.getNeighborsOfType(candidateCell, grid, "sea");
-      let allSeaNeighborsCanReachZeus = true;
+      // 4. Check all neighbors of the candidate cell
+      const allNeighbors = this.getNeighborsFromGrid(candidateCell.q, candidateCell.r, grid);
+      let conversionValid = true;
 
-      for (const seaNeighbor of seaNeighbors) {
-        if (!this.canReachZeusFromSeaNeighbor(seaNeighbor, candidateCell, grid)) {
-          allSeaNeighborsCanReachZeus = false;
-          break;
+      for (const neighbor of allNeighbors) {
+        if (neighbor.terrain === "sea") {
+          // For sea neighbors: check if they can trace a path back to zeus
+          // using only sea tiles (excluding the candidate cell which is now shallows)
+          if (!this.canReachZeusFromSeaNeighbor(neighbor, candidateCell, grid)) {
+            conversionValid = false;
+            break;
+          }
+        } else if (neighbor.terrain !== "shallow") {
+          // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
+          if (!this.hasNeighborOfType(neighbor, grid, "sea")) {
+            conversionValid = false;
+            break;
+          }
         }
+        // For shallow neighbors, no additional checks needed
       }
 
-      // 5. If any sea neighbor cannot reach zeus, revert the candidate cell back to sea
-      if (!allSeaNeighborsCanReachZeus) {
+      // 5. If any neighbor check fails, revert the candidate cell back to sea
+      if (!conversionValid) {
         candidateCell.terrain = originalTerrain;
         continue;
       }
 
-      // 6. If we get to this point, leave the candidate cell as shallows
+      // 7. If we get to this point, leave the candidate cell as shallows
       // (it's already converted from step 3)
       successfulConversions++;
     }

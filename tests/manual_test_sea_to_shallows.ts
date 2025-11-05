@@ -55,18 +55,29 @@ function manualTest() {
               const hasCityNeighbor = hexMap["hasNeighborOfType"](cell, grid, "city");
               console.log(`    Has city neighbor: ${hasCityNeighbor} (should be false)`);
               
-              const seaNeighbors = hexMap["getNeighborsOfType"](cell, grid, "sea");
-              console.log(`    Number of sea neighbors: ${seaNeighbors.length}`);
+              // Check all neighbors with combined logic
+              const allNeighbors = hexMap["getNeighbors"](cell.q, cell.r);
+              let allConstraintsSatisfied = true;
               
-              let atLeastOneCanReachZeus = false;
-              for (const seaNeighbor of seaNeighbors) {
-                const canReach = hexMap["canReachZeusFromSeaNeighbor"](seaNeighbor, cell, grid);
-                console.log(`      Sea neighbor at (${seaNeighbor.q}, ${seaNeighbor.r}) can reach zeus: ${canReach}`);
-                if (canReach) {
-                  atLeastOneCanReachZeus = true;
+              for (const neighbor of allNeighbors) {
+                if (neighbor.terrain === "sea") {
+                  // For sea neighbors: check if they can trace a path back to zeus
+                  const canReach = hexMap["canReachZeusFromSeaNeighbor"](neighbor, cell, grid);
+                  console.log(`      Sea neighbor at (${neighbor.q}, ${neighbor.r}) can reach zeus: ${canReach}`);
+                  if (!canReach) {
+                    allConstraintsSatisfied = false;
+                  }
+                } else if (neighbor.terrain !== "shallow") {
+                  // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
+                  const hasSeaNeighbor = hexMap["hasNeighborOfType"](neighbor, grid, "sea");
+                  console.log(`      Land neighbor at (${neighbor.q}, ${neighbor.r}) has sea access: ${hasSeaNeighbor}`);
+                  if (!hasSeaNeighbor) {
+                    allConstraintsSatisfied = false;
+                  }
                 }
+                // For shallow neighbors, no additional checks needed
               }
-              console.log(`    At least one sea neighbor can reach zeus: ${atLeastOneCanReachZeus} (should be true)`);
+              console.log(`    All neighbor constraints satisfied: ${allConstraintsSatisfied} (should be true)`);
               
               break;
             }
@@ -120,7 +131,37 @@ function manualTest() {
             }
             console.log(`  At least one sea neighbor can reach zeus: ${atLeastOneCanReachZeus}`);
             
-            const isEligible = !hasZeusNeighbor && !hasCityNeighbor && atLeastOneCanReachZeus;
+            // Check all neighbors with combined logic (simulate conversion)
+            const originalTerrain = cell.terrain;
+            cell.terrain = "shallow"; // Temporarily convert to test
+            
+            const allNeighbors = hexMap["getNeighbors"](cell.q, cell.r);
+            let allConstraintsSatisfied = true;
+            
+            for (const neighbor of allNeighbors) {
+              if (neighbor.terrain === "sea") {
+                // For sea neighbors: check if they can trace a path back to zeus
+                const canReach = hexMap["canReachZeusFromSeaNeighbor"](neighbor, cell, grid);
+                console.log(`  Sea neighbor at (${neighbor.q}, ${neighbor.r}) can reach zeus: ${canReach}`);
+                if (!canReach) {
+                  allConstraintsSatisfied = false;
+                  console.log(`  Sea neighbor at (${neighbor.q}, ${neighbor.r}) would lose zeus access`);
+                }
+              } else if (neighbor.terrain !== "shallow") {
+                // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
+                const hasSeaNeighbor = hexMap["hasNeighborOfType"](neighbor, grid, "sea");
+                console.log(`  Land neighbor at (${neighbor.q}, ${neighbor.r}) has sea access: ${hasSeaNeighbor}`);
+                if (!hasSeaNeighbor) {
+                  allConstraintsSatisfied = false;
+                  console.log(`  Land neighbor at (${neighbor.q}, ${neighbor.r}) would lose sea access`);
+                }
+              }
+              // For shallow neighbors, no additional checks needed
+            }
+            
+            cell.terrain = originalTerrain; // Restore original terrain
+            
+            const isEligible = !hasZeusNeighbor && !hasCityNeighbor && allConstraintsSatisfied;
             console.log(`  Cell is eligible for conversion: ${isEligible}`);
             
             if (isEligible) {
