@@ -1,62 +1,88 @@
-import { HexMap, getMapStatistics } from "./src/hexmap.ts";
+import { getMapStatistics, HexMap } from "./src/hexmap.ts";
 
 /**
  * Compare color distributions between the old random assignment and new least-used preference
  */
 function compareColorDistributions(): void {
   console.log("=== Comparing Color Distribution Methods ===\n");
-  
+
   const testCount = 30;
   const colors = ["red", "pink", "blue", "black", "green", "yellow"];
-  
+
   // Test with current implementation (least-used preference)
   console.log("Testing with LEAST-USED COLOR PREFERENCE:");
   const newStats = runColorDistributionTest(testCount);
-  
+
   console.log("\n" + "=".repeat(50) + "\n");
-  
+
   // Test with old implementation (random assignment)
   console.log("Testing with RANDOM COLOR ASSIGNMENT:");
   const oldStats = runColorDistributionTest(testCount, true);
-  
+
   console.log("\n" + "=".repeat(50) + "\n");
   console.log("=== COMPARISON SUMMARY ===\n");
-  
+
   // Compare key metrics
   console.log("Key Metrics Comparison:");
   console.log(`- Average conflicts per map:`);
   console.log(`  Least-used: ${newStats.avgConflicts.toFixed(2)}`);
   console.log(`  Random:     ${oldStats.avgConflicts.toFixed(2)}`);
-  
+
   console.log(`\n- Maximum color difference in any map:`);
   console.log(`  Least-used: ${newStats.maxDifference} tiles`);
   console.log(`  Random:     ${oldStats.maxDifference} tiles`);
-  
+
   console.log(`\n- Average standard deviation per color:`);
   console.log(`  Least-used: ${newStats.avgStdDev.toFixed(2)} tiles`);
   console.log(`  Random:     ${oldStats.avgStdDev.toFixed(2)} tiles`);
-  
+
   // Improvement analysis
-  const conflictImprovement = ((oldStats.avgConflicts - newStats.avgConflicts) / oldStats.avgConflicts * 100).toFixed(1);
-  const balanceImprovement = ((oldStats.maxDifference - newStats.maxDifference) / oldStats.maxDifference * 100).toFixed(1);
-  
+  const conflictImprovement =
+    ((oldStats.avgConflicts - newStats.avgConflicts) / oldStats.avgConflicts *
+      100).toFixed(1);
+  const balanceImprovement =
+    ((oldStats.maxDifference - newStats.maxDifference) /
+      oldStats.maxDifference * 100).toFixed(1);
+
   console.log(`\n=== IMPROVEMENT ANALYSIS ===`);
-  console.log(`- Conflict reduction: ${conflictImprovement}% fewer same-color adjacencies`);
-  console.log(`- Balance improvement: ${balanceImprovement}% better color distribution`);
-  
-  if (parseFloat(conflictImprovement) > 0 && parseFloat(balanceImprovement) > 0) {
-    console.log("\n✅ SUCCESS: Least-used color preference provides better balance!");
+  console.log(
+    `- Conflict reduction: ${conflictImprovement}% fewer same-color adjacencies`,
+  );
+  console.log(
+    `- Balance improvement: ${balanceImprovement}% better color distribution`,
+  );
+
+  if (
+    parseFloat(conflictImprovement) > 0 && parseFloat(balanceImprovement) > 0
+  ) {
+    console.log(
+      "\n✅ SUCCESS: Least-used color preference provides better balance!",
+    );
   } else {
-    console.log("\n⚠️  Mixed results: Some metrics may need further optimization");
+    console.log(
+      "\n⚠️  Mixed results: Some metrics may need further optimization",
+    );
   }
 }
 
 /**
  * Run color distribution test with optional old method simulation
  */
-function runColorDistributionTest(testCount: number, useOldMethod: boolean = false): any {
-  const colorStats: Record<string, { min: number, max: number, total: number, counts: number[], stdDev: number }> = {};
-  
+function runColorDistributionTest(
+  testCount: number,
+  useOldMethod: boolean = false,
+): any {
+  const colorStats: Record<
+    string,
+    {
+      min: number;
+      max: number;
+      total: number;
+      counts: number[];
+      stdDev: number;
+    }
+  > = {};
+
   // Initialize stats for each color
   const colors = ["red", "pink", "blue", "black", "green", "yellow"];
   for (const color of colors) {
@@ -65,7 +91,7 @@ function runColorDistributionTest(testCount: number, useOldMethod: boolean = fal
       max: -Infinity,
       total: 0,
       counts: [],
-      stdDev: 0
+      stdDev: 0,
     };
   }
 
@@ -74,32 +100,34 @@ function runColorDistributionTest(testCount: number, useOldMethod: boolean = fal
 
   for (let i = 0; i < testCount; i++) {
     const map = new HexMap();
-    
+
     if (useOldMethod) {
       // Simulate old random assignment method
       simulateOldRandomAssignment(map);
     }
-    
+
     const grid = map.getGrid();
     const stats = getMapStatistics();
-    
+
     // Count conflicts
     const conflicts = countAdjacentSameColorSeaHexes(map, grid);
     totalConflicts += conflicts;
-    
+
     // Update stats for each color
     const currentCounts: number[] = [];
     for (const color of colors) {
-      const count = stats.seaColorCounts[color as keyof typeof stats.seaColorCounts] || 0;
+      const count =
+        stats.seaColorCounts[color as keyof typeof stats.seaColorCounts] || 0;
       colorStats[color].min = Math.min(colorStats[color].min, count);
       colorStats[color].max = Math.max(colorStats[color].max, count);
       colorStats[color].total += count;
       colorStats[color].counts.push(count);
       currentCounts.push(count);
     }
-    
+
     // Track maximum difference in this map
-    const mapDifference = Math.max(...currentCounts) - Math.min(...currentCounts);
+    const mapDifference = Math.max(...currentCounts) -
+      Math.min(...currentCounts);
     if (mapDifference > maxMapDifference) {
       maxMapDifference = mapDifference;
     }
@@ -110,27 +138,36 @@ function runColorDistributionTest(testCount: number, useOldMethod: boolean = fal
   for (const color of colors) {
     const stats = colorStats[color];
     const average = stats.total / testCount;
-    const variance = stats.counts.reduce((sum, count) => sum + Math.pow(count - average, 2), 0) / testCount;
+    const variance = stats.counts.reduce((sum, count) =>
+      sum + Math.pow(count - average, 2), 0) / testCount;
     stats.stdDev = Math.sqrt(variance);
     totalStdDev += stats.stdDev;
   }
 
   // Log results
   console.log(`Results after ${testCount} tests:`);
-  console.log(`- Average conflicts: ${(totalConflicts / testCount).toFixed(2)} same-color adjacencies`);
+  console.log(
+    `- Average conflicts: ${
+      (totalConflicts / testCount).toFixed(2)
+    } same-color adjacencies`,
+  );
   console.log(`- Maximum color difference: ${maxMapDifference} tiles`);
-  
+
   console.log("\nColor Distribution:");
   for (const color of colors) {
     const stats = colorStats[color];
     const average = stats.total / testCount;
-    console.log(`${color.toUpperCase()}: Avg ${average.toFixed(2)}, Range ${stats.min}-${stats.max}, StdDev ${stats.stdDev.toFixed(2)}`);
+    console.log(
+      `${color.toUpperCase()}: Avg ${
+        average.toFixed(2)
+      }, Range ${stats.min}-${stats.max}, StdDev ${stats.stdDev.toFixed(2)}`,
+    );
   }
 
   return {
     avgConflicts: totalConflicts / testCount,
     maxDifference: maxMapDifference,
-    avgStdDev: totalStdDev / colors.length
+    avgStdDev: totalStdDev / colors.length,
   };
 }
 
@@ -170,9 +207,10 @@ function simulateOldRandomAssignment(map: HexMap): void {
     }
 
     // Find available colors
-    const availableColors = ["red", "pink", "blue", "black", "green", "yellow"].filter(
-      (color) => !adjacentColors.has(color)
-    );
+    const availableColors = ["red", "pink", "blue", "black", "green", "yellow"]
+      .filter(
+        (color) => !adjacentColors.has(color),
+      );
 
     // Choose randomly from available colors (old method)
     if (availableColors.length > 0) {
@@ -181,7 +219,8 @@ function simulateOldRandomAssignment(map: HexMap): void {
     } else {
       // Fallback: choose randomly from all colors
       const randomIndex = Math.floor(Math.random() * 6);
-      cell.color = ["red", "pink", "blue", "black", "green", "yellow"][randomIndex];
+      cell.color =
+        ["red", "pink", "blue", "black", "green", "yellow"][randomIndex];
     }
   }
 }
@@ -200,13 +239,15 @@ function countAdjacentSameColorSeaHexes(map: HexMap, grid: any[][]): number {
         const cell = row[arrayR];
         if (cell && cell.terrain === "sea" && cell.color !== "none") {
           const neighbors = map.getNeighbors(cell.q, cell.r);
-          
+
           for (const neighbor of neighbors) {
             if (neighbor.terrain === "sea" && neighbor.color !== "none") {
               // Create a unique key for this pair to avoid double counting
               const pairKey = getPairKey(cell, neighbor);
-              
-              if (!processedPairs.has(pairKey) && cell.color === neighbor.color) {
+
+              if (
+                !processedPairs.has(pairKey) && cell.color === neighbor.color
+              ) {
                 conflicts++;
                 processedPairs.add(pairKey);
               }

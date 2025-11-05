@@ -1,4 +1,4 @@
-import { HexMap, getMapStatistics } from "../src/hexmap.ts";
+import { getMapStatistics, HexMap } from "../src/hexmap.ts";
 
 /**
  * Test to analyze the distribution of colors across sea tiles
@@ -6,10 +6,13 @@ import { HexMap, getMapStatistics } from "../src/hexmap.ts";
  */
 function testSeaColorDistribution(): void {
   console.log("=== Testing Sea Color Distribution ===");
-  
+
   const testCount = 50; // More tests for better statistics
-  const colorStats: Record<string, { min: number, max: number, total: number, counts: number[] }> = {};
-  
+  const colorStats: Record<
+    string,
+    { min: number; max: number; total: number; counts: number[] }
+  > = {};
+
   // Initialize stats for each color
   const colors = ["red", "pink", "blue", "black", "green", "yellow"];
   for (const color of colors) {
@@ -17,7 +20,7 @@ function testSeaColorDistribution(): void {
       min: Infinity,
       max: -Infinity,
       total: 0,
-      counts: []
+      counts: [],
     };
   }
 
@@ -28,14 +31,15 @@ function testSeaColorDistribution(): void {
     const map = new HexMap();
     const grid = map.getGrid();
     const stats = getMapStatistics();
-    
+
     // Count conflicts
     const conflicts = countAdjacentSameColorSeaHexes(map, grid);
     totalConflicts += conflicts;
-    
+
     // Update stats for each color
     for (const color of colors) {
-      const count = stats.seaColorCounts[color as keyof typeof stats.seaColorCounts] || 0;
+      const count =
+        stats.seaColorCounts[color as keyof typeof stats.seaColorCounts] || 0;
       colorStats[color].min = Math.min(colorStats[color].min, count);
       colorStats[color].max = Math.max(colorStats[color].max, count);
       colorStats[color].total += count;
@@ -45,27 +49,34 @@ function testSeaColorDistribution(): void {
   }
 
   console.log(`\nResults after ${testCount} tests:`);
-  console.log(`- Average conflicts: ${(totalConflicts / testCount).toFixed(2)} same-color adjacencies`);
+  console.log(
+    `- Average conflicts: ${
+      (totalConflicts / testCount).toFixed(2)
+    } same-color adjacencies`,
+  );
   console.log(`- Total sea tiles analyzed: ${totalSeaTiles}`);
-  console.log(`- Average sea tiles per map: ${(totalSeaTiles / testCount).toFixed(2)}`);
-  
+  console.log(
+    `- Average sea tiles per map: ${(totalSeaTiles / testCount).toFixed(2)}`,
+  );
+
   console.log("\n=== Color Distribution Analysis ===");
-  
+
   let maxDifference = 0;
   let mostUnevenMap = -1;
   let mostUnevenDifference = 0;
-  
+
   for (const color of colors) {
     const stats = colorStats[color];
     const average = stats.total / testCount;
-    const variance = stats.counts.reduce((sum, count) => sum + Math.pow(count - average, 2), 0) / testCount;
+    const variance = stats.counts.reduce((sum, count) =>
+      sum + Math.pow(count - average, 2), 0) / testCount;
     const stdDev = Math.sqrt(variance);
-    
+
     console.log(`${color.toUpperCase()}:`);
     console.log(`  Average: ${average.toFixed(2)} tiles`);
     console.log(`  Range: ${stats.min} - ${stats.max} tiles`);
     console.log(`  Standard Deviation: ${stdDev.toFixed(2)} tiles`);
-    
+
     // Track maximum difference
     const colorRange = stats.max - stats.min;
     if (colorRange > maxDifference) {
@@ -75,7 +86,7 @@ function testSeaColorDistribution(): void {
 
   // Find the most uneven map
   for (let i = 0; i < testCount; i++) {
-    const counts = colors.map(color => colorStats[color].counts[i]);
+    const counts = colors.map((color) => colorStats[color].counts[i]);
     const mapDifference = Math.max(...counts) - Math.min(...counts);
     if (mapDifference > mostUnevenDifference) {
       mostUnevenDifference = mapDifference;
@@ -84,14 +95,22 @@ function testSeaColorDistribution(): void {
   }
 
   console.log(`\n=== Imbalance Analysis ===`);
-  console.log(`- Maximum difference in any single color: ${maxDifference} tiles`);
-  console.log(`- Most uneven map (map ${mostUnevenMap + 1}): ${mostUnevenDifference} tiles difference`);
-  
+  console.log(
+    `- Maximum difference in any single color: ${maxDifference} tiles`,
+  );
+  console.log(
+    `- Most uneven map (map ${
+      mostUnevenMap + 1
+    }): ${mostUnevenDifference} tiles difference`,
+  );
+
   // Show the distribution for the most uneven map
   if (mostUnevenMap >= 0) {
     console.log(`  Color counts in most uneven map:`);
     for (const color of colors) {
-      console.log(`    ${color}: ${colorStats[color].counts[mostUnevenMap]} tiles`);
+      console.log(
+        `    ${color}: ${colorStats[color].counts[mostUnevenMap]} tiles`,
+      );
     }
   }
 
@@ -111,14 +130,17 @@ function testSeaColorDistribution(): void {
   }
 
   // Check if we've seen the extreme case mentioned (17 vs 6)
-  const extremeCaseFound = colors.some(color => 
-    colorStats[color].max >= 17 && colors.some(otherColor => 
+  const extremeCaseFound = colors.some((color) =>
+    colorStats[color].max >= 17 &&
+    colors.some((otherColor) =>
       colorStats[otherColor].min <= 6 && otherColor !== color
     )
   );
 
   if (extremeCaseFound) {
-    console.log("\n⚠️  EXTREME CASE DETECTED: Found maps with 17+ of one color and 6- of another!");
+    console.log(
+      "\n⚠️  EXTREME CASE DETECTED: Found maps with 17+ of one color and 6- of another!",
+    );
   } else {
     console.log("\n✅ No extreme cases (17 vs 6) detected in this sample.");
   }
@@ -138,13 +160,15 @@ function countAdjacentSameColorSeaHexes(map: HexMap, grid: any[][]): number {
         const cell = row[arrayR];
         if (cell && cell.terrain === "sea" && cell.color !== "none") {
           const neighbors = map.getNeighbors(cell.q, cell.r);
-          
+
           for (const neighbor of neighbors) {
             if (neighbor.terrain === "sea" && neighbor.color !== "none") {
               // Create a unique key for this pair to avoid double counting
               const pairKey = getPairKey(cell, neighbor);
-              
-              if (!processedPairs.has(pairKey) && cell.color === neighbor.color) {
+
+              if (
+                !processedPairs.has(pairKey) && cell.color === neighbor.color
+              ) {
                 conflicts++;
                 processedPairs.add(pairKey);
               }

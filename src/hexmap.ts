@@ -987,11 +987,13 @@ export class HexMap {
 
         // If multiple colors have the same minimum count, choose randomly among them
         const leastUsedColors = availableColors.filter(
-          (color) => colorCounts[color] === minCount
+          (color) => colorCounts[color] === minCount,
         );
-        
+
         if (leastUsedColors.length > 1) {
-          const randomIndex = Math.floor(Math.random() * leastUsedColors.length);
+          const randomIndex = Math.floor(
+            Math.random() * leastUsedColors.length,
+          );
           cell.color = leastUsedColors[randomIndex];
         } else {
           cell.color = leastUsedColor;
@@ -1012,7 +1014,7 @@ export class HexMap {
     console.log(
       `Assigned colors to ${seaCells.length} sea hexes with ${conflicts} same-color adjacencies`,
     );
-    
+
     // Log the final color distribution for debugging
     console.log("Final sea color distribution:");
     for (const color of ALL_COLORS) {

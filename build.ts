@@ -1,7 +1,6 @@
 #!/usr/bin/env -S deno run -A
 
 import * as esbuild from "esbuild";
-import { denoPlugins } from "esbuild-deno-loader";
 
 async function build() {
   console.log("Building TypeScript logic to JavaScript...");
@@ -40,7 +39,7 @@ async function build() {
       format: "esm",
       platform: "browser",
       target: "es2020",
-      plugins: [...denoPlugins()],
+      plugins: [],
       minify: false,
       sourcemap: true,
       external: [],
