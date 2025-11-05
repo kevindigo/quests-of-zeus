@@ -213,7 +213,7 @@ export class HexMapSVG {
   private getStrokeColor(color: HexColor): string {
     const colors: Record<HexColor, string> = {
       none: "#333333",
-      red: "#ff0000",
+      red: "#DC143C",
       pink: "#ff69b4",
       blue: "#0000ff",
       black: "#000000",
