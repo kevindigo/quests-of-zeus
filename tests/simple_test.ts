@@ -2,7 +2,7 @@
 
 import { HexMap } from "../src/hexmap.ts";
 
-function testSimple() {
+export function testSimple() {
   console.log("Testing simple grid creation...\n");
 
   try {
@@ -28,7 +28,9 @@ function testSimple() {
     console.log("\n✅ All basic tests passed!");
   } catch (error) {
     console.error("❌ Error:", error);
+    return false;
   }
+  return true;
 }
 
 if (import.meta.main) {
