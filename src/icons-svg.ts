@@ -316,3 +316,41 @@ export function generateMonsterIcon(options: IconOptions): string {
     </g>
   `;
 }
+
+/**
+ * Generate a clouds icon with black loops forming a vague cloud-like image
+ * Simplified version with clean, minimal cloud shape
+ */
+export function generateCloudsIcon(options: IconOptions): string {
+  const { centerX, centerY, cellSize } = options;
+  
+  // Scale the icon based on cell size - same scale as other icons
+  const scale = cellSize / 40; // Base scale on default cell size of 40
+  const size = 12 * scale * 2.5; // 2.5x larger to fill more space
+  
+  // Monochrome black color with thick strokes
+  const strokeColor = "#000000";
+  const strokeWidth = 2.5 * scale; // Thick black lines
+  
+  return `
+    <g transform="translate(${centerX}, ${centerY})" class="clouds-icon">
+      <!-- Simplified cloud shape - single clean outline -->
+      <path d="
+        M ${-size * 0.6} ${-size * 0.1}
+        C ${-size * 0.8} ${-size * 0.3}, ${-size * 0.4} ${-size * 0.5}, ${-size * 0.2} ${-size * 0.3}
+        C ${0} ${-size * 0.5}, ${size * 0.2} ${-size * 0.5}, ${size * 0.4} ${-size * 0.3}
+        C ${size * 0.6} ${-size * 0.5}, ${size * 0.8} ${-size * 0.3}, ${size * 0.6} ${-size * 0.1}
+        C ${size * 0.8} ${0}, ${size * 0.6} ${size * 0.2}, ${size * 0.4} ${size * 0.1}
+        C ${size * 0.2} ${size * 0.3}, ${0} ${size * 0.2}, ${-size * 0.2} ${size * 0.1}
+        C ${-size * 0.4} ${size * 0.3}, ${-size * 0.6} ${size * 0.2}, ${-size * 0.6} ${-size * 0.1}
+        Z
+      " 
+        fill="none" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth}" 
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </g>
+  `;
+}
