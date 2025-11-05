@@ -143,7 +143,7 @@ export class HexMap {
    * - 9 monsters
    * - 12 clouds
    * - Convert ALL remaining shallows to sea (100% conversion)
-   * None of these should overlap with each other or with the center 7 hexes
+   * None of these should overlap with each other
    */
   private placeSpecialTerrain(grid: HexCell[][]): void {
     // Ensure grid is valid before proceeding
@@ -157,7 +157,7 @@ export class HexMap {
 
     const availableCells: HexCell[] = [];
 
-    // Collect all cells that are shallows (not the center 7 hexes and not cities)
+    // Collect all cells that are shallows
     // We need to iterate through the grid array directly since getCell expects a different structure
     for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
       const row = grid[arrayQ];
@@ -731,7 +731,7 @@ export class HexMap {
       }
     }
 
-    // Set all neighbors to sea (including the center cell)
+    // Set all neighbors of Zeus to sea
     for (const neighbor of neighbors) {
       neighbor.terrain = "sea";
     }
