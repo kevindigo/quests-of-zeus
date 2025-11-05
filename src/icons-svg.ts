@@ -52,3 +52,100 @@ export function generateZeusIcon(options: IconOptions): string {
     </g>
   `;
 }
+
+/**
+ * Generate a line-drawn city icon with three Rome-era buildings
+ * Three outlines of Rome-era buildings next to each other, each of slightly different sizes and shapes
+ */
+export function generateCityIcon(options: IconOptions): string {
+  const { centerX, centerY, cellSize } = options;
+  
+  // Scale the icon based on cell size - 2.5x larger than before
+  const scale = cellSize / 40; // Base scale on default cell size of 40
+  const size = 12 * scale * 2.5; // 2.5x larger to fill more space
+  
+  // Monochrome black color with thick strokes
+  const strokeColor = "#000000";
+  const strokeWidth = 2.5 * scale; // Thick black lines
+  
+  return `
+    <g transform="translate(${centerX}, ${centerY})" class="city-icon">
+      <!-- Left building: Temple-style with triangular pediment -->
+      <path d="
+        M ${-size * 0.8} ${size * 0.3}
+        L ${-size * 0.8} ${-size * 0.6}
+        L ${-size * 0.4} ${-size * 0.8}
+        L ${-size * 0.2} ${-size * 0.6}
+        L ${-size * 0.2} ${size * 0.3}
+        Z
+      " 
+        fill="none" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth}" 
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      
+      <!-- Center building: Basilica-style with arched entrance -->
+      <path d="
+        M ${-size * 0.15} ${size * 0.3}
+        L ${-size * 0.15} ${-size * 0.3}
+        L ${size * 0.15} ${-size * 0.3}
+        L ${size * 0.15} ${size * 0.3}
+        Z
+      " 
+        fill="none" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth}" 
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      
+      <!-- Arch for center building -->
+      <path d="
+        M ${-size * 0.1} ${-size * 0.3}
+        A ${size * 0.1} ${size * 0.2} 0 0 0 ${size * 0.1} ${-size * 0.3}
+      " 
+        fill="none" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth}" 
+        stroke-linecap="round"
+      />
+      
+      <!-- Right building: Domus/villa with columns - clearer and more prominent -->
+      <path d="
+        M ${size * 0.25} ${size * 0.3}
+        L ${size * 0.25} ${-size * 0.4}
+        L ${size * 0.7} ${-size * 0.4}
+        L ${size * 0.7} ${size * 0.3}
+        Z
+      " 
+        fill="none" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth}" 
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      
+      <!-- Column details for right building - more prominent -->
+      <line 
+        x1="${size * 0.35}" y1="${-size * 0.4}" 
+        x2="${size * 0.35}" y2="${size * 0.3}" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth * 0.8}"
+      />
+      <line 
+        x1="${size * 0.5}" y1="${-size * 0.4}" 
+        x2="${size * 0.5}" y2="${size * 0.3}" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth * 0.8}"
+      />
+      <line 
+        x1="${size * 0.65}" y1="${-size * 0.4}" 
+        x2="${size * 0.65}" y2="${size * 0.3}" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth * 0.8}"
+      />
+    </g>
+  `;
+}

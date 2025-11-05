@@ -2,7 +2,7 @@
 // Generates an SVG representation of the hex map
 
 import type { HexCell, HexColor, TerrainType } from "./hexmap.ts";
-import { generateZeusIcon } from "./icons-svg.ts";
+import { generateZeusIcon, generateCityIcon } from "./icons-svg.ts";
 
 export interface HexMapSVGOptions {
   cellSize?: number;
@@ -56,6 +56,11 @@ export class HexMapSVG {
     // Add Greek god head icon for Zeus hex
     if (cell.terrain === "zeus") {
       cellContent += generateZeusIcon({ centerX, centerY, cellSize });
+    }
+
+    // Add city icon for city hexes
+    if (cell.terrain === "city") {
+      cellContent += generateCityIcon({ centerX, centerY, cellSize });
     }
 
     // Add coordinates if enabled
