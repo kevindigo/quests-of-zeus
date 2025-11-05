@@ -65,8 +65,9 @@ export class HexMap {
         // Calculate distance from center
         const distanceFromCenter = this.hexDistance(q, r, 0, 0);
 
-        // Generate terrain based on distance from center
-        const terrain = this.generateTerrain(q, r, distanceFromCenter);
+        // For all hexes, default to shallows
+        // The sea generation for Zeus neighbors will be handled after Zeus placement
+        const terrain: TerrainType = "shallow";
 
         const cell: HexCell = {
           q,
@@ -107,18 +108,7 @@ export class HexMap {
     return (Math.abs(q1 - q2) + Math.abs(r1 - r2) + Math.abs(s1 - s2)) / 2;
   }
 
-  /**
-   * Generate terrain type based on position and distance from center
-   */
-  private generateTerrain(
-    q: number,
-    r: number,
-    _distanceFromCenter: number,
-  ): TerrainType {
-    // For all hexes, default to shallows
-    // The sea generation for Zeus neighbors will be handled after Zeus placement
-    return "shallow";
-  }
+
 
   /**
    * Add special locations like oracles, ports, and sanctuaries
