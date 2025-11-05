@@ -2,7 +2,7 @@
 // Generates an SVG representation of the hex map
 
 import type { HexCell, HexColor, TerrainType } from "./hexmap.ts";
-import { generateZeusIcon, generateCityIcon, generateMonsterIcon, generateTempleIcon, generateCloudsIcon, generateCubesIcon } from "./icons-svg.ts";
+import { generateZeusIcon, generateCityIcon, generateMonsterIcon, generateTempleIcon, generateCloudsIcon, generateCubesIcon, generateFoundationsIcon } from "./icons-svg.ts";
 
 export interface HexMapSVGOptions {
   cellSize?: number;
@@ -81,6 +81,11 @@ export class HexMapSVG {
     // Add clouds icon for clouds hexes
     if (cell.terrain === "clouds") {
       cellContent += generateCloudsIcon({ centerX, centerY, cellSize });
+    }
+
+    // Add foundations icon for foundations hexes
+    if (cell.terrain === "foundations") {
+      cellContent += generateFoundationsIcon({ centerX, centerY, cellSize });
     }
 
     // Add coordinates if enabled

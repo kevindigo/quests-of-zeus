@@ -503,3 +503,72 @@ export function generateCloudsIcon(options: IconOptions): string {
     </g>
   `;
 }
+
+/**
+ * Generate a foundations icon with three parallelograms representing squares lying flat
+ * Three 3D perspective parallelograms in a staggered arrangement
+ */
+export function generateFoundationsIcon(options: IconOptions): string {
+  const { centerX, centerY, cellSize } = options;
+  
+  // Scale the icon based on cell size - same scale as other icons
+  const scale = cellSize / 40; // Base scale on default cell size of 40
+  const size = 12 * scale * 2.5; // 2.5x larger to fill more space
+  
+  // Monochrome black color with thick strokes
+  const strokeColor = "#000000";
+  const strokeWidth = 2.5 * scale; // Thick black lines
+  
+  // Consistent parallelogram dimensions - all oriented with top lines to left, bottom lines to right
+  const parallelogramWidth = size * 0.6;
+  const parallelogramHeight = size * 0.3;
+  const perspectiveOffset = size * 0.2; // Amount of perspective shift
+  const verticalShift = parallelogramHeight * 0.5; // 50% of parallelogram height
+  const horizontalShift = verticalShift * 2; // Twice the vertical shift amount
+  
+  return `
+    <g transform="translate(${centerX}, ${centerY})" class="foundations-icon">
+      <!-- Top parallelogram (near top of hex) - moved up by 50% of height -->
+      <polygon points="
+        ${-size * 0.1} ${-size * 0.6 - verticalShift},
+        ${size * 0.5} ${-size * 0.6 - verticalShift},
+        ${size * 0.5 - perspectiveOffset} ${-size * 0.3 - verticalShift},
+        ${-size * 0.1 - perspectiveOffset} ${-size * 0.3 - verticalShift}
+      " 
+        fill="none" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth}" 
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      
+      <!-- Middle parallelogram - moved up by 50% of height and right by twice that amount -->
+      <polygon points="
+        ${-size * 0.1 + horizontalShift} ${-size * 0.1 - verticalShift},
+        ${size * 0.7 + horizontalShift} ${-size * 0.1 - verticalShift},
+        ${size * 0.7 - perspectiveOffset + horizontalShift} ${size * 0.2 - verticalShift},
+        ${-size * 0.1 - perspectiveOffset + horizontalShift} ${size * 0.2 - verticalShift}
+      " 
+        fill="none" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth}" 
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      
+      <!-- Bottom right parallelogram (toward bottom right) -->
+      <polygon points="
+        ${-size * 0.7} ${size * 0.3},
+        ${size * 0.1} ${size * 0.3},
+        ${size * 0.1 - perspectiveOffset} ${size * 0.6},
+        ${-size * 0.7 - perspectiveOffset} ${size * 0.6}
+      " 
+        fill="none" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth}" 
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </g>
+  `;
+}
