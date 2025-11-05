@@ -1115,6 +1115,15 @@ export function generateNewMap(): HexMap {
 
 export function getMapStatistics() {
   const terrainCounts: Record<string, number> = {};
+  const seaColorCounts: Record<HexColor, number> = {
+    none: 0,
+    red: 0,
+    pink: 0,
+    blue: 0,
+    black: 0,
+    green: 0,
+    yellow: 0,
+  };
   const grid = gameMap.getGrid();
   let totalCells = 0;
 
@@ -1126,6 +1135,12 @@ export function getMapStatistics() {
         const cell = row[arrayR];
         if (cell) {
           terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
+          
+          // Count sea tiles by color
+          if (cell.terrain === "sea" && cell.color !== "none") {
+            seaColorCounts[cell.color] = (seaColorCounts[cell.color] || 0) + 1;
+          }
+          
           totalCells++;
         }
       }
@@ -1138,6 +1153,7 @@ export function getMapStatistics() {
       height: gameMap.height,
     },
     terrainCounts,
+    seaColorCounts,
     totalCells,
   };
 }

@@ -195,6 +195,13 @@
       .terrain-desert {
         background: rgba(238, 203, 173, 0.3);
       }
+      
+      .color-red { background: rgba(255, 0, 0, 0.2); }
+      .color-pink { background: rgba(255, 105, 180, 0.2); }
+      .color-blue { background: rgba(0, 0, 255, 0.2); }
+      .color-black { background: rgba(0, 0, 0, 0.2); }
+      .color-green { background: rgba(0, 128, 0, 0.2); }
+      .color-yellow { background: rgba(255, 255, 0, 0.2); }
     </style>
   </head>
   <body>
@@ -279,6 +286,19 @@
         console.log("PWA installation available");
       });
 
+      // Helper function to get hex color from color name
+      function getColorHex(color) {
+        const colors = {
+          red: "#ff0000",
+          pink: "#ff69b4", 
+          blue: "#0000ff",
+          black: "#000000",
+          green: "#008000",
+          yellow: "#ffff00",
+        };
+        return colors[color] || "#333333";
+      }
+
       // Game UI Event Handlers
       document.getElementById("generateMap").addEventListener(
         "click",
@@ -301,6 +321,8 @@
                 <h3>Map Statistics</h3>
                 <p><strong>Dimensions:</strong> ${stats.dimensions.width} × ${stats.dimensions.height}</p>
                 <p><strong>Total Cells:</strong> ${stats.totalCells}</p>
+                
+                <h4 style="margin-top: 1.5rem;">Terrain Counts</h4>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; margin: 1rem 0;">
                     ${
             Object.entries(stats.terrainCounts).map((
@@ -308,6 +330,19 @@
             ) =>
               `<div class="cell-item terrain-${terrain}">
                             <strong>${terrain}:</strong> ${count}
+                        </div>`
+            ).join("")
+          }
+                </div>
+
+                <h4 style="margin-top: 1.5rem;">Sea Tiles by Color</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem; margin: 1rem 0;">
+                    ${
+            Object.entries(stats.seaColorCounts || {}).filter(([color, count]) => color !== "none" && count > 0).map((
+              [color, count],
+            ) =>
+              `<div class="cell-item color-${color}" style="border-left: 4px solid ${getColorHex(color)}">
+                            <strong style="color: ${getColorHex(color)}">${color}:</strong> ${count}
                         </div>`
             ).join("")
           }
