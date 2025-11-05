@@ -89,6 +89,9 @@ export class HexMap {
       return grid;
     }
 
+    // Place Zeus randomly in one of the neighbor hexes of the center
+    this.placeZeus(grid);
+
     // Place special terrain types randomly
     this.placeSpecialTerrain(grid);
 
@@ -112,28 +115,8 @@ export class HexMap {
     r: number,
     _distanceFromCenter: number,
   ): TerrainType {
-    // Center hex (q=0, r=0) should always be zeus
-    if (q === 0 && r === 0) {
-      return "zeus";
-    }
-
-    // The six hexes surrounding the center should always be sea
-    const surroundingHexes = [
-      [1, 0],
-      [1, -1],
-      [0, -1],
-      [-1, 0],
-      [-1, 1],
-      [0, 1],
-    ];
-
-    for (const [dq, dr] of surroundingHexes) {
-      if (q === dq && r === dr) {
-        return "sea";
-      }
-    }
-
-    // For all other hexes, default to shallows
+    // For all hexes, default to shallows
+    // The sea generation for Zeus neighbors will be handled after Zeus placement
     return "shallow";
   }
 
@@ -633,6 +616,39 @@ export class HexMap {
   }
 
   /**
+   * Place Zeus randomly in one of the neighbor hexes of the center
+   * and set all neighbors of the chosen Zeus hex to sea
+   */
+  private placeZeus(grid: HexCell[][]): void {
+    // Define the 6 neighbor hexes around the center
+    const neighborHexes = [
+      [1, 0],
+      [1, -1],
+      [0, -1],
+      [-1, 0],
+      [-1, 1],
+      [0, 1],
+    ];
+
+    // Randomly select one of the neighbor hexes
+    const randomIndex = Math.floor(Math.random() * neighborHexes.length);
+    const [zeusQ, zeusR] = neighborHexes[randomIndex];
+
+    // Find the cell for Zeus placement
+    const zeusCell = this.getCellFromGrid(grid, zeusQ, zeusR);
+    if (zeusCell) {
+      // Place Zeus at the selected neighbor hex
+      zeusCell.terrain = "zeus";
+      console.log(`Zeus placed at (${zeusQ}, ${zeusR})`);
+
+      // Set all neighbors of the Zeus hex to sea
+      this.setZeusNeighborsToSea(grid, zeusQ, zeusR);
+    } else {
+      console.error(`Failed to place Zeus at (${zeusQ}, ${zeusR})`);
+    }
+  }
+
+  /**
    * Place the 6 city tiles near the corners of the hex map
    * For each corner, pick a random direction (+2 or +4) and a random distance (0 to 2)
    * Place the city there, then set 2 random neighboring hexes to sea
@@ -687,6 +703,37 @@ export class HexMap {
           this.setRandomNeighborsToSea(grid, cornerCoords.q, cornerCoords.r);
         }
       }
+    }
+  }
+
+  /**
+   * Set all neighbors of the Zeus hex to sea
+   * @param grid - The grid containing all cells
+   * @param zeusQ - The q coordinate of the Zeus cell
+   * @param zeusR - The r coordinate of the Zeus cell
+   */
+  private setZeusNeighborsToSea(
+    grid: HexCell[][],
+    zeusQ: number,
+    zeusR: number,
+  ): void {
+    // Get all neighboring cells of the Zeus hex
+    const neighbors: HexCell[] = [];
+    
+    // Check all 6 directions using getAdjacent
+    for (let direction = 0; direction < 6; direction++) {
+      const adjacentCoords = this.getAdjacent(zeusQ, zeusR, direction);
+      if (adjacentCoords) {
+        const neighbor = this.getCellFromGrid(grid, adjacentCoords.q, adjacentCoords.r);
+        if (neighbor) {
+          neighbors.push(neighbor);
+        }
+      }
+    }
+
+    // Set all neighbors to sea (including the center cell)
+    for (const neighbor of neighbors) {
+      neighbor.terrain = "sea";
     }
   }
 

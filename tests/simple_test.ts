@@ -19,6 +19,10 @@ function testSimple() {
     const seaCell = hexMap.getCell(1, 0);
     console.log(`✓ Sea cell: ${seaCell ? seaCell.terrain : 'not found'}`);
     
+    // Test that Zeus exists somewhere on the map
+    const zeusCells = hexMap.getCellsByTerrain("zeus");
+    console.log(`✓ Zeus cells found: ${zeusCells.length}`);
+    
     console.log("\n✅ All basic tests passed!");
   } catch (error) {
     console.error("❌ Error:", error);
