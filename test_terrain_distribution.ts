@@ -1,7 +1,15 @@
 // Test script to verify terrain distribution after 100% shallows to sea conversion
 import { HexMap } from "./dist/hexmap.js";
 
-function testTerrainDistribution() {
+interface TerrainCounts {
+  [key: string]: number;
+}
+
+interface ExpectedCounts {
+  [key: string]: number;
+}
+
+function testTerrainDistribution(): void {
   console.log("Testing terrain distribution for 5 generated maps...");
   console.log(
     "Note: 100% of remaining shallows are converted to sea in the final step (ALL shallows become sea)\n",
@@ -13,7 +21,7 @@ function testTerrainDistribution() {
     const map = new HexMap();
     const grid = map.getGrid();
 
-    const terrainCounts = {};
+    const terrainCounts: TerrainCounts = {};
     let totalCells = 0;
 
     // Count all terrain types
@@ -28,7 +36,7 @@ function testTerrainDistribution() {
     }
 
     // Expected counts (after 100% shallows to sea conversion)
-    const expectedCounts = {
+    const expectedCounts: ExpectedCounts = {
       "zeus": 1,
       "cubes": 6,
       "temple": 6,
@@ -66,7 +74,7 @@ function testTerrainDistribution() {
 
     // Verify center 7 hexes
     const centerCell = map.getCell(0, 0);
-    const surroundingHexes = [
+    const surroundingHexes: [number, number][] = [
       [1, 0],
       [1, -1],
       [0, -1],
