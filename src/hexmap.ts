@@ -476,6 +476,9 @@ export class HexMap {
       }
     }
 
+    // Assign random colors to all sea hexes
+    this.assignColorsToSeaHexes(grid);
+
     // After converting all shallows to sea, try to convert one random sea back to shallows
     this.tryConvertSeaToShallows(grid);
   }
@@ -528,7 +531,9 @@ export class HexMap {
 
       // 3. Tentatively convert the candidate cell to shallows
       const originalTerrain = candidateCell.terrain;
+      const originalColor = candidateCell.color;
       candidateCell.terrain = "shallow";
+      candidateCell.color = "none"; // Reset color for shallows
 
       // 4. Check all neighbors of the candidate cell
       const allNeighbors = this.getNeighborsFromGrid(candidateCell.q, candidateCell.r, grid);
@@ -555,6 +560,7 @@ export class HexMap {
       // 5. If any neighbor check fails, revert the candidate cell back to sea
       if (!conversionValid) {
         candidateCell.terrain = originalTerrain;
+        candidateCell.color = originalColor; // Restore original color
         continue;
       }
 
@@ -860,6 +866,47 @@ export class HexMap {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
     }
+  }
+
+  /**
+   * Assign random colors to all sea hexes
+   * This ensures all sea hexes have one of the 6 fundamental colors
+   * Colors are assigned randomly to hopefully achieve balanced distribution
+   */
+  private assignColorsToSeaHexes(grid: HexCell[][]): void {
+    const seaCells: HexCell[] = [];
+
+    // Collect all sea cells
+    for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+      const row = grid[arrayQ];
+      if (row) {
+        for (let arrayR = 0; arrayR < row.length; arrayR++) {
+          const cell = row[arrayR];
+          if (cell && cell.terrain === "sea") {
+            seaCells.push(cell);
+          }
+        }
+      }
+    }
+
+    // If there are no sea cells, nothing to do
+    if (seaCells.length === 0) {
+      return;
+    }
+
+    // Create a shuffled array of colors that we'll cycle through
+    // This helps ensure a more balanced distribution than pure random assignment
+    const shuffledColors = [...ALL_COLORS];
+    this.shuffleArray(shuffledColors);
+
+    // Assign colors to sea cells
+    for (let i = 0; i < seaCells.length; i++) {
+      // Use modulo to cycle through the shuffled colors
+      const colorIndex = i % shuffledColors.length;
+      seaCells[i].color = shuffledColors[colorIndex];
+    }
+
+    console.log(`Assigned colors to ${seaCells.length} sea hexes`);
   }
 
   /**
