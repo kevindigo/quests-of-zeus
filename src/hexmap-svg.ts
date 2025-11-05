@@ -160,9 +160,9 @@ export class HexMapSVG {
       zeus: "#ffd700", // Gold for Zeus
       sea: "#4a90e2", // Blue for sea
       shallow: "#000000", // Black for shallow water
-      monsters: "#8b0000", // Dark red for monsters
-      cubes: "#ffa500", // Orange for cubes
-      temple: "#800080", // Purple for temple
+      monsters: "#e05050", // Red for monsters
+      cubes: "#f9d9a9", // Yellow-tan for cubes
+      temple: "#f9d9a9", // Yellow-tan for temple
       clouds: "#f0f8ff", // Light blue-white for clouds
       city: "#b0b0b0", // Light gray for city
       foundations: "#b0b0b0", // Light gray for foundations
