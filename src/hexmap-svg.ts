@@ -102,7 +102,12 @@ export class HexMapSVG {
 
     // Add city icon for city hexes
     if (cell.terrain === "city") {
-      cellContent += generateCityIcon({ centerX, centerY, cellSize });
+      cellContent += generateCityIcon({ 
+        centerX, 
+        centerY, 
+        cellSize,
+        hexColor: this.getStrokeColor(cell.color)
+      });
     }
 
     // Add monster icon for monster hexes
@@ -131,7 +136,12 @@ export class HexMapSVG {
 
     // Add temple icon for temple hexes
     if (cell.terrain === "temple") {
-      cellContent += generateTempleIcon({ centerX, centerY, cellSize });
+      cellContent += generateTempleIcon({ 
+        centerX, 
+        centerY, 
+        cellSize,
+        hexColor: this.getStrokeColor(cell.color)
+      });
     }
 
     // Add cubes icon for cubes hexes

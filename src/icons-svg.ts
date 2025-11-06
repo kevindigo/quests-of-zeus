@@ -5,6 +5,7 @@ export interface IconOptions {
   centerX: number;
   centerY: number;
   cellSize: number;
+  hexColor?: string;
 }
 
 /**
@@ -58,7 +59,7 @@ export function generateZeusIcon(options: IconOptions): string {
  * Three outlines of Rome-era buildings next to each other, each of slightly different sizes and shapes
  */
 export function generateCityIcon(options: IconOptions): string {
-  const { centerX, centerY, cellSize } = options;
+  const { centerX, centerY, cellSize, hexColor } = options;
 
   // Scale the icon based on cell size - 2.5x larger than before
   const scale = cellSize / 40; // Base scale on default cell size of 40
@@ -67,6 +68,9 @@ export function generateCityIcon(options: IconOptions): string {
   // Monochrome black color with thick strokes
   const strokeColor = "#000000";
   const strokeWidth = 2.5 * scale; // Thick black lines
+
+  // Use hex color for fill, fallback to none if not provided
+  const fillColor = hexColor || "none";
 
   return `
     <g transform="translate(${centerX}, ${centerY})" class="city-icon">
@@ -79,7 +83,7 @@ export function generateCityIcon(options: IconOptions): string {
         L ${-size * 0.2} ${size * 0.3}
         Z
       " 
-        fill="none" 
+        fill="${fillColor}" 
         stroke="${strokeColor}" 
         stroke-width="${strokeWidth}" 
         stroke-linecap="round"
@@ -94,7 +98,7 @@ export function generateCityIcon(options: IconOptions): string {
         L ${size * 0.15} ${size * 0.3}
         Z
       " 
-        fill="none" 
+        fill="${fillColor}" 
         stroke="${strokeColor}" 
         stroke-width="${strokeWidth}" 
         stroke-linecap="round"
@@ -120,7 +124,7 @@ export function generateCityIcon(options: IconOptions): string {
         L ${size * 0.7} ${size * 0.3}
         Z
       " 
-        fill="none" 
+        fill="${fillColor}" 
         stroke="${strokeColor}" 
         stroke-width="${strokeWidth}" 
         stroke-linecap="round"
@@ -155,7 +159,7 @@ export function generateCityIcon(options: IconOptions): string {
  * Simple thick black line drawing matching the city icon style
  */
 export function generateTempleIcon(options: IconOptions): string {
-  const { centerX, centerY, cellSize } = options;
+  const { centerX, centerY, cellSize, hexColor } = options;
 
   // Scale the icon based on cell size - same scale as city icon
   const scale = cellSize / 40; // Base scale on default cell size of 40
@@ -164,6 +168,9 @@ export function generateTempleIcon(options: IconOptions): string {
   // Monochrome black color with thick strokes
   const strokeColor = "#000000";
   const strokeWidth = 2.5 * scale; // Thick black lines
+
+  // Use hex color for fill, fallback to none if not provided
+  const fillColor = hexColor || "none";
 
   return `
     <g transform="translate(${centerX}, ${centerY})" class="temple-icon">
@@ -174,7 +181,7 @@ export function generateTempleIcon(options: IconOptions): string {
         L ${size * 0.4} ${size * 0.3}
         L ${size * 0.4} ${-size * 0.3}
       " 
-        fill="none" 
+        fill="${fillColor}" 
         stroke="${strokeColor}" 
         stroke-width="${strokeWidth}" 
         stroke-linecap="round"
