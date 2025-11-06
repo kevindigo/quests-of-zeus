@@ -25,18 +25,7 @@ export interface Player {
   oracleDice: HexColor[]; // Current oracle dice values
 }
 
-export interface Quest {
-  id: number;
-  type: "temple_offering" | "monster" | "foundation" | "cloud";
-  color: HexColor;
-  requirements: {
-    cube?: boolean; // Requires a cube of quest color
-    statue?: boolean; // Requires a statue of quest color
-    monsterType?: string;
-    location?: { q: number; r: number };
-  };
-  completed: boolean;
-}
+
 
 export interface GameState {
   map: HexMap;
@@ -44,9 +33,6 @@ export interface GameState {
   currentPlayerIndex: number;
   round: number;
   phase: "setup" | "oracle" | "movement" | "action" | "end";
-  quests: Quest[];
-  availableQuests: Quest[];
-  completedQuests: Quest[];
   monsterStrength: number;
   weatherDice: HexColor[];
 }
@@ -173,18 +159,12 @@ export class OracleGameEngine {
       },
     ];
 
-    // Initialize quests
-    const quests = this.generateInitialQuests();
-
     this.state = {
       map,
       players,
       currentPlayerIndex: 0,
       round: 1,
       phase: "setup",
-      quests,
-      availableQuests: [...quests],
-      completedQuests: [],
       monsterStrength: 3,
       weatherDice: [],
     };
@@ -192,62 +172,7 @@ export class OracleGameEngine {
     return this.state;
   }
 
-  private generateInitialQuests(): Quest[] {
-    const quests: Quest[] = [];
-    let id = 1;
 
-    // Temple offering quests (3 total) - requires a cube of the quest color
-    for (let i = 0; i < 3; i++) {
-      quests.push({
-        id: id++,
-        type: "temple_offering",
-        color: ALL_COLORS[i % ALL_COLORS.length],
-        requirements: {
-          cube: true,
-        },
-        completed: false,
-      });
-    }
-
-    // Monster quests (3 total)
-    for (let i = 0; i < 3; i++) {
-      quests.push({
-        id: id++,
-        type: "monster",
-        color: ALL_COLORS[i % ALL_COLORS.length],
-        requirements: {
-          monsterType: "basic",
-        },
-        completed: false,
-      });
-    }
-
-    // Foundation quests (3 total)
-    for (let i = 0; i < 3; i++) {
-      quests.push({
-        id: id++,
-        type: "foundation",
-        color: ALL_COLORS[i % ALL_COLORS.length],
-        requirements: {},
-        completed: false,
-      });
-    }
-
-    // Cloud quests (3 total) - requires a statue of the quest color
-    for (let i = 0; i < 3; i++) {
-      quests.push({
-        id: id++,
-        type: "cloud",
-        color: ALL_COLORS[i % ALL_COLORS.length],
-        requirements: {
-          statue: true,
-        },
-        completed: false,
-      });
-    }
-
-    return quests;
-  }
 
   // Game Actions
   public rollOracleDice(playerId: number): HexColor[] {
@@ -373,7 +298,7 @@ export class OracleGameEngine {
     player.oracleDice.splice(0, requiredDice);
     
     // Complete monster quest
-    this.completeQuest(playerId, "monster");
+    this.completeQuestType(playerId, "monster");
     this.endTurn();
     
     return true;
@@ -403,7 +328,7 @@ export class OracleGameEngine {
     // Consume cube and complete temple
     const success = removeCubeFromStorage(player, requiredColor);
     if (success) {
-      this.completeQuest(playerId, "temple_offering");
+      this.completeQuestType(playerId, "temple_offering");
       this.endTurn();
     }
     
@@ -426,7 +351,7 @@ export class OracleGameEngine {
     }
 
     // Complete foundation quest
-    this.completeQuest(playerId, "foundation");
+    this.completeQuestType(playerId, "foundation");
     this.endTurn();
     
     return true;
@@ -456,46 +381,22 @@ export class OracleGameEngine {
     // Consume statue and complete cloud quest
     const success = removeStatueFromStorage(player, requiredColor);
     if (success) {
-      this.completeQuest(playerId, "cloud");
+      this.completeQuestType(playerId, "cloud");
       this.endTurn();
     }
     
     return success;
   }
 
-  private completeQuest(playerId: number, questType: Quest["type"]): void {
+  private completeQuestType(playerId: number, questType: "temple_offering" | "monster" | "foundation" | "cloud"): void {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
     const player = this.state.players.find(p => p.id === playerId);
     if (!player) return;
 
-    // Find available quest of the specified type
-    const questIndex = this.state.availableQuests.findIndex(q => 
-      q.type === questType && !q.completed
-    );
-
-    if (questIndex !== -1) {
-      const quest = this.state.availableQuests[questIndex];
-      
-      // Check if player meets the quest requirements
-      if (quest.requirements.cube && !hasCubeOfColor(player, quest.color)) {
-        return; // Player doesn't have required cube
-      }
-      if (quest.requirements.statue && !hasStatueOfColor(player, quest.color)) {
-        return; // Player doesn't have required statue
-      }
-      
-      quest.completed = true;
-      player.completedQuests++;
-      
-      // Track completed quests by type
-      player.completedQuestTypes[questType]++;
-      
-      // Move quest to completed
-      this.state.completedQuests.push(quest);
-      this.state.availableQuests.splice(questIndex, 1);
-    }
+    player.completedQuests++;
+    player.completedQuestTypes[questType]++;
   }
 
   private endTurn(): void {

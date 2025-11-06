@@ -16,7 +16,7 @@ Deno.test("GameEngine - initialization", () => {
   assertEquals(state.players.length, 2);
   assertEquals(state.round, 1);
   assertEquals(state.phase, "setup");
-  assertEquals(state.quests.length, 12); // 3 temple_offering + 3 monster + 3 foundation + 3 cloud
+
   
   // Now game should be initialized
   assertEquals(engine.isGameInitialized(), true);
@@ -117,8 +117,7 @@ Deno.test("GameEngine - quest completion", () => {
   engine.initializeGame();
   const state = engine.getGameState();
   
-  // Initially no completed quests
-  assertEquals(state.completedQuests.length, 0);
+
   
   // Check that players start with 0 completed quests
   const player1 = engine.getPlayer(1);
@@ -158,19 +157,5 @@ Deno.test("GameEngine - storage system", () => {
   assertEquals(player.storage[0].type, "empty");
   assertEquals(player.storage[1].type, "empty");
   
-  // Test that quests now require cubes/statues instead of offerings
-  const state = engine.getGameState();
-  const templeQuest = state.quests.find(q => q.type === "temple_offering");
-  const cloudQuest = state.quests.find(q => q.type === "cloud");
-  
-  assertExists(templeQuest);
-  assertExists(cloudQuest);
-  
-  // Temple quests should require cubes
-  assertEquals(templeQuest.requirements.cube, true);
-  assertEquals(templeQuest.requirements.statue, undefined);
-  
-  // Cloud quests should require statues
-  assertEquals(cloudQuest.requirements.statue, true);
-  assertEquals(cloudQuest.requirements.cube, undefined);
+
 });

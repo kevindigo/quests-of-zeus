@@ -97,9 +97,6 @@ export class GameController {
     // Update player info display
     this.updatePlayerInfo(gameState);
     
-    // Update quest display
-    this.updateQuestInfo(gameState);
-    
     // Render the map with player positions
     this.renderMap(gameState);
     
@@ -164,27 +161,7 @@ export class GameController {
     `;
   }
 
-  private updateQuestInfo(gameState: any): void {
-    const questInfoContainer = document.getElementById("questInfo");
-    if (!questInfoContainer) return;
 
-    questInfoContainer.innerHTML = `
-      <div class="quest-info">
-        <h3>Available Quests</h3>
-        <div class="quest-list">
-          ${gameState.availableQuests.slice(0, 5).map((quest: any) => `
-            <div class="quest-item quest-${quest.type}">
-              <div class="quest-type">${quest.type.toUpperCase()}</div>
-              <div class="quest-color color-${quest.color}">${quest.color}</div>
-            </div>
-          `).join('')}
-        </div>
-        <div class="completed-quests">
-          <h4>Completed Quests: ${gameState.completedQuests.length}</h4>
-        </div>
-      </div>
-    `;
-  }
 
   private renderMap(gameState: any): void {
     const hexMapContainer = document.getElementById("hexMapSVG");
