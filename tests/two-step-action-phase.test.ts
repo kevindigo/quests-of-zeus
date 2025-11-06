@@ -52,15 +52,16 @@ Deno.test("GameController - movement with selected die", () => {
       `Player should have ${requiredDieColor} die for this move`
     );
     
+    // Count how many dice of this color the player has before the move
+    const diceCountBefore = player.oracleDice.filter(color => color === requiredDieColor).length;
+    
     // Test moving with the correct die color
     const success = engine.moveShip(1, firstMove.q, firstMove.r, requiredDieColor);
     assertEquals(success, true, "Move should succeed with correct die color");
     
-    // Verify the die was consumed
-    assert(
-      !player.oracleDice.includes(requiredDieColor),
-      `Die should be consumed after move`
-    );
+    // Verify exactly one die of this color was consumed
+    const diceCountAfter = player.oracleDice.filter(color => color === requiredDieColor).length;
+    assertEquals(diceCountAfter, diceCountBefore - 1, "Exactly one die should be consumed after move");
   }
 });
 
