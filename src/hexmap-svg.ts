@@ -114,16 +114,13 @@ export class HexMapSVG {
         
         console.log(`Processing monster hex at (${cell.q}, ${cell.r}):`, monsterHex);
         
+        // Always show the line-drawn monster icon as the base
+        cellContent += generateMonsterIcon({ centerX, centerY, cellSize });
+        
+        // Then overlay colored monsters if present
         if (monsterHex && monsterHex.monsterColors.length > 0) {
           console.log(`Generating colored monsters for (${cell.q}, ${cell.r}) with colors:`, monsterHex.monsterColors);
-          // Generate colored monsters instead of generic icon
           cellContent += this.generateColoredMonsters({ centerX, centerY, cellSize }, monsterHex.monsterColors);
-          
-
-        } else {
-          console.log(`No monsters found for (${cell.q}, ${cell.r}), using generic icon`);
-          // Show generic monster icon if no monsters present
-          cellContent += generateMonsterIcon({ centerX, centerY, cellSize });
         }
       } catch (error) {
         console.error(`Error rendering monster hex at (${cell.q}, ${cell.r}):`, error);
@@ -146,16 +143,13 @@ export class HexMapSVG {
         
         console.log(`Processing cube hex at (${cell.q}, ${cell.r}):`, cubeHex);
         
+        // Always show the line-drawn cubes icon as the base
+        cellContent += generateCubesIcon({ centerX, centerY, cellSize });
+        
+        // Then overlay colored cubes if present
         if (cubeHex && cubeHex.cubeColors.length > 0) {
           console.log(`Generating colored cubes for (${cell.q}, ${cell.r}) with colors:`, cubeHex.cubeColors);
-          // Generate colored cubes instead of generic icon
           cellContent += this.generateColoredCubes({ centerX, centerY, cellSize }, cubeHex.cubeColors);
-          
-
-        } else {
-          console.log(`No cubes found for (${cell.q}, ${cell.r}), using generic icon`);
-          // Show generic cube icon if no cubes present
-          cellContent += generateCubesIcon({ centerX, centerY, cellSize });
         }
       } catch (error) {
         console.error(`Error rendering cube hex at (${cell.q}, ${cell.r}):`, error);
@@ -304,9 +298,9 @@ export class HexMapSVG {
     try {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
-      // Use squares instead of circles for cubes
+      // Use squares for cubes
       const cubeSize = 8 * scale;
-      const spacing = cubeSize * 3;
+      const spacing = cubeSize * 8;
 
       let cubesContent = '';
       
@@ -357,7 +351,7 @@ export class HexMapSVG {
     try {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
-      // Triangle size - slightly larger than cubes for visibility
+      // Use triangles
       const triangleSize = 10 * scale;
       const spacing = triangleSize * 3;
 
