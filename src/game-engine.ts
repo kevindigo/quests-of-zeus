@@ -832,11 +832,12 @@ export class OracleGameEngine {
       movementRange,
     );
 
-    // Filter by player's available dice colors
+    // Filter by player's available dice colors and exclude current position
     for (const seaTile of reachableSeaTiles) {
       if (
         seaTile.color !== "none" &&
-        player.oracleDice.includes(seaTile.color)
+        player.oracleDice.includes(seaTile.color) &&
+        !(seaTile.q === currentPos.q && seaTile.r === currentPos.r)
       ) {
         availableMoves.push({
           q: seaTile.q,
@@ -884,7 +885,9 @@ export class OracleGameEngine {
 
   /**
    * Get all reachable sea tiles within movement range using BFS
-   * Ships can move up to <range> steps on sea tiles, starting from adjacent sea tiles
+   * Ships can move up to <range> steps on sea tiles, starting from the current position
+   * Movement is only allowed through sea tiles (land blocks movement)
+   * Ships can start on non-sea tiles (like Zeus) and move to adjacent sea tiles
    */
   private getReachableSeaTiles(startQ: number, startR: number, range: number): { q: number; r: number; color: HexColor }[] {
     if (!this.state) {
@@ -895,26 +898,17 @@ export class OracleGameEngine {
     const visited = new Set<string>();
     const queue: { q: number; r: number; steps: number }[] = [];
 
-    // Start BFS from all adjacent sea tiles (not from the starting position itself)
-    const adjacentCells = this.state.map.getNeighbors(startQ, startR);
-    
-    for (const cell of adjacentCells) {
-      if (cell.terrain === "sea") {
-        const key = `${cell.q},${cell.r}`;
-        if (!visited.has(key)) {
-          visited.add(key);
-          queue.push({ q: cell.q, r: cell.r, steps: 1 });
-          reachableTiles.push({ q: cell.q, r: cell.r, color: cell.color });
-        }
-      }
-    }
+    // Start BFS from the current position (step 0)
+    const startKey = `${startQ},${startR}`;
+    visited.add(startKey);
+    queue.push({ q: startQ, r: startR, steps: 0 });
 
     // Continue BFS up to the movement range
     while (queue.length > 0) {
       const current = queue.shift()!;
       
       // If we've reached the maximum range, don't explore further
-      if (current.steps > range) {
+      if (current.steps >= range) {
         continue;
       }
 
