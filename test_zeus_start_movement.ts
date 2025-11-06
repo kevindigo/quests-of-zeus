@@ -80,5 +80,3 @@ if (availableMoves.length > 0) {
   console.log("Adjacent sea colors:", adjacentCells.filter(c => c.terrain === 'sea').map(c => c.color));
   console.log("Player dice:", dice);
 }
-
-console.log("\n=== Test Complete ===");

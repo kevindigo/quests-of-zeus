@@ -96,5 +96,3 @@ if (unreachableWithinRange.length > 0) {
 } else {
   console.log("\nNo unreachable tiles found within range - this map might not have land obstacles blocking sea paths");
 }
-
-console.log("\n=== Test Complete ===");

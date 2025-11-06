@@ -25,10 +25,6 @@ Deno.test("Sea to shallows conversion - basic functionality", () => {
   const shallowCount = terrainCounts["shallow"] || 0;
   const seaCount = terrainCounts["sea"] || 0;
 
-  console.log(`Terrain distribution after sea-to-shallows conversion:`);
-  console.log(`  Shallows: ${shallowCount}`);
-  console.log(`  Sea: ${seaCount}`);
-
   // After sea-to-shallows conversion, we should have between 0 and 10 shallows
   // (we make 10 attempts on random sea hexes)
   assertEquals(
@@ -54,14 +50,8 @@ Deno.test("Sea to shallows conversion - basic functionality", () => {
       }
     }
 
-    console.log(`Found ${shallowCells.length} shallow cells`);
-
     // Verify each shallow cell meets the constraints
     for (const shallowCell of shallowCells) {
-      console.log(
-        `Verifying shallow cell at (${shallowCell.q}, ${shallowCell.r})`,
-      );
-
       // 1. Should not have zeus as neighbor
       const hasZeusNeighbor = hexMap["hasNeighborOfType"](
         shallowCell,
@@ -117,10 +107,6 @@ Deno.test("Sea to shallows conversion - basic functionality", () => {
         allConstraintsSatisfied,
         true,
         `All neighbor constraints should be satisfied for shallow cell at (${shallowCell.q}, ${shallowCell.r})`,
-      );
-
-      console.log(
-        `All constraints satisfied for shallow cell at (${shallowCell.q}, ${shallowCell.r})!`,
       );
     }
   } else {

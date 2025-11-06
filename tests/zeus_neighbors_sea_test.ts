@@ -13,7 +13,6 @@ Deno.test("Zeus neighbors should all be sea", () => {
   assertEquals(zeusCells.length, 1, "Should have exactly 1 Zeus cell");
 
   const zeusCell = zeusCells[0];
-  console.log(`Zeus placed at (${zeusCell.q}, ${zeusCell.r})`);
 
   // Get all neighbors of the Zeus cell
   const zeusNeighbors = hexMap.getNeighbors(zeusCell.q, zeusCell.r);
@@ -26,8 +25,6 @@ Deno.test("Zeus neighbors should all be sea", () => {
       `Neighbor of Zeus at (${neighbor.q}, ${neighbor.r}) should be sea, but was ${neighbor.terrain}`,
     );
   }
-
-  console.log(`✅ All ${zeusNeighbors.length} neighbors of Zeus are sea`);
 });
 
 // Test multiple generations to ensure consistency
@@ -50,8 +47,4 @@ Deno.test("Zeus neighbors sea - multiple generations", () => {
       );
     }
   }
-
-  console.log(
-    "✅ All 10 generations passed - Zeus neighbors are consistently sea",
-  );
 });

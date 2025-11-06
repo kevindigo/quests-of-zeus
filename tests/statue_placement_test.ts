@@ -53,9 +53,6 @@ export function testStatuePlacement(): void {
 
   // Test canPlaceStatueOnCity after placement
   const canPlaceAfterPlacement = game.canPlaceStatueOnCity(player.id);
-  console.log(`  Can place statue after placement: ${canPlaceAfterPlacement}`);
-
-  console.log("\n=== Statue Placement Test Complete ===");
 }
 
 // Run the test if this file is executed directly

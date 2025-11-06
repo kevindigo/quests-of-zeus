@@ -44,9 +44,6 @@ export function testCityStatues(): void {
 
   // Test complete cities
   const completeCities = map.getCompleteCities();
-  console.log(`\nComplete cities: ${completeCities.length}`);
-
-  console.log("\n=== City Statue Test Complete ===");
 }
 
 // Run the test if this file is executed directly

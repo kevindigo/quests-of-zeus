@@ -4,8 +4,6 @@ import { HexMap } from "../src/hexmap.ts";
 
 // Simple verification that Zeus neighbors are sea
 function verifyZeusNeighborsSea() {
-  console.log("=== Verifying Zeus Neighbors Are Sea ===\n");
-
   const hexMap = new HexMap();
   const grid = hexMap.getGrid();
 
@@ -18,12 +16,9 @@ function verifyZeusNeighborsSea() {
   }
 
   const zeusCell = zeusCells[0];
-  console.log(`Zeus placed at (${zeusCell.q}, ${zeusCell.r})`);
 
   // Get all neighbors of the Zeus cell
   const zeusNeighbors = hexMap.getNeighbors(zeusCell.q, zeusCell.r);
-
-  console.log(`\nZeus has ${zeusNeighbors.length} neighbors:`);
 
   let allNeighborsSea = true;
   for (const neighbor of zeusNeighbors) {
@@ -40,9 +35,6 @@ function verifyZeusNeighborsSea() {
       allNeighborsSea = false;
     }
   }
-
-  console.log(`\nResult: ${allNeighborsSea ? "✅ SUCCESS" : "❌ FAILED"}`);
-  console.log(`All neighbors of Zeus are sea.`);
 }
 
 // Run the verification

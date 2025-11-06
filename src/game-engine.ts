@@ -758,22 +758,6 @@ export class OracleGameEngine {
       });
     }
 
-    // Log distribution for debugging
-    console.log(
-      `Monster distribution: ${markedHexes.length} marked hexes, ${nonMarkedHexes.length} non-marked hexes`,
-    );
-    console.log(
-      `Total monsters: ${totalMonsters} (${totalMonstersPerColor} per color)`,
-    );
-
-    for (const monsterHex of monsterHexes) {
-      console.log(
-        `Hex (${monsterHex.q},${monsterHex.r}): ${
-          monsterHex.monsterColors.join(", ")
-        }`,
-      );
-    }
-
     return monsterHexes;
   }
 

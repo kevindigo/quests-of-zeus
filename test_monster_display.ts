@@ -65,8 +65,6 @@ function testMonsterDisplay(): void {
       );
     }
   }
-
-  console.log("\n=== Test Complete ===");
 }
 
 // Run if this file is executed directly

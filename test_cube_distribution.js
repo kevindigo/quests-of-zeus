@@ -80,10 +80,6 @@ function testCubeDistribution() {
         `  Position (${ch.q}, ${ch.r}): ${ch.cubeColors.join(", ")}`,
       );
     });
-
-    console.log(
-      "\n✅ All tests passed! The new cube distribution logic is working correctly.",
-    );
   } catch (error) {
     console.error("❌ Error:", error);
   }

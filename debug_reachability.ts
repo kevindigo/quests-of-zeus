@@ -80,5 +80,3 @@ availableMoves.forEach(move => {
     console.log(`  (${move.q}, ${move.r}) with ${move.dieColor} die - missing from reachable tiles`);
   }
 });
-
-console.log("\n=== Test Complete ===");

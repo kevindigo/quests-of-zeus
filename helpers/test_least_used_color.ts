@@ -59,8 +59,6 @@ function testLeastUsedColorPreference(): void {
     `- Average sea tiles per map: ${(totalSeaTiles / testCount).toFixed(2)}`,
   );
 
-  console.log("\n=== Color Distribution Analysis ===");
-
   let maxDifference = 0;
   let mostUnevenMap = -1;
   let mostUnevenDifference = 0;
@@ -71,11 +69,6 @@ function testLeastUsedColorPreference(): void {
     const variance = stats.counts.reduce((sum, count) =>
       sum + Math.pow(count - average, 2), 0) / testCount;
     const stdDev = Math.sqrt(variance);
-
-    console.log(`${color.toUpperCase()}:`);
-    console.log(`  Average: ${average.toFixed(2)} tiles`);
-    console.log(`  Range: ${stats.min} - ${stats.max} tiles`);
-    console.log(`  Standard Deviation: ${stdDev.toFixed(2)} tiles`);
 
     // Track maximum difference
     const colorRange = stats.max - stats.min;
@@ -94,28 +87,7 @@ function testLeastUsedColorPreference(): void {
     }
   }
 
-  console.log(`\n=== Imbalance Analysis ===`);
-  console.log(
-    `- Maximum difference in any single color: ${maxDifference} tiles`,
-  );
-  console.log(
-    `- Most uneven map (map ${
-      mostUnevenMap + 1
-    }): ${mostUnevenDifference} tiles difference`,
-  );
-
-  // Show the distribution for the most uneven map
-  if (mostUnevenMap >= 0) {
-    console.log(`  Color counts in most uneven map:`);
-    for (const color of colors) {
-      console.log(
-        `    ${color}: ${colorStats[color].counts[mostUnevenMap]} tiles`,
-      );
-    }
-  }
-
   // Evaluate the distribution
-  console.log(`\n=== Evaluation ===`);
   if (maxDifference > 10) {
     console.log("❌ CRITICAL: Significant color imbalance detected!");
     console.log("   Some colors appear 10+ times more than others.");
@@ -126,7 +98,7 @@ function testLeastUsedColorPreference(): void {
     console.log("ℹ️  NOTE: Some color imbalance present.");
     console.log("   Some colors appear 5+ times more than others.");
   } else {
-    console.log("✅ Color distribution appears reasonably balanced.");
+    // console.log("✅ Color distribution appears reasonably balanced.");
   }
 
   // Check if we've seen the extreme case mentioned (17 vs 6)
@@ -142,7 +114,7 @@ function testLeastUsedColorPreference(): void {
       "\n⚠️  EXTREME CASE DETECTED: Found maps with 17+ of one color and 6- of another!",
     );
   } else {
-    console.log("\n✅ No extreme cases (17 vs 6) detected in this sample.");
+    // console.log("\n✅ No extreme cases (17 vs 6) detected in this sample.");
   }
 
   // Compare with expected balanced distribution

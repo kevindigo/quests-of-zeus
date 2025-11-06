@@ -23,8 +23,6 @@ function testConstraintColoring(): void {
     totalConflicts += conflicts;
     maxConflicts = Math.max(maxConflicts, conflicts);
     minConflicts = Math.min(minConflicts, conflicts);
-
-    console.log(`  Map ${i + 1}: ${conflicts} same-color adjacencies\n`);
   }
 
   const averageConflicts = totalConflicts / testCount;

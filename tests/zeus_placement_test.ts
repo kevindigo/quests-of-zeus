@@ -15,7 +15,6 @@ Deno.test("Zeus placement - randomly in neighbor hexes", () => {
   assertEquals(zeusCells.length, 1, "Should have exactly 1 Zeus cell");
 
   const zeusCell = zeusCells[0];
-  console.log(`Zeus placed at (${zeusCell.q}, ${zeusCell.r})`);
 
   // Zeus should not be at the center (0, 0)
   assertEquals(
@@ -51,8 +50,6 @@ Deno.test("Zeus placement - randomly in neighbor hexes", () => {
     true,
     "Center cell should exist",
   );
-
-  console.log("✅ Zeus placement test passed!");
 });
 
 // Test multiple map generations to ensure random placement
@@ -86,11 +83,6 @@ Deno.test("Zeus placement - multiple generations", () => {
     );
   }
 
-  console.log(
-    `Zeus was placed in ${positions.size} different positions out of 6 possible`,
-  );
-  console.log("Positions:", Array.from(positions).sort());
-
   // With 20 generations, we should see multiple different positions
   // (though it's theoretically possible to get the same position 20 times, it's very unlikely)
   assertEquals(
@@ -98,6 +90,4 @@ Deno.test("Zeus placement - multiple generations", () => {
     true,
     "With 20 generations, Zeus should appear in at least 2 different positions",
   );
-
-  console.log("✅ Multiple generations test passed!");
 });

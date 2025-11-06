@@ -104,8 +104,6 @@ function testMonsterDistribution(): void {
   } else {
     console.error("❌ Some non-marked hexes have invalid monster counts");
   }
-
-  console.log("\n=== Monster Distribution Test Complete ===");
 }
 
 // Run the test if this file is executed directly

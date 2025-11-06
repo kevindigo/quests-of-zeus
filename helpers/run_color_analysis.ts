@@ -93,7 +93,7 @@ function analyzeSeaColorDistribution(): void {
   } else if (maxDifference > 5) {
     console.log("ℹ️  NOTE: Moderate color imbalance present.");
   } else {
-    console.log("✅ Color distribution appears reasonably balanced.");
+    // console.log("✅ Color distribution appears reasonably balanced.");
   }
 }
 

@@ -55,5 +55,3 @@ if (availableMoves.length > 0) {
 } else {
   console.log("\nNo available moves - this might be expected if no dice match adjacent sea colors");
 }
-
-console.log("\n=== Test Complete ===");

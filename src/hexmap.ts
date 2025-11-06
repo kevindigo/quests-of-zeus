@@ -573,10 +573,6 @@ export class HexMap {
       // (it's already converted from step 3)
       successfulConversions++;
     }
-
-    console.log(
-      `Made ${attemptsMade} attempts to convert sea to shallows, ${successfulConversions} successful conversions`,
-    );
   }
 
   /**
@@ -745,7 +741,6 @@ export class HexMap {
     if (zeusCell) {
       // Place Zeus at the selected neighbor hex
       zeusCell.terrain = "zeus";
-      console.log(`Zeus placed at (${zeusQ}, ${zeusR})`);
 
       // Set all neighbors of the Zeus hex to sea
       this.setZeusNeighborsToSea(grid, zeusQ, zeusR);
@@ -806,7 +801,6 @@ export class HexMap {
         cell.color = shuffledColors[cornerDirection];
         // Initialize statues counter for this city to 3 (all statues start on cities)
         cell.statues = 3;
-        console.log(`Placed city at (${placementQ}, ${placementR}) with color ${cell.color}, statues initialized to 3`);
 
         // After placing city, set 2 random neighboring hexes to sea
         this.setRandomNeighborsToSea(grid, placementQ, placementR);
@@ -1019,15 +1013,11 @@ export class HexMap {
 
     // Count and log adjacent same-color sea hexes for debugging
     const conflicts = this.countAdjacentSameColorSeaHexes(grid);
-    console.log(
-      `Assigned colors to ${seaCells.length} sea hexes with ${conflicts} same-color adjacencies`,
-    );
-
-    // Log the final color distribution for debugging
-    console.log("Final sea color distribution:");
-    for (const color of ALL_COLORS) {
-      console.log(`  ${color}: ${colorCounts[color]} tiles`);
-    }
+    if (conflicts > 0) {
+      console.log(
+        `Assigned colors to ${seaCells.length} sea hexes with ${conflicts} same-color adjacencies`,
+      );
+      }
   }
 
   /**

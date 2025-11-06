@@ -23,9 +23,6 @@ export function testSimple() {
 
     // Test that Zeus exists somewhere on the map
     const zeusCells = hexMap.getCellsByTerrain("zeus");
-    console.log(`✓ Zeus cells found: ${zeusCells.length}`);
-
-    console.log("\n✅ All basic tests passed!");
   } catch (error) {
     console.error("❌ Error:", error);
     return false;
