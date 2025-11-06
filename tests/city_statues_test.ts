@@ -20,14 +20,22 @@ export function testCityStatues(): void {
     for (let i = 1; i <= 4; i++) {
       const success = map.addStatueToCity(city.q, city.r);
       const currentStatues = map.getStatuesOnCity(city.q, city.r);
-      console.log(`  Attempt ${i}: add statue -> ${success ? "SUCCESS" : "FAILED"}, statues: ${currentStatues}`);
+      console.log(
+        `  Attempt ${i}: add statue -> ${
+          success ? "SUCCESS" : "FAILED"
+        }, statues: ${currentStatues}`,
+      );
     }
 
     // Test removing statues
     for (let i = 1; i <= 4; i++) {
       const success = map.removeStatueFromCity(city.q, city.r);
       const currentStatues = map.getStatuesOnCity(city.q, city.r);
-      console.log(`  Attempt ${i}: remove statue -> ${success ? "SUCCESS" : "FAILED"}, statues: ${currentStatues}`);
+      console.log(
+        `  Attempt ${i}: remove statue -> ${
+          success ? "SUCCESS" : "FAILED"
+        }, statues: ${currentStatues}`,
+      );
     }
 
     // Test city completion

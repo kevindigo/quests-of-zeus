@@ -25,20 +25,43 @@ export function testStatueSystem(): void {
 
   // Test initial state
   const initialStatues = map.getStatuesOnCity(testCity.q, testCity.r);
-  if (initialStatues !== 0) {
-    console.log(`❌ Expected 0 statues initially, got ${initialStatues}`);
+  if (initialStatues !== 3) {
+    console.log(`❌ Expected 3 statues initially, got ${initialStatues}`);
   } else {
-    console.log("✓ Initial statue count is 0");
+    console.log("✓ Initial statue count is 3");
   }
 
-  // Test adding statues
+  // Test removing statues (cities start with 3 statues)
+  for (let i = 2; i >= 0; i--) {
+    const success = map.removeStatueFromCity(testCity.q, testCity.r);
+    const currentStatues = map.getStatuesOnCity(testCity.q, testCity.r);
+    if (success && currentStatues === i) {
+      console.log(`✓ Successfully removed statue, now ${i}/3`);
+    } else {
+      console.log(
+        `❌ Failed to remove statue: success=${success}, statues=${currentStatues}`,
+      );
+    }
+  }
+
+  // Test removing beyond zero
+  const underflowSuccess = map.removeStatueFromCity(testCity.q, testCity.r);
+  if (!underflowSuccess) {
+    console.log("✓ Correctly prevented removing statue below zero");
+  } else {
+    console.log("❌ Should not allow removing statue below zero");
+  }
+
+  // Test adding statues back
   for (let i = 1; i <= 3; i++) {
     const success = map.addStatueToCity(testCity.q, testCity.r);
     const currentStatues = map.getStatuesOnCity(testCity.q, testCity.r);
     if (success && currentStatues === i) {
       console.log(`✓ Successfully added statue ${i}/3`);
     } else {
-      console.log(`❌ Failed to add statue ${i}: success=${success}, statues=${currentStatues}`);
+      console.log(
+        `❌ Failed to add statue ${i}: success=${success}, statues=${currentStatues}`,
+      );
     }
   }
 
@@ -58,25 +81,6 @@ export function testStatueSystem(): void {
     console.log("❌ City should be complete with 3 statues");
   }
 
-  // Test removing statues
-  for (let i = 2; i >= 0; i--) {
-    const success = map.removeStatueFromCity(testCity.q, testCity.r);
-    const currentStatues = map.getStatuesOnCity(testCity.q, testCity.r);
-    if (success && currentStatues === i) {
-      console.log(`✓ Successfully removed statue, now ${i}/3`);
-    } else {
-      console.log(`❌ Failed to remove statue: success=${success}, statues=${currentStatues}`);
-    }
-  }
-
-  // Test removing beyond zero
-  const underflowSuccess = map.removeStatueFromCity(testCity.q, testCity.r);
-  if (!underflowSuccess) {
-    console.log("✓ Correctly prevented removing statue below zero");
-  } else {
-    console.log("❌ Should not allow removing statue below zero");
-  }
-
   // Test 2: Game Engine statue functionality
   console.log("\n2. Testing Game Engine statue operations...");
   const game = new OracleGameEngine();
@@ -86,7 +90,7 @@ export function testStatueSystem(): void {
   // Find a city and move player there
   const gameCities = gameState.map.getCellsByTerrain("city");
   const gameCity = gameCities[0];
-  
+
   console.log(`✓ Testing with city at (${gameCity.q}, ${gameCity.r})`);
   player.shipPosition = { q: gameCity.q, r: gameCity.r };
   gameState.phase = "action";
@@ -100,7 +104,9 @@ export function testStatueSystem(): void {
   }
 
   // Add statue of wrong color
-  const emptySlotIndex = player.storage.findIndex(slot => slot.type === "empty");
+  const emptySlotIndex = player.storage.findIndex((slot) =>
+    slot.type === "empty"
+  );
   if (emptySlotIndex !== -1) {
     // Find a color different from the city
     const wrongColor = gameCity.color === "red" ? "blue" : "red";
@@ -117,10 +123,17 @@ export function testStatueSystem(): void {
   }
 
   // Add statue of correct color
-  const anotherEmptySlot = player.storage.findIndex(slot => slot.type === "empty");
+  const anotherEmptySlot = player.storage.findIndex((slot) =>
+    slot.type === "empty"
+  );
   if (anotherEmptySlot !== -1) {
-    player.storage[anotherEmptySlot] = { type: "statue", color: gameCity.color };
-    console.log(`✓ Added statue of correct color (${gameCity.color}) to storage`);
+    player.storage[anotherEmptySlot] = {
+      type: "statue",
+      color: gameCity.color,
+    };
+    console.log(
+      `✓ Added statue of correct color (${gameCity.color}) to storage`,
+    );
   }
 
   // Test with correct color statue
@@ -141,7 +154,7 @@ export function testStatueSystem(): void {
   }
 
   // Test statue was consumed from storage
-  const statueStillInStorage = player.storage.some(slot => 
+  const statueStillInStorage = player.storage.some((slot) =>
     slot.type === "statue" && slot.color === gameCity.color
   );
   if (!statueStillInStorage) {

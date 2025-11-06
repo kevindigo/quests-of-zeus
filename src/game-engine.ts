@@ -663,21 +663,21 @@ export class OracleGameEngine {
     for (const markedHex of markedHexes) {
       const hexKey = `${markedHex.q},${markedHex.r}`;
       usedColorsPerHex.set(hexKey, new Set<HexColor>());
-      
+
       const monsterColors: HexColor[] = [];
-      
+
       // Find 2 different colors from the pool
       let placed = 0;
       let poolIndex = 0;
-      
+
       while (placed < 2 && poolIndex < monsterPool.length) {
         const color = monsterPool[poolIndex];
-        
+
         // Check if this color isn't already used on this hex
         if (!monsterColors.includes(color)) {
           monsterColors.push(color);
           usedColorsPerHex.get(hexKey)!.add(color);
-          
+
           // Remove this color from the pool (we'll track remaining pool separately)
           monsterPool.splice(poolIndex, 1);
           placed++;
@@ -696,24 +696,31 @@ export class OracleGameEngine {
     // Step 2: Distribute remaining monsters evenly among non-marked hexes
     // Calculate how many monsters should go on each non-marked hex
     const remainingMonsters = monsterPool.length;
-    const monstersPerNonMarkedHex = Math.floor(remainingMonsters / nonMarkedHexes.length);
+    const monstersPerNonMarkedHex = Math.floor(
+      remainingMonsters / nonMarkedHexes.length,
+    );
     const extraMonsters = remainingMonsters % nonMarkedHexes.length;
 
     // Distribute monsters to non-marked hexes
     let monsterIndex = 0;
-    
+
     for (let i = 0; i < nonMarkedHexes.length; i++) {
       const nonMarkedHex = nonMarkedHexes[i];
       const hexKey = `${nonMarkedHex.q},${nonMarkedHex.r}`;
       usedColorsPerHex.set(hexKey, new Set<HexColor>());
-      
+
       const monsterColors: HexColor[] = [];
-      
+
       // Calculate how many monsters this hex gets
-      const monstersForThisHex = monstersPerNonMarkedHex + (i < extraMonsters ? 1 : 0);
-      
+      const monstersForThisHex = monstersPerNonMarkedHex +
+        (i < extraMonsters ? 1 : 0);
+
       // Add monsters to this hex, ensuring no duplicate colors
-      for (let j = 0; j < monstersForThisHex && monsterIndex < monsterPool.length; j++) {
+      for (
+        let j = 0;
+        j < monstersForThisHex && monsterIndex < monsterPool.length;
+        j++
+      ) {
         // Find the next color that isn't already on this hex
         while (
           monsterIndex < monsterPool.length &&
@@ -737,11 +744,19 @@ export class OracleGameEngine {
     }
 
     // Log distribution for debugging
-    console.log(`Monster distribution: ${markedHexes.length} marked hexes, ${nonMarkedHexes.length} non-marked hexes`);
-    console.log(`Total monsters: ${totalMonsters} (${totalMonstersPerColor} per color)`);
-    
+    console.log(
+      `Monster distribution: ${markedHexes.length} marked hexes, ${nonMarkedHexes.length} non-marked hexes`,
+    );
+    console.log(
+      `Total monsters: ${totalMonsters} (${totalMonstersPerColor} per color)`,
+    );
+
     for (const monsterHex of monsterHexes) {
-      console.log(`Hex (${monsterHex.q},${monsterHex.r}): ${monsterHex.monsterColors.join(', ')}`);
+      console.log(
+        `Hex (${monsterHex.q},${monsterHex.r}): ${
+          monsterHex.monsterColors.join(", ")
+        }`,
+      );
     }
 
     return monsterHexes;

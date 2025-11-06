@@ -197,24 +197,38 @@ export class GameController {
       // Update the hex map SVG with cube hex data
       const cubeHexes = gameState.cubeHexes || [];
       console.log("Cube hexes for rendering:", cubeHexes);
-      
+
       // Debug: Log cube hex details
       cubeHexes.forEach((cubeHex, index) => {
-        console.log(`Cube hex ${index}: (${cubeHex.q}, ${cubeHex.r}) with colors:`, cubeHex.cubeColors);
+        console.log(
+          `Cube hex ${index}: (${cubeHex.q}, ${cubeHex.r}) with colors:`,
+          cubeHex.cubeColors,
+        );
       });
 
       // Update the hex map SVG with monster hex data
       const monsterHexes = gameState.monsterHexes || [];
       console.log("Monster hexes for rendering:", monsterHexes);
-      
+
       // Debug: Log monster hex details
       monsterHexes.forEach((monsterHex, index) => {
-        console.log(`Monster hex ${index}: (${monsterHex.q}, ${monsterHex.r}) with colors:`, monsterHex.monsterColors);
+        console.log(
+          `Monster hex ${index}: (${monsterHex.q}, ${monsterHex.r}) with colors:`,
+          monsterHex.monsterColors,
+        );
       });
 
       // Debug: Check if cube hexes and monster hexes are being passed to SVG renderer
-      console.log("Setting cubeHexes in SVG options:", cubeHexes.length, "hexes");
-      console.log("Setting monsterHexes in SVG options:", monsterHexes.length, "hexes");
+      console.log(
+        "Setting cubeHexes in SVG options:",
+        cubeHexes.length,
+        "hexes",
+      );
+      console.log(
+        "Setting monsterHexes in SVG options:",
+        monsterHexes.length,
+        "hexes",
+      );
 
       this.hexMapSVG.setOptions({
         cubeHexes: cubeHexes,
@@ -395,12 +409,18 @@ export class GameController {
             `<button id="completeCloudQuest" class="action-btn">Complete Cloud Quest</button>`;
         }
         if (currentCell?.terrain === "city") {
-          const canPlaceStatue = this.gameEngine.canPlaceStatueOnCity(currentPlayer.id);
+          const canPlaceStatue = this.gameEngine.canPlaceStatueOnCity(
+            currentPlayer.id,
+          );
           if (canPlaceStatue) {
             actions +=
               `<button id="placeStatue" class="action-btn">Place Statue on City</button>`;
           } else {
-            actions += `<p>Cannot place statue: ${currentCell.statues === 3 ? "City already has all 3 statues" : "No statue of city's color in storage"}</p>`;
+            actions += `<p>Cannot place statue: ${
+              currentCell.statues === 3
+                ? "City already has all 3 statues"
+                : "No statue of city's color in storage"
+            }</p>`;
           }
         }
 
@@ -573,7 +593,9 @@ export class GameController {
         currentPlayer.shipPosition.q,
         currentPlayer.shipPosition.r,
       );
-      this.showMessage(`Statue placed on city! (${currentCell.statues}/3 statues)`);
+      this.showMessage(
+        `Statue placed on city! (${currentCell.statues}/3 statues)`,
+      );
     } else {
       this.showMessage("Cannot place statue on this city");
     }

@@ -103,20 +103,23 @@ export class HexMapSVG {
 
     // Add city icon for city hexes
     if (cell.terrain === "city") {
-      cellContent += generateCityIcon({ 
-        centerX, 
-        centerY, 
+      cellContent += generateCityIcon({
+        centerX,
+        centerY,
         cellSize,
-        hexColor: this.getStrokeColor(cell.color)
+        hexColor: this.getStrokeColor(cell.color),
       });
-      
+
       // Add statue icons if there are statues on this city
-      if (cell.statues && cell.statues > 0) {
-        cellContent += generateStatueIcons({ 
-          centerX, 
-          centerY, 
+      // Debug: Log statue information for troubleshooting
+      console.log(`City at (${cell.q}, ${cell.r}): statues = ${cell.statues}, color = ${cell.color}`);
+      if (cell.statues !== undefined && cell.statues > 0) {
+        console.log(`  Generating ${cell.statues} statue(s) for city at (${cell.q}, ${cell.r})`);
+        cellContent += generateStatueIcons({
+          centerX,
+          centerY,
           cellSize,
-          hexColor: this.getStrokeColor(cell.color)
+          hexColor: this.getStrokeColor(cell.color),
         }, cell.statues);
       }
     }
@@ -127,19 +130,32 @@ export class HexMapSVG {
         const monsterHex = this.options.monsterHexes?.find((mh) =>
           mh.q === cell.q && mh.r === cell.r
         );
-        
-        console.log(`Processing monster hex at (${cell.q}, ${cell.r}):`, monsterHex);
-        
+
+        console.log(
+          `Processing monster hex at (${cell.q}, ${cell.r}):`,
+          monsterHex,
+        );
+
         // Always show the line-drawn monster icon as the base
         cellContent += generateMonsterIcon({ centerX, centerY, cellSize });
-        
+
         // Then overlay colored monsters if present
         if (monsterHex && monsterHex.monsterColors.length > 0) {
-          console.log(`Generating colored monsters for (${cell.q}, ${cell.r}) with colors:`, monsterHex.monsterColors);
-          cellContent += this.generateColoredMonsters({ centerX, centerY, cellSize }, monsterHex.monsterColors);
+          console.log(
+            `Generating colored monsters for (${cell.q}, ${cell.r}) with colors:`,
+            monsterHex.monsterColors,
+          );
+          cellContent += this.generateColoredMonsters({
+            centerX,
+            centerY,
+            cellSize,
+          }, monsterHex.monsterColors);
         }
       } catch (error) {
-        console.error(`Error rendering monster hex at (${cell.q}, ${cell.r}):`, error);
+        console.error(
+          `Error rendering monster hex at (${cell.q}, ${cell.r}):`,
+          error,
+        );
         // Fallback to generic monster icon on error
         cellContent += generateMonsterIcon({ centerX, centerY, cellSize });
       }
@@ -147,11 +163,11 @@ export class HexMapSVG {
 
     // Add temple icon for temple hexes
     if (cell.terrain === "temple") {
-      cellContent += generateTempleIcon({ 
-        centerX, 
-        centerY, 
+      cellContent += generateTempleIcon({
+        centerX,
+        centerY,
         cellSize,
-        hexColor: this.getStrokeColor(cell.color)
+        hexColor: this.getStrokeColor(cell.color),
       });
     }
 
@@ -161,19 +177,29 @@ export class HexMapSVG {
         const cubeHex = this.options.cubeHexes.find((ch) =>
           ch.q === cell.q && ch.r === cell.r
         );
-        
+
         console.log(`Processing cube hex at (${cell.q}, ${cell.r}):`, cubeHex);
-        
+
         // Always show the line-drawn cubes icon as the base
         cellContent += generateCubesIcon({ centerX, centerY, cellSize });
-        
+
         // Then overlay colored cubes if present
         if (cubeHex && cubeHex.cubeColors.length > 0) {
-          console.log(`Generating colored cubes for (${cell.q}, ${cell.r}) with colors:`, cubeHex.cubeColors);
-          cellContent += this.generateColoredCubes({ centerX, centerY, cellSize }, cubeHex.cubeColors);
+          console.log(
+            `Generating colored cubes for (${cell.q}, ${cell.r}) with colors:`,
+            cubeHex.cubeColors,
+          );
+          cellContent += this.generateColoredCubes({
+            centerX,
+            centerY,
+            cellSize,
+          }, cubeHex.cubeColors);
         }
       } catch (error) {
-        console.error(`Error rendering cube hex at (${cell.q}, ${cell.r}):`, error);
+        console.error(
+          `Error rendering cube hex at (${cell.q}, ${cell.r}):`,
+          error,
+        );
         // Fallback to generic cube icon on error
         cellContent += generateCubesIcon({ centerX, centerY, cellSize });
       }
@@ -315,7 +341,10 @@ export class HexMapSVG {
   /**
    * Generate colored cube icons for cube hexes
    */
-  private generateColoredCubes(options: IconOptions, cubeColors: HexColor[]): string {
+  private generateColoredCubes(
+    options: IconOptions,
+    cubeColors: HexColor[],
+  ): string {
     try {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
@@ -323,24 +352,24 @@ export class HexMapSVG {
       const cubeSize = 8 * scale;
       const spacing = cubeSize * 3;
 
-      let cubesContent = '';
-      
+      let cubesContent = "";
+
       // Safety check: if no cube colors, return empty string
       if (cubeColors.length === 0) {
         return cubesContent;
       }
-      
+
       // Position cubes in a circular arrangement around the center
       const angleStep = (2 * Math.PI) / cubeColors.length;
-      
+
       cubeColors.forEach((color, index) => {
         const angle = index * angleStep;
         const cubeX = centerX + Math.cos(angle) * spacing;
         const cubeY = centerY + Math.sin(angle) * spacing;
-        
+
         const strokeColor = this.getStrokeColor(color);
         const fillColor = this.getCubeFillColor(color);
-        
+
         // Use squares instead of circles for cubes
         cubesContent += `
           <rect 
@@ -360,7 +389,7 @@ export class HexMapSVG {
     } catch (error) {
       console.error("Error in generateColoredCubes:", error);
       // Return empty string on error - the fallback generic icon will be used
-      return '';
+      return "";
     }
   }
 
@@ -368,7 +397,10 @@ export class HexMapSVG {
    * Generate colored monster icons for monster hexes
    * Monsters are displayed as downward-pointing equilateral triangles
    */
-  private generateColoredMonsters(options: IconOptions, monsterColors: HexColor[]): string {
+  private generateColoredMonsters(
+    options: IconOptions,
+    monsterColors: HexColor[],
+  ): string {
     try {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
@@ -376,36 +408,36 @@ export class HexMapSVG {
       const triangleSize = 15 * scale;
       const spacing = triangleSize * 2;
 
-      let monstersContent = '';
-      
+      let monstersContent = "";
+
       // Safety check: if no monster colors, return empty string
       if (monsterColors.length === 0) {
         return monstersContent;
       }
-      
+
       // Position monsters in a circular arrangement around the center
       const angleStep = (2 * Math.PI) / monsterColors.length;
-      
+
       monsterColors.forEach((color, index) => {
         const angle = index * angleStep;
         const monsterX = centerX + Math.cos(angle) * spacing;
         const monsterY = centerY + Math.sin(angle) * spacing;
-        
+
         const strokeColor = this.getStrokeColor(color);
         const fillColor = this.getMonsterFillColor(color);
-        
+
         // Create downward-pointing equilateral triangle
         // Equilateral triangle height = side * √3 / 2
         const triangleHeight = triangleSize * Math.sqrt(3) / 2;
-        
+
         // Points for downward-pointing equilateral triangle:
         // Top left, top right, bottom center
         const points = [
           `${monsterX - triangleSize / 2},${monsterY - triangleHeight / 2}`,
           `${monsterX + triangleSize / 2},${monsterY - triangleHeight / 2}`,
-          `${monsterX},${monsterY + triangleHeight / 2}`
-        ].join(' ');
-        
+          `${monsterX},${monsterY + triangleHeight / 2}`,
+        ].join(" ");
+
         monstersContent += `
           <polygon 
             points="${points}" 
@@ -421,7 +453,7 @@ export class HexMapSVG {
     } catch (error) {
       console.error("Error in generateColoredMonsters:", error);
       // Return empty string on error - the fallback generic icon will be used
-      return '';
+      return "";
     }
   }
 
@@ -431,12 +463,12 @@ export class HexMapSVG {
   private getCubeFillColor(color: HexColor): string {
     const colors: Record<HexColor, string> = {
       none: "#cccccc",
-      red: "#ff0000",      // More vibrant red
-      pink: "#ff69b4",     // More vibrant pink
-      blue: "#0000ff",     // More vibrant blue
-      black: "#000000",    // Pure black
-      green: "#00ff00",    // More vibrant green
-      yellow: "#ffff00",   // More vibrant yellow
+      red: "#ff0000", // More vibrant red
+      pink: "#ff69b4", // More vibrant pink
+      blue: "#0000ff", // More vibrant blue
+      black: "#000000", // Pure black
+      green: "#00ff00", // More vibrant green
+      yellow: "#ffff00", // More vibrant yellow
     };
     return colors[color] || "#cccccc";
   }
@@ -499,7 +531,9 @@ export class HexMapSVG {
       for (let r = 0; r < row.length; r++) {
         const cell = row[r];
         if (cell) {
-          console.log(`Generating hex cell at (${cell.q}, ${cell.r}) with terrain: ${cell.terrain}`);
+          console.log(
+            `Generating hex cell at (${cell.q}, ${cell.r}) with terrain: ${cell.terrain}`,
+          );
           const { x, y } = this.calculateCellPosition(cell.q, cell.r);
           svgContent += this.generateHexCell(cell, x, y);
         }

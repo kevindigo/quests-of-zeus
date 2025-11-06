@@ -804,8 +804,9 @@ export class HexMap {
         cell.terrain = "city";
         // Assign a random color to the city
         cell.color = shuffledColors[cornerDirection];
-        // Initialize statues counter for this city
-        cell.statues = 0;
+        // Initialize statues counter for this city to 3 (all statues start on cities)
+        cell.statues = 3;
+        console.log(`Placed city at (${placementQ}, ${placementR}) with color ${cell.color}, statues initialized to 3`);
 
         // After placing city, set 2 random neighboring hexes to sea
         this.setRandomNeighborsToSea(grid, placementQ, placementR);
@@ -820,8 +821,8 @@ export class HexMap {
           cornerCell.terrain = "city";
           // Assign a random color to the city
           cornerCell.color = shuffledColors[cornerDirection];
-          // Initialize statues counter for this city
-          cornerCell.statues = 0;
+          // Initialize statues counter for this city to 3 (all statues start on cities)
+          cornerCell.statues = 3;
 
           // After placing city, set 2 random neighboring hexes to sea
           this.setRandomNeighborsToSea(grid, cornerCoords.q, cornerCoords.r);
@@ -1304,10 +1305,15 @@ export class HexMap {
    */
   addStatueToCity(q: number, r: number): boolean {
     const cell = this.getCell(q, r);
-    if (cell && cell.terrain === "city" && cell.statues !== undefined && cell.statues < 3) {
+    if (
+      cell && cell.terrain === "city" && cell.statues !== undefined &&
+      cell.statues < 3
+    ) {
       cell.statues++;
+      console.log(`Added statue to city at (${q}, ${r}). Now has ${cell.statues}/3 statues.`);
       return true;
     }
+    console.log(`Failed to add statue to city at (${q}, ${r}): cell=${cell ? "found" : "not found"}, terrain=${cell?.terrain}, statues=${cell?.statues}`);
     return false;
   }
 
@@ -1317,7 +1323,10 @@ export class HexMap {
    */
   removeStatueFromCity(q: number, r: number): boolean {
     const cell = this.getCell(q, r);
-    if (cell && cell.terrain === "city" && cell.statues !== undefined && cell.statues > 0) {
+    if (
+      cell && cell.terrain === "city" && cell.statues !== undefined &&
+      cell.statues > 0
+    ) {
       cell.statues--;
       return true;
     }
@@ -1331,8 +1340,10 @@ export class HexMap {
   getStatuesOnCity(q: number, r: number): number {
     const cell = this.getCell(q, r);
     if (cell && cell.terrain === "city" && cell.statues !== undefined) {
+      console.log(`Retrieved ${cell.statues} statues from city at (${q}, ${r})`);
       return cell.statues;
     }
+    console.log(`Failed to retrieve statues from city at (${q}, ${r}): cell=${cell ? "found" : "not found"}, terrain=${cell?.terrain}, statues=${cell?.statues}`);
     return -1;
   }
 
@@ -1349,7 +1360,7 @@ export class HexMap {
    */
   getCompleteCities(): HexCell[] {
     const cities = this.getCellsByTerrain("city");
-    return cities.filter(city => city.statues === 3);
+    return cities.filter((city) => city.statues === 3);
   }
 
   /**

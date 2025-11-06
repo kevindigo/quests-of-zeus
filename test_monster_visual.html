@@ -1,137 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monster Display Test</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background: #f5f5f5;
-        }
-        .test-container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .svg-container {
-            border: 1px solid #ccc;
-            margin: 20px 0;
-            background: white;
-        }
-        .test-info {
-            background: #e8f4fd;
-            padding: 15px;
-            border-radius: 4px;
-            margin: 10px 0;
-        }
-        .success { color: green; }
-        .error { color: red; }
-        .colored-monster {
-            /* Test styles for monster triangles */
-            stroke-width: 2;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background: #f5f5f5;
+      }
+      .test-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .svg-container {
+        border: 1px solid #ccc;
+        margin: 20px 0;
+        background: white;
+      }
+      .test-info {
+        background: #e8f4fd;
+        padding: 15px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+      .success {
+        color: green;
+      }
+      .error {
+        color: red;
+      }
+      .colored-monster {
+        /* Test styles for monster triangles */
+        stroke-width: 2;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="test-container">
-        <h1>Monster Display Test</h1>
-        <p>This test verifies that monsters are displayed as downward-pointing equilateral triangles with colors.</p>
-        
-        <div class="test-info">
-            <h3>Expected Behavior:</h3>
-            <ul>
-                <li>Monsters should appear as downward-pointing equilateral triangles</li>
-                <li>Each monster should have a colored fill based on its color</li>
-                <li>Monsters should be arranged in a circular pattern around the hex center</li>
-                <li>The number of monsters on each hex should be displayed</li>
-            </ul>
-        </div>
+      <h1>Monster Display Test</h1>
+      <p>
+        This test verifies that monsters are displayed as downward-pointing
+        equilateral triangles with colors.
+      </p>
 
-        <div id="testResults"></div>
-        <div id="svgContainer" class="svg-container"></div>
-        
-        <button onclick="runTest()">Run Monster Display Test</button>
+      <div class="test-info">
+        <h3>Expected Behavior:</h3>
+        <ul>
+          <li>
+            Monsters should appear as downward-pointing equilateral triangles
+          </li>
+          <li>Each monster should have a colored fill based on its color</li>
+          <li>
+            Monsters should be arranged in a circular pattern around the hex
+            center
+          </li>
+          <li>The number of monsters on each hex should be displayed</li>
+        </ul>
+      </div>
+
+      <div id="testResults"></div>
+      <div id="svgContainer" class="svg-container"></div>
+
+      <button onclick="runTest()">Run Monster Display Test</button>
     </div>
 
     <script type="module">
-        import { OracleGameEngine } from './src/game-engine.ts';
-        import { HexMapSVG } from './src/hexmap-svg.ts';
+      import { OracleGameEngine } from "./src/game-engine.ts";
+      import { HexMapSVG } from "./src/hexmap-svg.ts";
 
-        async function runTest() {
-            const results = document.getElementById('testResults');
-            const svgContainer = document.getElementById('svgContainer');
-            
-            results.innerHTML = '<div class="test-info">Running test...</div>';
-            svgContainer.innerHTML = '';
+      async function runTest() {
+        const results = document.getElementById("testResults");
+        const svgContainer = document.getElementById("svgContainer");
 
-            try {
-                // Create game engine and initialize
-                const engine = new OracleGameEngine();
-                const state = engine.initializeGame();
+        results.innerHTML =
+          '<div class="test-info">Running test...</div>';
+        svgContainer.innerHTML = "";
 
-                // Get monster hexes
-                const monsterHexes = engine.getMonsterHexes();
+        try {
+          // Create game engine and initialize
+          const engine = new OracleGameEngine();
+          const state = engine.initializeGame();
 
-                // Create HexMapSVG with monster hex data
-                const hexMapSVG = new HexMapSVG({
-                    cellSize: 40,
-                    showCoordinates: true,
-                    showTerrainLabels: true,
-                    interactive: false,
-                    cubeHexes: state.cubeHexes,
-                    monsterHexes: monsterHexes,
-                });
+          // Get monster hexes
+          const monsterHexes = engine.getMonsterHexes();
 
-                // Generate SVG
-                const grid = state.map.serialize();
-                const svg = hexMapSVG.generateSVG(grid);
+          // Create HexMapSVG with monster hex data
+          const hexMapSVG = new HexMapSVG({
+            cellSize: 40,
+            showCoordinates: true,
+            showTerrainLabels: true,
+            interactive: false,
+            cubeHexes: state.cubeHexes,
+            monsterHexes: monsterHexes,
+          });
 
-                // Display SVG
-                svgContainer.innerHTML = svg;
+          // Generate SVG
+          const grid = state.map.serialize();
+          const svg = hexMapSVG.generateSVG(grid);
 
-                // Test results
-                let testResults = '<div class="test-info">';
-                testResults += '<h3>Test Results:</h3>';
-                
-                // Check if SVG contains monster elements
-                const hasMonsterElements = svg.includes('colored-monster') || svg.includes('monster-count');
-                testResults += `<p class="${hasMonsterElements ? 'success' : 'error'}">✅ Monster elements found in SVG: ${hasMonsterElements ? 'PASS' : 'FAIL'}</p>`;
-                
-                // Count colored monsters in SVG
-                const monsterCount = (svg.match(/colored-monster/g) || []).length;
-                const expectedCount = monsterHexes.reduce((sum, hex) => sum + hex.monsterColors.length, 0);
-                testResults += `<p class="${monsterCount === expectedCount ? 'success' : 'error'}">✅ Colored monsters rendered: ${monsterCount}/${expectedCount} ${monsterCount === expectedCount ? 'PASS' : 'FAIL'}</p>`;
-                
-                // Check for specific monster hexes
-                let allMonsterCountsCorrect = true;
-                for (const hex of monsterHexes) {
-                    if (hex.monsterColors.length > 0) {
-                        const hasMonsterCount = svg.includes(`monster-count">${hex.monsterColors.length}`);
-                        if (!hasMonsterCount) {
-                            allMonsterCountsCorrect = false;
-                        }
-                    }
-                }
-                testResults += `<p class="${allMonsterCountsCorrect ? 'success' : 'error'}">✅ Monster counts displayed correctly: ${allMonsterCountsCorrect ? 'PASS' : 'FAIL'}</p>`;
-                
-                // Check for triangle shapes (polygon elements with 3 points)
-                const hasTriangles = svg.includes('polygon') && svg.includes('colored-monster');
-                testResults += `<p class="${hasTriangles ? 'success' : 'error'}">✅ Triangle shapes used for monsters: ${hasTriangles ? 'PASS' : 'FAIL'}</p>`;
-                
-                testResults += '</div>';
-                results.innerHTML = testResults;
+          // Display SVG
+          svgContainer.innerHTML = svg;
 
-            } catch (error) {
-                results.innerHTML = `<div class="test-info error">Test failed: ${error.message}</div>`;
-                console.error('Test error:', error);
+          // Test results
+          let testResults = '<div class="test-info">';
+          testResults += "<h3>Test Results:</h3>";
+
+          // Check if SVG contains monster elements
+          const hasMonsterElements = svg.includes("colored-monster") ||
+            svg.includes("monster-count");
+          testResults += `<p class="${
+            hasMonsterElements ? "success" : "error"
+          }">✅ Monster elements found in SVG: ${
+            hasMonsterElements ? "PASS" : "FAIL"
+          }</p>`;
+
+          // Count colored monsters in SVG
+          const monsterCount =
+            (svg.match(/colored-monster/g) || []).length;
+          const expectedCount = monsterHexes.reduce(
+            (sum, hex) => sum + hex.monsterColors.length,
+            0,
+          );
+          testResults += `<p class="${
+            monsterCount === expectedCount ? "success" : "error"
+          }">✅ Colored monsters rendered: ${monsterCount}/${expectedCount} ${
+            monsterCount === expectedCount ? "PASS" : "FAIL"
+          }</p>`;
+
+          // Check for specific monster hexes
+          let allMonsterCountsCorrect = true;
+          for (const hex of monsterHexes) {
+            if (hex.monsterColors.length > 0) {
+              const hasMonsterCount = svg.includes(
+                `monster-count">${hex.monsterColors.length}`,
+              );
+              if (!hasMonsterCount) {
+                allMonsterCountsCorrect = false;
+              }
             }
-        }
+          }
+          testResults += `<p class="${
+            allMonsterCountsCorrect ? "success" : "error"
+          }">✅ Monster counts displayed correctly: ${
+            allMonsterCountsCorrect ? "PASS" : "FAIL"
+          }</p>`;
 
-        // Run test automatically when page loads
-        document.addEventListener('DOMContentLoaded', runTest);
+          // Check for triangle shapes (polygon elements with 3 points)
+          const hasTriangles = svg.includes("polygon") &&
+            svg.includes("colored-monster");
+          testResults += `<p class="${
+            hasTriangles ? "success" : "error"
+          }">✅ Triangle shapes used for monsters: ${
+            hasTriangles ? "PASS" : "FAIL"
+          }</p>`;
+
+          testResults += "</div>";
+          results.innerHTML = testResults;
+        } catch (error) {
+          results.innerHTML =
+            `<div class="test-info error">Test failed: ${error.message}</div>`;
+          console.error("Test error:", error);
+        }
+      }
+
+      // Run test automatically when page loads
+      document.addEventListener("DOMContentLoaded", runTest);
     </script>
-</body>
+  </body>
 </html>

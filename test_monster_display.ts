@@ -17,7 +17,7 @@ function testMonsterDisplay(): void {
 
   console.log("Monster Distribution:");
   for (const hex of monsterHexes) {
-    console.log(`Hex (${hex.q}, ${hex.r}): ${hex.monsterColors.join(', ')}`);
+    console.log(`Hex (${hex.q}, ${hex.r}): ${hex.monsterColors.join(", ")}`);
   }
 
   // Create HexMapSVG with monster hex data
@@ -35,21 +35,34 @@ function testMonsterDisplay(): void {
   const svg = hexMapSVG.generateSVG(grid);
 
   // Check if SVG contains monster elements
-  const hasMonsterElements = svg.includes('colored-monster') || svg.includes('monster-count');
-  
+  const hasMonsterElements = svg.includes("colored-monster") ||
+    svg.includes("monster-count");
+
   console.log("\nSVG Generation Test:");
   console.log(`✅ SVG generated successfully: ${svg.length > 0 ? "✓" : "✗"}`);
-  console.log(`✅ Monster elements found in SVG: ${hasMonsterElements ? "✓" : "✗"}`);
+  console.log(
+    `✅ Monster elements found in SVG: ${hasMonsterElements ? "✓" : "✗"}`,
+  );
 
   // Count colored monsters in SVG
   const monsterCount = (svg.match(/colored-monster/g) || []).length;
-  console.log(`✅ Colored monsters rendered: ${monsterCount} (expected: ${monsterHexes.reduce((sum, hex) => sum + hex.monsterColors.length, 0)})`);
+  console.log(
+    `✅ Colored monsters rendered: ${monsterCount} (expected: ${
+      monsterHexes.reduce((sum, hex) => sum + hex.monsterColors.length, 0)
+    })`,
+  );
 
   // Check for specific monster hexes
   for (const hex of monsterHexes) {
     if (hex.monsterColors.length > 0) {
-      const hasMonsterCount = svg.includes(`monster-count">${hex.monsterColors.length}`);
-      console.log(`✅ Hex (${hex.q}, ${hex.r}) monster count displayed: ${hasMonsterCount ? "✓" : "✗"}`);
+      const hasMonsterCount = svg.includes(
+        `monster-count">${hex.monsterColors.length}`,
+      );
+      console.log(
+        `✅ Hex (${hex.q}, ${hex.r}) monster count displayed: ${
+          hasMonsterCount ? "✓" : "✗"
+        }`,
+      );
     }
   }
 

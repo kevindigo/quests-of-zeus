@@ -14,7 +14,7 @@ export function testStatuePlacement(): void {
   // Find a city
   const cities = gameState.map.getCellsByTerrain("city");
   const firstCity = cities[0];
-  
+
   console.log(`\nTesting with city at (${firstCity.q}, ${firstCity.r}):`);
   console.log(`  City color: ${firstCity.color}`);
   console.log(`  Initial statues: ${firstCity.statues}`);
@@ -25,10 +25,14 @@ export function testStatuePlacement(): void {
 
   // Test canPlaceStatueOnCity when player has no statues
   const canPlaceWithoutStatue = game.canPlaceStatueOnCity(player.id);
-  console.log(`  Can place statue without statue in storage: ${canPlaceWithoutStatue}`);
+  console.log(
+    `  Can place statue without statue in storage: ${canPlaceWithoutStatue}`,
+  );
 
   // Add a statue of the city's color to player storage
-  const emptySlotIndex = player.storage.findIndex(slot => slot.type === "empty");
+  const emptySlotIndex = player.storage.findIndex((slot) =>
+    slot.type === "empty"
+  );
   if (emptySlotIndex !== -1) {
     player.storage[emptySlotIndex] = { type: "statue", color: firstCity.color };
     console.log(`  Added statue of ${firstCity.color} to player storage`);
@@ -36,11 +40,15 @@ export function testStatuePlacement(): void {
 
   // Test canPlaceStatueOnCity when player has the right statue
   const canPlaceWithStatue = game.canPlaceStatueOnCity(player.id);
-  console.log(`  Can place statue with statue in storage: ${canPlaceWithStatue}`);
+  console.log(
+    `  Can place statue with statue in storage: ${canPlaceWithStatue}`,
+  );
 
   // Test actual statue placement
   const placementSuccess = game.placeStatueOnCity(player.id);
-  console.log(`  Statue placement result: ${placementSuccess ? "SUCCESS" : "FAILED"}`);
+  console.log(
+    `  Statue placement result: ${placementSuccess ? "SUCCESS" : "FAILED"}`,
+  );
   console.log(`  Statues on city after placement: ${firstCity.statues}`);
 
   // Test canPlaceStatueOnCity after placement

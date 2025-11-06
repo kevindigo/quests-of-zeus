@@ -484,9 +484,12 @@ export function generateCubesIcon(options: IconOptions): string {
 /**
  * Generate statue icons for cities
  * Statues are represented as tall thin rectangles (3:1 ratio) in the city's color
- * Positioned vertically to the right of the city icon
+ * Positioned vertically to the right of the city icon with better visibility
  */
-export function generateStatueIcons(options: IconOptions, statueCount: number): string {
+export function generateStatueIcons(
+  options: IconOptions,
+  statueCount: number,
+): string {
   const { centerX, centerY, cellSize, hexColor } = options;
 
   // Scale the icon based on cell size
@@ -503,16 +506,16 @@ export function generateStatueIcons(options: IconOptions, statueCount: number): 
   const statueHeight = statueWidth * 3; // Height = 3x width for 3:1 ratio
   const statueSpacing = statueWidth * 0.5; // Space between statues
 
-  let statuesContent = '';
-  
-  // Position statues to the right of the city icon
-  const startX = size * 0.8; // Start position to the right of city buildings
+  let statuesContent = "";
+
+  // Position statues to the right of the city icon with better positioning
+  const startX = size * 0.6; // Start position to the right of city buildings
   const startY = -statueHeight / 2; // Center vertically
 
   // Generate statues based on count (0-3)
   for (let i = 0; i < statueCount; i++) {
     const statueX = startX + i * (statueWidth + statueSpacing);
-    
+
     statuesContent += `
       <!-- Statue ${i + 1} -->
       <rect 
@@ -524,6 +527,7 @@ export function generateStatueIcons(options: IconOptions, statueCount: number): 
         stroke="${strokeColor}" 
         stroke-width="${strokeWidth}"
         class="city-statue statue-${i + 1}"
+        style="filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3));"
       />
     `;
   }
