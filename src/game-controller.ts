@@ -708,9 +708,11 @@ export class GameController {
     // Clear selected die when ending turn
     this.selectedDieColor = null;
     
-    // For now, we'll simulate ending the turn
-    // In a real implementation, this would call a proper endTurn method
-    this.showMessage("Turn ended");
+    // Call the game engine's endTurn method to properly advance to next player
+    this.gameEngine.endTurn();
+    
+    const nextPlayer = this.gameEngine.getCurrentPlayer();
+    this.showMessage(`Turn ended. ${nextPlayer.name}'s turn begins.`);
 
     this.renderGameState();
   }
