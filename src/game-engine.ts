@@ -241,16 +241,19 @@ export class OracleGameEngine {
       return false;
     }
 
-    // Calculate distance between current position and target
-    const distance = this.hexDistance(
+    // Rule 2: Each ship has a movement value of 3 (can move up to 3 steps on sea tiles)
+    // Check if the target is reachable within 3 steps on sea tiles
+    const reachableSeaTiles = this.getReachableSeaTiles(
       currentPos.q,
       currentPos.r,
-      targetQ,
-      targetR,
+      3,
     );
-
-    // Rule 2: Each ship has a movement value of 3 (can move up to 3 hexes away with one die)
-    if (distance > 3) {
+    
+    const isReachable = reachableSeaTiles.some(tile => 
+      tile.q === targetQ && tile.r === targetR
+    );
+    
+    if (!isReachable) {
       return false;
     }
 
@@ -820,33 +823,26 @@ export class OracleGameEngine {
 
     const currentPos = player.shipPosition;
     const availableMoves: { q: number; r: number; dieColor: HexColor }[] = [];
+    const movementRange = 3;
 
-    // Get all sea cells within movement range (3 hexes)
-    const allSeaCells = this.state.map.getCellsByTerrain("sea");
+    // Get all reachable sea tiles within range using BFS
+    const reachableSeaTiles = this.getReachableSeaTiles(
+      currentPos.q,
+      currentPos.r,
+      movementRange,
+    );
 
-    for (const seaCell of allSeaCells) {
-      // Calculate distance between current position and target
-      const distance = this.hexDistance(
-        currentPos.q,
-        currentPos.r,
-        seaCell.q,
-        seaCell.r,
-      );
-
-      // Rule 2: Each ship has a movement value of 3 (can move up to 3 hexes away with one die)
-      if (distance <= 3 && distance > 0) {
-        // Rule 3: Can only land on sea hexes of the color of the die they used
-        // Check if player has a die of the required color
-        if (
-          seaCell.color !== "none" &&
-          player.oracleDice.includes(seaCell.color)
-        ) {
-          availableMoves.push({
-            q: seaCell.q,
-            r: seaCell.r,
-            dieColor: seaCell.color,
-          });
-        }
+    // Filter by player's available dice colors
+    for (const seaTile of reachableSeaTiles) {
+      if (
+        seaTile.color !== "none" &&
+        player.oracleDice.includes(seaTile.color)
+      ) {
+        availableMoves.push({
+          q: seaTile.q,
+          r: seaTile.r,
+          dieColor: seaTile.color,
+        });
       }
     }
 
@@ -884,6 +880,59 @@ export class OracleGameEngine {
       mh.q === q && mh.r === r
     );
     return monsterHex ? monsterHex.monsterColors : [];
+  }
+
+  /**
+   * Get all reachable sea tiles within movement range using BFS
+   * Ships can move up to <range> steps on sea tiles, starting from adjacent sea tiles
+   */
+  private getReachableSeaTiles(startQ: number, startR: number, range: number): { q: number; r: number; color: HexColor }[] {
+    if (!this.state) {
+      return [];
+    }
+
+    const reachableTiles: { q: number; r: number; color: HexColor }[] = [];
+    const visited = new Set<string>();
+    const queue: { q: number; r: number; steps: number }[] = [];
+
+    // Start BFS from all adjacent sea tiles (not from the starting position itself)
+    const adjacentCells = this.state.map.getNeighbors(startQ, startR);
+    
+    for (const cell of adjacentCells) {
+      if (cell.terrain === "sea") {
+        const key = `${cell.q},${cell.r}`;
+        if (!visited.has(key)) {
+          visited.add(key);
+          queue.push({ q: cell.q, r: cell.r, steps: 1 });
+          reachableTiles.push({ q: cell.q, r: cell.r, color: cell.color });
+        }
+      }
+    }
+
+    // Continue BFS up to the movement range
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      
+      // If we've reached the maximum range, don't explore further
+      if (current.steps > range) {
+        continue;
+      }
+
+      const neighbors = this.state.map.getNeighbors(current.q, current.r);
+      
+      for (const neighbor of neighbors) {
+        if (neighbor.terrain === "sea") {
+          const key = `${neighbor.q},${neighbor.r}`;
+          if (!visited.has(key)) {
+            visited.add(key);
+            queue.push({ q: neighbor.q, r: neighbor.r, steps: current.steps + 1 });
+            reachableTiles.push({ q: neighbor.q, r: neighbor.r, color: neighbor.color });
+          }
+        }
+      }
+    }
+
+    return reachableTiles;
   }
 
   /**

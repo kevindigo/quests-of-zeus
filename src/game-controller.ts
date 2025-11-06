@@ -281,8 +281,9 @@ export class GameController {
       }
     } catch (error) {
       console.error("Error generating SVG:", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
       hexMapContainer.innerHTML =
-        `<div class="welcome-map"><p>Error generating map: ${error.message}</p></div>`;
+        `<div class="welcome-map"><p>Error generating map: ${errorMessage}</p></div>`;
     }
   }
 
@@ -669,9 +670,13 @@ export class GameController {
         currentPlayer.shipPosition.q,
         currentPlayer.shipPosition.r,
       );
-      this.showMessage(
-        `Statue placed on city! (${currentCell.statues}/3 statues)`,
-      );
+      if (currentCell) {
+        this.showMessage(
+          `Statue placed on city! (${currentCell.statues}/3 statues)`,
+        );
+      } else {
+        this.showMessage("Statue placed on city!");
+      }
       // Clear selected die after successful action
       this.selectedDieColor = null;
       this.renderGameState();
