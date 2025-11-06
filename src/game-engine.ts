@@ -18,7 +18,6 @@ export interface Player {
     cloud: number;
   };
   oracleDice: HexColor[]; // Current oracle dice values
-  gold: number;
 }
 
 export interface Quest {
@@ -93,7 +92,6 @@ export class OracleGameEngine {
           cloud: 0,
         },
         oracleDice: [],
-        gold: 0,
       },
       {
         id: 2,
@@ -109,7 +107,6 @@ export class OracleGameEngine {
           cloud: 0,
         },
         oracleDice: [],
-        gold: 0,
       },
     ];
 

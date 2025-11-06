@@ -124,7 +124,6 @@ export class GameController {
         <h3>Current Player: ${currentPlayer.name}</h3>
         <div class="player-stats">
           <div><strong>Completed Quests:</strong> ${currentPlayer.completedQuests}/12</div>
-          <div><strong>Gold:</strong> ${currentPlayer.gold}</div>
         </div>
         <div class="quest-progress">
           <h4>Quest Progress</h4>
