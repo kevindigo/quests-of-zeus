@@ -82,7 +82,9 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
   
   // Roll dice to enter action phase
   const initialDice = engine.rollOracleDice(player.id);
-  const initialDiceCount = player.oracleDice.length;
+  // Store the initial dice state before movement
+  const initialDiceColors = [...player.oracleDice];
+  const initialDiceCount = initialDiceColors.length;
   
   // Get available moves
   const availableMoves = engine.getAvailableMoves(player.id);
@@ -90,16 +92,23 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
   if (availableMoves.length > 0) {
     const firstMove = availableMoves[0];
     
+    // Debug: Log initial state
+    console.log(`Initial dice: [${initialDiceColors.join(", ")}]`);
+    console.log(`Attempting move to (${firstMove.q}, ${firstMove.r}) with die ${firstMove.dieColor}`);
+    
     // Move to the target hex
     const success = engine.moveShip(player.id, firstMove.q, firstMove.r, firstMove.dieColor);
     assert(success, "Movement should be successful");
     
-    // Get fresh player reference after movement
+    // Get fresh player reference after movement - ensure we get the actual current player
     const updatedPlayer = engine.getCurrentPlayer();
     
+    // Debug: Log final state
+    console.log(`Final dice: [${updatedPlayer.oracleDice.join(", ")}]`);
+    
     // Check that the die was consumed
-    assertEquals(updatedPlayer.oracleDice.length, initialDiceCount - 1, "One die should be consumed");
-    assert(!updatedPlayer.oracleDice.includes(firstMove.dieColor), "Used die should be removed from oracle dice");
+    assertEquals(updatedPlayer.oracleDice.length, initialDiceCount - 1, `One die should be consumed. Expected ${initialDiceCount - 1}, got ${updatedPlayer.oracleDice.length}`);
+    assert(!updatedPlayer.oracleDice.includes(firstMove.dieColor), `Used die (${firstMove.dieColor}) should be removed from oracle dice. Current dice: [${updatedPlayer.oracleDice.join(", ")}]`);
     
     // Check that ship position was updated
     assertEquals(updatedPlayer.shipPosition, { q: firstMove.q, r: firstMove.r }, "Ship position should be updated");
