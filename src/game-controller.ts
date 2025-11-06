@@ -57,8 +57,7 @@ export class GameController {
             <h4>Phases:</h4>
             <ul>
               <li><strong>Oracle Phase:</strong> Roll 3 colored dice</li>
-              <li><strong>Movement Phase:</strong> Move your ship using dice</li>
-              <li><strong>Action Phase:</strong> Perform actions based on location</li>
+              <li><strong>Action Phase:</strong> Move your ship using dice and perform actions based on location</li>
             </ul>
           </div>
         </div>
@@ -252,7 +251,7 @@ export class GameController {
       this.addPlayerMarkers(gameState.players);
 
       // Highlight available moves
-      if (gameState.phase === "movement") {
+      if (gameState.phase === "action") {
         this.highlightAvailableMoves();
       }
     } catch (error) {
@@ -376,11 +375,6 @@ export class GameController {
         return `
           <button id="rollDice" class="action-btn">Roll Oracle Dice</button>
         `;
-      case "movement":
-        return `
-          <p>Click on an adjacent highlighted hex to move your ship</p>
-          <button id="skipMovement" class="action-btn secondary">Skip Movement</button>
-        `;
       case "action":
         const currentCell = this.gameEngine.getGameState().map.getCell(
           currentPlayer.shipPosition.q,
@@ -388,6 +382,10 @@ export class GameController {
         );
 
         let actions = "";
+        
+        // Movement is always available during action phase
+        actions += `<p>Click on an adjacent highlighted hex to move your ship</p>`;
+        
         if (currentCell?.terrain === "cubes") {
           actions +=
             `<button id="collectOffering" class="action-btn">Collect Offering</button>`;
@@ -453,7 +451,7 @@ export class GameController {
       const { q, r } = event.detail;
       const gameState = this.gameEngine.getGameState();
 
-      if (gameState.phase === "movement") {
+      if (gameState.phase === "action") {
         const currentPlayer = this.gameEngine.getCurrentPlayer();
         const success = this.gameEngine.moveShip(currentPlayer.id, q, r);
         if (success) {
@@ -474,8 +472,6 @@ export class GameController {
 
       if (target.id === "rollDice") {
         this.rollOracleDice();
-      } else if (target.id === "skipMovement") {
-        this.skipMovement();
       } else if (target.id === "collectOffering") {
         this.collectOffering();
       } else if (target.id === "fightMonster") {
@@ -511,17 +507,7 @@ export class GameController {
     }
   }
 
-  private skipMovement(): void {
-    // Skip movement phase and go directly to action phase
-    const gameState = this.gameEngine.getGameState();
-    if (gameState.phase === "movement") {
-      // We need to manually advance the phase since there's no direct method
-      // For now, we'll simulate this by calling a method that changes phase
-      const currentPlayer = this.gameEngine.getCurrentPlayer();
-      this.gameEngine.collectOffering(currentPlayer.id, "red"); // This will fail but change phase
-      this.renderGameState();
-    }
-  }
+
 
   private collectOffering(): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();

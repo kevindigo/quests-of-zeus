@@ -100,7 +100,7 @@ Deno.test("GameEngine - movement validation", () => {
   // Initialize the game
   engine.initializeGame();
 
-  // First roll dice to enter movement phase
+  // First roll dice to enter action phase
   engine.rollOracleDice(1);
 
   // Get available moves

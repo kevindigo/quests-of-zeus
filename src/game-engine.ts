@@ -42,7 +42,7 @@ export interface GameState {
   players: Player[];
   currentPlayerIndex: number;
   round: number;
-  phase: "setup" | "oracle" | "movement" | "action" | "end";
+  phase: "setup" | "oracle" | "action" | "end";
   monsterStrength: number;
   weatherDice: HexColor[];
   cubeHexes: CubeHex[];
@@ -199,7 +199,7 @@ export class OracleGameEngine {
     }
 
     player.oracleDice = dice;
-    this.state.phase = "movement";
+    this.state.phase = "action";
 
     return dice;
   }
@@ -215,7 +215,7 @@ export class OracleGameEngine {
       return false;
     }
 
-    if (this.state.phase !== "movement") {
+    if (this.state.phase !== "action") {
       return false;
     }
 
@@ -253,7 +253,6 @@ export class OracleGameEngine {
 
     // Move the ship
     player.shipPosition = { q: targetQ, r: targetR };
-    this.state.phase = "action";
 
     return true;
   }
@@ -808,7 +807,7 @@ export class OracleGameEngine {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
     const player = this.state.players.find((p) => p.id === playerId);
-    if (!player || this.state.phase !== "movement") {
+    if (!player || this.state.phase !== "action") {
       return [];
     }
 
