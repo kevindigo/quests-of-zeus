@@ -107,8 +107,16 @@ Deno.test("GameEngine - movement validation", () => {
   const availableMoves = engine.getAvailableMoves(1);
   assertExists(availableMoves);
 
-  // Should be able to move to adjacent land hexes
-  assertEquals(availableMoves.length > 0, true);
+  // With new movement rules, available moves should include die color information
+  assertEquals(Array.isArray(availableMoves), true);
+  
+  // Check that each move has the required properties
+  if (availableMoves.length > 0) {
+    const firstMove = availableMoves[0];
+    assert("q" in firstMove, "Move should have q coordinate");
+    assert("r" in firstMove, "Move should have r coordinate");
+    assert("dieColor" in firstMove, "Move should have dieColor property");
+  }
 });
 
 Deno.test("GameEngine - quest completion", () => {

@@ -349,6 +349,8 @@ export class GameController {
       );
       if (cell) {
         cell.classList.add("available-move");
+        // Add tooltip to show required die color
+        cell.setAttribute("title", `Requires ${move.dieColor} die`);
       }
     });
   }
@@ -453,13 +455,22 @@ export class GameController {
 
       if (gameState.phase === "action") {
         const currentPlayer = this.gameEngine.getCurrentPlayer();
-        const success = this.gameEngine.moveShip(currentPlayer.id, q, r);
-        if (success) {
-          this.renderGameState();
+        
+        // Get available moves to find the required die color for this target
+        const availableMoves = this.gameEngine.getAvailableMoves(currentPlayer.id);
+        const targetMove = availableMoves.find(move => move.q === q && move.r === r);
+        
+        if (targetMove) {
+          // Use the die color from the available move
+          const success = this.gameEngine.moveShip(currentPlayer.id, q, r, targetMove.dieColor);
+          if (success) {
+            this.showMessage(`Ship moved to (${q}, ${r}) using ${targetMove.dieColor} die`);
+            this.renderGameState();
+          } else {
+            this.showMessage("Invalid move!");
+          }
         } else {
-          this.showMessage(
-            "Invalid move! Make sure you have the required oracle dice for sea movement.",
-          );
+          this.showMessage("Cannot move to this hex! Must be a sea hex within 3 hexes and you need a matching die.");
         }
       }
     });

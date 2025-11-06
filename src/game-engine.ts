@@ -204,7 +204,7 @@ export class OracleGameEngine {
     return dice;
   }
 
-  public moveShip(playerId: number, targetQ: number, targetR: number): boolean {
+  public moveShip(playerId: number, targetQ: number, targetR: number, dieColor?: HexColor): boolean {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
@@ -219,7 +219,6 @@ export class OracleGameEngine {
       return false;
     }
 
-    // Check if movement is valid (adjacent hex)
     const currentPos = player.shipPosition;
     const targetCell = this.state.map.getCell(targetQ, targetR);
 
@@ -227,29 +226,37 @@ export class OracleGameEngine {
       return false;
     }
 
-    // Check adjacency
-    const neighbors = this.state.map.getNeighbors(currentPos.q, currentPos.r);
-    const isAdjacent = neighbors.some((neighbor) =>
-      neighbor.q === targetQ && neighbor.r === targetR
-    );
-
-    if (!isAdjacent) {
+    // Rule 1: You can only move to sea spaces
+    if (targetCell.terrain !== "sea") {
       return false;
     }
 
-    // Check if player has required oracle dice for sea movement
-    if (targetCell.terrain === "sea" && targetCell.color !== "none") {
-      const requiredColor = targetCell.color;
-      const hasDice = player.oracleDice.includes(requiredColor);
-
-      if (!hasDice) {
-        return false;
-      }
-
-      // Consume the oracle die
-      const dieIndex = player.oracleDice.indexOf(requiredColor);
-      player.oracleDice.splice(dieIndex, 1);
+    // Rule 3: Can only land on sea hexes of the color of the die they used
+    if (!dieColor || targetCell.color !== dieColor) {
+      return false;
     }
+
+    // Check if player has the required oracle die
+    if (!player.oracleDice.includes(dieColor)) {
+      return false;
+    }
+
+    // Calculate distance between current position and target
+    const distance = this.hexDistance(
+      currentPos.q,
+      currentPos.r,
+      targetQ,
+      targetR,
+    );
+
+    // Rule 2: Each ship has a movement value of 3 (can move up to 3 hexes away with one die)
+    if (distance > 3) {
+      return false;
+    }
+
+    // Consume the oracle die
+    const dieIndex = player.oracleDice.indexOf(dieColor);
+    player.oracleDice.splice(dieIndex, 1);
 
     // Move the ship
     player.shipPosition = { q: targetQ, r: targetR };
@@ -802,7 +809,7 @@ export class OracleGameEngine {
     return this.state.players.find((p) => p.id === playerId);
   }
 
-  public getAvailableMoves(playerId: number): { q: number; r: number }[] {
+  public getAvailableMoves(playerId: number): { q: number; r: number; dieColor: HexColor }[] {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
@@ -812,15 +819,38 @@ export class OracleGameEngine {
     }
 
     const currentPos = player.shipPosition;
-    const neighbors = this.state.map.getNeighbors(currentPos.q, currentPos.r);
+    const availableMoves: { q: number; r: number; dieColor: HexColor }[] = [];
 
-    return neighbors.filter((neighbor) => {
-      // Check if movement to this hex is possible
-      if (neighbor.terrain === "sea" && neighbor.color !== "none") {
-        return player.oracleDice.includes(neighbor.color);
+    // Get all sea cells within movement range (3 hexes)
+    const allSeaCells = this.state.map.getCellsByTerrain("sea");
+
+    for (const seaCell of allSeaCells) {
+      // Calculate distance between current position and target
+      const distance = this.hexDistance(
+        currentPos.q,
+        currentPos.r,
+        seaCell.q,
+        seaCell.r,
+      );
+
+      // Rule 2: Each ship has a movement value of 3 (can move up to 3 hexes away with one die)
+      if (distance <= 3 && distance > 0) {
+        // Rule 3: Can only land on sea hexes of the color of the die they used
+        // Check if player has a die of the required color
+        if (
+          seaCell.color !== "none" &&
+          player.oracleDice.includes(seaCell.color)
+        ) {
+          availableMoves.push({
+            q: seaCell.q,
+            r: seaCell.r,
+            dieColor: seaCell.color,
+          });
+        }
       }
-      return true; // Land hexes are always accessible
-    }).map((neighbor) => ({ q: neighbor.q, r: neighbor.r }));
+    }
+
+    return availableMoves;
   }
 
   /**
@@ -854,6 +884,15 @@ export class OracleGameEngine {
       mh.q === q && mh.r === r
     );
     return monsterHex ? monsterHex.monsterColors : [];
+  }
+
+  /**
+   * Calculate distance between two hex cells using axial coordinates
+   */
+  private hexDistance(q1: number, r1: number, q2: number, r2: number): number {
+    const s1 = -q1 - r1;
+    const s2 = -q2 - r2;
+    return (Math.abs(q1 - q2) + Math.abs(r1 - r2) + Math.abs(s1 - s2)) / 2;
   }
 
   public checkWinCondition(): { winner: Player | null; gameOver: boolean } {
