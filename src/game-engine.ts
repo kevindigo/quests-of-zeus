@@ -261,6 +261,10 @@ export class OracleGameEngine {
     const dieIndex = player.oracleDice.indexOf(dieColor);
     if (dieIndex !== -1) {
       player.oracleDice.splice(dieIndex, 1);
+    } else {
+      // This should not happen since we checked above, but log for debugging
+      console.warn(`Attempted to consume die ${dieColor} but it was not found in player's oracle dice: [${player.oracleDice.join(", ")}]`);
+      return false;
     }
 
     // Move the ship

@@ -106,6 +106,50 @@ export class HexMapSVG {
         data-terrain="${cell.terrain}"
         class="hex-cell-inner ${this.getTerrainClass(cell.terrain)}"
       />`;
+
+      // Add an even more inset polygon for highlighting (won't cover the colored border)
+      const highlightInsetAmount = insetAmount + effectiveStrokeWidth;
+      const highlightHexPoints = this.calculateHexPoints(
+        x + highlightInsetAmount,
+        y + highlightInsetAmount,
+        cellSize - highlightInsetAmount,
+      );
+
+      cellContent += `
+      <polygon 
+        points="${highlightHexPoints}" 
+        fill="none" 
+        stroke="transparent" 
+        stroke-width="4"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        data-q="${cell.q}" 
+        data-r="${cell.r}"
+        data-terrain="${cell.terrain}"
+        class="hex-highlight ${this.getTerrainClass(cell.terrain)}"
+      />`;
+    } else {
+      // For uncolored hexes, add a highlight polygon at the same inset as colored hexes
+      const highlightInsetAmount = 8; // Similar to what colored hexes would have
+      const highlightHexPoints = this.calculateHexPoints(
+        x + highlightInsetAmount,
+        y + highlightInsetAmount,
+        cellSize - highlightInsetAmount,
+      );
+
+      cellContent += `
+      <polygon 
+        points="${highlightHexPoints}" 
+        fill="none" 
+        stroke="transparent" 
+        stroke-width="4"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        data-q="${cell.q}" 
+        data-r="${cell.r}"
+        data-terrain="${cell.terrain}"
+        class="hex-highlight ${this.getTerrainClass(cell.terrain)}"
+      />`;
     }
 
     // Add Greek god head icon for Zeus hex

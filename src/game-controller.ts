@@ -384,13 +384,15 @@ export class GameController {
       availableMoves.forEach((move) => {
         // Only highlight moves that match the selected die color
         if (move.dieColor === this.selectedDieColor) {
-          const cell = document.querySelector(
-            `[data-q="${move.q}"][data-r="${move.r}"]`,
+          // Highlight the new hex-highlight polygons (centered, won't cover colored border)
+          const highlightCell = document.querySelector(
+            `.hex-highlight[data-q="${move.q}"][data-r="${move.r}"]`,
           );
-          if (cell) {
-            cell.classList.add("available-move");
+          
+          if (highlightCell) {
+            highlightCell.classList.add("available-move");
             // Add tooltip to show required die color
-            cell.setAttribute("title", `Move using ${move.dieColor} die`);
+            highlightCell.setAttribute("title", `Move using ${move.dieColor} die`);
           }
         }
       });
