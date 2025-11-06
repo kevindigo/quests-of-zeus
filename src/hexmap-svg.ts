@@ -352,8 +352,8 @@ export class HexMapSVG {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
       // Use triangles
-      const triangleSize = 10 * scale;
-      const spacing = triangleSize * 3;
+      const triangleSize = 15 * scale;
+      const spacing = triangleSize * 2;
 
       let monstersContent = '';
       
