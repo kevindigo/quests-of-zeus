@@ -67,7 +67,9 @@ app.use((context) => {
 });
 
 const PORT = 8000;
-console.log(`🚀 Oracle of Delphi Game Server running on http://localhost:${PORT}`);
+console.log(
+  `🚀 Oracle of Delphi Game Server running on http://localhost:${PORT}`,
+);
 console.log(`🎮 Play the game at http://localhost:${PORT}/game`);
 console.log(`🗺️ Map generation and game mechanics are fully functional`);
 

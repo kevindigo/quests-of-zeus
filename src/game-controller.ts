@@ -8,7 +8,6 @@ export class GameController {
   private gameEngine: OracleGameEngine;
   private hexMapSVG: HexMapSVG;
 
-
   constructor() {
     this.gameEngine = new OracleGameEngine();
     this.hexMapSVG = new HexMapSVG({
@@ -17,7 +16,6 @@ export class GameController {
       showTerrainLabels: false,
       interactive: true,
     });
-
   }
 
   public initializeGameUI(): void {
@@ -30,7 +28,7 @@ export class GameController {
     const questInfoContainer = document.getElementById("questInfo");
     const phaseDisplay = document.getElementById("phaseDisplay");
     const hexMapContainer = document.getElementById("hexMapSVG");
-    
+
     if (playerInfoContainer) {
       playerInfoContainer.innerHTML = `
         <div class="welcome-screen">
@@ -93,16 +91,16 @@ export class GameController {
 
     const gameState = this.gameEngine.getGameState();
     const currentPlayer = this.gameEngine.getCurrentPlayer();
-    
+
     // Update player info display
     this.updatePlayerInfo(gameState);
-    
+
     // Render the map with player positions
     this.renderMap(gameState);
-    
+
     // Update game phase display
     this.updatePhaseDisplay(gameState.phase);
-    
+
     // Check for win condition
     const winCondition = this.gameEngine.checkWinCondition();
     if (winCondition.gameOver) {
@@ -115,14 +113,18 @@ export class GameController {
     if (!playerInfoContainer) return;
 
     const currentPlayer = this.gameEngine.getCurrentPlayer();
-    
+
     playerInfoContainer.innerHTML = `
       <div class="player-info">
         <h3>Current Player: ${currentPlayer.name}</h3>
         <div class="player-stats">
           <div><strong>Color:</strong> 
-            <span class="color-swatch" style="background-color: ${this.getColorHex(currentPlayer.color)}"></span>
-            ${currentPlayer.color.charAt(0).toUpperCase() + currentPlayer.color.slice(1)}
+            <span class="color-swatch" style="background-color: ${
+      this.getColorHex(currentPlayer.color)
+    }"></span>
+            ${
+      currentPlayer.color.charAt(0).toUpperCase() + currentPlayer.color.slice(1)
+    }
           </div>
           <div><strong>Completed Quests:</strong> ${currentPlayer.completedQuests}/12</div>
         </div>
@@ -138,34 +140,45 @@ export class GameController {
         <div class="storage">
           <h4>Storage (2 slots)</h4>
           <div class="storage-slots">
-            ${currentPlayer.storage.map((slot, index) => 
-              `<div class="storage-slot slot-${index} ${slot.type}">
+            ${
+      currentPlayer.storage.map((slot, index) =>
+        `<div class="storage-slot slot-${index} ${slot.type}">
                 <div class="slot-content">
-                  ${slot.type === "empty" ? 
-                    '<span class="empty-slot">Empty</span>' : 
-                    `<span class="item-type">${slot.type}</span>
-                     <span class="color-swatch" style="background-color: ${this.getColorHex(slot.color)}"></span>
+                  ${
+          slot.type === "empty"
+            ? '<span class="empty-slot">Empty</span>'
+            : `<span class="item-type">${slot.type}</span>
+                     <span class="color-swatch" style="background-color: ${
+              this.getColorHex(slot.color)
+            }"></span>
                      <span class="item-color">${slot.color}</span>`
-                  }
+        }
                 </div>
               </div>`
-            ).join('')}
+      ).join("")
+    }
           </div>
         </div>
         <div class="oracle-dice">
           <h4>Oracle Dice</h4>
           <div class="dice-container">
-            ${currentPlayer.oracleDice.map(color => 
-              `<div class="die color-${color}" style="background-color: ${this.getColorHex(color)}">${color.charAt(0).toUpperCase()}</div>`
-            ).join('')}
-            ${currentPlayer.oracleDice.length === 0 ? '<div class="no-dice">No dice rolled yet</div>' : ''}
+            ${
+      currentPlayer.oracleDice.map((color) =>
+        `<div class="die color-${color}" style="background-color: ${
+          this.getColorHex(color)
+        }">${color.charAt(0).toUpperCase()}</div>`
+      ).join("")
+    }
+            ${
+      currentPlayer.oracleDice.length === 0
+        ? '<div class="no-dice">No dice rolled yet</div>'
+        : ""
+    }
           </div>
         </div>
       </div>
     `;
   }
-
-
 
   private renderMap(gameState: any): void {
     const hexMapContainer = document.getElementById("hexMapSVG");
@@ -174,7 +187,7 @@ export class GameController {
     const grid = gameState.map.serialize();
     console.log("Grid structure:", grid);
     console.log("Grid length:", grid.length);
-    
+
     if (grid && grid.length > 0) {
       console.log("First row length:", grid[0].length);
       console.log("First cell:", grid[0][0]);
@@ -182,14 +195,17 @@ export class GameController {
 
     try {
       // Update the hex map SVG with cube hex data
+      const cubeHexes = gameState.cubeHexes || [];
+      console.log("Cube hexes for rendering:", cubeHexes);
+      
       this.hexMapSVG.setOptions({
-        cubeHexes: gameState.cubeHexes || []
+        cubeHexes: cubeHexes,
       });
-      
+
       const { svg, script } = this.hexMapSVG.generateInteractiveSVG(grid);
-      
+
       hexMapContainer.innerHTML = svg;
-      
+
       // Execute the interaction script
       try {
         eval(script);
@@ -206,14 +222,15 @@ export class GameController {
       }
     } catch (error) {
       console.error("Error generating SVG:", error);
-      hexMapContainer.innerHTML = `<div class="welcome-map"><p>Error generating map: ${error.message}</p></div>`;
+      hexMapContainer.innerHTML =
+        `<div class="welcome-map"><p>Error generating map: ${error.message}</p></div>`;
     }
   }
 
   private addPlayerMarkers(players: any[]): void {
     // Group players by their position
     const playersByPosition = new Map<string, any[]>();
-    players.forEach(player => {
+    players.forEach((player) => {
       const positionKey = `${player.shipPosition.q},${player.shipPosition.r}`;
       if (!playersByPosition.has(positionKey)) {
         playersByPosition.set(positionKey, []);
@@ -223,20 +240,20 @@ export class GameController {
 
     // Add markers for each position group
     playersByPosition.forEach((playersAtPosition, positionKey) => {
-      const [q, r] = positionKey.split(',').map(Number);
+      const [q, r] = positionKey.split(",").map(Number);
       const cell = document.querySelector(`[data-q="${q}"][data-r="${r}"]`);
       if (cell) {
         const rect = cell.getBoundingClientRect();
-        const svg = cell.closest('svg');
+        const svg = cell.closest("svg");
         if (svg) {
           const point = svg.createSVGPoint();
-          
+
           playersAtPosition.forEach((player, index) => {
             // Calculate position in one of the four quadrants of the hex
             const quadrant = index % 4;
             let offsetX = 0;
             let offsetY = 0;
-            
+
             switch (quadrant) {
               case 0: // Upper left
                 offsetX = -rect.width / 4;
@@ -255,12 +272,17 @@ export class GameController {
                 offsetY = rect.height / 4;
                 break;
             }
-            
+
             point.x = rect.left + rect.width / 2 + offsetX;
             point.y = rect.top + rect.height / 2 + offsetY;
-            const svgPoint = point.matrixTransform(svg.getScreenCTM()!.inverse());
+            const svgPoint = point.matrixTransform(
+              svg.getScreenCTM()!.inverse(),
+            );
 
-            const marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            const marker = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "circle",
+            );
             marker.setAttribute("cx", svgPoint.x.toString());
             marker.setAttribute("cy", svgPoint.y.toString());
             marker.setAttribute("r", "8");
@@ -269,11 +291,13 @@ export class GameController {
             marker.setAttribute("stroke-width", "2");
             marker.setAttribute("class", "player-marker");
             marker.setAttribute("data-player-id", player.id.toString());
-            
+
             svg.appendChild(marker);
           });
         } else {
-          console.warn(`Could not find SVG container for players at (${q}, ${r})`);
+          console.warn(
+            `Could not find SVG container for players at (${q}, ${r})`,
+          );
         }
       } else {
         console.warn(`Could not find cell for players at (${q}, ${r})`);
@@ -284,9 +308,11 @@ export class GameController {
   private highlightAvailableMoves(): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     const availableMoves = this.gameEngine.getAvailableMoves(currentPlayer.id);
-    
-    availableMoves.forEach(move => {
-      const cell = document.querySelector(`[data-q="${move.q}"][data-r="${move.r}"]`);
+
+    availableMoves.forEach((move) => {
+      const cell = document.querySelector(
+        `[data-q="${move.q}"][data-r="${move.r}"]`,
+      );
       if (cell) {
         cell.classList.add("available-move");
       }
@@ -309,7 +335,7 @@ export class GameController {
 
   private getPhaseActions(phase: string): string {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
-    
+
     switch (phase) {
       case "oracle":
         return `
@@ -322,35 +348,41 @@ export class GameController {
         `;
       case "action":
         const currentCell = this.gameEngine.getGameState().map.getCell(
-          currentPlayer.shipPosition.q, 
-          currentPlayer.shipPosition.r
+          currentPlayer.shipPosition.q,
+          currentPlayer.shipPosition.r,
         );
-        
-        let actions = '';
+
+        let actions = "";
         if (currentCell?.terrain === "cubes") {
-          actions += `<button id="collectOffering" class="action-btn">Collect Offering</button>`;
+          actions +=
+            `<button id="collectOffering" class="action-btn">Collect Offering</button>`;
         }
         if (currentCell?.terrain === "monsters") {
-          actions += `<button id="fightMonster" class="action-btn">Fight Monster</button>`;
+          actions +=
+            `<button id="fightMonster" class="action-btn">Fight Monster</button>`;
         }
         if (currentCell?.terrain === "temple") {
-          actions += `<button id="buildTemple" class="action-btn">Build Temple</button>`;
+          actions +=
+            `<button id="buildTemple" class="action-btn">Build Temple</button>`;
         }
         if (currentCell?.terrain === "foundations") {
-          actions += `<button id="buildFoundation" class="action-btn">Build Foundation</button>`;
+          actions +=
+            `<button id="buildFoundation" class="action-btn">Build Foundation</button>`;
         }
         if (currentCell?.terrain === "clouds") {
-          actions += `<button id="completeCloudQuest" class="action-btn">Complete Cloud Quest</button>`;
+          actions +=
+            `<button id="completeCloudQuest" class="action-btn">Complete Cloud Quest</button>`;
         }
-        
+
         if (!actions) {
-          actions = '<p>No actions available at this location</p>';
+          actions = "<p>No actions available at this location</p>";
         }
-        
-        actions += `<button id="endTurn" class="action-btn secondary">End Turn</button>`;
+
+        actions +=
+          `<button id="endTurn" class="action-btn secondary">End Turn</button>`;
         return actions;
       default:
-        return '<p>Game phase not recognized</p>';
+        return "<p>Game phase not recognized</p>";
     }
   }
 
@@ -358,7 +390,7 @@ export class GameController {
     // Start game button
     document.addEventListener("click", (event) => {
       const target = event.target as HTMLElement;
-      
+
       if (target.id === "startGame") {
         this.startNewGame();
       }
@@ -367,17 +399,19 @@ export class GameController {
     // Hex cell click for movement
     document.addEventListener("hexCellClick", (event: any) => {
       if (!this.gameEngine.isGameInitialized()) return;
-      
+
       const { q, r } = event.detail;
       const gameState = this.gameEngine.getGameState();
-      
+
       if (gameState.phase === "movement") {
         const currentPlayer = this.gameEngine.getCurrentPlayer();
         const success = this.gameEngine.moveShip(currentPlayer.id, q, r);
         if (success) {
           this.renderGameState();
         } else {
-          this.showMessage("Invalid move! Make sure you have the required oracle dice for sea movement.");
+          this.showMessage(
+            "Invalid move! Make sure you have the required oracle dice for sea movement.",
+          );
         }
       }
     });
@@ -385,9 +419,9 @@ export class GameController {
     // Delegate phase action buttons
     document.addEventListener("click", (event) => {
       if (!this.gameEngine.isGameInitialized()) return;
-      
+
       const target = event.target as HTMLElement;
-      
+
       if (target.id === "rollDice") {
         this.rollOracleDice();
       } else if (target.id === "skipMovement") {
@@ -418,7 +452,7 @@ export class GameController {
     try {
       const currentPlayer = this.gameEngine.getCurrentPlayer();
       const dice = this.gameEngine.rollOracleDice(currentPlayer.id);
-      this.showMessage(`Rolled oracle dice: ${dice.join(', ')}`);
+      this.showMessage(`Rolled oracle dice: ${dice.join(", ")}`);
       this.renderGameState();
     } catch (error) {
       this.showMessage("Cannot roll dice at this time");
@@ -440,12 +474,15 @@ export class GameController {
   private collectOffering(): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     const currentCell = this.gameEngine.getGameState().map.getCell(
-      currentPlayer.shipPosition.q, 
-      currentPlayer.shipPosition.r
+      currentPlayer.shipPosition.q,
+      currentPlayer.shipPosition.r,
     );
-    
+
     if (currentCell?.terrain === "cubes" && currentCell.color !== "none") {
-      const success = this.gameEngine.collectOffering(currentPlayer.id, currentCell.color);
+      const success = this.gameEngine.collectOffering(
+        currentPlayer.id,
+        currentCell.color,
+      );
       if (success) {
         this.showMessage(`Collected ${currentCell.color} cube!`);
       } else {
@@ -490,7 +527,9 @@ export class GameController {
     if (success) {
       this.showMessage("Cloud quest completed!");
     } else {
-      this.showMessage("Cannot complete cloud quest here or missing required statue");
+      this.showMessage(
+        "Cannot complete cloud quest here or missing required statue",
+      );
     }
   }
 
@@ -507,7 +546,7 @@ export class GameController {
     if (messageContainer) {
       messageContainer.textContent = message;
       messageContainer.style.display = "block";
-      
+
       setTimeout(() => {
         messageContainer.style.display = "none";
       }, 3000);
@@ -515,12 +554,14 @@ export class GameController {
   }
 
   private showGameOver(winner: any): void {
-    const message = `Game Over! ${winner.name} (${winner.color.charAt(0).toUpperCase() + winner.color.slice(1)}) wins by completing ${winner.completedQuests} quests!`;
+    const message = `Game Over! ${winner.name} (${
+      winner.color.charAt(0).toUpperCase() + winner.color.slice(1)
+    }) wins by completing ${winner.completedQuests} quests!`;
     this.showMessage(message);
-    
+
     // Disable further actions
     const actionButtons = document.querySelectorAll(".action-btn");
-    actionButtons.forEach(button => {
+    actionButtons.forEach((button) => {
       (button as HTMLButtonElement).disabled = true;
     });
   }

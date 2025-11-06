@@ -175,8 +175,6 @@
         font-size: 0.9rem;
       }
 
-
-
       .phase-info {
         text-align: center;
       }
@@ -280,6 +278,11 @@
         filter: brightness(1.3);
       }
 
+      .cube-count {
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      }
+
       .hex-coord, .hex-terrain-label {
         pointer-events: none;
         user-select: none;
@@ -298,25 +301,54 @@
       }
 
       @keyframes pulse {
-        0% { r: 8; }
-        50% { r: 10; }
-        100% { r: 8; }
+        0% {
+          r: 8;
+        }
+        50% {
+          r: 10;
+        }
+        100% {
+          r: 8;
+        }
       }
 
       /* Color classes for UI elements */
-      .color-red { background: rgba(220, 20, 60, 0.3); }
-      .color-pink { background: rgba(255, 105, 180, 0.3); }
-      .color-blue { background: rgba(0, 0, 255, 0.3); }
-      .color-black { background: rgba(0, 0, 0, 0.3); color: white; }
-      .color-green { background: rgba(0, 128, 0, 0.3); }
-      .color-yellow { background: rgba(255, 255, 0, 0.3); }
+      .color-red {
+        background: rgba(220, 20, 60, 0.3);
+      }
+      .color-pink {
+        background: rgba(255, 105, 180, 0.3);
+      }
+      .color-blue {
+        background: rgba(0, 0, 255, 0.3);
+      }
+      .color-black {
+        background: rgba(0, 0, 0, 0.3);
+        color: white;
+      }
+      .color-green {
+        background: rgba(0, 128, 0, 0.3);
+      }
+      .color-yellow {
+        background: rgba(255, 255, 0, 0.3);
+      }
 
       /* Quest type backgrounds */
-      .quest-offering { background: rgba(144, 238, 144, 0.2); }
-      .quest-monster { background: rgba(178, 34, 34, 0.2); }
-      .quest-temple { background: rgba(255, 215, 0, 0.2); }
-      .quest-foundation { background: rgba(139, 69, 19, 0.2); }
-      .quest-cloud { background: rgba(135, 206, 250, 0.2); }
+      .quest-offering {
+        background: rgba(144, 238, 144, 0.2);
+      }
+      .quest-monster {
+        background: rgba(178, 34, 34, 0.2);
+      }
+      .quest-temple {
+        background: rgba(255, 215, 0, 0.2);
+      }
+      .quest-foundation {
+        background: rgba(139, 69, 19, 0.2);
+      }
+      .quest-cloud {
+        background: rgba(135, 206, 250, 0.2);
+      }
 
       footer {
         margin-top: 2rem;
@@ -412,15 +444,15 @@
           grid-template-columns: 1fr;
           grid-template-rows: auto auto auto;
         }
-        
+
         .game-panel {
           order: 1;
         }
-        
+
         .hex-map-container {
           order: 2;
         }
-        
+
         .quest-panel {
           order: 3;
         }
@@ -438,7 +470,7 @@
         <!-- Left Panel: Player Info & Actions -->
         <div class="game-panel">
           <div id="playerInfo"></div>
-          <div id="phaseDisplay" style="margin-top: 1.5rem;"></div>
+          <div id="phaseDisplay" style="margin-top: 1.5rem"></div>
         </div>
 
         <!-- Center Panel: Game Map -->
@@ -461,7 +493,10 @@
       </div>
 
       <footer>
-        <p>Built with Deno 2.5 • Progressive Web App • Playable Oracle of Delphi Game</p>
+        <p>
+          Built with Deno 2.5 • Progressive Web App • Playable Oracle of Delphi
+          Game
+        </p>
       </footer>
     </div>
 
@@ -483,40 +518,72 @@
         cellSize: 30,
       };
 
-      document.getElementById("toggleCoordinates").addEventListener("click", () => {
-        currentOptions.showCoordinates = !currentOptions.showCoordinates;
-        document.getElementById("toggleCoordinates").textContent =
-          currentOptions.showCoordinates ? "Hide Coordinates" : "Show Coordinates";
-        // Note: This would need to be integrated with the game controller
-      });
+      document.getElementById("toggleCoordinates").addEventListener(
+        "click",
+        () => {
+          currentOptions.showCoordinates = !currentOptions
+            .showCoordinates;
+          document.getElementById("toggleCoordinates").textContent =
+            currentOptions.showCoordinates
+              ? "Hide Coordinates"
+              : "Show Coordinates";
+          // Note: This would need to be integrated with the game controller
+        },
+      );
 
-      document.getElementById("toggleLabels").addEventListener("click", () => {
-        currentOptions.showTerrainLabels = !currentOptions.showTerrainLabels;
-        document.getElementById("toggleLabels").textContent =
-          currentOptions.showTerrainLabels ? "Hide Labels" : "Show Labels";
-        // Note: This would need to be integrated with the game controller
-      });
+      document.getElementById("toggleLabels").addEventListener(
+        "click",
+        () => {
+          currentOptions.showTerrainLabels = !currentOptions
+            .showTerrainLabels;
+          document.getElementById("toggleLabels").textContent =
+            currentOptions.showTerrainLabels
+              ? "Hide Labels"
+              : "Show Labels";
+          // Note: This would need to be integrated with the game controller
+        },
+      );
 
-      document.getElementById("zoomIn").addEventListener("click", () => {
-        currentOptions.cellSize = Math.min(currentOptions.cellSize + 5, 60);
-        // Note: This would need to be integrated with the game controller
-      });
+      document.getElementById("zoomIn").addEventListener(
+        "click",
+        () => {
+          currentOptions.cellSize = Math.min(
+            currentOptions.cellSize + 5,
+            60,
+          );
+          // Note: This would need to be integrated with the game controller
+        },
+      );
 
-      document.getElementById("zoomOut").addEventListener("click", () => {
-        currentOptions.cellSize = Math.max(currentOptions.cellSize - 5, 20);
-        // Note: This would need to be integrated with the game controller
-      });
+      document.getElementById("zoomOut").addEventListener(
+        "click",
+        () => {
+          currentOptions.cellSize = Math.max(
+            currentOptions.cellSize - 5,
+            20,
+          );
+          // Note: This would need to be integrated with the game controller
+        },
+      );
 
-      document.getElementById("resetZoom").addEventListener("click", () => {
-        currentOptions.cellSize = 30;
-        // Note: This would need to be integrated with the game controller
-      });
+      document.getElementById("resetZoom").addEventListener(
+        "click",
+        () => {
+          currentOptions.cellSize = 30;
+          // Note: This would need to be integrated with the game controller
+        },
+      );
 
-      document.getElementById("newGame").addEventListener("click", () => {
-        if (confirm("Start a new game? Current progress will be lost.")) {
-          gameController.startNewGame();
-        }
-      });
+      document.getElementById("newGame").addEventListener(
+        "click",
+        () => {
+          if (
+            confirm("Start a new game? Current progress will be lost.")
+          ) {
+            gameController.startNewGame();
+          }
+        },
+      );
 
       // Service Worker Registration
       if ("serviceWorker" in navigator) {
@@ -526,7 +593,10 @@
               console.log("SW registered: ", registration);
             })
             .catch((registrationError) => {
-              console.log("SW registration failed: ", registrationError);
+              console.log(
+                "SW registration failed: ",
+                registrationError,
+              );
             });
         });
       }

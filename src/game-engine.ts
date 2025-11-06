@@ -2,7 +2,7 @@
 // Core game mechanics and state management
 
 import type { HexCell, HexColor, TerrainType } from "./hexmap.ts";
-import { HexMap, ALL_COLORS, COLORS } from "./hexmap.ts";
+import { ALL_COLORS, COLORS, HexMap } from "./hexmap.ts";
 
 export interface StorageSlot {
   type: "cube" | "statue" | "empty";
@@ -24,8 +24,6 @@ export interface Player {
   };
   oracleDice: HexColor[]; // Current oracle dice values
 }
-
-
 
 export interface OfferingCube {
   color: HexColor;
@@ -53,43 +51,53 @@ export interface GameState {
 function createEmptyStorage(): [StorageSlot, StorageSlot] {
   return [
     { type: "empty", color: "none" },
-    { type: "empty", color: "none" }
+    { type: "empty", color: "none" },
   ];
 }
 
 // Helper function to check if player has a cube of specific color
 function hasCubeOfColor(player: Player, color: HexColor): boolean {
-  return player.storage.some(slot => slot.type === "cube" && slot.color === color);
+  return player.storage.some((slot) =>
+    slot.type === "cube" && slot.color === color
+  );
 }
 
 // Helper function to check if player has a statue of specific color
 function hasStatueOfColor(player: Player, color: HexColor): boolean {
-  return player.storage.some(slot => slot.type === "statue" && slot.color === color);
+  return player.storage.some((slot) =>
+    slot.type === "statue" && slot.color === color
+  );
 }
 
 // Helper function to check if player has any cube
 function hasAnyCube(player: Player): boolean {
-  return player.storage.some(slot => slot.type === "cube");
+  return player.storage.some((slot) => slot.type === "cube");
 }
 
 // Helper function to check if player has any statue
 function hasAnyStatue(player: Player): boolean {
-  return player.storage.some(slot => slot.type === "statue");
+  return player.storage.some((slot) => slot.type === "statue");
 }
 
 // Helper function to count how many cubes of specific color player has
 function countCubesOfColor(player: Player, color: HexColor): number {
-  return player.storage.filter(slot => slot.type === "cube" && slot.color === color).length;
+  return player.storage.filter((slot) =>
+    slot.type === "cube" && slot.color === color
+  ).length;
 }
 
 // Helper function to count how many statues of specific color player has
 function countStatuesOfColor(player: Player, color: HexColor): number {
-  return player.storage.filter(slot => slot.type === "statue" && slot.color === color).length;
+  return player.storage.filter((slot) =>
+    slot.type === "statue" && slot.color === color
+  ).length;
 }
 
 // Helper function to add a cube to storage (returns true if successful)
 function addCubeToStorage(player: Player, color: HexColor): boolean {
-  const emptySlotIndex = player.storage.findIndex(slot => slot.type === "empty");
+  const emptySlotIndex = player.storage.findIndex((slot) =>
+    slot.type === "empty"
+  );
   if (emptySlotIndex !== -1) {
     player.storage[emptySlotIndex] = { type: "cube", color };
     return true;
@@ -99,7 +107,9 @@ function addCubeToStorage(player: Player, color: HexColor): boolean {
 
 // Helper function to add a statue to storage (returns true if successful)
 function addStatueToStorage(player: Player, color: HexColor): boolean {
-  const emptySlotIndex = player.storage.findIndex(slot => slot.type === "empty");
+  const emptySlotIndex = player.storage.findIndex((slot) =>
+    slot.type === "empty"
+  );
   if (emptySlotIndex !== -1) {
     player.storage[emptySlotIndex] = { type: "statue", color };
     return true;
@@ -109,7 +119,9 @@ function addStatueToStorage(player: Player, color: HexColor): boolean {
 
 // Helper function to remove a cube of specific color from storage (returns true if successful)
 function removeCubeFromStorage(player: Player, color: HexColor): boolean {
-  const cubeSlotIndex = player.storage.findIndex(slot => slot.type === "cube" && slot.color === color);
+  const cubeSlotIndex = player.storage.findIndex((slot) =>
+    slot.type === "cube" && slot.color === color
+  );
   if (cubeSlotIndex !== -1) {
     player.storage[cubeSlotIndex] = { type: "empty", color: "none" };
     return true;
@@ -119,7 +131,9 @@ function removeCubeFromStorage(player: Player, color: HexColor): boolean {
 
 // Helper function to remove a statue of specific color from storage (returns true if successful)
 function removeStatueFromStorage(player: Player, color: HexColor): boolean {
-  const statueSlotIndex = player.storage.findIndex(slot => slot.type === "statue" && slot.color === color);
+  const statueSlotIndex = player.storage.findIndex((slot) =>
+    slot.type === "statue" && slot.color === color
+  );
   if (statueSlotIndex !== -1) {
     player.storage[statueSlotIndex] = { type: "empty", color: "none" };
     return true;
@@ -136,11 +150,13 @@ export class OracleGameEngine {
 
   public initializeGame(): GameState {
     const map = new HexMap();
-    
+
     // Find the Zeus hex coordinates
     const zeusCell = map.getCellsByTerrain("zeus")[0];
-    const zeusPosition = zeusCell ? { q: zeusCell.q, r: zeusCell.r } : { q: 0, r: 0 };
-    
+    const zeusPosition = zeusCell
+      ? { q: zeusCell.q, r: zeusCell.r }
+      : { q: 0, r: 0 };
+
     // Initialize players (2-4 players)
     const players: Player[] = [
       {
@@ -192,28 +208,29 @@ export class OracleGameEngine {
     return this.state;
   }
 
-
-
   // Game Actions
   public rollOracleDice(playerId: number): HexColor[] {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
-    const player = this.state.players.find(p => p.id === playerId);
-    if (!player || this.state.currentPlayerIndex !== this.getPlayerIndex(playerId)) {
+    const player = this.state.players.find((p) => p.id === playerId);
+    if (
+      !player || this.state.currentPlayerIndex !== this.getPlayerIndex(playerId)
+    ) {
       throw new Error("Invalid player or turn");
     }
 
     // Roll 3 oracle dice (random colors)
     const dice: HexColor[] = [];
     for (let i = 0; i < 3; i++) {
-      const randomColor = ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)];
+      const randomColor =
+        ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)];
       dice.push(randomColor);
     }
 
     player.oracleDice = dice;
     this.state.phase = "movement";
-    
+
     return dice;
   }
 
@@ -221,8 +238,10 @@ export class OracleGameEngine {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
-    const player = this.state.players.find(p => p.id === playerId);
-    if (!player || this.state.currentPlayerIndex !== this.getPlayerIndex(playerId)) {
+    const player = this.state.players.find((p) => p.id === playerId);
+    if (
+      !player || this.state.currentPlayerIndex !== this.getPlayerIndex(playerId)
+    ) {
       return false;
     }
 
@@ -233,14 +252,14 @@ export class OracleGameEngine {
     // Check if movement is valid (adjacent hex)
     const currentPos = player.shipPosition;
     const targetCell = this.state.map.getCell(targetQ, targetR);
-    
+
     if (!targetCell) {
       return false;
     }
 
     // Check adjacency
     const neighbors = this.state.map.getNeighbors(currentPos.q, currentPos.r);
-    const isAdjacent = neighbors.some(neighbor => 
+    const isAdjacent = neighbors.some((neighbor) =>
       neighbor.q === targetQ && neighbor.r === targetR
     );
 
@@ -252,7 +271,7 @@ export class OracleGameEngine {
     if (targetCell.terrain === "sea" && targetCell.color !== "none") {
       const requiredColor = targetCell.color;
       const hasDice = player.oracleDice.includes(requiredColor);
-      
+
       if (!hasDice) {
         return false;
       }
@@ -265,7 +284,7 @@ export class OracleGameEngine {
     // Move the ship
     player.shipPosition = { q: targetQ, r: targetR };
     this.state.phase = "action";
-    
+
     return true;
   }
 
@@ -273,28 +292,31 @@ export class OracleGameEngine {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
-    const player = this.state.players.find(p => p.id === playerId);
+    const player = this.state.players.find((p) => p.id === playerId);
     if (!player || this.state.phase !== "action") {
       return false;
     }
 
     // Check if player is on a cube hex
-    const currentCell = this.state.map.getCell(player.shipPosition.q, player.shipPosition.r);
+    const currentCell = this.state.map.getCell(
+      player.shipPosition.q,
+      player.shipPosition.r,
+    );
     if (!currentCell || currentCell.terrain !== "cubes") {
       return false;
     }
 
     // Find the cube hex in our tracking
-    const cubeHex = this.state.cubeHexes.find(ch => 
+    const cubeHex = this.state.cubeHexes.find((ch) =>
       ch.q === currentCell.q && ch.r === currentCell.r
     );
-    
+
     if (!cubeHex) {
       return false;
     }
 
     // Check if the requested color is available on this hex
-    const offeringCube = cubeHex.cubes.find(cube => cube.color === color);
+    const offeringCube = cubeHex.cubes.find((cube) => cube.color === color);
     if (!offeringCube || offeringCube.count <= 0) {
       return false;
     }
@@ -306,7 +328,7 @@ export class OracleGameEngine {
       offeringCube.count--;
       this.endTurn();
     }
-    
+
     return success;
   }
 
@@ -314,13 +336,16 @@ export class OracleGameEngine {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
-    const player = this.state.players.find(p => p.id === playerId);
+    const player = this.state.players.find((p) => p.id === playerId);
     if (!player || this.state.phase !== "action") {
       return false;
     }
 
     // Check if player is on a monster hex
-    const currentCell = this.state.map.getCell(player.shipPosition.q, player.shipPosition.r);
+    const currentCell = this.state.map.getCell(
+      player.shipPosition.q,
+      player.shipPosition.r,
+    );
     if (!currentCell || currentCell.terrain !== "monsters") {
       return false;
     }
@@ -333,11 +358,11 @@ export class OracleGameEngine {
 
     // Consume oracle dice
     player.oracleDice.splice(0, requiredDice);
-    
+
     // Complete monster quest
     this.completeQuestType(playerId, "monster");
     this.endTurn();
-    
+
     return true;
   }
 
@@ -345,13 +370,16 @@ export class OracleGameEngine {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
-    const player = this.state.players.find(p => p.id === playerId);
+    const player = this.state.players.find((p) => p.id === playerId);
     if (!player || this.state.phase !== "action") {
       return false;
     }
 
     // Check if player is on a temple hex
-    const currentCell = this.state.map.getCell(player.shipPosition.q, player.shipPosition.r);
+    const currentCell = this.state.map.getCell(
+      player.shipPosition.q,
+      player.shipPosition.r,
+    );
     if (!currentCell || currentCell.terrain !== "temple") {
       return false;
     }
@@ -368,7 +396,7 @@ export class OracleGameEngine {
       this.completeQuestType(playerId, "temple_offering");
       this.endTurn();
     }
-    
+
     return success;
   }
 
@@ -376,13 +404,16 @@ export class OracleGameEngine {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
-    const player = this.state.players.find(p => p.id === playerId);
+    const player = this.state.players.find((p) => p.id === playerId);
     if (!player || this.state.phase !== "action") {
       return false;
     }
 
     // Check if player is on a foundation hex
-    const currentCell = this.state.map.getCell(player.shipPosition.q, player.shipPosition.r);
+    const currentCell = this.state.map.getCell(
+      player.shipPosition.q,
+      player.shipPosition.r,
+    );
     if (!currentCell || currentCell.terrain !== "foundations") {
       return false;
     }
@@ -390,7 +421,7 @@ export class OracleGameEngine {
     // Complete foundation quest
     this.completeQuestType(playerId, "foundation");
     this.endTurn();
-    
+
     return true;
   }
 
@@ -398,13 +429,16 @@ export class OracleGameEngine {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
-    const player = this.state.players.find(p => p.id === playerId);
+    const player = this.state.players.find((p) => p.id === playerId);
     if (!player || this.state.phase !== "action") {
       return false;
     }
 
     // Check if player is on a cloud hex
-    const currentCell = this.state.map.getCell(player.shipPosition.q, player.shipPosition.r);
+    const currentCell = this.state.map.getCell(
+      player.shipPosition.q,
+      player.shipPosition.r,
+    );
     if (!currentCell || currentCell.terrain !== "clouds") {
       return false;
     }
@@ -421,15 +455,18 @@ export class OracleGameEngine {
       this.completeQuestType(playerId, "cloud");
       this.endTurn();
     }
-    
+
     return success;
   }
 
-  private completeQuestType(playerId: number, questType: "temple_offering" | "monster" | "foundation" | "cloud"): void {
+  private completeQuestType(
+    playerId: number,
+    questType: "temple_offering" | "monster" | "foundation" | "cloud",
+  ): void {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
-    const player = this.state.players.find(p => p.id === playerId);
+    const player = this.state.players.find((p) => p.id === playerId);
     if (!player) return;
 
     player.completedQuests++;
@@ -445,8 +482,9 @@ export class OracleGameEngine {
     currentPlayer.oracleDice = [];
 
     // Move to next player
-    this.state.currentPlayerIndex = (this.state.currentPlayerIndex + 1) % this.state.players.length;
-    
+    this.state.currentPlayerIndex = (this.state.currentPlayerIndex + 1) %
+      this.state.players.length;
+
     // If all players have taken their turn, advance round
     if (this.state.currentPlayerIndex === 0) {
       this.state.round++;
@@ -460,7 +498,7 @@ export class OracleGameEngine {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
-    return this.state.players.findIndex(p => p.id === playerId);
+    return this.state.players.findIndex((p) => p.id === playerId);
   }
 
   /**
@@ -470,36 +508,36 @@ export class OracleGameEngine {
    */
   private initializeOfferingCubes(map: HexMap, playerCount: number): CubeHex[] {
     const cubeHexes: CubeHex[] = [];
-    
+
     // Get all cube hexes from the map
     const cubeCells = map.getCellsByTerrain("cubes");
-    
+
     // Create cubes for each color: playerCount cubes per color
-    const availableCubes: OfferingCube[] = ALL_COLORS.map(color => ({
+    const availableCubes: OfferingCube[] = ALL_COLORS.map((color) => ({
       color,
-      count: playerCount
+      count: playerCount,
     }));
-    
+
     // Shuffle the cube hexes for random distribution
     const shuffledCubeHexes = [...cubeCells];
     this.shuffleArray(shuffledCubeHexes);
-    
+
     // Distribute cubes to hexes - each hex gets one cube of each color
     // Since we have 6 colors and 6 hexes, each hex gets exactly one color
     for (let i = 0; i < shuffledCubeHexes.length; i++) {
       const cell = shuffledCubeHexes[i];
       const color = ALL_COLORS[i]; // Each hex gets a different color
-      
+
       cubeHexes.push({
         q: cell.q,
         r: cell.r,
         cubes: [{
           color,
-          count: playerCount
-        }]
+          count: playerCount,
+        }],
       });
     }
-    
+
     return cubeHexes;
   }
 
@@ -541,28 +579,28 @@ export class OracleGameEngine {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
-    return this.state.players.find(p => p.id === playerId);
+    return this.state.players.find((p) => p.id === playerId);
   }
 
   public getAvailableMoves(playerId: number): { q: number; r: number }[] {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
-    const player = this.state.players.find(p => p.id === playerId);
+    const player = this.state.players.find((p) => p.id === playerId);
     if (!player || this.state.phase !== "movement") {
       return [];
     }
 
     const currentPos = player.shipPosition;
     const neighbors = this.state.map.getNeighbors(currentPos.q, currentPos.r);
-    
-    return neighbors.filter(neighbor => {
+
+    return neighbors.filter((neighbor) => {
       // Check if movement to this hex is possible
       if (neighbor.terrain === "sea" && neighbor.color !== "none") {
         return player.oracleDice.includes(neighbor.color);
       }
       return true; // Land hexes are always accessible
-    }).map(neighbor => ({ q: neighbor.q, r: neighbor.r }));
+    }).map((neighbor) => ({ q: neighbor.q, r: neighbor.r }));
   }
 
   /**
@@ -580,7 +618,7 @@ export class OracleGameEngine {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
     // Game ends when any player completes 3 of each quest type
-    const winner = this.state.players.find(p => 
+    const winner = this.state.players.find((p) =>
       p.completedQuestTypes.temple_offering >= 3 &&
       p.completedQuestTypes.monster >= 3 &&
       p.completedQuestTypes.foundation >= 3 &&
@@ -588,7 +626,7 @@ export class OracleGameEngine {
     );
     return {
       winner: winner || null,
-      gameOver: !!winner
+      gameOver: !!winner,
     };
   }
 }

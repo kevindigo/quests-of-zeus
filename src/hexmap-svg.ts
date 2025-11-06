@@ -77,7 +77,7 @@ export class HexMapSVG {
         y + insetAmount,
         cellSize - insetAmount,
       );
-      
+
       cellContent += `
       <polygon 
         points="${innerHexPoints}" 
@@ -116,9 +116,9 @@ export class HexMapSVG {
     // Add cubes icon for cubes hexes
     if (cell.terrain === "cubes") {
       cellContent += generateCubesIcon({ centerX, centerY, cellSize });
-      
+
       // Add cube count display if available
-      const cubeHex = this.options.cubeHexes.find(ch => 
+      const cubeHex = this.options.cubeHexes.find((ch) =>
         ch.q === cell.q && ch.r === cell.r
       );
       if (cubeHex && cubeHex.cubes.length > 0) {
@@ -129,9 +129,11 @@ export class HexMapSVG {
               x="${centerX}" 
               y="${centerY + 15}" 
               text-anchor="middle" 
-              font-size="10" 
+              font-size="12" 
               fill="${this.getStrokeColor(cube.color)}"
               font-weight="bold"
+              stroke="white"
+              stroke-width="2"
               class="cube-count"
             >${cube.count}</text>`;
         }
@@ -221,7 +223,7 @@ export class HexMapSVG {
       sea: "#87ceeb", // Pale blue for sea
       shallow: "#000000", // Black for shallow water
       monsters: "#d4a574", // Light brown for monsters
-      cubes: "#f9d9a9", // Yellow-tan for cubes
+      cubes: "#e8c99b", // Darker yellow-tan for cubes (more visible)
       temple: "#f9d9a9", // Yellow-tan for temple
       clouds: "#f0f8ff", // Light blue-white for clouds
       city: "#b0b0b0", // Light gray for city

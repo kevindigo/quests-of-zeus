@@ -47,7 +47,9 @@ deno task dev
 
 ## How to Play
 
-Oracle of Delphi is a pick-up-and-deliver board game set in Greek mythology. Players sail their ships around the Greek islands to complete quests and gain favor with the gods.
+Oracle of Delphi is a pick-up-and-deliver board game set in Greek mythology.
+Players sail their ships around the Greek islands to complete quests and gain
+favor with the gods.
 
 ### Game Flow
 
@@ -58,29 +60,36 @@ Oracle of Delphi is a pick-up-and-deliver board game set in Greek mythology. Pla
    - **Fight Monsters** on monster hexes
    - **Build Temples** on temple hexes (requires cube of matching color)
    - **Build Foundations** on foundation hexes
-   - **Complete Cloud Quests** on cloud hexes (requires statue of matching color)
+   - **Complete Cloud Quests** on cloud hexes (requires statue of matching
+     color)
 
 ### Victory Condition
 
-The first player to complete **3 of each quest type** (temple_offering, monster, foundation, and cloud) wins the game!
+The first player to complete **3 of each quest type** (temple_offering, monster,
+foundation, and cloud) wins the game!
 
 ### Game Components
 
-- **Oracle Dice**: 6 colors (red, pink, blue, black, green, yellow) that power actions
-- **Storage System**: Each player has 2 storage slots that can hold either 1 cube or 1 statue of any color
+- **Oracle Dice**: 6 colors (red, pink, blue, black, green, yellow) that power
+  actions
+- **Storage System**: Each player has 2 storage slots that can hold either 1
+  cube or 1 statue of any color
 - **Cubes**: Collected from cube hexes, used for temple offering quests
 - **Statues**: Used for cloud quests
-- **Quests**: 4 types (temple_offering, monster, foundation, cloud) - must complete 3 of each type to win
+- **Quests**: 4 types (temple_offering, monster, foundation, cloud) - must
+  complete 3 of each type to win
 - **Map**: Hexagonal grid with sea, land, and special terrain
 
 ### Storage System
 
 Each player has exactly 2 storage slots. Each slot can hold:
+
 - **1 Cube** of any color (collected from cube hexes)
 - **1 Statue** of any color (used for cloud quests)
 - **Nothing** (empty slot)
 
 **Key Rules**:
+
 - Players cannot exceed 2 total items in storage
 - Cubes are consumed when building temples
 - Statues are consumed when completing cloud quests
@@ -109,7 +118,8 @@ Each player has exactly 2 storage slots. Each slot can hold:
 
 ### Core Components
 
-1. **HexMap** - Procedural map generation with authentic Oracle of Delphi terrain
+1. **HexMap** - Procedural map generation with authentic Oracle of Delphi
+   terrain
 2. **GameEngine** - Core game mechanics, state management, and rules enforcement
 3. **GameController** - UI management, user interactions, and game flow
 4. **HexMapSVG** - Interactive SVG visualization with player markers
@@ -120,11 +130,13 @@ Each player has exactly 2 storage slots. Each slot can hold:
 - **Rule Enforcement**: All game rules are properly implemented
 - **Interactive UI**: Click-based movement and actions
 - **Real-time Updates**: Game state updates immediately after actions
-- **Multiplayer Ready**: Support for 2-4 players (currently 2 players implemented)
+- **Multiplayer Ready**: Support for 2-4 players (currently 2 players
+  implemented)
 
 ## Development Status
 
 ✅ **Completed Features**:
+
 - Hexagonal map generation (radius 6)
 - Procedural terrain placement
 - All Oracle of Delphi terrain types
@@ -135,11 +147,13 @@ Each player has exactly 2 storage slots. Each slot can hold:
 - SVG-based map visualization
 
 🔄 **In Progress**:
+
 - AI opponent implementation
 - Enhanced UI/UX improvements
 - Game state persistence
 
 📋 **Planned Features**:
+
 - Advanced AI strategies
 - Game statistics and analytics
 - Sound effects and music
@@ -154,7 +168,8 @@ The game follows the official Oracle of Delphi rules by Stefan Feld:
 - **Players**: 2-4 players (currently 2 implemented)
 - **Phases**: Oracle → Movement → Action
 - **Movement**: Land hexes free, sea hexes require matching oracle dice
-- **Actions**: Collect cubes, fight monsters, build temples/foundations, complete cloud quests
+- **Actions**: Collect cubes, fight monsters, build temples/foundations,
+  complete cloud quests
 - **Victory**: First to complete 3 of each quest type wins
 
 ## Contributing

@@ -47,6 +47,7 @@ Each hex in the game must have the following characteristics:
 ## Testing Workflow
 
 ### Available Test Commands:
+
 - `deno task test` - Run all tests
 - `deno task test:no-server` - Run tests without remote type checking (faster)
 - `deno task test:fast` - Fast test mode (no execution, just compilation)
@@ -55,13 +56,16 @@ Each hex in the game must have the following characteristics:
 - `deno run tests/simple_test.ts` - Run individual test files directly
 
 ### Debugging Guidelines:
+
 - Use `debug_test.ts` for experiments to avoid server startup
 - Individual test files can be run directly with `deno run`
 - Avoid importing `src/main.ts` in tests to prevent server hangs
 - Use `test_utils.ts` for test helper functions
 
 ### When Running Tests:
+
 - Tests should not start servers - they are standalone scripts
 - If a test hangs, it's likely importing server code
 - Use the specific test commands above for debugging
-- Focus on static analysis and code review rather than execution in this environment
+- Focus on static analysis and code review rather than execution in this
+  environment

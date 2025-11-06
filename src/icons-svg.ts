@@ -330,7 +330,7 @@ export function generateCubesIcon(options: IconOptions): string {
 
   // Scale the icon based on cell size - larger than other icons for better visibility
   const scale = cellSize / 40; // Base scale on default cell size of 40
-  const size = 14 * scale * 2.5; // Larger size to fill more space
+  const size = 16 * scale * 2.5; // Even larger size to fill more space
 
   // Monochrome black color with thick strokes
   const strokeColor = "#000000";
