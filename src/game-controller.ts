@@ -120,6 +120,10 @@ export class GameController {
       <div class="player-info">
         <h3>Current Player: ${currentPlayer.name}</h3>
         <div class="player-stats">
+          <div><strong>Color:</strong> 
+            <span class="color-swatch" style="background-color: ${this.getColorHex(currentPlayer.color)}"></span>
+            ${currentPlayer.color.charAt(0).toUpperCase() + currentPlayer.color.slice(1)}
+          </div>
           <div><strong>Completed Quests:</strong> ${currentPlayer.completedQuests}/12</div>
         </div>
         <div class="quest-progress">
@@ -506,7 +510,7 @@ export class GameController {
   }
 
   private showGameOver(winner: any): void {
-    const message = `Game Over! ${winner.name} wins by completing ${winner.completedQuests} quests!`;
+    const message = `Game Over! ${winner.name} (${winner.color.charAt(0).toUpperCase() + winner.color.slice(1)}) wins by completing ${winner.completedQuests} quests!`;
     this.showMessage(message);
     
     // Disable further actions
