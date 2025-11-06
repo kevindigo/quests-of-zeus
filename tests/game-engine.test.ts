@@ -42,8 +42,9 @@ Deno.test("GameEngine - player creation", () => {
   assertExists(player2);
   assertEquals(player1?.name, "Player 1");
   assertEquals(player2?.name, "Player 2");
-  assertEquals(player1?.shipPosition, { q: -1, r: 0 });
-  assertEquals(player2?.shipPosition, { q: 1, r: 0 });
+  
+  // All players should start on the same position (Zeus hex)
+  assertEquals(player1?.shipPosition, player2?.shipPosition);
   
   // Check that players start with empty storage
   assertEquals(player1?.storage.length, 2);
@@ -158,4 +159,39 @@ Deno.test("GameEngine - storage system", () => {
   assertEquals(player.storage[1].type, "empty");
   
 
+});
+
+Deno.test("GameEngine - all players start on Zeus hex", () => {
+  const engine = new OracleGameEngine();
+  const state = engine.initializeGame();
+  
+  // Get all players
+  const player1 = engine.getPlayer(1);
+  const player2 = engine.getPlayer(2);
+  
+  assertExists(player1);
+  assertExists(player2);
+  
+  // Find the Zeus hex in the map
+  const zeusCells = state.map.getCellsByTerrain("zeus");
+  assertEquals(zeusCells.length, 1, "There should be exactly one Zeus hex");
+  
+  const zeusCell = zeusCells[0];
+  const zeusPosition = { q: zeusCell.q, r: zeusCell.r };
+  
+  // Verify all players start on the Zeus hex
+  assertEquals(player1.shipPosition, zeusPosition, "Player 1 should start on Zeus hex");
+  assertEquals(player2.shipPosition, zeusPosition, "Player 2 should start on Zeus hex");
+  
+  // Verify all players start on the same position
+  assertEquals(player1.shipPosition, player2.shipPosition, "All players should start on the same position");
+  
+  // Verify the starting position is actually a Zeus hex
+  const player1Cell = state.map.getCell(player1.shipPosition.q, player1.shipPosition.r);
+  assertExists(player1Cell);
+  assertEquals(player1Cell.terrain, "zeus", "Player 1 should be on a Zeus hex");
+  
+  const player2Cell = state.map.getCell(player2.shipPosition.q, player2.shipPosition.r);
+  assertExists(player2Cell);
+  assertEquals(player2Cell.terrain, "zeus", "Player 2 should be on a Zeus hex");
 });

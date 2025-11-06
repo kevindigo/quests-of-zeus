@@ -125,13 +125,17 @@ export class OracleGameEngine {
   public initializeGame(): GameState {
     const map = new HexMap();
     
+    // Find the Zeus hex coordinates
+    const zeusCell = map.getCellsByTerrain("zeus")[0];
+    const zeusPosition = zeusCell ? { q: zeusCell.q, r: zeusCell.r } : { q: 0, r: 0 };
+    
     // Initialize players (2-4 players)
     const players: Player[] = [
       {
         id: 1,
         name: "Player 1",
         color: COLORS.RED,
-        shipPosition: { q: -1, r: 0 }, // Start at different positions
+        shipPosition: zeusPosition, // All players start on Zeus hex
         storage: createEmptyStorage(),
         completedQuests: 0,
         completedQuestTypes: {
@@ -146,7 +150,7 @@ export class OracleGameEngine {
         id: 2,
         name: "Player 2",
         color: COLORS.BLUE,
-        shipPosition: { q: 1, r: 0 },
+        shipPosition: zeusPosition, // All players start on Zeus hex
         storage: createEmptyStorage(),
         completedQuests: 0,
         completedQuestTypes: {
