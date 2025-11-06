@@ -300,7 +300,7 @@ export class HexMapSVG {
       const scale = cellSize / 40;
       // Use squares for cubes
       const cubeSize = 8 * scale;
-      const spacing = cubeSize * 8;
+      const spacing = cubeSize * 3;
 
       let cubesContent = '';
       
