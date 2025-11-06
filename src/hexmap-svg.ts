@@ -119,19 +119,7 @@ export class HexMapSVG {
           // Generate colored monsters instead of generic icon
           cellContent += this.generateColoredMonsters({ centerX, centerY, cellSize }, monsterHex.monsterColors);
           
-          // Show the number of monsters remaining on this hex
-          cellContent += `
-            <text 
-              x="${centerX}" 
-              y="${centerY + 20}" 
-              text-anchor="middle" 
-              font-size="14" 
-              fill="#000000"
-              font-weight="bold"
-              stroke="white"
-              stroke-width="3"
-              class="monster-count"
-            >${monsterHex.monsterColors.length}</text>`;
+
         } else {
           console.log(`No monsters found for (${cell.q}, ${cell.r}), using generic icon`);
           // Show generic monster icon if no monsters present
@@ -163,19 +151,7 @@ export class HexMapSVG {
           // Generate colored cubes instead of generic icon
           cellContent += this.generateColoredCubes({ centerX, centerY, cellSize }, cubeHex.cubeColors);
           
-          // Show the number of cubes remaining on this hex
-          cellContent += `
-            <text 
-              x="${centerX}" 
-              y="${centerY + 20}" 
-              text-anchor="middle" 
-              font-size="14" 
-              fill="#000000"
-              font-weight="bold"
-              stroke="white"
-              stroke-width="3"
-              class="cube-count"
-            >${cubeHex.cubeColors.length}</text>`;
+
         } else {
           console.log(`No cubes found for (${cell.q}, ${cell.r}), using generic icon`);
           // Show generic cube icon if no cubes present
