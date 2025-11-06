@@ -441,6 +441,80 @@ export class OracleGameEngine {
     return success;
   }
 
+  /**
+   * Place a statue on a city
+   * Player must be on the city and have a statue of the city's color in storage
+   */
+  public placeStatueOnCity(playerId: number): boolean {
+    if (!this.state) {
+      throw new Error("Game not initialized. Call initializeGame() first.");
+    }
+    const player = this.state.players.find((p) => p.id === playerId);
+    if (!player || this.state.phase !== "action") {
+      return false;
+    }
+
+    // Check if player is on a city hex
+    const currentCell = this.state.map.getCell(
+      player.shipPosition.q,
+      player.shipPosition.r,
+    );
+    if (!currentCell || currentCell.terrain !== "city") {
+      return false;
+    }
+
+    // Check if city already has all 3 statues
+    if (currentCell.statues === 3) {
+      return false;
+    }
+
+    // Check if player has a statue of the city's color
+    const requiredColor = currentCell.color;
+    if (!hasStatueOfColor(player, requiredColor)) {
+      return false;
+    }
+
+    // Consume statue from storage and add to city
+    const success = removeStatueFromStorage(player, requiredColor);
+    if (success) {
+      this.state.map.addStatueToCity(currentCell.q, currentCell.r);
+      this.endTurn();
+    }
+
+    return success;
+  }
+
+  /**
+   * Check if a player can place a statue on the current city
+   */
+  public canPlaceStatueOnCity(playerId: number): boolean {
+    if (!this.state) {
+      throw new Error("Game not initialized. Call initializeGame() first.");
+    }
+    const player = this.state.players.find((p) => p.id === playerId);
+    if (!player || this.state.phase !== "action") {
+      return false;
+    }
+
+    // Check if player is on a city hex
+    const currentCell = this.state.map.getCell(
+      player.shipPosition.q,
+      player.shipPosition.r,
+    );
+    if (!currentCell || currentCell.terrain !== "city") {
+      return false;
+    }
+
+    // Check if city already has all 3 statues
+    if (currentCell.statues === 3) {
+      return false;
+    }
+
+    // Check if player has a statue of the city's color
+    const requiredColor = currentCell.color;
+    return hasStatueOfColor(player, requiredColor);
+  }
+
   private completeQuestType(
     playerId: number,
     questType: "temple_offering" | "monster" | "foundation" | "cloud",

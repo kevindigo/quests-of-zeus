@@ -75,7 +75,8 @@ foundation, and cloud) wins the game!
 - **Storage System**: Each player has 2 storage slots that can hold either 1
   cube or 1 statue of any color
 - **Cubes**: Collected from cube hexes, used for temple offering quests
-- **Statues**: Used for cloud quests
+- **Statues**: Used for cloud quests and placed on cities
+- **Cities**: 6 cities, each with a unique color, can hold up to 3 statues of their color
 - **Quests**: 4 types (temple_offering, monster, foundation, cloud) - must
   complete 3 of each type to win
 - **Map**: Hexagonal grid with sea, land, and special terrain
@@ -85,7 +86,7 @@ foundation, and cloud) wins the game!
 Each player has exactly 2 storage slots. Each slot can hold:
 
 - **1 Cube** of any color (collected from cube hexes)
-- **1 Statue** of any color (used for cloud quests)
+- **1 Statue** of any color (used for cloud quests and placed on cities)
 - **Nothing** (empty slot)
 
 **Key Rules**:
@@ -93,7 +94,18 @@ Each player has exactly 2 storage slots. Each slot can hold:
 - Players cannot exceed 2 total items in storage
 - Cubes are consumed when building temples
 - Statues are consumed when completing cloud quests
+- Statues can be placed on cities of matching color
 - Storage management becomes a strategic element of gameplay
+
+### City Statue System
+
+Each of the 6 cities on the map has a unique color and can hold up to 3 statues:
+
+- **Statue Placement**: Players can place statues on cities when they are on the city hex
+- **Color Matching**: Statues must match the city's color
+- **Visual Representation**: Statues appear as tall thin rectangles (3:1 ratio) next to city icons
+- **Completion**: Cities with all 3 statues placed are considered complete
+- **Strategic Value**: Statue placement provides additional gameplay options and victory paths
 
 ## Project Structure
 

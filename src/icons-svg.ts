@@ -482,6 +482,60 @@ export function generateCubesIcon(options: IconOptions): string {
 }
 
 /**
+ * Generate statue icons for cities
+ * Statues are represented as tall thin rectangles (3:1 ratio) in the city's color
+ * Positioned vertically to the right of the city icon
+ */
+export function generateStatueIcons(options: IconOptions, statueCount: number): string {
+  const { centerX, centerY, cellSize, hexColor } = options;
+
+  // Scale the icon based on cell size
+  const scale = cellSize / 40; // Base scale on default cell size of 40
+  const size = 12 * scale * 2.5; // 2.5x larger to fill more space
+
+  // Use hex color for statues, fallback to black if not provided
+  const strokeColor = hexColor || "#000000";
+  const fillColor = hexColor || "#cccccc";
+  const strokeWidth = 2 * scale; // Slightly thinner than other icons
+
+  // Statue dimensions: tall thin rectangles with 3:1 ratio
+  const statueWidth = size * 0.15; // Width of each statue
+  const statueHeight = statueWidth * 3; // Height = 3x width for 3:1 ratio
+  const statueSpacing = statueWidth * 0.5; // Space between statues
+
+  let statuesContent = '';
+  
+  // Position statues to the right of the city icon
+  const startX = size * 0.8; // Start position to the right of city buildings
+  const startY = -statueHeight / 2; // Center vertically
+
+  // Generate statues based on count (0-3)
+  for (let i = 0; i < statueCount; i++) {
+    const statueX = startX + i * (statueWidth + statueSpacing);
+    
+    statuesContent += `
+      <!-- Statue ${i + 1} -->
+      <rect 
+        x="${statueX}" 
+        y="${startY}" 
+        width="${statueWidth}" 
+        height="${statueHeight}" 
+        fill="${fillColor}" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth}"
+        class="city-statue statue-${i + 1}"
+      />
+    `;
+  }
+
+  return `
+    <g transform="translate(${centerX}, ${centerY})" class="statue-icons">
+      ${statuesContent}
+    </g>
+  `;
+}
+
+/**
  * Generate a clouds icon with black loops forming a vague cloud-like image
  * Simplified version with clean, minimal cloud shape
  */

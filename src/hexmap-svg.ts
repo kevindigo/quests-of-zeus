@@ -9,6 +9,7 @@ import {
   generateCubesIcon,
   generateFoundationsIcon,
   generateMonsterIcon,
+  generateStatueIcons,
   generateTempleIcon,
   generateZeusIcon,
 } from "./icons-svg.ts";
@@ -108,6 +109,16 @@ export class HexMapSVG {
         cellSize,
         hexColor: this.getStrokeColor(cell.color)
       });
+      
+      // Add statue icons if there are statues on this city
+      if (cell.statues && cell.statues > 0) {
+        cellContent += generateStatueIcons({ 
+          centerX, 
+          centerY, 
+          cellSize,
+          hexColor: this.getStrokeColor(cell.color)
+        }, cell.statues);
+      }
     }
 
     // Add monster icon for monster hexes

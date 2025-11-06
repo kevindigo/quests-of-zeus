@@ -49,6 +49,9 @@ export interface HexCell {
   // Cell characteristics
   terrain: TerrainType;
   color: HexColor;
+
+  // City-specific properties
+  statues?: number; // Number of statues placed on this city (0-3)
 }
 
 export class HexMap {
@@ -801,6 +804,8 @@ export class HexMap {
         cell.terrain = "city";
         // Assign a random color to the city
         cell.color = shuffledColors[cornerDirection];
+        // Initialize statues counter for this city
+        cell.statues = 0;
 
         // After placing city, set 2 random neighboring hexes to sea
         this.setRandomNeighborsToSea(grid, placementQ, placementR);
@@ -815,6 +820,8 @@ export class HexMap {
           cornerCell.terrain = "city";
           // Assign a random color to the city
           cornerCell.color = shuffledColors[cornerDirection];
+          // Initialize statues counter for this city
+          cornerCell.statues = 0;
 
           // After placing city, set 2 random neighboring hexes to sea
           this.setRandomNeighborsToSea(grid, cornerCoords.q, cornerCoords.r);
@@ -1289,6 +1296,60 @@ export class HexMap {
     if (cell) {
       cell.color = color;
     }
+  }
+
+  /**
+   * Add a statue to a city
+   * Returns true if successful, false if city is full or not a city
+   */
+  addStatueToCity(q: number, r: number): boolean {
+    const cell = this.getCell(q, r);
+    if (cell && cell.terrain === "city" && cell.statues !== undefined && cell.statues < 3) {
+      cell.statues++;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Remove a statue from a city
+   * Returns true if successful, false if no statues or not a city
+   */
+  removeStatueFromCity(q: number, r: number): boolean {
+    const cell = this.getCell(q, r);
+    if (cell && cell.terrain === "city" && cell.statues !== undefined && cell.statues > 0) {
+      cell.statues--;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Get the number of statues on a city
+   * Returns the count, or -1 if not a city
+   */
+  getStatuesOnCity(q: number, r: number): number {
+    const cell = this.getCell(q, r);
+    if (cell && cell.terrain === "city" && cell.statues !== undefined) {
+      return cell.statues;
+    }
+    return -1;
+  }
+
+  /**
+   * Check if a city has all 3 statues placed
+   */
+  isCityComplete(q: number, r: number): boolean {
+    const cell = this.getCell(q, r);
+    return !!(cell && cell.terrain === "city" && cell.statues === 3);
+  }
+
+  /**
+   * Get all cities that are complete (have all 3 statues)
+   */
+  getCompleteCities(): HexCell[] {
+    const cities = this.getCellsByTerrain("city");
+    return cities.filter(city => city.statues === 3);
   }
 
   /**

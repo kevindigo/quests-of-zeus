@@ -394,6 +394,15 @@ export class GameController {
           actions +=
             `<button id="completeCloudQuest" class="action-btn">Complete Cloud Quest</button>`;
         }
+        if (currentCell?.terrain === "city") {
+          const canPlaceStatue = this.gameEngine.canPlaceStatueOnCity(currentPlayer.id);
+          if (canPlaceStatue) {
+            actions +=
+              `<button id="placeStatue" class="action-btn">Place Statue on City</button>`;
+          } else {
+            actions += `<p>Cannot place statue: ${currentCell.statues === 3 ? "City already has all 3 statues" : "No statue of city's color in storage"}</p>`;
+          }
+        }
 
         if (!actions) {
           actions = "<p>No actions available at this location</p>";
@@ -457,6 +466,8 @@ export class GameController {
         this.buildFoundation();
       } else if (target.id === "completeCloudQuest") {
         this.completeCloudQuest();
+      } else if (target.id === "placeStatue") {
+        this.placeStatueOnCity();
       } else if (target.id === "endTurn") {
         this.endTurn();
       }
@@ -551,6 +562,20 @@ export class GameController {
       this.showMessage(
         "Cannot complete cloud quest here or missing required statue",
       );
+    }
+  }
+
+  private placeStatueOnCity(): void {
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const success = this.gameEngine.placeStatueOnCity(currentPlayer.id);
+    if (success) {
+      const currentCell = this.gameEngine.getGameState().map.getCell(
+        currentPlayer.shipPosition.q,
+        currentPlayer.shipPosition.r,
+      );
+      this.showMessage(`Statue placed on city! (${currentCell.statues}/3 statues)`);
+    } else {
+      this.showMessage("Cannot place statue on this city");
     }
   }
 
