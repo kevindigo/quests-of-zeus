@@ -94,12 +94,15 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
     const success = engine.moveShip(player.id, firstMove.q, firstMove.r, firstMove.dieColor);
     assert(success, "Movement should be successful");
     
+    // Get fresh player reference after movement
+    const updatedPlayer = engine.getCurrentPlayer();
+    
     // Check that the die was consumed
-    assertEquals(player.oracleDice.length, initialDiceCount - 1, "One die should be consumed");
-    assert(!player.oracleDice.includes(firstMove.dieColor), "Used die should be removed from oracle dice");
+    assertEquals(updatedPlayer.oracleDice.length, initialDiceCount - 1, "One die should be consumed");
+    assert(!updatedPlayer.oracleDice.includes(firstMove.dieColor), "Used die should be removed from oracle dice");
     
     // Check that ship position was updated
-    assertEquals(player.shipPosition, { q: firstMove.q, r: firstMove.r }, "Ship position should be updated");
+    assertEquals(updatedPlayer.shipPosition, { q: firstMove.q, r: firstMove.r }, "Ship position should be updated");
   }
 });
 

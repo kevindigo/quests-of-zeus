@@ -259,7 +259,9 @@ export class OracleGameEngine {
 
     // Consume the oracle die
     const dieIndex = player.oracleDice.indexOf(dieColor);
-    player.oracleDice.splice(dieIndex, 1);
+    if (dieIndex !== -1) {
+      player.oracleDice.splice(dieIndex, 1);
+    }
 
     // Move the ship
     player.shipPosition = { q: targetQ, r: targetR };
