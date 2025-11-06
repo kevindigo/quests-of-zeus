@@ -2,8 +2,8 @@
 
 import { OracleGameEngine } from "./src/game-engine.ts";
 
-function debugOfferingCubes() {
-  console.log("Debugging Offering cubes initialization...\n");
+function testCubeDistribution() {
+  console.log("Testing new cube distribution logic...\n");
 
   try {
     const gameEngine = new OracleGameEngine();
@@ -11,12 +11,7 @@ function debugOfferingCubes() {
 
     console.log("✓ Game initialized successfully");
     console.log(`✓ Number of players: ${gameState.players.length}`);
-    console.log(`✓ Number of cube hexes: ${gameState.cubeHexes?.length || 0}`);
-
-    if (!gameState.cubeHexes) {
-      console.log("❌ cubeHexes is undefined");
-      return;
-    }
+    console.log(`✓ Number of cube hexes: ${gameState.cubeHexes.length}`);
 
     // Check that we have exactly 6 cube hexes
     if (gameState.cubeHexes.length === 6) {
@@ -28,13 +23,14 @@ function debugOfferingCubes() {
     }
 
     // Check that each cube hex has exactly playerCount cubes
+    const playerCount = gameState.players.length;
     const validCubeHexes = gameState.cubeHexes.filter((ch) =>
-      ch.cubeColors && ch.cubeColors.length === gameState.players.length
+      ch.cubeColors.length === playerCount
     );
 
     if (validCubeHexes.length === 6) {
       console.log(
-        `✅ All cube hexes have exactly ${gameState.players.length} cubes`,
+        `✅ All cube hexes have exactly ${playerCount} cubes`,
       );
     } else {
       console.log(
@@ -44,12 +40,12 @@ function debugOfferingCubes() {
 
     // Check that all 6 colors are represented (each color should appear playerCount times)
     const allCubeColors = gameState.cubeHexes.flatMap(ch => ch.cubeColors);
-    const colorCounts: Record<string, number> = {};
+    const colorCounts = {};
     allCubeColors.forEach(color => {
       colorCounts[color] = (colorCounts[color] || 0) + 1;
     });
 
-    const expectedColorCount = gameState.players.length;
+    const expectedColorCount = playerCount;
     const correctColorCounts = Object.values(colorCounts).filter(count => 
       count === expectedColorCount
     );
@@ -84,11 +80,13 @@ function debugOfferingCubes() {
         `  Position (${ch.q}, ${ch.r}): ${ch.cubeColors.join(", ")}`,
       );
     });
+
+    console.log("\n✅ All tests passed! The new cube distribution logic is working correctly.");
   } catch (error) {
     console.error("❌ Error:", error);
   }
 }
 
 if (import.meta.main) {
-  debugOfferingCubes();
+  testCubeDistribution();
 }

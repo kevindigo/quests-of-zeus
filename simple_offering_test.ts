@@ -28,9 +28,9 @@ function simpleOfferingTest() {
         const firstCubeHex = gameState.cubeHexes[0];
         console.log(`\nExample cube hex:`);
         console.log(`  Position: (${firstCubeHex.q}, ${firstCubeHex.r})`);
-        console.log(`  Cubes: ${firstCubeHex.cubes.length} color(s)`);
-        firstCubeHex.cubes.forEach((cube) => {
-          console.log(`    - ${cube.color}: ${cube.count} cubes`);
+        console.log(`  Cubes: ${firstCubeHex.cubeColors.length} color(s)`);
+        firstCubeHex.cubeColors.forEach((color) => {
+          console.log(`    - ${color}`);
         });
       }
     } else {

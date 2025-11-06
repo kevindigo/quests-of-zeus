@@ -121,22 +121,20 @@ export class HexMapSVG {
       const cubeHex = this.options.cubeHexes.find((ch) =>
         ch.q === cell.q && ch.r === cell.r
       );
-      if (cubeHex && cubeHex.cubes.length > 0) {
-        const cube = cubeHex.cubes[0]; // Each cube hex has exactly one color
-        if (cube.count > 0) {
-          cellContent += `
+      if (cubeHex && cubeHex.cubeColors.length > 0) {
+        // Show the number of cubes remaining on this hex
+        cellContent += `
             <text 
               x="${centerX}" 
               y="${centerY + 15}" 
               text-anchor="middle" 
               font-size="12" 
-              fill="${this.getStrokeColor(cube.color)}"
+              fill="#333333"
               font-weight="bold"
               stroke="white"
               stroke-width="2"
               class="cube-count"
-            >${cube.count}</text>`;
-        }
+            >${cubeHex.cubeColors.length}</text>`;
       }
     }
 

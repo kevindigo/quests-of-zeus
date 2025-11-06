@@ -25,15 +25,10 @@ export interface Player {
   oracleDice: HexColor[]; // Current oracle dice values
 }
 
-export interface OfferingCube {
-  color: HexColor;
-  count: number;
-}
-
 export interface CubeHex {
   q: number;
   r: number;
-  cubes: OfferingCube[];
+  cubeColors: HexColor[]; // Array of colors that have cubes on this hex (no duplicates)
 }
 
 export interface GameState {
@@ -316,16 +311,16 @@ export class OracleGameEngine {
     }
 
     // Check if the requested color is available on this hex
-    const offeringCube = cubeHex.cubes.find((cube) => cube.color === color);
-    if (!offeringCube || offeringCube.count <= 0) {
+    if (!cubeHex.cubeColors.includes(color)) {
       return false;
     }
 
     // Try to add cube to storage
     const success = addCubeToStorage(player, color);
     if (success) {
-      // Remove one cube of this color from the hex
-      offeringCube.count--;
+      // Remove this color from the hex
+      const colorIndex = cubeHex.cubeColors.indexOf(color);
+      cubeHex.cubeColors.splice(colorIndex, 1);
       this.endTurn();
     }
 
@@ -503,8 +498,8 @@ export class OracleGameEngine {
 
   /**
    * Initialize Offering cubes on cube hexes
-   * Take as many cubes of each color as players participating
-   * Distribute evenly among the 6 cube hexes so that no color occurs twice on any island
+   * Each cube hex gets as many cubes as there are players, 
+   * but no hex can contain more than one cube of the same color
    */
   private initializeOfferingCubes(map: HexMap, playerCount: number): CubeHex[] {
     const cubeHexes: CubeHex[] = [];
@@ -512,29 +507,44 @@ export class OracleGameEngine {
     // Get all cube hexes from the map
     const cubeCells = map.getCellsByTerrain("cubes");
 
-    // Create cubes for each color: playerCount cubes per color
-    const availableCubes: OfferingCube[] = ALL_COLORS.map((color) => ({
-      color,
-      count: playerCount,
-    }));
-
     // Shuffle the cube hexes for random distribution
     const shuffledCubeHexes = [...cubeCells];
     this.shuffleArray(shuffledCubeHexes);
 
-    // Distribute cubes to hexes - each hex gets one cube of each color
-    // Since we have 6 colors and 6 hexes, each hex gets exactly one color
-    for (let i = 0; i < shuffledCubeHexes.length; i++) {
-      const cell = shuffledCubeHexes[i];
-      const color = ALL_COLORS[i]; // Each hex gets a different color
+    // Create a pool of colors to distribute
+    const colorPool: HexColor[] = [];
+    
+    // Add playerCount copies of each color to the pool
+    for (let i = 0; i < playerCount; i++) {
+      colorPool.push(...ALL_COLORS);
+    }
+
+    // Shuffle the color pool for random distribution
+    this.shuffleArray(colorPool);
+
+    // Distribute colors to hexes
+    let colorIndex = 0;
+    for (const cell of shuffledCubeHexes) {
+      const cubeColors: HexColor[] = [];
+      
+      // Add playerCount colors to this hex, ensuring no duplicates
+      for (let i = 0; i < playerCount && colorIndex < colorPool.length; i++) {
+        // Find the next color that isn't already on this hex
+        while (colorIndex < colorPool.length && 
+               cubeColors.includes(colorPool[colorIndex])) {
+          colorIndex++;
+        }
+        
+        if (colorIndex < colorPool.length) {
+          cubeColors.push(colorPool[colorIndex]);
+          colorIndex++;
+        }
+      }
 
       cubeHexes.push({
         q: cell.q,
         r: cell.r,
-        cubes: [{
-          color,
-          count: playerCount,
-        }],
+        cubeColors,
       });
     }
 

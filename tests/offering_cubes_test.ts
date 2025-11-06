@@ -22,14 +22,14 @@ function testOfferingCubes() {
       );
     }
 
-    // Check that each cube hex has exactly one color
+    // Check that each cube hex has exactly playerCount cubes
     const validCubeHexes = gameState.cubeHexes.filter((ch) =>
-      ch.cubes.length === 1 && ch.cubes[0].count === gameState.players.length
+      ch.cubeColors.length === gameState.players.length
     );
 
     if (validCubeHexes.length === 6) {
       console.log(
-        "✅ All cube hexes have exactly one color with correct count",
+        `✅ All cube hexes have exactly ${gameState.players.length} cubes`,
       );
     } else {
       console.log(
@@ -37,54 +37,46 @@ function testOfferingCubes() {
       );
     }
 
-    // Check that all 6 colors are represented
-    const colors = new Set(gameState.cubeHexes.map((ch) => ch.cubes[0].color));
-    if (colors.size === 6) {
-      console.log("✅ All 6 colors are represented on cube hexes");
-    } else {
-      console.log(`❌ Expected 6 unique colors, found ${colors.size}`);
-    }
-
-    // Check that no color appears twice
+    // Check that all 6 colors are represented (each color should appear playerCount times)
+    const allCubeColors = gameState.cubeHexes.flatMap(ch => ch.cubeColors);
     const colorCounts: Record<string, number> = {};
-    gameState.cubeHexes.forEach((ch) => {
-      const color = ch.cubes[0].color;
+    allCubeColors.forEach(color => {
       colorCounts[color] = (colorCounts[color] || 0) + 1;
     });
 
-    const duplicateColors = Object.entries(colorCounts).filter(([_, count]) =>
-      count > 1
+    const expectedColorCount = gameState.players.length;
+    const correctColorCounts = Object.values(colorCounts).filter(count => 
+      count === expectedColorCount
     );
-    if (duplicateColors.length === 0) {
-      console.log("✅ No color appears twice on any island");
+    
+    if (correctColorCounts.length === 6) {
+      console.log(
+        `✅ All 6 colors are represented ${expectedColorCount} times each`,
+      );
     } else {
       console.log(
-        `❌ Found duplicate colors: ${
-          duplicateColors.map(([color]) => color).join(", ")
-        }`,
+        `❌ Expected 6 colors each appearing ${expectedColorCount} times, found ${correctColorCounts.length} colors with correct count`,
       );
     }
 
-    // Check cube counts
-    const expectedCount = gameState.players.length;
-    const correctCounts = gameState.cubeHexes.filter((ch) =>
-      ch.cubes[0].count === expectedCount
-    );
-    if (correctCounts.length === 6) {
-      console.log(
-        `✅ All cube hexes have ${expectedCount} cubes (one per player)`,
-      );
+    // Check that no color appears twice on the same hex
+    const hexesWithDuplicates = gameState.cubeHexes.filter(ch => {
+      const uniqueColors = new Set(ch.cubeColors);
+      return uniqueColors.size !== ch.cubeColors.length;
+    });
+    
+    if (hexesWithDuplicates.length === 0) {
+      console.log("✅ No color appears twice on any island");
     } else {
       console.log(
-        `❌ ${correctCounts.length} of 6 cube hexes have correct cube count`,
+        `❌ Found ${hexesWithDuplicates.length} hexes with duplicate colors`,
       );
     }
 
     console.log("\nCube hex distribution:");
     gameState.cubeHexes.forEach((ch) => {
-      const cube = ch.cubes[0];
       console.log(
-        `  Position (${ch.q}, ${ch.r}): ${cube.color} cubes: ${cube.count}`,
+        `  Position (${ch.q}, ${ch.r}): ${ch.cubeColors.join(", ")}`,
       );
     });
   } catch (error) {
