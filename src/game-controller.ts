@@ -284,26 +284,30 @@ export class GameController {
 
           playersAtPosition.forEach((player, index) => {
             // Calculate position in one of the four quadrants of the hex
+            // Use smaller offsets to position dots closer to the center
             const quadrant = index % 4;
             let offsetX = 0;
             let offsetY = 0;
 
+            // Reduce the offset to move dots closer to center (from 1/4 to 1/6 of the width/height)
+            const offsetFactor = 6;
+
             switch (quadrant) {
               case 0: // Upper left
-                offsetX = -rect.width / 4;
-                offsetY = -rect.height / 4;
+                offsetX = -rect.width / offsetFactor;
+                offsetY = -rect.height / offsetFactor;
                 break;
               case 1: // Upper right
-                offsetX = rect.width / 4;
-                offsetY = -rect.height / 4;
+                offsetX = rect.width / offsetFactor;
+                offsetY = -rect.height / offsetFactor;
                 break;
               case 2: // Lower left
-                offsetX = -rect.width / 4;
-                offsetY = rect.height / 4;
+                offsetX = -rect.width / offsetFactor;
+                offsetY = rect.height / offsetFactor;
                 break;
               case 3: // Lower right
-                offsetX = rect.width / 4;
-                offsetY = rect.height / 4;
+                offsetX = rect.width / offsetFactor;
+                offsetY = rect.height / offsetFactor;
                 break;
             }
 
