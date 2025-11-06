@@ -64,8 +64,6 @@ function hasStatueOfColor(player: Player, color: HexColor): boolean {
   );
 }
 
-
-
 // Helper function to add a cube to storage (returns true if successful)
 function addCubeToStorage(player: Player, color: HexColor): boolean {
   const emptySlotIndex = player.storage.findIndex((slot) =>
@@ -77,8 +75,6 @@ function addCubeToStorage(player: Player, color: HexColor): boolean {
   }
   return false;
 }
-
-
 
 // Helper function to remove a cube of specific color from storage (returns true if successful)
 function removeCubeFromStorage(player: Player, color: HexColor): boolean {
@@ -466,7 +462,7 @@ export class OracleGameEngine {
 
   /**
    * Initialize Offering cubes on cube hexes
-   * Each cube hex gets as many cubes as there are players, 
+   * Each cube hex gets as many cubes as there are players,
    * but no hex can contain more than one cube of the same color
    */
   private initializeOfferingCubes(map: HexMap, playerCount: number): CubeHex[] {
@@ -481,7 +477,7 @@ export class OracleGameEngine {
 
     // Create a pool of colors to distribute
     const colorPool: HexColor[] = [];
-    
+
     // Add playerCount copies of each color to the pool
     for (let i = 0; i < playerCount; i++) {
       colorPool.push(...ALL_COLORS);
@@ -494,15 +490,17 @@ export class OracleGameEngine {
     let colorIndex = 0;
     for (const cell of shuffledCubeHexes) {
       const cubeColors: HexColor[] = [];
-      
+
       // Add playerCount colors to this hex, ensuring no duplicates
       for (let i = 0; i < playerCount && colorIndex < colorPool.length; i++) {
         // Find the next color that isn't already on this hex
-        while (colorIndex < colorPool.length && 
-               cubeColors.includes(colorPool[colorIndex])) {
+        while (
+          colorIndex < colorPool.length &&
+          cubeColors.includes(colorPool[colorIndex])
+        ) {
           colorIndex++;
         }
-        
+
         if (colorIndex < colorPool.length) {
           cubeColors.push(colorPool[colorIndex]);
           colorIndex++;

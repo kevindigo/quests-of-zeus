@@ -198,6 +198,14 @@ export class GameController {
       const cubeHexes = gameState.cubeHexes || [];
       console.log("Cube hexes for rendering:", cubeHexes);
       
+      // Debug: Log cube hex details
+      cubeHexes.forEach((cubeHex, index) => {
+        console.log(`Cube hex ${index}: (${cubeHex.q}, ${cubeHex.r}) with colors:`, cubeHex.cubeColors);
+      });
+
+      // Debug: Check if cube hexes are being passed to SVG renderer
+      console.log("Setting cubeHexes in SVG options:", cubeHexes.length, "hexes");
+
       this.hexMapSVG.setOptions({
         cubeHexes: cubeHexes,
       });
@@ -208,7 +216,9 @@ export class GameController {
 
       // Execute the interaction script
       try {
-        eval(script);
+        // Use Function constructor instead of direct eval to avoid bundler warnings
+        const executeScript = new Function(script);
+        executeScript();
       } catch (error) {
         console.error("Error executing hex map script:", error);
       }

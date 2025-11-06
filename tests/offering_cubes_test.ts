@@ -38,17 +38,17 @@ function testOfferingCubes() {
     }
 
     // Check that all 6 colors are represented (each color should appear playerCount times)
-    const allCubeColors = gameState.cubeHexes.flatMap(ch => ch.cubeColors);
+    const allCubeColors = gameState.cubeHexes.flatMap((ch) => ch.cubeColors);
     const colorCounts: Record<string, number> = {};
-    allCubeColors.forEach(color => {
+    allCubeColors.forEach((color) => {
       colorCounts[color] = (colorCounts[color] || 0) + 1;
     });
 
     const expectedColorCount = gameState.players.length;
-    const correctColorCounts = Object.values(colorCounts).filter(count => 
+    const correctColorCounts = Object.values(colorCounts).filter((count) =>
       count === expectedColorCount
     );
-    
+
     if (correctColorCounts.length === 6) {
       console.log(
         `✅ All 6 colors are represented ${expectedColorCount} times each`,
@@ -60,11 +60,11 @@ function testOfferingCubes() {
     }
 
     // Check that no color appears twice on the same hex
-    const hexesWithDuplicates = gameState.cubeHexes.filter(ch => {
+    const hexesWithDuplicates = gameState.cubeHexes.filter((ch) => {
       const uniqueColors = new Set(ch.cubeColors);
       return uniqueColors.size !== ch.cubeColors.length;
     });
-    
+
     if (hexesWithDuplicates.length === 0) {
       console.log("✅ No color appears twice on any island");
     } else {

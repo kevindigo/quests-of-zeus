@@ -115,26 +115,40 @@ export class HexMapSVG {
 
     // Add cubes icon for cubes hexes
     if (cell.terrain === "cubes") {
-      cellContent += generateCubesIcon({ centerX, centerY, cellSize });
-
-      // Add cube count display if available
-      const cubeHex = this.options.cubeHexes.find((ch) =>
-        ch.q === cell.q && ch.r === cell.r
-      );
-      if (cubeHex && cubeHex.cubeColors.length > 0) {
-        // Show the number of cubes remaining on this hex
-        cellContent += `
+      try {
+        const cubeHex = this.options.cubeHexes.find((ch) =>
+          ch.q === cell.q && ch.r === cell.r
+        );
+        
+        console.log(`Processing cube hex at (${cell.q}, ${cell.r}):`, cubeHex);
+        
+        if (cubeHex && cubeHex.cubeColors.length > 0) {
+          console.log(`Generating colored cubes for (${cell.q}, ${cell.r}) with colors:`, cubeHex.cubeColors);
+          // Generate colored cubes instead of generic icon
+          cellContent += this.generateColoredCubes({ centerX, centerY, cellSize }, cubeHex.cubeColors);
+          
+          // Show the number of cubes remaining on this hex
+          cellContent += `
             <text 
               x="${centerX}" 
-              y="${centerY + 15}" 
+              y="${centerY + 20}" 
               text-anchor="middle" 
-              font-size="12" 
-              fill="#333333"
+              font-size="14" 
+              fill="#000000"
               font-weight="bold"
               stroke="white"
-              stroke-width="2"
+              stroke-width="3"
               class="cube-count"
             >${cubeHex.cubeColors.length}</text>`;
+        } else {
+          console.log(`No cubes found for (${cell.q}, ${cell.r}), using generic icon`);
+          // Show generic cube icon if no cubes present
+          cellContent += generateCubesIcon({ centerX, centerY, cellSize });
+        }
+      } catch (error) {
+        console.error(`Error rendering cube hex at (${cell.q}, ${cell.r}):`, error);
+        // Fallback to generic cube icon on error
+        cellContent += generateCubesIcon({ centerX, centerY, cellSize });
       }
     }
 
@@ -272,6 +286,73 @@ export class HexMapSVG {
   }
 
   /**
+   * Generate colored cube icons for cube hexes
+   */
+  private generateColoredCubes(options: IconOptions, cubeColors: HexColor[]): string {
+    try {
+      const { centerX, centerY, cellSize } = options;
+      const scale = cellSize / 40;
+      // Use circles instead of rectangles for simplicity
+      const cubeRadius = 8 * scale;
+      const spacing = cubeRadius * 3;
+
+      let cubesContent = '';
+      
+      // Safety check: if no cube colors, return empty string
+      if (cubeColors.length === 0) {
+        return cubesContent;
+      }
+      
+      // Position cubes in a circular arrangement around the center
+      const angleStep = (2 * Math.PI) / cubeColors.length;
+      
+      cubeColors.forEach((color, index) => {
+        const angle = index * angleStep;
+        const cubeX = centerX + Math.cos(angle) * spacing;
+        const cubeY = centerY + Math.sin(angle) * spacing;
+        
+        const strokeColor = this.getStrokeColor(color);
+        const fillColor = this.getCubeFillColor(color);
+        
+        // Use simple circles instead of complex rectangles
+        cubesContent += `
+          <circle 
+            cx="${cubeX}" 
+            cy="${cubeY}" 
+            r="${cubeRadius}" 
+            fill="${fillColor}" 
+            stroke="${strokeColor}" 
+            stroke-width="${2 * scale}"
+            class="colored-cube cube-${color}"
+          />
+        `;
+      });
+
+      return cubesContent;
+    } catch (error) {
+      console.error("Error in generateColoredCubes:", error);
+      // Return empty string on error - the fallback generic icon will be used
+      return '';
+    }
+  }
+
+  /**
+   * Get fill color for cubes
+   */
+  private getCubeFillColor(color: HexColor): string {
+    const colors: Record<HexColor, string> = {
+      none: "#cccccc",
+      red: "#ff0000",      // More vibrant red
+      pink: "#ff69b4",     // More vibrant pink
+      blue: "#0000ff",     // More vibrant blue
+      black: "#000000",    // Pure black
+      green: "#00ff00",    // More vibrant green
+      yellow: "#ffff00",   // More vibrant yellow
+    };
+    return colors[color] || "#cccccc";
+  }
+
+  /**
    * Generate complete SVG for the hex map
    */
   generateSVG(grid: HexCell[][]): string {
@@ -321,6 +402,7 @@ export class HexMapSVG {
       for (let r = 0; r < row.length; r++) {
         const cell = row[r];
         if (cell) {
+          console.log(`Generating hex cell at (${cell.q}, ${cell.r}) with terrain: ${cell.terrain}`);
           const { x, y } = this.calculateCellPosition(cell.q, cell.r);
           svgContent += this.generateHexCell(cell, x, y);
         }
@@ -331,6 +413,7 @@ export class HexMapSVG {
   </g>
 </svg>`;
 
+    console.log("SVG generation completed successfully");
     return svgContent;
   }
 
