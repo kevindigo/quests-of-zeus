@@ -43,7 +43,7 @@ export class GameController {
               <li>Roll oracle dice to determine movement options</li>
               <li>Move your ship across the sea and land hexes</li>
               <li>Collect offerings, fight monsters, and build temples</li>
-              <li>Complete quests to earn victory points</li>
+              <li>Complete quests to win the game</li>
               <li>First player to complete 12 quests wins!</li>
             </ul>
           </div>
@@ -123,7 +123,6 @@ export class GameController {
       <div class="player-info">
         <h3>Current Player: ${currentPlayer.name}</h3>
         <div class="player-stats">
-          <div><strong>Victory Points:</strong> ${currentPlayer.victoryPoints}</div>
           <div><strong>Completed Quests:</strong> ${currentPlayer.completedQuests}/12</div>
           <div><strong>Gold:</strong> ${currentPlayer.gold}</div>
         </div>
@@ -163,7 +162,6 @@ export class GameController {
             <div class="quest-item quest-${quest.type}">
               <div class="quest-type">${quest.type.toUpperCase()}</div>
               <div class="quest-color color-${quest.color}">${quest.color}</div>
-              <div class="quest-vp">${quest.victoryPoints} VP</div>
             </div>
           `).join('')}
         </div>
@@ -461,7 +459,7 @@ export class GameController {
   }
 
   private showGameOver(winner: any): void {
-    const message = `Game Over! ${winner.name} wins with ${winner.victoryPoints} victory points!`;
+    const message = `Game Over! ${winner.name} wins by completing ${winner.completedQuests} quests!`;
     this.showMessage(message);
     
     // Disable further actions

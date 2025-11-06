@@ -13,7 +13,6 @@ export interface Player {
   completedQuests: number;
   oracleDice: HexColor[]; // Current oracle dice values
   gold: number;
-  victoryPoints: number;
 }
 
 export interface Quest {
@@ -25,7 +24,6 @@ export interface Quest {
     monsterType?: string;
     location?: { q: number; r: number };
   };
-  victoryPoints: number;
   completed: boolean;
 }
 
@@ -84,7 +82,6 @@ export class OracleGameEngine {
         completedQuests: 0,
         oracleDice: [],
         gold: 0,
-        victoryPoints: 0,
       },
       {
         id: 2,
@@ -95,7 +92,6 @@ export class OracleGameEngine {
         completedQuests: 0,
         oracleDice: [],
         gold: 0,
-        victoryPoints: 0,
       },
     ];
 
@@ -131,7 +127,6 @@ export class OracleGameEngine {
         requirements: {
           offerings: createOfferingsWithRequirement(color, 3),
         },
-        victoryPoints: 2,
         completed: false,
       });
     }
@@ -145,7 +140,6 @@ export class OracleGameEngine {
         requirements: {
           monsterType: "basic",
         },
-        victoryPoints: 3,
         completed: false,
       });
     }
@@ -159,7 +153,6 @@ export class OracleGameEngine {
         requirements: {
           offerings: createOfferingsWithRequirement(ALL_COLORS[i % ALL_COLORS.length], 1),
         },
-        victoryPoints: 4,
         completed: false,
       });
     }
@@ -171,7 +164,6 @@ export class OracleGameEngine {
         type: "foundation",
         color: ALL_COLORS[i % ALL_COLORS.length],
         requirements: {},
-        victoryPoints: 5,
         completed: false,
       });
     }
@@ -374,7 +366,6 @@ export class OracleGameEngine {
       const quest = this.state.availableQuests[questIndex];
       quest.completed = true;
       player.completedQuests++;
-      player.victoryPoints += quest.victoryPoints;
       
       // Move quest to completed
       this.state.completedQuests.push(quest);
