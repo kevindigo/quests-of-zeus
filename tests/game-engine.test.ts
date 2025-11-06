@@ -16,7 +16,7 @@ Deno.test("GameEngine - initialization", () => {
   assertEquals(state.players.length, 2);
   assertEquals(state.round, 1);
   assertEquals(state.phase, "setup");
-  assertEquals(state.quests.length, 19); // 6 offering + 6 monster + 4 temple + 3 foundation
+  assertEquals(state.quests.length, 15); // 3 offering + 3 monster + 3 temple + 3 foundation + 3 cloud
   
   // Now game should be initialized
   assertEquals(engine.isGameInitialized(), true);

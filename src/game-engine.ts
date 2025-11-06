@@ -11,13 +11,20 @@ export interface Player {
   shipPosition: { q: number; r: number };
   offerings: Record<HexColor, number>; // Offerings collected for each color
   completedQuests: number;
+  completedQuestTypes: {
+    offering: number;
+    monster: number;
+    foundation: number;
+    temple: number;
+    cloud: number;
+  };
   oracleDice: HexColor[]; // Current oracle dice values
   gold: number;
 }
 
 export interface Quest {
   id: number;
-  type: "offering" | "monster" | "foundation" | "temple";
+  type: "offering" | "monster" | "foundation" | "temple" | "cloud";
   color: HexColor;
   requirements: {
     offerings?: Record<HexColor, number>;
@@ -80,6 +87,13 @@ export class OracleGameEngine {
         shipPosition: { q: -1, r: 0 }, // Start at different positions
         offerings: createEmptyOfferings(),
         completedQuests: 0,
+        completedQuestTypes: {
+          offering: 0,
+          monster: 0,
+          foundation: 0,
+          temple: 0,
+          cloud: 0,
+        },
         oracleDice: [],
         gold: 0,
       },
@@ -90,6 +104,13 @@ export class OracleGameEngine {
         shipPosition: { q: 1, r: 0 },
         offerings: createEmptyOfferings(),
         completedQuests: 0,
+        completedQuestTypes: {
+          offering: 0,
+          monster: 0,
+          foundation: 0,
+          temple: 0,
+          cloud: 0,
+        },
         oracleDice: [],
         gold: 0,
       },
@@ -118,21 +139,21 @@ export class OracleGameEngine {
     const quests: Quest[] = [];
     let id = 1;
 
-    // Offering quests (collect specific offerings)
-    for (const color of ALL_COLORS) {
+    // Offering quests (3 total)
+    for (let i = 0; i < 3; i++) {
       quests.push({
         id: id++,
         type: "offering",
-        color,
+        color: ALL_COLORS[i % ALL_COLORS.length],
         requirements: {
-          offerings: createOfferingsWithRequirement(color, 3),
+          offerings: createOfferingsWithRequirement(ALL_COLORS[i % ALL_COLORS.length], 3),
         },
         completed: false,
       });
     }
 
-    // Monster quests
-    for (let i = 0; i < 6; i++) {
+    // Monster quests (3 total)
+    for (let i = 0; i < 3; i++) {
       quests.push({
         id: id++,
         type: "monster",
@@ -144,8 +165,8 @@ export class OracleGameEngine {
       });
     }
 
-    // Temple quests
-    for (let i = 0; i < 4; i++) {
+    // Temple quests (3 total)
+    for (let i = 0; i < 3; i++) {
       quests.push({
         id: id++,
         type: "temple",
@@ -157,13 +178,26 @@ export class OracleGameEngine {
       });
     }
 
-    // Foundation quests
+    // Foundation quests (3 total)
     for (let i = 0; i < 3; i++) {
       quests.push({
         id: id++,
         type: "foundation",
         color: ALL_COLORS[i % ALL_COLORS.length],
         requirements: {},
+        completed: false,
+      });
+    }
+
+    // Cloud quests (3 total)
+    for (let i = 0; i < 3; i++) {
+      quests.push({
+        id: id++,
+        type: "cloud",
+        color: ALL_COLORS[i % ALL_COLORS.length],
+        requirements: {
+          offerings: createOfferingsWithRequirement(ALL_COLORS[i % ALL_COLORS.length], 2),
+        },
         completed: false,
       });
     }
@@ -350,6 +384,35 @@ export class OracleGameEngine {
     return true;
   }
 
+  public completeCloudQuest(playerId: number): boolean {
+    if (!this.state) {
+      throw new Error("Game not initialized. Call initializeGame() first.");
+    }
+    const player = this.state.players.find(p => p.id === playerId);
+    if (!player || this.state.phase !== "action") {
+      return false;
+    }
+
+    // Check if player is on a cloud hex
+    const currentCell = this.state.map.getCell(player.shipPosition.q, player.shipPosition.r);
+    if (!currentCell || currentCell.terrain !== "clouds") {
+      return false;
+    }
+
+    // Check if player has required offerings
+    const requiredColor = currentCell.color;
+    if (player.offerings[requiredColor] < 2) {
+      return false;
+    }
+
+    // Consume offerings and complete cloud quest
+    player.offerings[requiredColor] -= 2;
+    this.completeQuest(playerId, "cloud");
+    this.endTurn();
+    
+    return true;
+  }
+
   private completeQuest(playerId: number, questType: Quest["type"]): void {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
@@ -366,6 +429,9 @@ export class OracleGameEngine {
       const quest = this.state.availableQuests[questIndex];
       quest.completed = true;
       player.completedQuests++;
+      
+      // Track completed quests by type
+      player.completedQuestTypes[questType]++;
       
       // Move quest to completed
       this.state.completedQuests.push(quest);
@@ -456,8 +522,14 @@ export class OracleGameEngine {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
-    // Game ends when any player completes 12 quests
-    const winner = this.state.players.find(p => p.completedQuests >= 12);
+    // Game ends when any player completes 3 of each quest type
+    const winner = this.state.players.find(p => 
+      p.completedQuestTypes.offering >= 3 &&
+      p.completedQuestTypes.monster >= 3 &&
+      p.completedQuestTypes.foundation >= 3 &&
+      p.completedQuestTypes.temple >= 3 &&
+      p.completedQuestTypes.cloud >= 3
+    );
     return {
       winner: winner || null,
       gameOver: !!winner

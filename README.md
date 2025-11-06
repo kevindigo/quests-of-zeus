@@ -61,13 +61,13 @@ Oracle of Delphi is a pick-up-and-deliver board game set in Greek mythology. Pla
 
 ### Victory Condition
 
-The first player to complete **12 quests** wins the game!
+The first player to complete **3 of each quest type** (offering, monster, temple, foundation, and cloud) wins the game!
 
 ### Game Components
 
 - **Oracle Dice**: 6 colors (red, pink, blue, black, green, yellow) that power actions
 - **Offerings**: Resources collected from cube hexes
-- **Quests**: 4 types (offering, monster, temple, foundation) worth victory points
+- **Quests**: 5 types (offering, monster, temple, foundation, cloud) - must complete 3 of each type to win
 - **Map**: Hexagonal grid with sea, land, and special terrain
 
 ## Project Structure
@@ -139,7 +139,7 @@ The game follows the official Oracle of Delphi rules by Stefan Feld:
 - **Phases**: Oracle → Movement → Action
 - **Movement**: Land hexes free, sea hexes require matching oracle dice
 - **Actions**: Collect offerings, fight monsters, build temples/foundations
-- **Victory**: First to complete 12 quests wins
+- **Victory**: First to complete 3 of each quest type wins
 
 ## Contributing
 

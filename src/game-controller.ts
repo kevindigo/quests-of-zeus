@@ -44,7 +44,7 @@ export class GameController {
               <li>Move your ship across the sea and land hexes</li>
               <li>Collect offerings, fight monsters, and build temples</li>
               <li>Complete quests to win the game</li>
-              <li>First player to complete 12 quests wins!</li>
+              <li>First player to complete 3 of each quest type wins!</li>
             </ul>
           </div>
         </div>
@@ -123,8 +123,18 @@ export class GameController {
       <div class="player-info">
         <h3>Current Player: ${currentPlayer.name}</h3>
         <div class="player-stats">
-          <div><strong>Completed Quests:</strong> ${currentPlayer.completedQuests}/12</div>
+          <div><strong>Completed Quests:</strong> ${currentPlayer.completedQuests}/15</div>
           <div><strong>Gold:</strong> ${currentPlayer.gold}</div>
+        </div>
+        <div class="quest-progress">
+          <h4>Quest Progress</h4>
+          <div class="quest-types">
+            <div class="quest-type-item">Offering: ${currentPlayer.completedQuestTypes.offering}/3</div>
+            <div class="quest-type-item">Monster: ${currentPlayer.completedQuestTypes.monster}/3</div>
+            <div class="quest-type-item">Foundation: ${currentPlayer.completedQuestTypes.foundation}/3</div>
+            <div class="quest-type-item">Temple: ${currentPlayer.completedQuestTypes.temple}/3</div>
+            <div class="quest-type-item">Cloud: ${currentPlayer.completedQuestTypes.cloud}/3</div>
+          </div>
         </div>
         <div class="offerings">
           <h4>Offerings</h4>
@@ -304,6 +314,9 @@ export class GameController {
         if (currentCell?.terrain === "foundations") {
           actions += `<button id="buildFoundation" class="action-btn">Build Foundation</button>`;
         }
+        if (currentCell?.terrain === "clouds") {
+          actions += `<button id="completeCloudQuest" class="action-btn">Complete Cloud Quest</button>`;
+        }
         
         if (!actions) {
           actions = '<p>No actions available at this location</p>';
@@ -361,6 +374,8 @@ export class GameController {
         this.buildTemple();
       } else if (target.id === "buildFoundation") {
         this.buildFoundation();
+      } else if (target.id === "completeCloudQuest") {
+        this.completeCloudQuest();
       } else if (target.id === "endTurn") {
         this.endTurn();
       }
@@ -435,6 +450,15 @@ export class GameController {
       this.showMessage("Foundation built! Quest completed!");
     } else {
       this.showMessage("Cannot build foundation here");
+    }
+  }
+
+  private completeCloudQuest(): void {
+    const success = this.gameEngine.completeCloudQuest(this.currentPlayerId);
+    if (success) {
+      this.showMessage("Cloud quest completed!");
+    } else {
+      this.showMessage("Cannot complete cloud quest here or missing offerings");
     }
   }
 
