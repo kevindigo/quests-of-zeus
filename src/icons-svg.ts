@@ -484,7 +484,7 @@ export function generateCubesIcon(options: IconOptions): string {
 /**
  * Generate statue icons for cities
  * Statues are represented as tall thin rectangles (3:1 ratio) in the city's color
- * Positioned vertically to the right of the city icon with better visibility
+ * Positioned at the bottom of the hex (below the city icon) with clear spacing
  */
 export function generateStatueIcons(
   options: IconOptions,
@@ -504,13 +504,14 @@ export function generateStatueIcons(
   // Statue dimensions: tall thin rectangles with 3:1 ratio
   const statueWidth = size * 0.15; // Width of each statue
   const statueHeight = statueWidth * 3; // Height = 3x width for 3:1 ratio
-  const statueSpacing = statueWidth * 0.5; // Space between statues
+  const statueSpacing = statueWidth * 1.2; // Increased spacing for better visibility
 
   let statuesContent = "";
 
-  // Position statues to the right of the city icon with better positioning
-  const startX = size * 0.6; // Start position to the right of city buildings
-  const startY = -statueHeight / 2; // Center vertically
+  // Position statues at the bottom of the hex, below the city icon
+  const startY = size * 0.8; // Position below the city buildings
+  const totalWidth = statueCount * statueWidth + (statueCount - 1) * statueSpacing;
+  const startX = -totalWidth / 2; // Center the statues horizontally
 
   // Generate statues based on count (0-3)
   for (let i = 0; i < statueCount; i++) {
