@@ -1,7 +1,7 @@
 // Oracle of Delphi Game Engine
 // Core game mechanics and state management
 
-import type { HexCell, HexColor, TerrainType } from "./hexmap.ts";
+import type { HexColor } from "./hexmap.ts";
 import { ALL_COLORS, COLORS, HexMap } from "./hexmap.ts";
 
 export interface StorageSlot {
@@ -64,29 +64,7 @@ function hasStatueOfColor(player: Player, color: HexColor): boolean {
   );
 }
 
-// Helper function to check if player has any cube
-function hasAnyCube(player: Player): boolean {
-  return player.storage.some((slot) => slot.type === "cube");
-}
 
-// Helper function to check if player has any statue
-function hasAnyStatue(player: Player): boolean {
-  return player.storage.some((slot) => slot.type === "statue");
-}
-
-// Helper function to count how many cubes of specific color player has
-function countCubesOfColor(player: Player, color: HexColor): number {
-  return player.storage.filter((slot) =>
-    slot.type === "cube" && slot.color === color
-  ).length;
-}
-
-// Helper function to count how many statues of specific color player has
-function countStatuesOfColor(player: Player, color: HexColor): number {
-  return player.storage.filter((slot) =>
-    slot.type === "statue" && slot.color === color
-  ).length;
-}
 
 // Helper function to add a cube to storage (returns true if successful)
 function addCubeToStorage(player: Player, color: HexColor): boolean {
@@ -100,17 +78,7 @@ function addCubeToStorage(player: Player, color: HexColor): boolean {
   return false;
 }
 
-// Helper function to add a statue to storage (returns true if successful)
-function addStatueToStorage(player: Player, color: HexColor): boolean {
-  const emptySlotIndex = player.storage.findIndex((slot) =>
-    slot.type === "empty"
-  );
-  if (emptySlotIndex !== -1) {
-    player.storage[emptySlotIndex] = { type: "statue", color };
-    return true;
-  }
-  return false;
-}
+
 
 // Helper function to remove a cube of specific color from storage (returns true if successful)
 function removeCubeFromStorage(player: Player, color: HexColor): boolean {
