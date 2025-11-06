@@ -42,7 +42,7 @@ export class GameController {
             <ul>
               <li>Roll oracle dice to determine movement options</li>
               <li>Move your ship across the sea and land hexes</li>
-              <li>Collect offerings, fight monsters, and build temples</li>
+              <li>Collect cubes and statues, fight monsters, and build temples</li>
               <li>Complete quests to win the game</li>
               <li>First player to complete 3 of each quest type (Temple Offering, Monster, Foundation, Cloud) wins!</li>
             </ul>
@@ -134,13 +134,19 @@ export class GameController {
             <div class="quest-type-item">Cloud: ${currentPlayer.completedQuestTypes.cloud}/3</div>
           </div>
         </div>
-        <div class="offerings">
-          <h4>Offerings</h4>
-          <div class="offering-grid">
-            ${Object.entries(currentPlayer.offerings).map(([color, count]) => 
-              `<div class="offering-item color-${color}">
-                <span class="color-swatch" style="background-color: ${this.getColorHex(color)}"></span>
-                <span>${color}: ${count}</span>
+        <div class="storage">
+          <h4>Storage (2 slots)</h4>
+          <div class="storage-slots">
+            ${currentPlayer.storage.map((slot, index) => 
+              `<div class="storage-slot slot-${index} ${slot.type}">
+                <div class="slot-content">
+                  ${slot.type === "empty" ? 
+                    '<span class="empty-slot">Empty</span>' : 
+                    `<span class="item-type">${slot.type}</span>
+                     <span class="color-swatch" style="background-color: ${this.getColorHex(slot.color)}"></span>
+                     <span class="item-color">${slot.color}</span>`
+                  }
+                </div>
               </div>`
             ).join('')}
           </div>
@@ -417,9 +423,9 @@ export class GameController {
     if (currentCell?.terrain === "cubes" && currentCell.color !== "none") {
       const success = this.gameEngine.collectOffering(this.currentPlayerId, currentCell.color);
       if (success) {
-        this.showMessage(`Collected ${currentCell.color} offering!`);
+        this.showMessage(`Collected ${currentCell.color} cube!`);
       } else {
-        this.showMessage("Failed to collect offering");
+        this.showMessage("No storage space available for cube!");
       }
     }
   }
@@ -438,7 +444,7 @@ export class GameController {
     if (success) {
       this.showMessage("Temple built! Quest completed!");
     } else {
-      this.showMessage("Cannot build temple here or missing offerings");
+      this.showMessage("Cannot build temple here or missing required cube");
     }
   }
 
@@ -456,7 +462,7 @@ export class GameController {
     if (success) {
       this.showMessage("Cloud quest completed!");
     } else {
-      this.showMessage("Cannot complete cloud quest here or missing offerings");
+      this.showMessage("Cannot complete cloud quest here or missing required statue");
     }
   }
 

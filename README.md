@@ -54,21 +54,37 @@ Oracle of Delphi is a pick-up-and-deliver board game set in Greek mythology. Pla
 1. **Oracle Phase**: Roll 3 oracle dice to determine available actions
 2. **Movement Phase**: Move your ship using oracle dice for sea movement
 3. **Action Phase**: Perform actions based on your location:
-   - **Collect Offerings** from cube hexes
+   - **Collect Cubes** from cube hexes (requires empty storage slot)
    - **Fight Monsters** on monster hexes
-   - **Build Temples** on temple hexes
+   - **Build Temples** on temple hexes (requires cube of matching color)
    - **Build Foundations** on foundation hexes
+   - **Complete Cloud Quests** on cloud hexes (requires statue of matching color)
 
 ### Victory Condition
 
-The first player to complete **3 of each quest type** (offering, monster, temple, foundation, and cloud) wins the game!
+The first player to complete **3 of each quest type** (temple_offering, monster, foundation, and cloud) wins the game!
 
 ### Game Components
 
 - **Oracle Dice**: 6 colors (red, pink, blue, black, green, yellow) that power actions
-- **Offerings**: Resources collected from cube hexes
-- **Quests**: 5 types (offering, monster, temple, foundation, cloud) - must complete 3 of each type to win
+- **Storage System**: Each player has 2 storage slots that can hold either 1 cube or 1 statue of any color
+- **Cubes**: Collected from cube hexes, used for temple offering quests
+- **Statues**: Used for cloud quests
+- **Quests**: 4 types (temple_offering, monster, foundation, cloud) - must complete 3 of each type to win
 - **Map**: Hexagonal grid with sea, land, and special terrain
+
+### Storage System
+
+Each player has exactly 2 storage slots. Each slot can hold:
+- **1 Cube** of any color (collected from cube hexes)
+- **1 Statue** of any color (used for cloud quests)
+- **Nothing** (empty slot)
+
+**Key Rules**:
+- Players cannot exceed 2 total items in storage
+- Cubes are consumed when building temples
+- Statues are consumed when completing cloud quests
+- Storage management becomes a strategic element of gameplay
 
 ## Project Structure
 
@@ -138,7 +154,7 @@ The game follows the official Oracle of Delphi rules by Stefan Feld:
 - **Players**: 2-4 players (currently 2 implemented)
 - **Phases**: Oracle → Movement → Action
 - **Movement**: Land hexes free, sea hexes require matching oracle dice
-- **Actions**: Collect offerings, fight monsters, build temples/foundations
+- **Actions**: Collect cubes, fight monsters, build temples/foundations, complete cloud quests
 - **Victory**: First to complete 3 of each quest type wins
 
 ## Contributing

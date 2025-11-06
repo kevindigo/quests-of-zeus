@@ -44,6 +44,14 @@ Deno.test("GameEngine - player creation", () => {
   assertEquals(player2?.name, "Player 2");
   assertEquals(player1?.shipPosition, { q: -1, r: 0 });
   assertEquals(player2?.shipPosition, { q: 1, r: 0 });
+  
+  // Check that players start with empty storage
+  assertEquals(player1?.storage.length, 2);
+  assertEquals(player2?.storage.length, 2);
+  assertEquals(player1?.storage[0].type, "empty");
+  assertEquals(player1?.storage[1].type, "empty");
+  assertEquals(player2?.storage[0].type, "empty");
+  assertEquals(player2?.storage[1].type, "empty");
 });
 
 Deno.test("GameEngine - oracle dice rolling", () => {
@@ -136,4 +144,33 @@ Deno.test("GameEngine - win condition", () => {
   const winCondition = engine.checkWinCondition();
   assertEquals(winCondition.gameOver, false);
   assertEquals(winCondition.winner, null);
+});
+
+Deno.test("GameEngine - storage system", () => {
+  const engine = new OracleGameEngine();
+  engine.initializeGame();
+  
+  const player = engine.getPlayer(1);
+  assertExists(player);
+  
+  // Check initial empty storage
+  assertEquals(player.storage.length, 2);
+  assertEquals(player.storage[0].type, "empty");
+  assertEquals(player.storage[1].type, "empty");
+  
+  // Test that quests now require cubes/statues instead of offerings
+  const state = engine.getGameState();
+  const templeQuest = state.quests.find(q => q.type === "temple_offering");
+  const cloudQuest = state.quests.find(q => q.type === "cloud");
+  
+  assertExists(templeQuest);
+  assertExists(cloudQuest);
+  
+  // Temple quests should require cubes
+  assertEquals(templeQuest.requirements.cube, true);
+  assertEquals(templeQuest.requirements.statue, undefined);
+  
+  // Cloud quests should require statues
+  assertEquals(cloudQuest.requirements.statue, true);
+  assertEquals(cloudQuest.requirements.cube, undefined);
 });
