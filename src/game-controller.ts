@@ -181,6 +181,11 @@ export class GameController {
     }
 
     try {
+      // Update the hex map SVG with cube hex data
+      this.hexMapSVG.setOptions({
+        cubeHexes: gameState.cubeHexes || []
+      });
+      
       const { svg, script } = this.hexMapSVG.generateInteractiveSVG(grid);
       
       hexMapContainer.innerHTML = svg;

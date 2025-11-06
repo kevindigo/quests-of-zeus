@@ -2,6 +2,7 @@
 // Generates an SVG representation of the hex map
 
 import type { HexCell, HexColor, TerrainType } from "./hexmap.ts";
+import type { CubeHex } from "./game-engine.ts";
 import {
   generateCityIcon,
   generateCloudsIcon,
@@ -18,6 +19,7 @@ export interface HexMapSVGOptions {
   showCoordinates?: boolean;
   showTerrainLabels?: boolean;
   interactive?: boolean;
+  cubeHexes?: CubeHex[];
 }
 
 export class HexMapSVG {
@@ -30,6 +32,7 @@ export class HexMapSVG {
       showCoordinates: options.showCoordinates ?? false,
       showTerrainLabels: options.showTerrainLabels ?? false,
       interactive: options.interactive ?? true,
+      cubeHexes: options.cubeHexes || [],
     };
   }
 
@@ -113,6 +116,26 @@ export class HexMapSVG {
     // Add cubes icon for cubes hexes
     if (cell.terrain === "cubes") {
       cellContent += generateCubesIcon({ centerX, centerY, cellSize });
+      
+      // Add cube count display if available
+      const cubeHex = this.options.cubeHexes.find(ch => 
+        ch.q === cell.q && ch.r === cell.r
+      );
+      if (cubeHex && cubeHex.cubes.length > 0) {
+        const cube = cubeHex.cubes[0]; // Each cube hex has exactly one color
+        if (cube.count > 0) {
+          cellContent += `
+            <text 
+              x="${centerX}" 
+              y="${centerY + 15}" 
+              text-anchor="middle" 
+              font-size="10" 
+              fill="${this.getStrokeColor(cube.color)}"
+              font-weight="bold"
+              class="cube-count"
+            >${cube.count}</text>`;
+        }
+      }
     }
 
     // Add clouds icon for clouds hexes

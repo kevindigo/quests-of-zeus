@@ -27,6 +27,17 @@ export interface Player {
 
 
 
+export interface OfferingCube {
+  color: HexColor;
+  count: number;
+}
+
+export interface CubeHex {
+  q: number;
+  r: number;
+  cubes: OfferingCube[];
+}
+
 export interface GameState {
   map: HexMap;
   players: Player[];
@@ -35,6 +46,7 @@ export interface GameState {
   phase: "setup" | "oracle" | "movement" | "action" | "end";
   monsterStrength: number;
   weatherDice: HexColor[];
+  cubeHexes: CubeHex[];
 }
 
 // Helper function to create empty storage slots
@@ -163,6 +175,9 @@ export class OracleGameEngine {
       },
     ];
 
+    // Initialize cube hexes with Offering cubes
+    const cubeHexes = this.initializeOfferingCubes(map, players.length);
+
     this.state = {
       map,
       players,
@@ -171,6 +186,7 @@ export class OracleGameEngine {
       phase: "setup",
       monsterStrength: 3,
       weatherDice: [],
+      cubeHexes,
     };
 
     return this.state;
@@ -262,15 +278,32 @@ export class OracleGameEngine {
       return false;
     }
 
-    // Check if player is on a cube hex of the specified color
+    // Check if player is on a cube hex
     const currentCell = this.state.map.getCell(player.shipPosition.q, player.shipPosition.r);
-    if (!currentCell || currentCell.terrain !== "cubes" || currentCell.color !== color) {
+    if (!currentCell || currentCell.terrain !== "cubes") {
+      return false;
+    }
+
+    // Find the cube hex in our tracking
+    const cubeHex = this.state.cubeHexes.find(ch => 
+      ch.q === currentCell.q && ch.r === currentCell.r
+    );
+    
+    if (!cubeHex) {
+      return false;
+    }
+
+    // Check if the requested color is available on this hex
+    const offeringCube = cubeHex.cubes.find(cube => cube.color === color);
+    if (!offeringCube || offeringCube.count <= 0) {
       return false;
     }
 
     // Try to add cube to storage
     const success = addCubeToStorage(player, color);
     if (success) {
+      // Remove one cube of this color from the hex
+      offeringCube.count--;
       this.endTurn();
     }
     
@@ -430,6 +463,56 @@ export class OracleGameEngine {
     return this.state.players.findIndex(p => p.id === playerId);
   }
 
+  /**
+   * Initialize Offering cubes on cube hexes
+   * Take as many cubes of each color as players participating
+   * Distribute evenly among the 6 cube hexes so that no color occurs twice on any island
+   */
+  private initializeOfferingCubes(map: HexMap, playerCount: number): CubeHex[] {
+    const cubeHexes: CubeHex[] = [];
+    
+    // Get all cube hexes from the map
+    const cubeCells = map.getCellsByTerrain("cubes");
+    
+    // Create cubes for each color: playerCount cubes per color
+    const availableCubes: OfferingCube[] = ALL_COLORS.map(color => ({
+      color,
+      count: playerCount
+    }));
+    
+    // Shuffle the cube hexes for random distribution
+    const shuffledCubeHexes = [...cubeCells];
+    this.shuffleArray(shuffledCubeHexes);
+    
+    // Distribute cubes to hexes - each hex gets one cube of each color
+    // Since we have 6 colors and 6 hexes, each hex gets exactly one color
+    for (let i = 0; i < shuffledCubeHexes.length; i++) {
+      const cell = shuffledCubeHexes[i];
+      const color = ALL_COLORS[i]; // Each hex gets a different color
+      
+      cubeHexes.push({
+        q: cell.q,
+        r: cell.r,
+        cubes: [{
+          color,
+          count: playerCount
+        }]
+      });
+    }
+    
+    return cubeHexes;
+  }
+
+  /**
+   * Shuffle array using Fisher-Yates algorithm
+   */
+  private shuffleArray<T>(array: T[]): void {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
   // Game status
   public isGameInitialized(): boolean {
     return this.state !== null;
@@ -480,6 +563,16 @@ export class OracleGameEngine {
       }
       return true; // Land hexes are always accessible
     }).map(neighbor => ({ q: neighbor.q, r: neighbor.r }));
+  }
+
+  /**
+   * Get cube hex information for display
+   */
+  public getCubeHexes(): CubeHex[] {
+    if (!this.state) {
+      throw new Error("Game not initialized. Call initializeGame() first.");
+    }
+    return this.state.cubeHexes;
   }
 
   public checkWinCondition(): { winner: Player | null; gameOver: boolean } {
