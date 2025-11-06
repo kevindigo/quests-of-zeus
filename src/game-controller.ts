@@ -7,7 +7,7 @@ import { HexMapSVG } from "./hexmap-svg.ts";
 export class GameController {
   private gameEngine: OracleGameEngine;
   private hexMapSVG: HexMapSVG;
-  private currentPlayerId: number;
+
 
   constructor() {
     this.gameEngine = new OracleGameEngine();
@@ -17,7 +17,7 @@ export class GameController {
       showTerrainLabels: false,
       interactive: true,
     });
-    this.currentPlayerId = 1; // Start with player 1
+
   }
 
   public initializeGameUI(): void {
@@ -193,7 +193,7 @@ export class GameController {
 
       // Highlight available moves
       if (gameState.phase === "movement") {
-        this.highlightAvailableMoves(gameState.currentPlayerIndex);
+        this.highlightAvailableMoves();
       }
     } catch (error) {
       console.error("Error generating SVG:", error);
@@ -237,9 +237,9 @@ export class GameController {
     });
   }
 
-  private highlightAvailableMoves(playerIndex: number): void {
-    const player = this.gameEngine.getCurrentPlayer();
-    const availableMoves = this.gameEngine.getAvailableMoves(player.id);
+  private highlightAvailableMoves(): void {
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const availableMoves = this.gameEngine.getAvailableMoves(currentPlayer.id);
     
     availableMoves.forEach(move => {
       const cell = document.querySelector(`[data-q="${move.q}"][data-r="${move.r}"]`);
@@ -328,7 +328,8 @@ export class GameController {
       const gameState = this.gameEngine.getGameState();
       
       if (gameState.phase === "movement") {
-        const success = this.gameEngine.moveShip(this.currentPlayerId, q, r);
+        const currentPlayer = this.gameEngine.getCurrentPlayer();
+        const success = this.gameEngine.moveShip(currentPlayer.id, q, r);
         if (success) {
           this.renderGameState();
         } else {
@@ -371,7 +372,8 @@ export class GameController {
 
   private rollOracleDice(): void {
     try {
-      const dice = this.gameEngine.rollOracleDice(this.currentPlayerId);
+      const currentPlayer = this.gameEngine.getCurrentPlayer();
+      const dice = this.gameEngine.rollOracleDice(currentPlayer.id);
       this.showMessage(`Rolled oracle dice: ${dice.join(', ')}`);
       this.renderGameState();
     } catch (error) {
@@ -385,7 +387,8 @@ export class GameController {
     if (gameState.phase === "movement") {
       // We need to manually advance the phase since there's no direct method
       // For now, we'll simulate this by calling a method that changes phase
-      this.gameEngine.collectOffering(this.currentPlayerId, "red"); // This will fail but change phase
+      const currentPlayer = this.gameEngine.getCurrentPlayer();
+      this.gameEngine.collectOffering(currentPlayer.id, "red"); // This will fail but change phase
       this.renderGameState();
     }
   }
@@ -398,7 +401,7 @@ export class GameController {
     );
     
     if (currentCell?.terrain === "cubes" && currentCell.color !== "none") {
-      const success = this.gameEngine.collectOffering(this.currentPlayerId, currentCell.color);
+      const success = this.gameEngine.collectOffering(currentPlayer.id, currentCell.color);
       if (success) {
         this.showMessage(`Collected ${currentCell.color} cube!`);
       } else {
@@ -408,7 +411,8 @@ export class GameController {
   }
 
   private fightMonster(): void {
-    const success = this.gameEngine.fightMonster(this.currentPlayerId);
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const success = this.gameEngine.fightMonster(currentPlayer.id);
     if (success) {
       this.showMessage("Monster defeated! Quest completed!");
     } else {
@@ -417,7 +421,8 @@ export class GameController {
   }
 
   private buildTemple(): void {
-    const success = this.gameEngine.buildTemple(this.currentPlayerId);
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const success = this.gameEngine.buildTemple(currentPlayer.id);
     if (success) {
       this.showMessage("Temple built! Quest completed!");
     } else {
@@ -426,7 +431,8 @@ export class GameController {
   }
 
   private buildFoundation(): void {
-    const success = this.gameEngine.buildFoundation(this.currentPlayerId);
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const success = this.gameEngine.buildFoundation(currentPlayer.id);
     if (success) {
       this.showMessage("Foundation built! Quest completed!");
     } else {
@@ -435,7 +441,8 @@ export class GameController {
   }
 
   private completeCloudQuest(): void {
-    const success = this.gameEngine.completeCloudQuest(this.currentPlayerId);
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const success = this.gameEngine.completeCloudQuest(currentPlayer.id);
     if (success) {
       this.showMessage("Cloud quest completed!");
     } else {
@@ -447,7 +454,7 @@ export class GameController {
     // For now, we'll simulate ending the turn
     // In a real implementation, this would call a proper endTurn method
     this.showMessage("Turn ended");
-    this.currentPlayerId = this.currentPlayerId === 1 ? 2 : 1;
+
     this.renderGameState();
   }
 
