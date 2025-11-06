@@ -202,16 +202,53 @@ export class GameController {
   }
 
   private addPlayerMarkers(players: any[]): void {
+    // Group players by their position
+    const playersByPosition = new Map<string, any[]>();
     players.forEach(player => {
-      try {
-        const cell = document.querySelector(`[data-q="${player.shipPosition.q}"][data-r="${player.shipPosition.r}"]`);
-        if (cell) {
-          const rect = cell.getBoundingClientRect();
-          const svg = cell.closest('svg');
-          if (svg) {
-            const point = svg.createSVGPoint();
-            point.x = rect.left + rect.width / 2;
-            point.y = rect.top + rect.height / 2;
+      const positionKey = `${player.shipPosition.q},${player.shipPosition.r}`;
+      if (!playersByPosition.has(positionKey)) {
+        playersByPosition.set(positionKey, []);
+      }
+      playersByPosition.get(positionKey)!.push(player);
+    });
+
+    // Add markers for each position group
+    playersByPosition.forEach((playersAtPosition, positionKey) => {
+      const [q, r] = positionKey.split(',').map(Number);
+      const cell = document.querySelector(`[data-q="${q}"][data-r="${r}"]`);
+      if (cell) {
+        const rect = cell.getBoundingClientRect();
+        const svg = cell.closest('svg');
+        if (svg) {
+          const point = svg.createSVGPoint();
+          
+          playersAtPosition.forEach((player, index) => {
+            // Calculate position in one of the four quadrants of the hex
+            const quadrant = index % 4;
+            let offsetX = 0;
+            let offsetY = 0;
+            
+            switch (quadrant) {
+              case 0: // Upper left
+                offsetX = -rect.width / 4;
+                offsetY = -rect.height / 4;
+                break;
+              case 1: // Upper right
+                offsetX = rect.width / 4;
+                offsetY = -rect.height / 4;
+                break;
+              case 2: // Lower left
+                offsetX = -rect.width / 4;
+                offsetY = rect.height / 4;
+                break;
+              case 3: // Lower right
+                offsetX = rect.width / 4;
+                offsetY = rect.height / 4;
+                break;
+            }
+            
+            point.x = rect.left + rect.width / 2 + offsetX;
+            point.y = rect.top + rect.height / 2 + offsetY;
             const svgPoint = point.matrixTransform(svg.getScreenCTM()!.inverse());
 
             const marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -225,14 +262,12 @@ export class GameController {
             marker.setAttribute("data-player-id", player.id.toString());
             
             svg.appendChild(marker);
-          } else {
-            console.warn(`Could not find SVG container for player ${player.id} at (${player.shipPosition.q}, ${player.shipPosition.r})`);
-          }
+          });
         } else {
-          console.warn(`Could not find cell for player ${player.id} at (${player.shipPosition.q}, ${player.shipPosition.r})`);
+          console.warn(`Could not find SVG container for players at (${q}, ${r})`);
         }
-      } catch (error) {
-        console.error(`Error adding marker for player ${player.id}:`, error);
+      } else {
+        console.warn(`Could not find cell for players at (${q}, ${r})`);
       }
     });
   }
