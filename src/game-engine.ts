@@ -31,6 +31,12 @@ export interface CubeHex {
   cubeColors: HexColor[]; // Array of colors that have cubes on this hex (no duplicates)
 }
 
+export interface MonsterHex {
+  q: number;
+  r: number;
+  monsterColors: HexColor[]; // Array of monster colors on this hex (no duplicates, max 2 per hex)
+}
+
 export interface GameState {
   map: HexMap;
   players: Player[];
@@ -40,6 +46,7 @@ export interface GameState {
   monsterStrength: number;
   weatherDice: HexColor[];
   cubeHexes: CubeHex[];
+  monsterHexes: MonsterHex[];
 }
 
 // Helper function to create empty storage slots
@@ -153,6 +160,9 @@ export class OracleGameEngine {
     // Initialize cube hexes with Offering cubes
     const cubeHexes = this.initializeOfferingCubes(map, players.length);
 
+    // Initialize monster hexes with monster distribution
+    const monsterHexes = this.initializeMonsters(map, players.length);
+
     this.state = {
       map,
       players,
@@ -162,6 +172,7 @@ export class OracleGameEngine {
       monsterStrength: 3,
       weatherDice: [],
       cubeHexes,
+      monsterHexes,
     };
 
     return this.state;
@@ -309,6 +320,15 @@ export class OracleGameEngine {
       return false;
     }
 
+    // Find the monster hex in our tracking
+    const monsterHex = this.state.monsterHexes.find((mh) =>
+      mh.q === currentCell.q && mh.r === currentCell.r
+    );
+
+    if (!monsterHex || monsterHex.monsterColors.length === 0) {
+      return false; // No monsters on this hex
+    }
+
     // Check if player has required oracle dice
     const requiredDice = this.state.monsterStrength;
     if (player.oracleDice.length < requiredDice) {
@@ -317,6 +337,9 @@ export class OracleGameEngine {
 
     // Consume oracle dice
     player.oracleDice.splice(0, requiredDice);
+
+    // Remove one monster from this hex (first one)
+    monsterHex.monsterColors.shift();
 
     // Complete monster quest
     this.completeQuestType(playerId, "monster");
@@ -518,6 +541,139 @@ export class OracleGameEngine {
   }
 
   /**
+   * Initialize monsters on monster hexes according to game rules:
+   * - Randomly choose 3 monster hexes to be "marked"
+   * - Place 2 different-color monsters on each marked hex
+   * - Distribute remaining monsters evenly among the remaining 6 non-marked hexes
+   * - No color of monster occurs twice on any hex
+   * - Total monsters per color = number of players
+   */
+  private initializeMonsters(map: HexMap, playerCount: number): MonsterHex[] {
+    const monsterHexes: MonsterHex[] = [];
+
+    // Get all monster hexes from the map
+    const monsterCells = map.getCellsByTerrain("monsters");
+
+    // Check if we have exactly 9 monster hexes as expected
+    if (monsterCells.length !== 9) {
+      console.warn(`Expected 9 monster hexes but found ${monsterCells.length}`);
+    }
+
+    // Shuffle the monster hexes for random distribution
+    const shuffledMonsterHexes = [...monsterCells];
+    this.shuffleArray(shuffledMonsterHexes);
+
+    // Split into marked (3) and non-marked (6) hexes
+    const markedHexes = shuffledMonsterHexes.slice(0, 3);
+    const nonMarkedHexes = shuffledMonsterHexes.slice(3);
+
+    // Calculate total monsters needed
+    const totalMonstersPerColor = playerCount;
+    const totalMonsters = totalMonstersPerColor * ALL_COLORS.length;
+
+    // Create a pool of monster colors to distribute
+    const monsterPool: HexColor[] = [];
+
+    // Add playerCount copies of each color to the pool
+    for (let i = 0; i < playerCount; i++) {
+      monsterPool.push(...ALL_COLORS);
+    }
+
+    // Shuffle the monster pool for random distribution
+    this.shuffleArray(monsterPool);
+
+    // Track used colors per hex to ensure no duplicates
+    const usedColorsPerHex = new Map<string, Set<HexColor>>();
+
+    // Step 1: Place 2 different-color monsters on each marked hex
+    for (const markedHex of markedHexes) {
+      const hexKey = `${markedHex.q},${markedHex.r}`;
+      usedColorsPerHex.set(hexKey, new Set<HexColor>());
+      
+      const monsterColors: HexColor[] = [];
+      
+      // Find 2 different colors from the pool
+      let placed = 0;
+      let poolIndex = 0;
+      
+      while (placed < 2 && poolIndex < monsterPool.length) {
+        const color = monsterPool[poolIndex];
+        
+        // Check if this color isn't already used on this hex
+        if (!monsterColors.includes(color)) {
+          monsterColors.push(color);
+          usedColorsPerHex.get(hexKey)!.add(color);
+          
+          // Remove this color from the pool (we'll track remaining pool separately)
+          monsterPool.splice(poolIndex, 1);
+          placed++;
+        } else {
+          poolIndex++;
+        }
+      }
+
+      monsterHexes.push({
+        q: markedHex.q,
+        r: markedHex.r,
+        monsterColors,
+      });
+    }
+
+    // Step 2: Distribute remaining monsters evenly among non-marked hexes
+    // Calculate how many monsters should go on each non-marked hex
+    const remainingMonsters = monsterPool.length;
+    const monstersPerNonMarkedHex = Math.floor(remainingMonsters / nonMarkedHexes.length);
+    const extraMonsters = remainingMonsters % nonMarkedHexes.length;
+
+    // Distribute monsters to non-marked hexes
+    let monsterIndex = 0;
+    
+    for (let i = 0; i < nonMarkedHexes.length; i++) {
+      const nonMarkedHex = nonMarkedHexes[i];
+      const hexKey = `${nonMarkedHex.q},${nonMarkedHex.r}`;
+      usedColorsPerHex.set(hexKey, new Set<HexColor>());
+      
+      const monsterColors: HexColor[] = [];
+      
+      // Calculate how many monsters this hex gets
+      const monstersForThisHex = monstersPerNonMarkedHex + (i < extraMonsters ? 1 : 0);
+      
+      // Add monsters to this hex, ensuring no duplicate colors
+      for (let j = 0; j < monstersForThisHex && monsterIndex < monsterPool.length; j++) {
+        // Find the next color that isn't already on this hex
+        while (
+          monsterIndex < monsterPool.length &&
+          monsterColors.includes(monsterPool[monsterIndex])
+        ) {
+          monsterIndex++;
+        }
+
+        if (monsterIndex < monsterPool.length) {
+          monsterColors.push(monsterPool[monsterIndex]);
+          usedColorsPerHex.get(hexKey)!.add(monsterPool[monsterIndex]);
+          monsterIndex++;
+        }
+      }
+
+      monsterHexes.push({
+        q: nonMarkedHex.q,
+        r: nonMarkedHex.r,
+        monsterColors,
+      });
+    }
+
+    // Log distribution for debugging
+    console.log(`Monster distribution: ${markedHexes.length} marked hexes, ${nonMarkedHexes.length} non-marked hexes`);
+    console.log(`Total monsters: ${totalMonsters} (${totalMonstersPerColor} per color)`);
+    
+    for (const monsterHex of monsterHexes) {
+      console.log(`Hex (${monsterHex.q},${monsterHex.r}): ${monsterHex.monsterColors.join(', ')}`);
+    }
+
+    return monsterHexes;
+  }
+
+  /**
    * Shuffle array using Fisher-Yates algorithm
    */
   private shuffleArray<T>(array: T[]): void {
@@ -587,6 +743,29 @@ export class OracleGameEngine {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
     return this.state.cubeHexes;
+  }
+
+  /**
+   * Get monster hex information for display
+   */
+  public getMonsterHexes(): MonsterHex[] {
+    if (!this.state) {
+      throw new Error("Game not initialized. Call initializeGame() first.");
+    }
+    return this.state.monsterHexes;
+  }
+
+  /**
+   * Get monsters on a specific hex
+   */
+  public getMonstersOnHex(q: number, r: number): HexColor[] {
+    if (!this.state) {
+      throw new Error("Game not initialized. Call initializeGame() first.");
+    }
+    const monsterHex = this.state.monsterHexes.find((mh) =>
+      mh.q === q && mh.r === r
+    );
+    return monsterHex ? monsterHex.monsterColors : [];
   }
 
   public checkWinCondition(): { winner: Player | null; gameOver: boolean } {
