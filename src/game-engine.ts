@@ -12,10 +12,9 @@ export interface Player {
   offerings: Record<HexColor, number>; // Offerings collected for each color
   completedQuests: number;
   completedQuestTypes: {
-    offering: number;
+    temple_offering: number;
     monster: number;
     foundation: number;
-    temple: number;
     cloud: number;
   };
   oracleDice: HexColor[]; // Current oracle dice values
@@ -24,7 +23,7 @@ export interface Player {
 
 export interface Quest {
   id: number;
-  type: "offering" | "monster" | "foundation" | "temple" | "cloud";
+  type: "temple_offering" | "monster" | "foundation" | "cloud";
   color: HexColor;
   requirements: {
     offerings?: Record<HexColor, number>;
@@ -88,10 +87,9 @@ export class OracleGameEngine {
         offerings: createEmptyOfferings(),
         completedQuests: 0,
         completedQuestTypes: {
-          offering: 0,
+          temple_offering: 0,
           monster: 0,
           foundation: 0,
-          temple: 0,
           cloud: 0,
         },
         oracleDice: [],
@@ -105,10 +103,9 @@ export class OracleGameEngine {
         offerings: createEmptyOfferings(),
         completedQuests: 0,
         completedQuestTypes: {
-          offering: 0,
+          temple_offering: 0,
           monster: 0,
           foundation: 0,
-          temple: 0,
           cloud: 0,
         },
         oracleDice: [],
@@ -139,14 +136,14 @@ export class OracleGameEngine {
     const quests: Quest[] = [];
     let id = 1;
 
-    // Offering quests (3 total)
+    // Temple offering quests (3 total) - combines collecting offering and delivering to temple
     for (let i = 0; i < 3; i++) {
       quests.push({
         id: id++,
-        type: "offering",
+        type: "temple_offering",
         color: ALL_COLORS[i % ALL_COLORS.length],
         requirements: {
-          offerings: createOfferingsWithRequirement(ALL_COLORS[i % ALL_COLORS.length], 3),
+          offerings: createOfferingsWithRequirement(ALL_COLORS[i % ALL_COLORS.length], 1),
         },
         completed: false,
       });
@@ -160,19 +157,6 @@ export class OracleGameEngine {
         color: ALL_COLORS[i % ALL_COLORS.length],
         requirements: {
           monsterType: "basic",
-        },
-        completed: false,
-      });
-    }
-
-    // Temple quests (3 total)
-    for (let i = 0; i < 3; i++) {
-      quests.push({
-        id: id++,
-        type: "temple",
-        color: ALL_COLORS[i % ALL_COLORS.length],
-        requirements: {
-          offerings: createOfferingsWithRequirement(ALL_COLORS[i % ALL_COLORS.length], 1),
         },
         completed: false,
       });
@@ -356,7 +340,7 @@ export class OracleGameEngine {
 
     // Consume offering and complete temple
     player.offerings[requiredColor]--;
-    this.completeQuest(playerId, "temple");
+    this.completeQuest(playerId, "temple_offering");
     this.endTurn();
     
     return true;
@@ -524,10 +508,9 @@ export class OracleGameEngine {
     }
     // Game ends when any player completes 3 of each quest type
     const winner = this.state.players.find(p => 
-      p.completedQuestTypes.offering >= 3 &&
+      p.completedQuestTypes.temple_offering >= 3 &&
       p.completedQuestTypes.monster >= 3 &&
       p.completedQuestTypes.foundation >= 3 &&
-      p.completedQuestTypes.temple >= 3 &&
       p.completedQuestTypes.cloud >= 3
     );
     return {

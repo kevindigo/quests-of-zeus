@@ -44,7 +44,7 @@ export class GameController {
               <li>Move your ship across the sea and land hexes</li>
               <li>Collect offerings, fight monsters, and build temples</li>
               <li>Complete quests to win the game</li>
-              <li>First player to complete 3 of each quest type wins!</li>
+              <li>First player to complete 3 of each quest type (Temple Offering, Monster, Foundation, Cloud) wins!</li>
             </ul>
           </div>
         </div>
@@ -123,16 +123,15 @@ export class GameController {
       <div class="player-info">
         <h3>Current Player: ${currentPlayer.name}</h3>
         <div class="player-stats">
-          <div><strong>Completed Quests:</strong> ${currentPlayer.completedQuests}/15</div>
+          <div><strong>Completed Quests:</strong> ${currentPlayer.completedQuests}/12</div>
           <div><strong>Gold:</strong> ${currentPlayer.gold}</div>
         </div>
         <div class="quest-progress">
           <h4>Quest Progress</h4>
           <div class="quest-types">
-            <div class="quest-type-item">Offering: ${currentPlayer.completedQuestTypes.offering}/3</div>
+            <div class="quest-type-item">Temple Offering: ${currentPlayer.completedQuestTypes.temple_offering}/3</div>
             <div class="quest-type-item">Monster: ${currentPlayer.completedQuestTypes.monster}/3</div>
             <div class="quest-type-item">Foundation: ${currentPlayer.completedQuestTypes.foundation}/3</div>
-            <div class="quest-type-item">Temple: ${currentPlayer.completedQuestTypes.temple}/3</div>
             <div class="quest-type-item">Cloud: ${currentPlayer.completedQuestTypes.cloud}/3</div>
           </div>
         </div>
