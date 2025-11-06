@@ -292,9 +292,9 @@ export class HexMapSVG {
     try {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
-      // Use circles instead of rectangles for simplicity
-      const cubeRadius = 8 * scale;
-      const spacing = cubeRadius * 3;
+      // Use squares instead of circles for cubes
+      const cubeSize = 8 * scale;
+      const spacing = cubeSize * 3;
 
       let cubesContent = '';
       
@@ -314,12 +314,13 @@ export class HexMapSVG {
         const strokeColor = this.getStrokeColor(color);
         const fillColor = this.getCubeFillColor(color);
         
-        // Use simple circles instead of complex rectangles
+        // Use squares instead of circles for cubes
         cubesContent += `
-          <circle 
-            cx="${cubeX}" 
-            cy="${cubeY}" 
-            r="${cubeRadius}" 
+          <rect 
+            x="${cubeX - cubeSize}" 
+            y="${cubeY - cubeSize}" 
+            width="${cubeSize * 2}" 
+            height="${cubeSize * 2}" 
             fill="${fillColor}" 
             stroke="${strokeColor}" 
             stroke-width="${2 * scale}"
