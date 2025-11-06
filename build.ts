@@ -5,6 +5,9 @@ import * as esbuild from "esbuild";
 async function build() {
   console.log("Building TypeScript logic to JavaScript...");
   console.log("✓ Converting src/hexmap.ts → dist/hexmap.js");
+  console.log("✓ Converting src/hexmap-svg.ts → dist/hexmap-svg.js");
+  console.log("✓ Converting src/game-engine.ts → dist/game-engine.js");
+  console.log("✓ Converting src/game-controller.ts → dist/game-controller.js");
   
   // Check if proper icons exist
   console.log("Checking icons...");
@@ -31,9 +34,14 @@ async function build() {
     }
     await Deno.mkdir("dist", { recursive: true });
 
-    // Build src/hexmap.ts to dist/hexmap.js
+    // Build all TypeScript files to dist/
     const result = await esbuild.build({
-      entryPoints: ["src/hexmap.ts", "src/hexmap-svg.ts"],
+      entryPoints: [
+        "src/hexmap.ts", 
+        "src/hexmap-svg.ts",
+        "src/game-engine.ts",
+        "src/game-controller.ts"
+      ],
       bundle: true,
       outdir: "dist",
       format: "esm",
@@ -49,6 +57,8 @@ async function build() {
     console.log("✓ All TypeScript logic compiled to JavaScript");
     console.log("✓ Source: src/hexmap.ts → Output: dist/hexmap.js");
     console.log("✓ Source: src/hexmap-svg.ts → Output: dist/hexmap-svg.js");
+    console.log("✓ Source: src/game-engine.ts → Output: dist/game-engine.js");
+    console.log("✓ Source: src/game-controller.ts → Output: dist/game-controller.js");
 
     if (result.warnings.length > 0) {
       console.log("Warnings:");

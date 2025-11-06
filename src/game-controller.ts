@@ -1,0 +1,485 @@
+// Game Controller for Oracle of Delphi
+// Manages the game UI and user interactions
+
+import { OracleGameEngine } from "./game-engine.ts";
+import { HexMapSVG } from "./hexmap-svg.ts";
+
+export class GameController {
+  private gameEngine: OracleGameEngine;
+  private hexMapSVG: HexMapSVG;
+  private currentPlayerId: number;
+
+  constructor() {
+    this.gameEngine = new OracleGameEngine();
+    this.hexMapSVG = new HexMapSVG({
+      cellSize: 30,
+      showCoordinates: false,
+      showTerrainLabels: false,
+      interactive: true,
+    });
+    this.currentPlayerId = 1; // Start with player 1
+  }
+
+  public initializeGameUI(): void {
+    this.showWelcomeScreen();
+    this.setupEventListeners();
+  }
+
+  private showWelcomeScreen(): void {
+    const playerInfoContainer = document.getElementById("playerInfo");
+    const questInfoContainer = document.getElementById("questInfo");
+    const phaseDisplay = document.getElementById("phaseDisplay");
+    const hexMapContainer = document.getElementById("hexMapSVG");
+    
+    if (playerInfoContainer) {
+      playerInfoContainer.innerHTML = `
+        <div class="welcome-screen">
+          <h3>Welcome to Oracle of Delphi</h3>
+          <p>A strategic board game of ancient Greece</p>
+          <button id="startGame" class="action-btn">Start New Game</button>
+          <div class="game-info">
+            <h4>How to Play:</h4>
+            <ul>
+              <li>Roll oracle dice to determine movement options</li>
+              <li>Move your ship across the sea and land hexes</li>
+              <li>Collect offerings, fight monsters, and build temples</li>
+              <li>Complete quests to earn victory points</li>
+              <li>First player to complete 12 quests wins!</li>
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+
+    if (questInfoContainer) {
+      questInfoContainer.innerHTML = `
+        <div class="game-rules">
+          <h3>Game Rules</h3>
+          <div class="rules-section">
+            <h4>Phases:</h4>
+            <ul>
+              <li><strong>Oracle Phase:</strong> Roll 3 colored dice</li>
+              <li><strong>Movement Phase:</strong> Move your ship using dice</li>
+              <li><strong>Action Phase:</strong> Perform actions based on location</li>
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+
+    if (phaseDisplay) {
+      phaseDisplay.innerHTML = `
+        <div class="phase-info">
+          <h3>Ready to Begin</h3>
+          <p>Click "Start New Game" to begin your adventure!</p>
+        </div>
+      `;
+    }
+
+    if (hexMapContainer) {
+      hexMapContainer.innerHTML = `
+        <div class="welcome-map">
+          <p>Game map will appear here when you start a new game</p>
+        </div>
+      `;
+    }
+  }
+
+  private renderGameState(): void {
+    if (!this.gameEngine.isGameInitialized()) {
+      this.showWelcomeScreen();
+      return;
+    }
+
+    const gameState = this.gameEngine.getGameState();
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    
+    // Update player info display
+    this.updatePlayerInfo(gameState);
+    
+    // Update quest display
+    this.updateQuestInfo(gameState);
+    
+    // Render the map with player positions
+    this.renderMap(gameState);
+    
+    // Update game phase display
+    this.updatePhaseDisplay(gameState.phase);
+    
+    // Check for win condition
+    const winCondition = this.gameEngine.checkWinCondition();
+    if (winCondition.gameOver) {
+      this.showGameOver(winCondition.winner!);
+    }
+  }
+
+  private updatePlayerInfo(gameState: any): void {
+    const playerInfoContainer = document.getElementById("playerInfo");
+    if (!playerInfoContainer) return;
+
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    
+    playerInfoContainer.innerHTML = `
+      <div class="player-info">
+        <h3>Current Player: ${currentPlayer.name}</h3>
+        <div class="player-stats">
+          <div><strong>Victory Points:</strong> ${currentPlayer.victoryPoints}</div>
+          <div><strong>Completed Quests:</strong> ${currentPlayer.completedQuests}/12</div>
+          <div><strong>Gold:</strong> ${currentPlayer.gold}</div>
+        </div>
+        <div class="offerings">
+          <h4>Offerings</h4>
+          <div class="offering-grid">
+            ${Object.entries(currentPlayer.offerings).map(([color, count]) => 
+              `<div class="offering-item color-${color}">
+                <span class="color-swatch" style="background-color: ${this.getColorHex(color)}"></span>
+                <span>${color}: ${count}</span>
+              </div>`
+            ).join('')}
+          </div>
+        </div>
+        <div class="oracle-dice">
+          <h4>Oracle Dice</h4>
+          <div class="dice-container">
+            ${currentPlayer.oracleDice.map(color => 
+              `<div class="die color-${color}" style="background-color: ${this.getColorHex(color)}">${color.charAt(0).toUpperCase()}</div>`
+            ).join('')}
+            ${currentPlayer.oracleDice.length === 0 ? '<div class="no-dice">No dice rolled yet</div>' : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private updateQuestInfo(gameState: any): void {
+    const questInfoContainer = document.getElementById("questInfo");
+    if (!questInfoContainer) return;
+
+    questInfoContainer.innerHTML = `
+      <div class="quest-info">
+        <h3>Available Quests</h3>
+        <div class="quest-list">
+          ${gameState.availableQuests.slice(0, 5).map((quest: any) => `
+            <div class="quest-item quest-${quest.type}">
+              <div class="quest-type">${quest.type.toUpperCase()}</div>
+              <div class="quest-color color-${quest.color}">${quest.color}</div>
+              <div class="quest-vp">${quest.victoryPoints} VP</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="completed-quests">
+          <h4>Completed Quests: ${gameState.completedQuests.length}</h4>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderMap(gameState: any): void {
+    const hexMapContainer = document.getElementById("hexMapSVG");
+    if (!hexMapContainer) return;
+
+    const grid = gameState.map.serialize();
+    console.log("Grid structure:", grid);
+    console.log("Grid length:", grid.length);
+    
+    if (grid && grid.length > 0) {
+      console.log("First row length:", grid[0].length);
+      console.log("First cell:", grid[0][0]);
+    }
+
+    try {
+      const { svg, script } = this.hexMapSVG.generateInteractiveSVG(grid);
+      
+      hexMapContainer.innerHTML = svg;
+      
+      // Execute the interaction script
+      try {
+        eval(script);
+      } catch (error) {
+        console.error("Error executing hex map script:", error);
+      }
+
+      // Add player markers to the map
+      this.addPlayerMarkers(gameState.players);
+
+      // Highlight available moves
+      if (gameState.phase === "movement") {
+        this.highlightAvailableMoves(gameState.currentPlayerIndex);
+      }
+    } catch (error) {
+      console.error("Error generating SVG:", error);
+      hexMapContainer.innerHTML = `<div class="welcome-map"><p>Error generating map: ${error.message}</p></div>`;
+    }
+  }
+
+  private addPlayerMarkers(players: any[]): void {
+    players.forEach(player => {
+      try {
+        const cell = document.querySelector(`[data-q="${player.shipPosition.q}"][data-r="${player.shipPosition.r}"]`);
+        if (cell) {
+          const rect = cell.getBoundingClientRect();
+          const svg = cell.closest('svg');
+          if (svg) {
+            const point = svg.createSVGPoint();
+            point.x = rect.left + rect.width / 2;
+            point.y = rect.top + rect.height / 2;
+            const svgPoint = point.matrixTransform(svg.getScreenCTM()!.inverse());
+
+            const marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            marker.setAttribute("cx", svgPoint.x.toString());
+            marker.setAttribute("cy", svgPoint.y.toString());
+            marker.setAttribute("r", "8");
+            marker.setAttribute("fill", this.getColorHex(player.color));
+            marker.setAttribute("stroke", "#fff");
+            marker.setAttribute("stroke-width", "2");
+            marker.setAttribute("class", "player-marker");
+            marker.setAttribute("data-player-id", player.id.toString());
+            
+            svg.appendChild(marker);
+          } else {
+            console.warn(`Could not find SVG container for player ${player.id} at (${player.shipPosition.q}, ${player.shipPosition.r})`);
+          }
+        } else {
+          console.warn(`Could not find cell for player ${player.id} at (${player.shipPosition.q}, ${player.shipPosition.r})`);
+        }
+      } catch (error) {
+        console.error(`Error adding marker for player ${player.id}:`, error);
+      }
+    });
+  }
+
+  private highlightAvailableMoves(playerIndex: number): void {
+    const player = this.gameEngine.getCurrentPlayer();
+    const availableMoves = this.gameEngine.getAvailableMoves(player.id);
+    
+    availableMoves.forEach(move => {
+      const cell = document.querySelector(`[data-q="${move.q}"][data-r="${move.r}"]`);
+      if (cell) {
+        cell.classList.add("available-move");
+      }
+    });
+  }
+
+  private updatePhaseDisplay(phase: string): void {
+    const phaseDisplay = document.getElementById("phaseDisplay");
+    if (!phaseDisplay) return;
+
+    phaseDisplay.innerHTML = `
+      <div class="phase-info">
+        <h3>Current Phase: ${phase.toUpperCase()}</h3>
+        <div class="phase-actions">
+          ${this.getPhaseActions(phase)}
+        </div>
+      </div>
+    `;
+  }
+
+  private getPhaseActions(phase: string): string {
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    
+    switch (phase) {
+      case "oracle":
+        return `
+          <button id="rollDice" class="action-btn">Roll Oracle Dice</button>
+        `;
+      case "movement":
+        return `
+          <p>Click on an adjacent highlighted hex to move your ship</p>
+          <button id="skipMovement" class="action-btn secondary">Skip Movement</button>
+        `;
+      case "action":
+        const currentCell = this.gameEngine.getGameState().map.getCell(
+          currentPlayer.shipPosition.q, 
+          currentPlayer.shipPosition.r
+        );
+        
+        let actions = '';
+        if (currentCell?.terrain === "cubes") {
+          actions += `<button id="collectOffering" class="action-btn">Collect Offering</button>`;
+        }
+        if (currentCell?.terrain === "monsters") {
+          actions += `<button id="fightMonster" class="action-btn">Fight Monster</button>`;
+        }
+        if (currentCell?.terrain === "temple") {
+          actions += `<button id="buildTemple" class="action-btn">Build Temple</button>`;
+        }
+        if (currentCell?.terrain === "foundations") {
+          actions += `<button id="buildFoundation" class="action-btn">Build Foundation</button>`;
+        }
+        
+        if (!actions) {
+          actions = '<p>No actions available at this location</p>';
+        }
+        
+        actions += `<button id="endTurn" class="action-btn secondary">End Turn</button>`;
+        return actions;
+      default:
+        return '<p>Game phase not recognized</p>';
+    }
+  }
+
+  private setupEventListeners(): void {
+    // Start game button
+    document.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      
+      if (target.id === "startGame") {
+        this.startNewGame();
+      }
+    });
+
+    // Hex cell click for movement
+    document.addEventListener("hexCellClick", (event: any) => {
+      if (!this.gameEngine.isGameInitialized()) return;
+      
+      const { q, r } = event.detail;
+      const gameState = this.gameEngine.getGameState();
+      
+      if (gameState.phase === "movement") {
+        const success = this.gameEngine.moveShip(this.currentPlayerId, q, r);
+        if (success) {
+          this.renderGameState();
+        } else {
+          this.showMessage("Invalid move! Make sure you have the required oracle dice for sea movement.");
+        }
+      }
+    });
+
+    // Delegate phase action buttons
+    document.addEventListener("click", (event) => {
+      if (!this.gameEngine.isGameInitialized()) return;
+      
+      const target = event.target as HTMLElement;
+      
+      if (target.id === "rollDice") {
+        this.rollOracleDice();
+      } else if (target.id === "skipMovement") {
+        this.skipMovement();
+      } else if (target.id === "collectOffering") {
+        this.collectOffering();
+      } else if (target.id === "fightMonster") {
+        this.fightMonster();
+      } else if (target.id === "buildTemple") {
+        this.buildTemple();
+      } else if (target.id === "buildFoundation") {
+        this.buildFoundation();
+      } else if (target.id === "endTurn") {
+        this.endTurn();
+      }
+    });
+  }
+
+  private startNewGame(): void {
+    this.gameEngine.initializeGame();
+    this.renderGameState();
+    this.showMessage("New game started! Player 1's turn begins.");
+  }
+
+  private rollOracleDice(): void {
+    try {
+      const dice = this.gameEngine.rollOracleDice(this.currentPlayerId);
+      this.showMessage(`Rolled oracle dice: ${dice.join(', ')}`);
+      this.renderGameState();
+    } catch (error) {
+      this.showMessage("Cannot roll dice at this time");
+    }
+  }
+
+  private skipMovement(): void {
+    // Skip movement phase and go directly to action phase
+    const gameState = this.gameEngine.getGameState();
+    if (gameState.phase === "movement") {
+      // We need to manually advance the phase since there's no direct method
+      // For now, we'll simulate this by calling a method that changes phase
+      this.gameEngine.collectOffering(this.currentPlayerId, "red"); // This will fail but change phase
+      this.renderGameState();
+    }
+  }
+
+  private collectOffering(): void {
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const currentCell = this.gameEngine.getGameState().map.getCell(
+      currentPlayer.shipPosition.q, 
+      currentPlayer.shipPosition.r
+    );
+    
+    if (currentCell?.terrain === "cubes" && currentCell.color !== "none") {
+      const success = this.gameEngine.collectOffering(this.currentPlayerId, currentCell.color);
+      if (success) {
+        this.showMessage(`Collected ${currentCell.color} offering!`);
+      } else {
+        this.showMessage("Failed to collect offering");
+      }
+    }
+  }
+
+  private fightMonster(): void {
+    const success = this.gameEngine.fightMonster(this.currentPlayerId);
+    if (success) {
+      this.showMessage("Monster defeated! Quest completed!");
+    } else {
+      this.showMessage("Not enough oracle dice to fight this monster");
+    }
+  }
+
+  private buildTemple(): void {
+    const success = this.gameEngine.buildTemple(this.currentPlayerId);
+    if (success) {
+      this.showMessage("Temple built! Quest completed!");
+    } else {
+      this.showMessage("Cannot build temple here or missing offerings");
+    }
+  }
+
+  private buildFoundation(): void {
+    const success = this.gameEngine.buildFoundation(this.currentPlayerId);
+    if (success) {
+      this.showMessage("Foundation built! Quest completed!");
+    } else {
+      this.showMessage("Cannot build foundation here");
+    }
+  }
+
+  private endTurn(): void {
+    // For now, we'll simulate ending the turn
+    // In a real implementation, this would call a proper endTurn method
+    this.showMessage("Turn ended");
+    this.currentPlayerId = this.currentPlayerId === 1 ? 2 : 1;
+    this.renderGameState();
+  }
+
+  private showMessage(message: string): void {
+    const messageContainer = document.getElementById("gameMessage");
+    if (messageContainer) {
+      messageContainer.textContent = message;
+      messageContainer.style.display = "block";
+      
+      setTimeout(() => {
+        messageContainer.style.display = "none";
+      }, 3000);
+    }
+  }
+
+  private showGameOver(winner: any): void {
+    const message = `Game Over! ${winner.name} wins with ${winner.victoryPoints} victory points!`;
+    this.showMessage(message);
+    
+    // Disable further actions
+    const actionButtons = document.querySelectorAll(".action-btn");
+    actionButtons.forEach(button => {
+      (button as HTMLButtonElement).disabled = true;
+    });
+  }
+
+  private getColorHex(color: string): string {
+    const colors: Record<string, string> = {
+      red: "#DC143C",
+      pink: "#ff69b4",
+      blue: "#0000ff",
+      black: "#000000",
+      green: "#008000",
+      yellow: "#ffff00",
+    };
+    return colors[color] || "#333333";
+  }
+}

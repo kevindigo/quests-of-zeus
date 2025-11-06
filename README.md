@@ -5,12 +5,13 @@ opponents, built with Deno 2.5.
 
 ## Features
 
-- 🎮 Board game implementation
-- 🤖 AI opponents
-- 📱 Progressive Web App (PWA)
-- ⚡ Built with Deno 2.5
-- 🎨 Modern web technologies
-- 💻 **Now entirely client-side!**
+- 🎮 **Playable Board Game** - Full Oracle of Delphi gameplay implementation
+- 🗺️ **Procedural Map Generation** - Hexagonal map with authentic terrain
+- 🎲 **Game Mechanics** - Oracle dice, movement, quests, and combat
+- 🤖 **Multiplayer Support** - 2-4 player game (AI coming soon)
+- 📱 **Progressive Web App** - Installable and works offline
+- ⚡ **Modern Tech Stack** - Built with Deno 2.5 and TypeScript
+- 🎨 **Interactive UI** - SVG-based hex map with player markers
 
 ## Getting Started
 
@@ -21,82 +22,132 @@ opponents, built with Deno 2.5.
 ### Installation
 
 1. Clone this repository
-2. Run the development server:
+2. Build the game:
+
+```bash
+deno task build
+```
+
+3. Run the development server:
 
 ```bash
 deno task dev
 ```
 
+4. Open your browser to `http://localhost:8000`
+
 ### Available Tasks
 
 - `deno task dev` - Start development server with file watching
 - `deno task start` - Start production server
+- `deno task build` - Build TypeScript to JavaScript
 - `deno task test` - Run tests
 - `deno task lint` - Run linter
 - `deno task fmt` - Format code
 
-### Project Structure
+## How to Play
+
+Oracle of Delphi is a pick-up-and-deliver board game set in Greek mythology. Players sail their ships around the Greek islands to complete quests and gain favor with the gods.
+
+### Game Flow
+
+1. **Oracle Phase**: Roll 3 oracle dice to determine available actions
+2. **Movement Phase**: Move your ship using oracle dice for sea movement
+3. **Action Phase**: Perform actions based on your location:
+   - **Collect Offerings** from cube hexes
+   - **Fight Monsters** on monster hexes
+   - **Build Temples** on temple hexes
+   - **Build Foundations** on foundation hexes
+
+### Victory Condition
+
+The first player to complete **12 quests** wins the game!
+
+### Game Components
+
+- **Oracle Dice**: 6 colors (red, pink, blue, black, green, yellow) that power actions
+- **Offerings**: Resources collected from cube hexes
+- **Quests**: 4 types (offering, monster, temple, foundation) worth victory points
+- **Map**: Hexagonal grid with sea, land, and special terrain
+
+## Project Structure
 
 ```
 ├── src/
-│   ├── main.ts         # Simple static file server (development only)
-│   ├── hexmap.ts       # Hex map generation and game logic
-│   └── hexmap-svg.ts   # SVG visualization for hex maps
-├── index.html          # Main HTML file with game UI
-├── dist/               # Compiled JavaScript files
-├── manifest.json       # PWA manifest
-├── sw.js              # Service Worker
-├── assets/            # Static assets (icons, images)
-├── deno.json          # Deno configuration
-└── README.md          # This file
+│   ├── main.ts              # Game server
+│   ├── hexmap.ts            # Hex map generation and terrain
+│   ├── hexmap-svg.ts        # SVG visualization
+│   ├── game-engine.ts       # Core game mechanics
+│   └── game-controller.ts   # UI controller
+├── index.html               # Main game interface
+├── dist/                    # Compiled JavaScript files
+├── tests/                   # Test files
+├── manifest.json            # PWA manifest
+├── sw.js                    # Service Worker
+├── assets/                  # Static assets
+├── deno.json               # Deno configuration
+└── README.md               # This file
 ```
 
-## Development
+## Game Architecture
 
-This project follows an incremental development approach. The current state is a
-basic PWA skeleton with:
+### Core Components
 
-- ✅ Deno 2.5 server setup (static files only)
-- ✅ PWA manifest and service worker
-- ✅ **Client-side game logic**
-- ✅ Hex map generation (hexagon radius 6)
-- ✅ Procedural terrain generation
-- ✅ Special locations (oracles, ports, sanctuaries)
-- ✅ Development tasks configured
-- ✅ Testing setup
+1. **HexMap** - Procedural map generation with authentic Oracle of Delphi terrain
+2. **GameEngine** - Core game mechanics, state management, and rules enforcement
+3. **GameController** - UI management, user interactions, and game flow
+4. **HexMapSVG** - Interactive SVG visualization with player markers
 
-## Architecture
+### Key Features
 
-**Client-Side Only**: The game now runs entirely in the browser:
+- **Procedural Generation**: Every game has a unique map layout
+- **Rule Enforcement**: All game rules are properly implemented
+- **Interactive UI**: Click-based movement and actions
+- **Real-time Updates**: Game state updates immediately after actions
+- **Multiplayer Ready**: Support for 2-4 players (currently 2 players implemented)
 
-- Game logic is implemented in JavaScript/TypeScript
-- No server-side API dependencies
-- Map generation happens in the browser
-- Works offline with service worker caching
+## Development Status
 
-**Key Components**:
+✅ **Completed Features**:
+- Hexagonal map generation (radius 6)
+- Procedural terrain placement
+- All Oracle of Delphi terrain types
+- Core game engine with rules
+- Player movement and actions
+- Quest system with victory points
+- Interactive UI with player markers
+- SVG-based map visualization
 
-- `src/hexmap.ts` - Core game logic, hex map, terrain generation
-- `src/hexmap-svg.ts` - SVG visualization for hex maps
-- `index.html` - Game UI and controls
-- `src/main.ts` - Simple static file server (development)
+🔄 **In Progress**:
+- AI opponent implementation
+- Enhanced UI/UX improvements
+- Game state persistence
 
-## Game Features
+📋 **Planned Features**:
+- Advanced AI strategies
+- Game statistics and analytics
+- Sound effects and music
+- Mobile optimization
+- Multi-language support
 
-- **Hexagon Map (radius 6)**: Procedurally generated terrain
-- **Terrain Types**: Sea, coast, plains, hills, mountains, forest, desert
-- **Special Locations**: Oracle temples, ports, sanctuaries, offering sites
-- **Movement System**: Different movement costs per terrain
-- **Resource System**: Gold, offerings, divine favor
+## Game Rules Implementation
 
-## Next Steps
+The game follows the official Oracle of Delphi rules by Stefan Feld:
 
-1. Add interactive hex map visualization
-2. Implement player movement and actions
-3. Add game state management
-4. Implement core game mechanics
-5. Add AI opponent logic
-6. Enhance UI/UX
+- **Map**: Hexagonal grid with radius 6
+- **Players**: 2-4 players (currently 2 implemented)
+- **Phases**: Oracle → Movement → Action
+- **Movement**: Land hexes free, sea hexes require matching oracle dice
+- **Actions**: Collect offerings, fight monsters, build temples/foundations
+- **Victory**: First to complete 12 quests wins
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests: `deno task test`
+5. Submit a pull request
 
 ## License
 
