@@ -54,14 +54,16 @@ favor with the gods.
 ### Game Flow
 
 1. **Oracle Phase**: Roll 3 oracle dice to determine available actions
-2. **Movement Phase**: Move your ship using oracle dice for sea movement
-3. **Action Phase**: Perform actions based on your location:
-   - **Collect Cubes** from cube hexes (requires empty storage slot)
-   - **Fight Monsters** on monster hexes
-   - **Build Temples** on temple hexes (requires cube of matching color)
-   - **Build Foundations** on foundation hexes
-   - **Complete Cloud Quests** on cloud hexes (requires statue of matching
-     color)
+2. **Action Phase**: Two-step process for all actions:
+   - **Step 1**: Select an oracle die from your available dice
+   - **Step 2**: Perform an action using the selected die:
+     - **Move Ship** to a sea hex of matching color within range
+     - **Collect Cubes** from cube hexes (requires empty storage slot)
+     - **Fight Monsters** on monster hexes
+     - **Build Temples** on temple hexes (requires cube of matching color)
+     - **Build Foundations** on foundation hexes
+     - **Complete Cloud Quests** on cloud hexes (requires statue of matching color)
+   - **Note**: You can change your selected die before making a move
 
 ### Victory Condition
 
@@ -182,7 +184,8 @@ The game follows the official Oracle of Delphi rules by Stefan Feld:
 
 - **Map**: Hexagonal grid with radius 6
 - **Players**: 2-4 players (currently 2 implemented)
-- **Phases**: Oracle → Movement → Action
+- **Phases**: Oracle → Action
+- **Action Phase**: Two-step process - first select a die, then perform actions
 - **Movement**: Land hexes free, sea hexes require matching oracle dice
 - **Actions**: Collect cubes, fight monsters, build temples/foundations,
   complete cloud quests

@@ -55,6 +55,7 @@ async function build() {
       minify: false,
       sourcemap: true,
       external: [],
+      // Add DOM library for browser types
     });
 
     console.log("✓ Build completed successfully!");

@@ -3,10 +3,22 @@
 
 import { OracleGameEngine } from "./game-engine.ts";
 import { HexMapSVG } from "./hexmap-svg.ts";
+import type { HexColor } from "./hexmap.ts";
+
+// Type declarations for DOM APIs (for Deno type checking)
+declare global {
+  const document: Document;
+  interface HTMLElementTagNameMap {
+    "div": HTMLDivElement;
+    "button": HTMLButtonElement;
+    "span": HTMLSpanElement;
+  }
+}
 
 export class GameController {
   private gameEngine: OracleGameEngine;
   private hexMapSVG: HexMapSVG;
+  private selectedDieColor: HexColor | null = null;
 
   constructor() {
     this.gameEngine = new OracleGameEngine();
@@ -57,7 +69,8 @@ export class GameController {
             <h4>Phases:</h4>
             <ul>
               <li><strong>Oracle Phase:</strong> Roll 3 colored dice</li>
-              <li><strong>Action Phase:</strong> Move your ship using dice and perform actions based on location</li>
+              <li><strong>Action Phase:</strong> First select a die, then perform actions (move, collect offerings, fight monsters, etc.)</li>
+              <li>You can change your selected die before making a move</li>
             </ul>
           </div>
         </div>
@@ -162,11 +175,14 @@ export class GameController {
           <h4>Oracle Dice</h4>
           <div class="dice-container">
             ${
-      currentPlayer.oracleDice.map((color) =>
-        `<div class="die color-${color}" style="background-color: ${
-          this.getColorHex(color)
-        }">${color.charAt(0).toUpperCase()}</div>`
-      ).join("")
+      currentPlayer.oracleDice.map((color) => {
+        const isSelected = this.selectedDieColor === color;
+        return `<div class="die color-${color} ${isSelected ? 'selected-die' : ''}" 
+                     style="background-color: ${this.getColorHex(color)}"
+                     data-die-color="${color}">
+                ${color.charAt(0).toUpperCase()}
+              </div>`;
+      }).join("")
     }
             ${
       currentPlayer.oracleDice.length === 0
@@ -174,6 +190,15 @@ export class GameController {
         : ""
     }
           </div>
+          ${
+      this.selectedDieColor && currentPlayer.oracleDice.length > 0
+        ? `<div class="selected-die-info">
+             Selected: <span class="color-swatch" style="background-color: ${this.getColorHex(this.selectedDieColor)}"></span>
+             ${this.selectedDieColor}
+             <button id="clearDieSelection" class="action-btn secondary">Clear</button>
+           </div>`
+        : ""
+    }
         </div>
       </div>
     `;
@@ -198,7 +223,7 @@ export class GameController {
       console.log("Cube hexes for rendering:", cubeHexes);
 
       // Debug: Log cube hex details
-      cubeHexes.forEach((cubeHex, index) => {
+      cubeHexes.forEach((cubeHex: any, index: number) => {
         console.log(
           `Cube hex ${index}: (${cubeHex.q}, ${cubeHex.r}) with colors:`,
           cubeHex.cubeColors,
@@ -210,7 +235,7 @@ export class GameController {
       console.log("Monster hexes for rendering:", monsterHexes);
 
       // Debug: Log monster hex details
-      monsterHexes.forEach((monsterHex, index) => {
+      monsterHexes.forEach((monsterHex: any, index: number) => {
         console.log(
           `Monster hex ${index}: (${monsterHex.q}, ${monsterHex.r}) with colors:`,
           monsterHex.monsterColors,
@@ -347,16 +372,28 @@ export class GameController {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     const availableMoves = this.gameEngine.getAvailableMoves(currentPlayer.id);
 
-    availableMoves.forEach((move) => {
-      const cell = document.querySelector(
-        `[data-q="${move.q}"][data-r="${move.r}"]`,
-      );
-      if (cell) {
-        cell.classList.add("available-move");
-        // Add tooltip to show required die color
-        cell.setAttribute("title", `Requires ${move.dieColor} die`);
-      }
+    // Clear previous highlights
+    document.querySelectorAll(".available-move").forEach((cell) => {
+      cell.classList.remove("available-move");
+      cell.removeAttribute("title");
     });
+
+    // Only highlight moves if a die is selected
+    if (this.selectedDieColor) {
+      availableMoves.forEach((move) => {
+        // Only highlight moves that match the selected die color
+        if (move.dieColor === this.selectedDieColor) {
+          const cell = document.querySelector(
+            `[data-q="${move.q}"][data-r="${move.r}"]`,
+          );
+          if (cell) {
+            cell.classList.add("available-move");
+            // Add tooltip to show required die color
+            cell.setAttribute("title", `Move using ${move.dieColor} die`);
+          }
+        }
+      });
+    }
   }
 
   private updatePhaseDisplay(phase: string): void {
@@ -389,43 +426,52 @@ export class GameController {
 
         let actions = "";
         
-        // Movement is always available during action phase
-        actions += `<p>Click on an adjacent highlighted hex to move your ship</p>`;
-        
-        if (currentCell?.terrain === "cubes") {
-          actions +=
-            `<button id="collectOffering" class="action-btn">Collect Offering</button>`;
-        }
-        if (currentCell?.terrain === "monsters") {
-          actions +=
-            `<button id="fightMonster" class="action-btn">Fight Monster</button>`;
-        }
-        if (currentCell?.terrain === "temple") {
-          actions +=
-            `<button id="buildTemple" class="action-btn">Build Temple</button>`;
-        }
-        if (currentCell?.terrain === "foundations") {
-          actions +=
-            `<button id="buildFoundation" class="action-btn">Build Foundation</button>`;
-        }
-        if (currentCell?.terrain === "clouds") {
-          actions +=
-            `<button id="completeCloudQuest" class="action-btn">Complete Cloud Quest</button>`;
-        }
-        if (currentCell?.terrain === "city") {
-          const canPlaceStatue = this.gameEngine.canPlaceStatueOnCity(
-            currentPlayer.id,
-          );
-          if (canPlaceStatue) {
+        if (this.selectedDieColor) {
+          // Die is selected - show available actions
+          actions += `<p>Selected die: <span class="color-swatch" style="background-color: ${this.getColorHex(this.selectedDieColor)}"></span> ${this.selectedDieColor}</p>`;
+          
+          // Movement is always available during action phase with a selected die
+          actions += `<p>Click on an adjacent highlighted hex to move your ship</p>`;
+          
+          if (currentCell?.terrain === "cubes") {
             actions +=
-              `<button id="placeStatue" class="action-btn">Place Statue on City</button>`;
-          } else {
-            actions += `<p>Cannot place statue: ${
-              currentCell.statues === 3
-                ? "City already has all 3 statues"
-                : "No statue of city's color in storage"
-            }</p>`;
+              `<button id="collectOffering" class="action-btn">Collect Offering</button>`;
           }
+          if (currentCell?.terrain === "monsters") {
+            actions +=
+              `<button id="fightMonster" class="action-btn">Fight Monster</button>`;
+          }
+          if (currentCell?.terrain === "temple") {
+            actions +=
+              `<button id="buildTemple" class="action-btn">Build Temple</button>`;
+          }
+          if (currentCell?.terrain === "foundations") {
+            actions +=
+              `<button id="buildFoundation" class="action-btn">Build Foundation</button>`;
+          }
+          if (currentCell?.terrain === "clouds") {
+            actions +=
+              `<button id="completeCloudQuest" class="action-btn">Complete Cloud Quest</button>`;
+          }
+          if (currentCell?.terrain === "city") {
+            const canPlaceStatue = this.gameEngine.canPlaceStatueOnCity(
+              currentPlayer.id,
+            );
+            if (canPlaceStatue) {
+              actions +=
+                `<button id="placeStatue" class="action-btn">Place Statue on City</button>`;
+            } else {
+              actions += `<p>Cannot place statue: ${
+                currentCell.statues === 3
+                  ? "City already has all 3 statues"
+                  : "No statue of city's color in storage"
+              }</p>`;
+            }
+          }
+        } else {
+          // No die selected - show selection instructions
+          actions += `<p>Select an oracle die to perform actions</p>`;
+          actions += `<p>Available dice: ${currentPlayer.oracleDice.join(", ")}</p>`;
         }
 
         if (!actions) {
@@ -460,21 +506,28 @@ export class GameController {
       if (gameState.phase === "action") {
         const currentPlayer = this.gameEngine.getCurrentPlayer();
         
+        if (!this.selectedDieColor) {
+          this.showMessage("Please select a die first!");
+          return;
+        }
+        
         // Get available moves to find the required die color for this target
         const availableMoves = this.gameEngine.getAvailableMoves(currentPlayer.id);
-        const targetMove = availableMoves.find(move => move.q === q && move.r === r);
+        const targetMove = availableMoves.find(move => move.q === q && move.r === r && move.dieColor === this.selectedDieColor);
         
         if (targetMove) {
-          // Use the die color from the available move
-          const success = this.gameEngine.moveShip(currentPlayer.id, q, r, targetMove.dieColor);
+          // Use the selected die color
+          const success = this.gameEngine.moveShip(currentPlayer.id, q, r, this.selectedDieColor);
           if (success) {
-            this.showMessage(`Ship moved to (${q}, ${r}) using ${targetMove.dieColor} die`);
+            this.showMessage(`Ship moved to (${q}, ${r}) using ${this.selectedDieColor} die`);
+            // Clear selected die after successful move
+            this.selectedDieColor = null;
             this.renderGameState();
           } else {
             this.showMessage("Invalid move!");
           }
         } else {
-          this.showMessage("Cannot move to this hex! Must be a sea hex within 3 hexes and you need a matching die.");
+          this.showMessage(`Cannot move to this hex using ${this.selectedDieColor} die! Must be a sea hex within 3 hexes of matching color.`);
         }
       }
     });
@@ -501,6 +554,13 @@ export class GameController {
         this.placeStatueOnCity();
       } else if (target.id === "endTurn") {
         this.endTurn();
+      } else if (target.id === "clearDieSelection") {
+        this.clearDieSelection();
+      } else if (target.classList.contains("die")) {
+        const dieColor = target.getAttribute("data-die-color") as HexColor;
+        if (dieColor) {
+          this.selectDie(dieColor);
+        }
       }
     });
   }
@@ -538,6 +598,9 @@ export class GameController {
       );
       if (success) {
         this.showMessage(`Collected ${currentCell.color} cube!`);
+        // Clear selected die after successful action
+        this.selectedDieColor = null;
+        this.renderGameState();
       } else {
         this.showMessage("No storage space available for cube!");
       }
@@ -549,6 +612,9 @@ export class GameController {
     const success = this.gameEngine.fightMonster(currentPlayer.id);
     if (success) {
       this.showMessage("Monster defeated! Quest completed!");
+      // Clear selected die after successful action
+      this.selectedDieColor = null;
+      this.renderGameState();
     } else {
       this.showMessage("Not enough oracle dice to fight this monster");
     }
@@ -559,6 +625,9 @@ export class GameController {
     const success = this.gameEngine.buildTemple(currentPlayer.id);
     if (success) {
       this.showMessage("Temple built! Quest completed!");
+      // Clear selected die after successful action
+      this.selectedDieColor = null;
+      this.renderGameState();
     } else {
       this.showMessage("Cannot build temple here or missing required cube");
     }
@@ -569,6 +638,9 @@ export class GameController {
     const success = this.gameEngine.buildFoundation(currentPlayer.id);
     if (success) {
       this.showMessage("Foundation built! Quest completed!");
+      // Clear selected die after successful action
+      this.selectedDieColor = null;
+      this.renderGameState();
     } else {
       this.showMessage("Cannot build foundation here");
     }
@@ -579,6 +651,9 @@ export class GameController {
     const success = this.gameEngine.completeCloudQuest(currentPlayer.id);
     if (success) {
       this.showMessage("Cloud quest completed!");
+      // Clear selected die after successful action
+      this.selectedDieColor = null;
+      this.renderGameState();
     } else {
       this.showMessage(
         "Cannot complete cloud quest here or missing required statue",
@@ -597,12 +672,35 @@ export class GameController {
       this.showMessage(
         `Statue placed on city! (${currentCell.statues}/3 statues)`,
       );
+      // Clear selected die after successful action
+      this.selectedDieColor = null;
+      this.renderGameState();
     } else {
       this.showMessage("Cannot place statue on this city");
     }
   }
 
+  private selectDie(dieColor: HexColor): void {
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    
+    // Check if the player has this die
+    if (currentPlayer.oracleDice.includes(dieColor)) {
+      this.selectedDieColor = dieColor;
+      this.showMessage(`Selected ${dieColor} die`);
+      this.renderGameState();
+    }
+  }
+
+  private clearDieSelection(): void {
+    this.selectedDieColor = null;
+    this.showMessage("Die selection cleared");
+    this.renderGameState();
+  }
+
   private endTurn(): void {
+    // Clear selected die when ending turn
+    this.selectedDieColor = null;
+    
     // For now, we'll simulate ending the turn
     // In a real implementation, this would call a proper endTurn method
     this.showMessage("Turn ended");
@@ -630,7 +728,7 @@ export class GameController {
 
     // Disable further actions
     const actionButtons = document.querySelectorAll(".action-btn");
-    actionButtons.forEach((button) => {
+    actionButtons.forEach((button: Element) => {
       (button as HTMLButtonElement).disabled = true;
     });
   }
