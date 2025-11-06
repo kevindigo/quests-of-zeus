@@ -168,7 +168,7 @@ export class OracleGameEngine {
       players,
       currentPlayerIndex: 0,
       round: 1,
-      phase: "setup",
+      phase: "oracle",
       monsterStrength: 3,
       weatherDice: [],
       cubeHexes,

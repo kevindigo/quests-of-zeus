@@ -1,0 +1,3 @@
+- Advance the game from setup to the first player's turn
+- Roll (and show) dice
+- Move through the sea

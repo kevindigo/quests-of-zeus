@@ -15,7 +15,7 @@ Deno.test("GameEngine - initialization", () => {
   assertExists(state.map);
   assertEquals(state.players.length, 2);
   assertEquals(state.round, 1);
-  assertEquals(state.phase, "setup");
+  assertEquals(state.phase, "oracle");
 
   // Now game should be initialized
   assertEquals(engine.isGameInitialized(), true);
