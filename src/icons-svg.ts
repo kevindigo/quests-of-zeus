@@ -540,7 +540,7 @@ export function generateFoundationsIcon(options: IconOptions): string {
   const strokeWidth = 2.5 * scale; // Thick black lines
 
   // Consistent parallelogram dimensions - all oriented with top lines to left, bottom lines to right
-  const parallelogramWidth = size * 0.6;
+  const _parallelogramWidth = size * 0.6;
   const parallelogramHeight = size * 0.3;
   const perspectiveOffset = size * 0.2; // Amount of perspective shift
   const verticalShift = parallelogramHeight * 0.5; // 50% of parallelogram height

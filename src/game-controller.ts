@@ -203,11 +203,22 @@ export class GameController {
         console.log(`Cube hex ${index}: (${cubeHex.q}, ${cubeHex.r}) with colors:`, cubeHex.cubeColors);
       });
 
-      // Debug: Check if cube hexes are being passed to SVG renderer
+      // Update the hex map SVG with monster hex data
+      const monsterHexes = gameState.monsterHexes || [];
+      console.log("Monster hexes for rendering:", monsterHexes);
+      
+      // Debug: Log monster hex details
+      monsterHexes.forEach((monsterHex, index) => {
+        console.log(`Monster hex ${index}: (${monsterHex.q}, ${monsterHex.r}) with colors:`, monsterHex.monsterColors);
+      });
+
+      // Debug: Check if cube hexes and monster hexes are being passed to SVG renderer
       console.log("Setting cubeHexes in SVG options:", cubeHexes.length, "hexes");
+      console.log("Setting monsterHexes in SVG options:", monsterHexes.length, "hexes");
 
       this.hexMapSVG.setOptions({
         cubeHexes: cubeHexes,
+        monsterHexes: monsterHexes,
       });
 
       const { svg, script } = this.hexMapSVG.generateInteractiveSVG(grid);

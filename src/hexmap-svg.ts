@@ -2,7 +2,7 @@
 // Generates an SVG representation of the hex map
 
 import type { HexCell, HexColor, TerrainType } from "./hexmap.ts";
-import type { CubeHex } from "./game-engine.ts";
+import type { CubeHex, MonsterHex } from "./game-engine.ts";
 import {
   generateCityIcon,
   generateCloudsIcon,
@@ -20,6 +20,7 @@ export interface HexMapSVGOptions {
   showTerrainLabels?: boolean;
   interactive?: boolean;
   cubeHexes?: CubeHex[];
+  monsterHexes?: MonsterHex[];
 }
 
 export class HexMapSVG {
@@ -33,6 +34,7 @@ export class HexMapSVG {
       showTerrainLabels: options.showTerrainLabels ?? false,
       interactive: options.interactive ?? true,
       cubeHexes: options.cubeHexes || [],
+      monsterHexes: options.monsterHexes || [],
     };
   }
 
@@ -105,7 +107,41 @@ export class HexMapSVG {
 
     // Add monster icon for monster hexes
     if (cell.terrain === "monsters") {
-      cellContent += generateMonsterIcon({ centerX, centerY, cellSize });
+      try {
+        const monsterHex = this.options.monsterHexes?.find((mh) =>
+          mh.q === cell.q && mh.r === cell.r
+        );
+        
+        console.log(`Processing monster hex at (${cell.q}, ${cell.r}):`, monsterHex);
+        
+        if (monsterHex && monsterHex.monsterColors.length > 0) {
+          console.log(`Generating colored monsters for (${cell.q}, ${cell.r}) with colors:`, monsterHex.monsterColors);
+          // Generate colored monsters instead of generic icon
+          cellContent += this.generateColoredMonsters({ centerX, centerY, cellSize }, monsterHex.monsterColors);
+          
+          // Show the number of monsters remaining on this hex
+          cellContent += `
+            <text 
+              x="${centerX}" 
+              y="${centerY + 20}" 
+              text-anchor="middle" 
+              font-size="14" 
+              fill="#000000"
+              font-weight="bold"
+              stroke="white"
+              stroke-width="3"
+              class="monster-count"
+            >${monsterHex.monsterColors.length}</text>`;
+        } else {
+          console.log(`No monsters found for (${cell.q}, ${cell.r}), using generic icon`);
+          // Show generic monster icon if no monsters present
+          cellContent += generateMonsterIcon({ centerX, centerY, cellSize });
+        }
+      } catch (error) {
+        console.error(`Error rendering monster hex at (${cell.q}, ${cell.r}):`, error);
+        // Fallback to generic monster icon on error
+        cellContent += generateMonsterIcon({ centerX, centerY, cellSize });
+      }
     }
 
     // Add temple icon for temple hexes
@@ -338,6 +374,67 @@ export class HexMapSVG {
   }
 
   /**
+   * Generate colored monster icons for monster hexes
+   * Monsters are displayed as downward-pointing equilateral triangles
+   */
+  private generateColoredMonsters(options: IconOptions, monsterColors: HexColor[]): string {
+    try {
+      const { centerX, centerY, cellSize } = options;
+      const scale = cellSize / 40;
+      // Triangle size - slightly larger than cubes for visibility
+      const triangleSize = 10 * scale;
+      const spacing = triangleSize * 3;
+
+      let monstersContent = '';
+      
+      // Safety check: if no monster colors, return empty string
+      if (monsterColors.length === 0) {
+        return monstersContent;
+      }
+      
+      // Position monsters in a circular arrangement around the center
+      const angleStep = (2 * Math.PI) / monsterColors.length;
+      
+      monsterColors.forEach((color, index) => {
+        const angle = index * angleStep;
+        const monsterX = centerX + Math.cos(angle) * spacing;
+        const monsterY = centerY + Math.sin(angle) * spacing;
+        
+        const strokeColor = this.getStrokeColor(color);
+        const fillColor = this.getMonsterFillColor(color);
+        
+        // Create downward-pointing equilateral triangle
+        // Equilateral triangle height = side * √3 / 2
+        const triangleHeight = triangleSize * Math.sqrt(3) / 2;
+        
+        // Points for downward-pointing equilateral triangle:
+        // Top left, top right, bottom center
+        const points = [
+          `${monsterX - triangleSize / 2},${monsterY - triangleHeight / 2}`,
+          `${monsterX + triangleSize / 2},${monsterY - triangleHeight / 2}`,
+          `${monsterX},${monsterY + triangleHeight / 2}`
+        ].join(' ');
+        
+        monstersContent += `
+          <polygon 
+            points="${points}" 
+            fill="${fillColor}" 
+            stroke="${strokeColor}" 
+            stroke-width="${2 * scale}"
+            class="colored-monster monster-${color}"
+          />
+        `;
+      });
+
+      return monstersContent;
+    } catch (error) {
+      console.error("Error in generateColoredMonsters:", error);
+      // Return empty string on error - the fallback generic icon will be used
+      return '';
+    }
+  }
+
+  /**
    * Get fill color for cubes
    */
   private getCubeFillColor(color: HexColor): string {
@@ -351,6 +448,14 @@ export class HexMapSVG {
       yellow: "#ffff00",   // More vibrant yellow
     };
     return colors[color] || "#cccccc";
+  }
+
+  /**
+   * Get fill color for monsters
+   */
+  private getMonsterFillColor(color: HexColor): string {
+    // Use the same vibrant colors as cubes for consistency
+    return this.getCubeFillColor(color);
   }
 
   /**
