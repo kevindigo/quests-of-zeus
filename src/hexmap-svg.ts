@@ -14,10 +14,7 @@ import {
   generateZeusIcon,
 } from "./icons-svg.ts";
 
-// Type declarations for DOM APIs (for Deno type checking)
-declare global {
-  const document: Document;
-}
+
 
 export interface HexMapSVGOptions {
   cellSize?: number;
