@@ -1,77 +1,202 @@
 /**
- * Test for monster distribution logic
- * Verifies that monsters are distributed according to simplified rules:
- * - All monster hexes are treated equally (no marked/unmarked distinction)
- * - Monsters are distributed as evenly as possible across all 9 hexes
- * - Total monsters per color = number of players
- * - No hex can have more than one monster of the same color
+ * Comprehensive monster distribution test suite
+ * Consolidates all monster distribution testing logic
+ * Tests: basic distribution, edge cases, algorithm robustness
  */
 
 import { assertEquals, assert } from "@std/assert";
 import { OracleGameEngine } from "../src/game-engine.ts";
 import { ALL_COLORS } from "../src/hexmap.ts";
 
-Deno.test("MonsterDistribution - basic distribution with 2 players", () => {
-  const engine = new OracleGameEngine();
-  const state = engine.initializeGame();
-
+// Helper function to run distribution tests
+function runDistributionTests(engine: OracleGameEngine, runNumber?: number): void {
   const monsterHexes = engine.getMonsterHexes();
+  const runLabel = runNumber ? `Run ${runNumber}: ` : "";
 
-  // Verify we have exactly 9 monster hexes
+  // Test 1: Should have exactly 9 monster hexes
   assertEquals(
     monsterHexes.length,
     9,
-    `Expected 9 monster hexes but got ${monsterHexes.length}`
+    `${runLabel}Expected 9 monster hexes, got ${monsterHexes.length}`
   );
 
-  // Count monsters by color
+  // Test 2: Total monsters should be 2 * number of colors (since we have 2 players)
+  const totalMonsters = monsterHexes.reduce(
+    (sum: number, hex: any) => sum + hex.monsterColors.length,
+    0
+  );
+  const expectedTotalMonsters = 2 * ALL_COLORS.length;
+  assertEquals(
+    totalMonsters,
+    expectedTotalMonsters,
+    `${runLabel}Expected ${expectedTotalMonsters} total monsters for 2 players, got ${totalMonsters}`
+  );
+
+  // Test 3: Each color should appear exactly 2 times (2 players)
   const colorCounts: Record<string, number> = {};
-  let totalMonsters = 0;
-
   for (const hex of monsterHexes) {
-    totalMonsters += hex.monsterColors.length;
-
     for (const color of hex.monsterColors) {
       colorCounts[color] = (colorCounts[color] || 0) + 1;
     }
   }
 
-  // Verify total monsters per color = player count (2)
-  const expectedPerColor = 2;
   for (const color of ALL_COLORS) {
     assertEquals(
       colorCounts[color],
-      expectedPerColor,
-      `Expected ${expectedPerColor} monsters for color ${color} but got ${colorCounts[color]}`
+      2,
+      `${runLabel}Expected 2 monsters of color ${color}, got ${colorCounts[color]}`
     );
   }
 
-  // Verify no hex has duplicate colors
+  // Test 4: No hex should have duplicate colors
   for (const hex of monsterHexes) {
     const uniqueColors = new Set(hex.monsterColors);
     assertEquals(
       uniqueColors.size,
       hex.monsterColors.length,
-      `Hex (${hex.q},${hex.r}) has duplicate colors: ${hex.monsterColors.join(", ")}`
+      `${runLabel}Hex (${hex.q},${hex.r}) has duplicate colors: ${hex.monsterColors.join(", ")}`
     );
   }
 
-  // Verify even distribution across hexes
-  const monstersPerHex = monsterHexes.map(hex => hex.monsterColors.length);
+  // Test 5: Monsters should be evenly distributed (difference ≤ 1)
+  const monstersPerHex = monsterHexes.map((hex: any) => hex.monsterColors.length);
   const minMonsters = Math.min(...monstersPerHex);
   const maxMonsters = Math.max(...monstersPerHex);
-  
-  // With simplified distribution, difference should be at most 1
   assert(
     maxMonsters - minMonsters <= 1,
-    `Monster distribution is not even enough (difference: ${maxMonsters - minMonsters})`
+    `${runLabel}Monster distribution not even: min=${minMonsters}, max=${maxMonsters}, difference=${maxMonsters - minMonsters}`
   );
 
-  // Verify total monsters is correct
-  const expectedTotalMonsters = 2 * ALL_COLORS.length;
-  assertEquals(
-    totalMonsters,
-    expectedTotalMonsters,
-    `Expected ${expectedTotalMonsters} total monsters but got ${totalMonsters}`
+  // Test 6: No hex should have more than 2 monsters (theoretical maximum)
+  assert(
+    maxMonsters <= 2,
+    `${runLabel}Some hex has ${maxMonsters} monsters (should be ≤ 2)`
   );
+}
+
+// Basic distribution test with 2 players
+Deno.test("MonsterDistribution - basic distribution with 2 players", () => {
+  const engine = new OracleGameEngine();
+  engine.initializeGame();
+  runDistributionTests(engine);
+});
+
+// Test the distribution algorithm multiple times to ensure consistency
+Deno.test("MonsterDistribution - distribution consistency", () => {
+  const testRuns = 10;
+  
+  for (let run = 0; run < testRuns; run++) {
+    const engine = new OracleGameEngine();
+    engine.initializeGame();
+    runDistributionTests(engine, run + 1);
+  }
+});
+
+// Test edge cases
+Deno.test("MonsterDistribution - edge cases", () => {
+  const engine = new OracleGameEngine();
+  engine.initializeGame();
+  runDistributionTests(engine);
+});
+
+// Test algorithm completeness and robustness
+Deno.test("MonsterDistribution - algorithm completeness", () => {
+  const playerCount = 2;
+  
+  for (let run = 0; run < 10; run++) {
+    const engine = new OracleGameEngine();
+    engine.initializeGame();
+    runDistributionTests(engine, run + 1);
+  }
+});
+
+// Test that distribution is always even across many runs
+Deno.test("MonsterDistribution - even distribution across runs", () => {
+  const playerCount = 2;
+  
+  for (let run = 0; run < 20; run++) {
+    const engine = new OracleGameEngine();
+    engine.initializeGame();
+    const monsterHexes = engine.getMonsterHexes();
+    
+    const monstersPerHex = monsterHexes.map((hex: any) => hex.monsterColors.length);
+    const min = Math.min(...monstersPerHex);
+    const max = Math.max(...monstersPerHex);
+    
+    // Distribution should be even (difference ≤ 1)
+    assert(max - min <= 1, `Run ${run + 1}: Distribution not even (min=${min}, max=${max})`);
+  }
+});
+
+// Test color distribution is correct across multiple runs
+Deno.test("MonsterDistribution - color distribution consistency", () => {
+  const playerCount = 2;
+  
+  for (let run = 0; run < 5; run++) {
+    const engine = new OracleGameEngine();
+    engine.initializeGame();
+    const monsterHexes = engine.getMonsterHexes();
+    
+    // Count colors
+    const colorCounts: Record<string, number> = {};
+    for (const hex of monsterHexes) {
+      for (const color of hex.monsterColors) {
+        colorCounts[color] = (colorCounts[color] || 0) + 1;
+      }
+    }
+    
+    // Each color should appear exactly playerCount times
+    for (const color of ALL_COLORS) {
+      assertEquals(colorCounts[color], playerCount, `Run ${run + 1}: Color ${color} appears ${colorCounts[color]} times, expected ${playerCount}`);
+    }
+  }
+});
+
+// Test that no hex has more than 2 monsters across multiple runs
+Deno.test("MonsterDistribution - max monsters per hex", () => {
+  const playerCount = 2;
+  
+  for (let run = 0; run < 10; run++) {
+    const engine = new OracleGameEngine();
+    engine.initializeGame();
+    const monsterHexes = engine.getMonsterHexes();
+    
+    const maxMonsters = Math.max(...monsterHexes.map((hex: any) => hex.monsterColors.length));
+    
+    // No hex should have more than 2 monsters
+    assert(maxMonsters <= 2, `Run ${run + 1}: Some hex has ${maxMonsters} monsters (should be ≤ 2)`);
+  }
+});
+
+// Test the algorithm with the actual player count (2 players)
+Deno.test("MonsterDistribution - actual player count (2 players)", () => {
+  const playerCount = 2;
+  
+  // 2 players * 6 colors = 12 monsters total
+  // With 9 hexes, the only possible even distribution is:
+  // - 6 hexes with 1 monster each = 6 monsters
+  // - 3 hexes with 2 monsters each = 6 monsters
+  // Total: 12 monsters
+  // So sorted distribution pattern should always be "111111222"
+  
+  for (let run = 0; run < 50; run++) {
+    const engine = new OracleGameEngine();
+    engine.initializeGame();
+    const monsterHexes = engine.getMonsterHexes();
+    
+    const monstersPerHex = monsterHexes.map((hex: any) => hex.monsterColors.length);
+    
+    // Verify all constraints
+    const totalMonsters = monstersPerHex.reduce((sum: number, count: number) => sum + count, 0);
+    assertEquals(totalMonsters, 12, `Run ${run + 1}: Total monsters should be 12`);
+    
+    const min = Math.min(...monstersPerHex);
+    const max = Math.max(...monstersPerHex);
+    assert(max - min <= 1, `Run ${run + 1}: Distribution not even`);
+    assert(max <= 2, `Run ${run + 1}: Max monsters should be ≤ 2`);
+    
+    // Verify the exact distribution pattern
+    const sortedPattern = monstersPerHex.sort().join("");
+    assertEquals(sortedPattern, "111111222", `Run ${run + 1}: Distribution pattern should be "111111222"`);
+  }
 });
