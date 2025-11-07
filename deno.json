@@ -7,7 +7,7 @@
     "start": "deno run --allow-net --allow-read --no-check src/main.ts",
     "build": "deno run -A build.ts",
     "icons": "deno run -A create-simple-icons.ts",
-    "test": "deno test --allow-read --no-check tests/",
+    "test": "deno test",
     "test:no-server": "deno test --allow-read --no-check tests/",
     "test:fast": "deno test --allow-read --no-run --no-check tests/",
     "test:single": "deno test --allow-read --filter --no-check",
