@@ -98,7 +98,6 @@ export class GameController {
     }
 
     const gameState = this.gameEngine.getGameState();
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
 
     // Update player info display
     this.updatePlayerInfo(gameState);
