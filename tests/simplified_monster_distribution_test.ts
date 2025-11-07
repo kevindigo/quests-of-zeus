@@ -1,28 +1,21 @@
 /**
- * Test for monster distribution logic
- * Verifies that monsters are distributed according to simplified rules:
- * - All monster hexes are treated equally (no marked/unmarked distinction)
- * - Monsters are distributed as evenly as possible across all 9 hexes
- * - Total monsters per color = number of players
- * - No hex can have more than one monster of the same color
+ * Test for simplified monster distribution logic
+ * Verifies that monsters are distributed evenly across all hexes
+ * without the marked/unmarked distinction
  */
 
 import { assertEquals, assert } from "@std/assert";
 import { OracleGameEngine } from "../src/game-engine.ts";
 import { ALL_COLORS } from "../src/hexmap.ts";
 
-Deno.test("MonsterDistribution - basic distribution with 2 players", () => {
+// Test with the actual player count (2 players)
+Deno.test("MonsterDistribution - simplified distribution", () => {
   const engine = new OracleGameEngine();
-  const state = engine.initializeGame();
-
+  engine.initializeGame();
   const monsterHexes = engine.getMonsterHexes();
 
   // Verify we have exactly 9 monster hexes
-  assertEquals(
-    monsterHexes.length,
-    9,
-    `Expected 9 monster hexes but got ${monsterHexes.length}`
-  );
+  assertEquals(monsterHexes.length, 9, "Should have 9 monster hexes");
 
   // Count monsters by color
   const colorCounts: Record<string, number> = {};
@@ -74,4 +67,19 @@ Deno.test("MonsterDistribution - basic distribution with 2 players", () => {
     expectedTotalMonsters,
     `Expected ${expectedTotalMonsters} total monsters but got ${totalMonsters}`
   );
+});
+
+// Test edge cases
+Deno.test("MonsterDistribution - edge cases", () => {
+  // Test with the actual player count (2)
+  const engine = new OracleGameEngine();
+  engine.initializeGame();
+  const monsterHexes = engine.getMonsterHexes();
+  
+  const totalMonsters = monsterHexes.reduce((sum: number, hex: any) => sum + hex.monsterColors.length, 0);
+  assertEquals(totalMonsters, 2 * ALL_COLORS.length, "Total monsters for 2 players should be correct");
+  
+  // Verify no hex has more than 2 monsters (theoretical maximum)
+  const maxMonstersPerHex = Math.max(...monsterHexes.map((hex: any) => hex.monsterColors.length));
+  assert(maxMonstersPerHex <= 2, `Some hex has ${maxMonstersPerHex} monsters (should be ≤ 2)`);
 });

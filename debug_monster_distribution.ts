@@ -49,8 +49,8 @@ function debugMonsterDistribution(): void {
   console.log("================================");
 
   for (const hex of monsterHexes) {
-    const isMarked = hex.monsterColors.length === 2;
-    const marker = isMarked ? "[MARKED]" : "[NORMAL]";
+    const monsterCount = hex.monsterColors.length;
+    const marker = monsterCount === 2 ? "[2 MONSTERS]" : "[1 MONSTER]";
     console.log(
       `Hex (${hex.q}, ${hex.r}) ${marker}: ${hex.monsterColors.join(", ")}`,
     );
@@ -60,13 +60,15 @@ function debugMonsterDistribution(): void {
   console.log("\nRule Verification:");
   console.log("==================");
 
-  // Rule 1: Exactly 3 marked hexes (2 monsters each)
-  const markedHexes = monsterHexes.filter((hex) =>
-    hex.monsterColors.length === 2
-  );
+  // Rule 1: Even distribution (difference between min and max monsters per hex ≤ 1)
+  const monstersPerHex = monsterHexes.map(hex => hex.monsterColors.length);
+  const minMonsters = Math.min(...monstersPerHex);
+  const maxMonsters = Math.max(...monstersPerHex);
+  const distributionEven = maxMonsters - minMonsters <= 1;
+  
   console.log(
-    `✅ Marked hexes: ${markedHexes.length}/3 ${
-      markedHexes.length === 3 ? "✓" : "✗"
+    `✅ Monster distribution: ${minMonsters}-${maxMonsters} per hex ${
+      distributionEven ? "✓" : "✗"
     }`,
   );
 

@@ -619,12 +619,11 @@ export class OracleGameEngine {
   }
 
   /**
-   * Initialize monsters on monster hexes according to game rules:
-   * - Randomly choose 3 monster hexes to be "marked"
-   * - Place 2 different-color monsters on each marked hex
-   * - Distribute remaining monsters evenly among the remaining 6 non-marked hexes
-   * - No color of monster occurs twice on any hex
+   * Initialize monsters on monster hexes with simplified distribution:
+   * - All monster hexes are treated equally (no marked/unmarked distinction)
+   * - Monsters are distributed as evenly as possible across all 9 hexes
    * - Total monsters per color = number of players
+   * - No hex can have more than one monster of the same color
    */
   private initializeMonsters(map: HexMap, playerCount: number): MonsterHex[] {
     const monsterHexes: MonsterHex[] = [];
@@ -641,113 +640,74 @@ export class OracleGameEngine {
     const shuffledMonsterHexes = [...monsterCells];
     this.shuffleArray(shuffledMonsterHexes);
 
-    // Split into marked (3) and non-marked (6) hexes
-    const markedHexes = shuffledMonsterHexes.slice(0, 3);
-    const nonMarkedHexes = shuffledMonsterHexes.slice(3);
-
     // Calculate total monsters needed
     const totalMonstersPerColor = playerCount;
     const totalMonsters = totalMonstersPerColor * ALL_COLORS.length;
 
-    // Create a pool of monster colors to distribute
-    const monsterPool: HexColor[] = [];
-
-    // Add playerCount copies of each color to the pool
+    // Create a shuffled list of all monster colors to place
+    // We need playerCount copies of each color
+    const monsterColorsToPlace: HexColor[] = [];
     for (let i = 0; i < playerCount; i++) {
-      monsterPool.push(...ALL_COLORS);
+      monsterColorsToPlace.push(...ALL_COLORS);
     }
+    this.shuffleArray(monsterColorsToPlace);
 
-    // Shuffle the monster pool for random distribution
-    this.shuffleArray(monsterPool);
-
-    // Track used colors per hex to ensure no duplicates
-    const usedColorsPerHex = new Map<string, Set<HexColor>>();
-
-    // Step 1: Place 2 different-color monsters on each marked hex
-    for (const markedHex of markedHexes) {
-      const hexKey = `${markedHex.q},${markedHex.r}`;
-      usedColorsPerHex.set(hexKey, new Set<HexColor>());
-
-      const monsterColors: HexColor[] = [];
-
-      // Find 2 different colors from the pool
-      let placed = 0;
-      let poolIndex = 0;
-
-      while (placed < 2 && poolIndex < monsterPool.length) {
-        const color = monsterPool[poolIndex];
-
-        // Check if this color isn't already used on this hex
-        if (!monsterColors.includes(color)) {
-          monsterColors.push(color);
-          usedColorsPerHex.get(hexKey)!.add(color);
-
-          // Remove this color from the pool (we'll track remaining pool separately)
-          monsterPool.splice(poolIndex, 1);
-          placed++;
-        } else {
-          poolIndex++;
-        }
-      }
-
+    // Initialize empty monster hexes
+    for (const cell of shuffledMonsterHexes) {
       monsterHexes.push({
-        q: markedHex.q,
-        r: markedHex.r,
-        monsterColors,
+        q: cell.q,
+        r: cell.r,
+        monsterColors: [],
       });
     }
 
-    // Step 2: Distribute remaining monsters evenly among non-marked hexes
-    // Calculate how many monsters should go on each non-marked hex
-    const remainingMonsters = monsterPool.length;
-    const monstersPerNonMarkedHex = Math.floor(
-      remainingMonsters / nonMarkedHexes.length,
-    );
-    const extraMonsters = remainingMonsters % nonMarkedHexes.length;
+    // Distribute monsters evenly by stepping through hexes and colors
+    // This algorithm ensures we can always place all monsters without getting stuck
+    let colorIndex = 0;
+    let hexIndex = 0;
+    const totalColors = monsterColorsToPlace.length;
+    let attempts = 0;
+    const maxAttempts = totalColors * monsterHexes.length; // Safety limit
 
-    // Distribute monsters to non-marked hexes
-    let monsterIndex = 0;
+    while (colorIndex < totalColors && attempts < maxAttempts) {
+      const currentHex = monsterHexes[hexIndex];
+      const currentColor = monsterColorsToPlace[colorIndex];
 
-    for (let i = 0; i < nonMarkedHexes.length; i++) {
-      const nonMarkedHex = nonMarkedHexes[i];
-      const hexKey = `${nonMarkedHex.q},${nonMarkedHex.r}`;
-      usedColorsPerHex.set(hexKey, new Set<HexColor>());
-
-      const monsterColors: HexColor[] = [];
-
-      // Calculate how many monsters this hex gets
-      const monstersForThisHex = monstersPerNonMarkedHex +
-        (i < extraMonsters ? 1 : 0);
-
-      // Add monsters to this hex, ensuring no duplicate colors
-      for (
-        let j = 0;
-        j < monstersForThisHex && monsterIndex < monsterPool.length;
-        j++
-      ) {
-        // Find the next color that isn't already on this hex
-        while (
-          monsterIndex < monsterPool.length &&
-          monsterColors.includes(monsterPool[monsterIndex])
-        ) {
-          monsterIndex++;
-        }
-
-        if (monsterIndex < monsterPool.length) {
-          monsterColors.push(monsterPool[monsterIndex]);
-          usedColorsPerHex.get(hexKey)!.add(monsterPool[monsterIndex]);
-          monsterIndex++;
-        }
+      // Check if we can place this color on this hex (no duplicate colors)
+      if (!currentHex.monsterColors.includes(currentColor)) {
+        currentHex.monsterColors.push(currentColor);
+        colorIndex++;
       }
+      
+      // Move to next hex, wrapping around if needed
+      hexIndex = (hexIndex + 1) % monsterHexes.length;
+      attempts++;
+    }
 
-      monsterHexes.push({
-        q: nonMarkedHex.q,
-        r: nonMarkedHex.r,
-        monsterColors,
-      });
+    // Safety check: if we couldn't place all colors, use fallback method
+    if (colorIndex < totalColors) {
+      console.warn("Fallback: Could not place all monsters with primary algorithm, using fallback method");
+      this.placeRemainingMonsters(monsterHexes, monsterColorsToPlace.slice(colorIndex));
     }
 
     return monsterHexes;
+  }
+
+  /**
+   * Fallback method to place remaining monsters that couldn't be placed
+   * by the primary algorithm. This ensures all monsters get placed.
+   */
+  private placeRemainingMonsters(monsterHexes: MonsterHex[], remainingColors: HexColor[]): void {
+    for (const color of remainingColors) {
+      // Find the first hex that doesn't have this color
+      const availableHex = monsterHexes.find(hex => !hex.monsterColors.includes(color));
+      if (availableHex) {
+        availableHex.monsterColors.push(color);
+      } else {
+        // This should never happen with proper constraints, but log if it does
+        console.warn(`Could not place color ${color} - all hexes already have this color`);
+      }
+    }
   }
 
   /**
