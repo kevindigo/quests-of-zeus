@@ -419,11 +419,12 @@ export class GameController {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
 
     switch (phase) {
-      case "oracle":
+      case "oracle": {
         return `
           <button id="rollDice" class="action-btn">Roll Oracle Dice</button>
         `;
-      case "action":
+      }
+      case "action": {
         const currentCell = this.gameEngine.getGameState().map.getCell(
           currentPlayer.shipPosition.q,
           currentPlayer.shipPosition.r,
@@ -492,8 +493,10 @@ export class GameController {
         actions +=
           `<button id="endTurn" class="action-btn secondary">End Turn</button>`;
         return actions;
-      default:
+      }
+      default: {
         return "<p>Game phase not recognized</p>";
+      }
     }
   }
 
