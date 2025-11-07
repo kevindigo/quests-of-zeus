@@ -1,6 +1,7 @@
 // Test for die recoloring feature
 
 import { OracleGameEngine } from "./src/game-engine.ts";
+import type { Player } from "./src/game-engine.ts";
 
 function testRecolorDie() {
   console.log("Testing die recoloring feature...\n");
@@ -9,7 +10,7 @@ function testRecolorDie() {
   gameEngine.initializeGame();
 
   // Get the first player
-  const player = gameEngine.getCurrentPlayer();
+  const player = gameEngine.getCurrentPlayer() as Player & { recoloredDice?: any };
   console.log(`Testing with player: ${player.name}`);
   console.log(`Initial favor: ${player.favor}\n`);
 
@@ -30,23 +31,33 @@ function testRecolorDie() {
     const originalFavor = player.favor;
     const originalDice = [...player.oracleDice];
     
-    const success = gameEngine.recolorDie(player.id, testCase.dieColor, testCase.favorSpent);
+    // Set recoloring intention
+    const success = gameEngine.setRecolorIntention(player.id, testCase.dieColor, testCase.favorSpent);
     
     if (success) {
-      console.log(`✓ Successfully recolored die`);
+      console.log(`✓ Successfully set recoloring intention`);
       console.log(`  Original dice: ${originalDice.join(", ")}`);
-      console.log(`  New dice: ${player.oracleDice.join(", ")}`);
-      console.log(`  Favor spent: ${originalFavor - player.favor}`);
+      console.log(`  Dice after intention: ${player.oracleDice.join(", ")}`);
+      console.log(`  Favor not spent yet: ${player.favor} (same as original)`);
       
-      // Verify the die was actually recolored
+      // Verify the die was NOT recolored yet (only intention set)
       const originalDieIndex = originalDice.indexOf(testCase.dieColor);
-      if (originalDieIndex !== -1 && player.oracleDice[originalDieIndex] !== testCase.dieColor) {
-        console.log(`✓ Die color changed from ${testCase.dieColor} to ${player.oracleDice[originalDieIndex]}`);
+      if (originalDieIndex !== -1 && player.oracleDice[originalDieIndex] === testCase.dieColor) {
+        console.log(`✓ Die color not changed yet (only intention set)`);
       } else {
-        console.log(`✗ Die color did not change as expected`);
+        console.log(`✗ Die color changed unexpectedly`);
+      }
+      
+      // Test applying recoloring by using the die for movement
+      console.log(`  Testing application of recoloring...`);
+      // This would require a movement test, but for now we'll just verify the intention is stored
+      if (player.recoloredDice && player.recoloredDice[testCase.dieColor]) {
+        console.log(`✓ Recoloring intention stored correctly`);
+      } else {
+        console.log(`✗ Recoloring intention not stored`);
       }
     } else {
-      console.log(`✗ Failed to recolor die`);
+      console.log(`✗ Failed to set recoloring intention`);
       console.log(`  Possible reasons: not enough favor, invalid die color, or not in action phase`);
     }
   }

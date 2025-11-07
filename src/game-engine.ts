@@ -24,6 +24,7 @@ export interface Player {
   };
   oracleDice: HexColor[]; // Current oracle dice values
   favor: number; // Player's favor resource
+  recoloredDice: { [dieColor: string]: { newColor: HexColor; favorCost: number } }; // Track recoloring intentions
 }
 
 export interface CubeHex {
@@ -144,6 +145,7 @@ export class OracleGameEngine {
         },
         oracleDice: [],
         favor: 3 + i, // First player gets 3 favor, each subsequent gets 1 more
+        recoloredDice: {}, // Track recoloring intentions
       });
     }
 
@@ -227,13 +229,19 @@ export class OracleGameEngine {
       return false;
     }
 
+    // Get effective die color considering recoloring intention
+    let effectiveDieColor = dieColor;
+    if (dieColor && player.recoloredDice && player.recoloredDice[dieColor]) {
+      effectiveDieColor = player.recoloredDice[dieColor].newColor;
+    }
+
     // Rule 3: Can only land on sea hexes of the color of the die they used
-    if (!dieColor || targetCell.color !== dieColor) {
+    if (!effectiveDieColor || targetCell.color !== effectiveDieColor) {
       return false;
     }
 
-    // Check if player has the required oracle die
-    if (!player.oracleDice.includes(dieColor)) {
+    // Check if player has the required oracle die (original color)
+    if (!dieColor || !player.oracleDice.includes(dieColor)) {
       return false;
     }
 
@@ -248,11 +256,21 @@ export class OracleGameEngine {
     );
 
     const isReachable = reachableSeaTiles.some((tile) =>
-      tile.q === targetQ && tile.r === targetR
+      tile.q === targetQ && tile.r === targetR && tile.color === effectiveDieColor
     );
 
     if (!isReachable) {
       return false;
+    }
+
+    // Apply recoloring if there's an intention for this die
+    const originalDieColor = dieColor;
+    if (player.recoloredDice && player.recoloredDice[dieColor]) {
+      const recoloringApplied = this.applyRecoloring(player, dieColor);
+      if (recoloringApplied) {
+        // Update dieColor to the recolored color for the rest of the logic
+        dieColor = player.recoloredDice[originalDieColor]?.newColor || dieColor;
+      }
     }
 
     // Consume the oracle die
@@ -526,6 +544,16 @@ export class OracleGameEngine {
       return false;
     }
 
+    // Apply recoloring if there's an intention for this die
+    const originalDieColor = dieColor;
+    if (player.recoloredDice && player.recoloredDice[dieColor]) {
+      const recoloringApplied = this.applyRecoloring(player, dieColor);
+      if (recoloringApplied) {
+        // Update dieColor to the recolored color for the rest of the logic
+        dieColor = player.recoloredDice[originalDieColor]?.newColor || dieColor;
+      }
+    }
+
     // Consume the oracle die
     const dieIndex = player.oracleDice.indexOf(dieColor);
     if (dieIndex !== -1) {
@@ -547,11 +575,12 @@ export class OracleGameEngine {
   }
 
   /**
-   * Recolor a die during the action phase
+   * Set recoloring intention for a die during the action phase
    * For each favor spent, advance the color one position along the color wheel
    * Color wheel: black → pink → blue → yellow → green → red → black
+   * The favor is not spent until the die is actually used
    */
-  public recolorDie(
+  public setRecolorIntention(
     playerId: number,
     dieColor: HexColor,
     favorSpent: number,
@@ -594,14 +623,54 @@ export class OracleGameEngine {
     const newIndex = (currentIndex + favorSpent) % colorWheel.length;
     const newColor = colorWheel[newIndex];
 
+    // Store recoloring intention (favor is not spent yet)
+    player.recoloredDice[dieColor] = {
+      newColor,
+      favorCost: favorSpent,
+    };
+
+    return true;
+  }
+
+  /**
+   * Clear recoloring intention for a die
+   */
+  public clearRecolorIntention(playerId: number, dieColor: HexColor): boolean {
+    if (!this.state) {
+      throw new Error("Game not initialized. Call initializeGame() first.");
+    }
+    const player = this.state.players.find((p) => p.id === playerId);
+    if (!player) {
+      return false;
+    }
+
+    delete player.recoloredDice[dieColor];
+    return true;
+  }
+
+  /**
+   * Apply recoloring when a die is used (e.g., for movement)
+   * This is where the favor is actually spent
+   */
+  private applyRecoloring(player: Player, dieColor: HexColor): boolean {
+    const recoloring = player.recoloredDice[dieColor];
+    if (!recoloring) {
+      return false; // No recoloring intention for this die
+    }
+
+    // Check if player still has enough favor
+    if (player.favor < recoloring.favorCost) {
+      return false;
+    }
+
     // Replace the die with the new color
     const dieIndex = player.oracleDice.indexOf(dieColor);
     if (dieIndex !== -1) {
-      player.oracleDice[dieIndex] = newColor;
+      player.oracleDice[dieIndex] = recoloring.newColor;
     } else {
       // This should not happen since we checked above, but log for debugging
       console.warn(
-        `Attempted to recolor die ${dieColor} but it was not found in player's oracle dice: [${
+        `Attempted to apply recoloring to die ${dieColor} but it was not found in player's oracle dice: [${
           player.oracleDice.join(", ")
         }]`,
       );
@@ -609,7 +678,10 @@ export class OracleGameEngine {
     }
 
     // Spend favor
-    player.favor -= favorSpent;
+    player.favor -= recoloring.favorCost;
+
+    // Clear the recoloring intention
+    delete player.recoloredDice[dieColor];
 
     return true;
   }
@@ -666,6 +738,9 @@ export class OracleGameEngine {
     // Reset oracle dice
     const currentPlayer = this.state.players[this.state.currentPlayerIndex];
     currentPlayer.oracleDice = [];
+
+    // Clear any recoloring intentions
+    currentPlayer.recoloredDice = {};
 
     // Move to next player
     this.state.currentPlayerIndex = (this.state.currentPlayerIndex + 1) %
@@ -953,31 +1028,55 @@ export class OracleGameEngine {
         movementRange,
       );
 
-      // Filter by player's available dice colors and exclude current position
+      // Filter by player's available dice colors (including recoloring intentions) and exclude current position
       for (const seaTile of reachableSeaTiles) {
         if (
           seaTile.color !== "none" &&
-          player.oracleDice.includes(seaTile.color) &&
           !(seaTile.q === currentPos.q && seaTile.r === currentPos.r)
         ) {
-          // Only add if this move isn't already available with less favor
-          const existingMove = availableMoves.find((move) =>
-            move.q === seaTile.q && move.r === seaTile.r &&
-            move.dieColor === seaTile.color
-          );
-          if (!existingMove) {
-            availableMoves.push({
-              q: seaTile.q,
-              r: seaTile.r,
-              dieColor: seaTile.color,
-              favorCost: favorSpent,
-            });
+          // Check if player has a die that matches this sea tile color, considering recoloring intentions
+          const matchingDie = this.getMatchingDieForSeaTile(player, seaTile.color);
+          if (matchingDie) {
+            // Only add if this move isn't already available with less favor
+            const existingMove = availableMoves.find((move) =>
+              move.q === seaTile.q && move.r === seaTile.r &&
+              move.dieColor === seaTile.color
+            );
+            if (!existingMove) {
+              availableMoves.push({
+                q: seaTile.q,
+                r: seaTile.r,
+                dieColor: seaTile.color,
+                favorCost: favorSpent,
+              });
+            }
           }
         }
       }
     }
 
     return availableMoves;
+  }
+
+  /**
+   * Check if player has a die that matches the sea tile color, considering recoloring intentions
+   */
+  private getMatchingDieForSeaTile(player: Player, seaTileColor: HexColor): HexColor | null {
+    // First check if player has a die of this color
+    if (player.oracleDice.includes(seaTileColor)) {
+      return seaTileColor;
+    }
+
+    // Then check if player has a die that can be recolored to this color
+    for (const dieColor of player.oracleDice) {
+      if (player.recoloredDice && player.recoloredDice[dieColor]) {
+        if (player.recoloredDice[dieColor].newColor === seaTileColor) {
+          return dieColor;
+        }
+      }
+    }
+
+    return null;
   }
 
   /**

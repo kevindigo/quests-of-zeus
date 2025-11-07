@@ -205,6 +205,11 @@ export class GameController {
         : ""
     }
         </div>
+        ${
+      this.selectedDieColor && _currentPlayer.favor > 0
+        ? this.renderRecolorOptions(_currentPlayer)
+        : ""
+    }
       </div>
     `;
   }
@@ -391,9 +396,16 @@ export class GameController {
 
     // Only highlight moves if a die is selected
     if (this.selectedDieColor) {
+      // Get the effective die color considering recoloring intention
+      let effectiveDieColor = this.selectedDieColor;
+      if (currentPlayer.recoloredDice && currentPlayer.recoloredDice[this.selectedDieColor]) {
+        effectiveDieColor = currentPlayer.recoloredDice[this.selectedDieColor].newColor;
+      }
+
       availableMoves.forEach((move) => {
-        // Only highlight moves that match the selected die color
-        if (move.dieColor === this.selectedDieColor) {
+        // Only highlight moves that match the effective die color
+        // The game engine returns moves based on sea tile color, which should match our effective die color
+        if (move.dieColor === effectiveDieColor) {
           // Highlight the new hex-highlight polygons (centered, won't cover colored border)
           const highlightCell = document.querySelector(
             `.hex-highlight[data-q="${move.q}"][data-r="${move.r}"]`,
@@ -405,14 +417,14 @@ export class GameController {
               // Add tooltip to show required die color and favor cost
               highlightCell.setAttribute(
                 "title",
-                `Move using ${move.dieColor} die (costs ${move.favorCost} favor)`,
+                `Move using ${effectiveDieColor} die (costs ${move.favorCost} favor)`,
               );
             } else {
               highlightCell.classList.add("available-move");
               // Add tooltip to show required die color
               highlightCell.setAttribute(
                 "title",
-                `Move using ${move.dieColor} die`,
+                `Move using ${effectiveDieColor} die`,
               );
             }
           }
@@ -478,23 +490,8 @@ export class GameController {
           actions +=
             `<button id="spendDieForFavor" class="action-btn">Spend Die for 2 Favor</button>`;
 
-          // Recolor die action is available if player has favor
-          if (currentPlayer.favor > 0) {
-            actions += `<div style="margin-top: 1rem;">
-                 <h4>Recolor Die</h4>
-                 <p>Spend favor to advance die color along the wheel:</p>
-                 <p style="font-size: 0.9rem; opacity: 0.8;">black → pink → blue → yellow → green → red → black</p>
-                 <div class="recolor-options" style="margin-top: 0.5rem;">
-                   ${
-              [1, 2, 3, 4, 5].map((favorCost) =>
-                currentPlayer.favor >= favorCost
-                  ? `<button class="action-btn secondary" data-recolor-favor="${favorCost}">Recolor +${favorCost} (${favorCost} favor)</button>`
-                  : `<button class="action-btn secondary" disabled>Recolor +${favorCost} (${favorCost} favor)</button>`
-              ).join("")
-            }
-                 </div>
-               </div>`;
-          }
+          // Recolor die options are now displayed in the player info panel as radio buttons
+          // The favor will be spent when the die is actually used for movement or other actions
 
           if (currentCell?.terrain === "cubes") {
             actions +=
@@ -583,9 +580,16 @@ export class GameController {
         const availableMoves = this.gameEngine.getAvailableMovesWithFavor(
           currentPlayer.id,
         );
+        
+        // Get the effective die color considering recoloring intention
+        let effectiveDieColor = this.selectedDieColor;
+        if (currentPlayer.recoloredDice && currentPlayer.recoloredDice[this.selectedDieColor]) {
+          effectiveDieColor = currentPlayer.recoloredDice[this.selectedDieColor].newColor;
+        }
+        
         const targetMove = availableMoves.find((move) =>
           move.q === q && move.r === r &&
-          move.dieColor === this.selectedDieColor
+          move.dieColor === effectiveDieColor
         );
 
         if (targetMove) {
@@ -593,7 +597,7 @@ export class GameController {
           if (targetMove.favorCost > 0 && !this.isFavorMode) {
             // Ask player if they want to spend favor
             const confirmSpend = confirm(
-              `This move requires spending ${targetMove.favorCost} favor to reach. Do you want to spend favor to move here?`,
+              `This move requires spending ${targetMove.favorCost} favor to reach using ${effectiveDieColor} die. Do you want to spend favor to move here?`,
             );
             if (confirmSpend) {
               this.selectedFavorSpent = targetMove.favorCost;
@@ -608,6 +612,7 @@ export class GameController {
           }
 
           // Use the selected die color and favor spent
+          // The game engine will handle recoloring internally
           const success = this.gameEngine.moveShip(
             currentPlayer.id,
             q,
@@ -616,8 +621,14 @@ export class GameController {
             this.selectedFavorSpent,
           );
           if (success) {
+            // Get the effective die color that was actually used
+            let effectiveDieColor = this.selectedDieColor;
+            if (currentPlayer.recoloredDice && currentPlayer.recoloredDice[this.selectedDieColor]) {
+              effectiveDieColor = currentPlayer.recoloredDice[this.selectedDieColor].newColor;
+            }
+            
             let message =
-              `Ship moved to (${q}, ${r}) using ${this.selectedDieColor} die`;
+              `Ship moved to (${q}, ${r}) using ${effectiveDieColor} die`;
             if (this.selectedFavorSpent > 0) {
               message += ` and ${this.selectedFavorSpent} favor`;
             }
@@ -638,7 +649,7 @@ export class GameController {
             this.showMessage("Favor spending cancelled.");
           } else {
             this.showMessage(
-              `Cannot move to this hex using ${this.selectedDieColor} die! Must be a sea hex within range of matching color.`,
+              `Cannot move to this hex using ${effectiveDieColor} die! Must be a sea hex within range of matching color.`,
             );
           }
         }
@@ -676,11 +687,9 @@ export class GameController {
         if (dieColor) {
           this.selectDie(dieColor);
         }
-      } else if (target.hasAttribute("data-recolor-favor")) {
-        const favorCost = parseInt(
-          target.getAttribute("data-recolor-favor") || "0",
-        );
-        this.recolorDie(favorCost);
+      } else if (target instanceof HTMLInputElement && target.name === "recolorOption") {
+        const favorCost = parseInt(target.value || "0");
+        this.setRecolorIntention(favorCost);
       }
     });
   }
@@ -824,7 +833,7 @@ export class GameController {
     }
   }
 
-  private recolorDie(favorSpent: number): void {
+  private setRecolorIntention(favorCost: number): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
 
     if (!this.selectedDieColor) {
@@ -832,24 +841,42 @@ export class GameController {
       return;
     }
 
-    const success = this.gameEngine.recolorDie(
-      currentPlayer.id,
-      this.selectedDieColor,
-      favorSpent,
-    );
-    if (success) {
-      // Get the new die color to display in the message
-      const newDieColor = currentPlayer.oracleDice.find((color) =>
-        color !== this.selectedDieColor
-      ) || this.selectedDieColor;
-      this.showMessage(
-        `Recolored die from ${this.selectedDieColor} to ${newDieColor} for ${favorSpent} favor!`,
+    if (favorCost === 0) {
+      // Clear recoloring intention
+      const success = this.gameEngine.clearRecolorIntention(
+        currentPlayer.id,
+        this.selectedDieColor,
       );
-      // Update the selected die color to the new color
-      this.selectedDieColor = newDieColor;
-      this.renderGameState();
+      if (success) {
+        this.showMessage("Recoloring intention cleared");
+        this.renderGameState();
+        // Update available moves since die color intention changed
+        this.highlightAvailableMoves();
+      } else {
+        this.showMessage("Cannot clear recoloring intention");
+      }
     } else {
-      this.showMessage("Cannot recolor die at this time");
+      // Set recoloring intention
+      const success = this.gameEngine.setRecolorIntention(
+        currentPlayer.id,
+        this.selectedDieColor,
+        favorCost,
+      );
+      if (success) {
+        const colorWheel: HexColor[] = ["black", "pink", "blue", "yellow", "green", "red"];
+        const currentIndex = colorWheel.indexOf(this.selectedDieColor);
+        const newIndex = (currentIndex + favorCost) % colorWheel.length;
+        const newColor = colorWheel[newIndex];
+        
+        this.showMessage(
+          `Die will be recolored from ${this.selectedDieColor} to ${newColor} when used (${favorCost} favor will be spent)`,
+        );
+        this.renderGameState();
+        // Update available moves since die color intention changed
+        this.highlightAvailableMoves();
+      } else {
+        this.showMessage("Cannot set recoloring intention");
+      }
     }
   }
 
@@ -899,6 +926,62 @@ export class GameController {
         messageContainer.style.display = "none";
       }, 3000);
     }
+  }
+
+  private renderRecolorOptions(player: Player): string {
+    if (!this.selectedDieColor) return "";
+
+    const colorWheel: HexColor[] = ["black", "pink", "blue", "yellow", "green", "red"];
+    const currentIndex = colorWheel.indexOf(this.selectedDieColor);
+    
+    if (currentIndex === -1) return "";
+
+    let options = `
+      <div class="recolor-section" style="margin-top: 1rem;">
+        <h4>Recolor Die (Favor will be spent when die is used)</h4>
+        <p style="font-size: 0.9rem; opacity: 0.8;">Color wheel: black → pink → blue → yellow → green → red → black</p>
+        <div class="recolor-options" style="margin-top: 0.5rem;">
+    `;
+
+    // Add "No Recolor" option
+    const hasRecolorIntention = player.recoloredDice && player.recoloredDice[this.selectedDieColor];
+    options += `
+      <div class="recolor-option" style="margin-bottom: 0.5rem;">
+        <label style="display: flex; align-items: center; gap: 0.5rem;">
+          <input type="radio" name="recolorOption" value="0" ${
+            !hasRecolorIntention ? 'checked' : ''
+          } data-recolor-favor="0">
+          <span class="color-swatch" style="background-color: ${this.getColorHex(this.selectedDieColor)}"></span>
+          Keep ${this.selectedDieColor} (0 favor)
+        </label>
+      </div>
+    `;
+
+    // Add recolor options
+    for (let favorCost = 1; favorCost <= Math.min(player.favor, 5); favorCost++) {
+      const newIndex = (currentIndex + favorCost) % colorWheel.length;
+      const newColor = colorWheel[newIndex];
+      const isSelected = hasRecolorIntention && player.recoloredDice[this.selectedDieColor].favorCost === favorCost;
+      
+      options += `
+        <div class="recolor-option" style="margin-bottom: 0.5rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem;">
+            <input type="radio" name="recolorOption" value="${favorCost}" ${
+              isSelected ? 'checked' : ''
+            } data-recolor-favor="${favorCost}">
+            <span class="color-swatch" style="background-color: ${this.getColorHex(newColor)}"></span>
+            Recolor to ${newColor} (${favorCost} favor)
+          </label>
+        </div>
+      `;
+    }
+
+    options += `
+        </div>
+      </div>
+    `;
+
+    return options;
   }
 
   private showGameOver(
