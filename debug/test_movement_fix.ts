@@ -32,7 +32,13 @@ console.log("\nAvailable moves:", availableMoves.length);
 
 // Test reachability logic directly
 console.log("\n=== Testing Reachability Logic ===");
-const reachableTiles = (engine as OracleGameEngine & { getReachableSeaTiles: (q: number, r: number, maxSteps: number) => { q: number; r: number; color: HexColor }[] }).getReachableSeaTiles(
+const reachableTiles = (engine as OracleGameEngine & {
+  getReachableSeaTiles: (
+    q: number,
+    r: number,
+    maxSteps: number,
+  ) => { q: number; r: number; color: HexColor }[];
+}).getReachableSeaTiles(
   player.shipPosition.q,
   player.shipPosition.r,
   3,
@@ -48,10 +54,17 @@ const allSeaTiles = gameState.map.getCellsByTerrain("sea");
 console.log("Total sea tiles on map:", allSeaTiles.length);
 
 // Find sea tiles that are within 3 hexes straight-line distance but not reachable
-const unreachableWithinRange: { q: number; r: number; color: HexColor; straightLineDistance: number }[] = [];
+const unreachableWithinRange: {
+  q: number;
+  r: number;
+  color: HexColor;
+  straightLineDistance: number;
+}[] = [];
 
 for (const seaTile of allSeaTiles) {
-  const straightLineDistance = (engine as OracleGameEngine & { hexDistance: (q1: number, r1: number, q2: number, r2: number) => number }).hexDistance(
+  const straightLineDistance = (engine as OracleGameEngine & {
+    hexDistance: (q1: number, r1: number, q2: number, r2: number) => number;
+  }).hexDistance(
     player.shipPosition.q,
     player.shipPosition.r,
     seaTile.q,

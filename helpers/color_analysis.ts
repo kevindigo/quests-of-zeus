@@ -1,4 +1,9 @@
-import { getMapStatistics, HexMap, type HexCell, type HexColor } from "./src/hexmap.ts";
+import {
+  getMapStatistics,
+  type HexCell,
+  type HexColor,
+  HexMap,
+} from "./src/hexmap.ts";
 
 /**
  * Test to analyze the distribution of colors across sea tiles
@@ -9,10 +14,20 @@ function testSeaColorDistribution(): void {
   const colorStats: Record<
     HexColor,
     { min: number; max: number; total: number; counts: number[] }
-  > = {} as Record<HexColor, { min: number; max: number; total: number; counts: number[] }>;
+  > = {} as Record<
+    HexColor,
+    { min: number; max: number; total: number; counts: number[] }
+  >;
 
   // Initialize stats for each color
-  const colors: HexColor[] = ["red", "pink", "blue", "black", "green", "yellow"];
+  const colors: HexColor[] = [
+    "red",
+    "pink",
+    "blue",
+    "black",
+    "green",
+    "yellow",
+  ];
   for (const color of colors) {
     colorStats[color] = {
       min: Infinity,
@@ -108,7 +123,10 @@ function testSeaColorDistribution(): void {
 /**
  * Count adjacent sea hexes with the same color
  */
-function countAdjacentSameColorSeaHexes(map: HexMap, grid: HexCell[][]): number {
+function countAdjacentSameColorSeaHexes(
+  map: HexMap,
+  grid: HexCell[][],
+): number {
   let conflicts = 0;
   const processedPairs = new Set<string>();
 

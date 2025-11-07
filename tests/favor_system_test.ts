@@ -63,25 +63,35 @@ Deno.test("Spend Die for Favor - basic functionality", () => {
 
   // Start in oracle phase, roll dice to get to action phase
   engine.rollOracleDice(1);
-  
+
   const initialFavor = player1.favor;
   const initialDiceCount = player1.oracleDice.length;
-  
+
   // Spend a die for favor
   const dieColor = player1.oracleDice[0];
-  
+
   // Count how many dice of this color the player has before spending
-  const initialColorCount = player1.oracleDice.filter(color => color === dieColor).length;
-  
+  const initialColorCount =
+    player1.oracleDice.filter((color) => color === dieColor).length;
+
   const success = engine.spendDieForFavor(1, dieColor);
-  
+
   assert(success, "Should successfully spend die for favor");
   assertEquals(player1.favor, initialFavor + 2, "Should gain 2 favor");
-  assertEquals(player1.oracleDice.length, initialDiceCount - 1, "Should consume one die");
-  
+  assertEquals(
+    player1.oracleDice.length,
+    initialDiceCount - 1,
+    "Should consume one die",
+  );
+
   // Check that the number of dice of the spent color decreased by 1
-  const finalColorCount = player1.oracleDice.filter(color => color === dieColor).length;
-  assertEquals(finalColorCount, initialColorCount - 1, "Should have one less die of the spent color");
+  const finalColorCount =
+    player1.oracleDice.filter((color) => color === dieColor).length;
+  assertEquals(
+    finalColorCount,
+    initialColorCount - 1,
+    "Should have one less die of the spent color",
+  );
 });
 
 Deno.test("Spend Die for Favor - invalid scenarios", () => {
@@ -97,10 +107,17 @@ Deno.test("Spend Die for Favor - invalid scenarios", () => {
 
   // Roll dice to get to action phase
   engine.rollOracleDice(1);
-  
+
   // Try to spend a die the player doesn't have (should fail)
   // Use a color that's definitely not in the player's dice by checking all possible colors
-  const allColors: HexColor[] = ["red", "pink", "blue", "black", "green", "yellow"];
+  const allColors: HexColor[] = [
+    "red",
+    "pink",
+    "blue",
+    "black",
+    "green",
+    "yellow",
+  ];
   let unavailableColor: HexColor = "red"; // Default fallback
   for (const color of allColors) {
     if (!player1.oracleDice.includes(color)) {
@@ -108,17 +125,21 @@ Deno.test("Spend Die for Favor - invalid scenarios", () => {
       break;
     }
   }
-  
+
   // If somehow all colors are present (shouldn't happen with 3 dice), use a made-up color
   // But since we can't use non-HexColor types, we'll just use the first color and accept it might fail
   // This is extremely unlikely with only 3 dice out of 6 colors
-  
+
   const fail2 = engine.spendDieForFavor(1, unavailableColor);
   assert(!fail2, "Should not be able to spend die player doesn't have");
-  
+
   // Verify favor and dice count didn't change
   assertEquals(player1.favor, 3, "Favor should not change on failed spend");
-  assertEquals(player1.oracleDice.length, 3, "Dice count should not change on failed spend");
+  assertEquals(
+    player1.oracleDice.length,
+    3,
+    "Dice count should not change on failed spend",
+  );
 });
 
 Deno.test("Spend Die for Favor - turn continues after spending", () => {
@@ -130,19 +151,27 @@ Deno.test("Spend Die for Favor - turn continues after spending", () => {
 
   // Roll dice to get to action phase
   engine.rollOracleDice(1);
-  
+
   const initialDiceCount = player1.oracleDice.length;
-  
+
   // Spend one die for favor
   const dieColor = player1.oracleDice[0];
   const success = engine.spendDieForFavor(1, dieColor);
-  
+
   assert(success, "Should successfully spend die for favor");
-  
+
   // Verify turn is still in action phase and player can use remaining dice
   const gameState = engine.getGameState();
-  assertEquals(gameState.phase, "action", "Should still be in action phase after spending die");
-  assertEquals(player1.oracleDice.length, initialDiceCount - 1, "Should have remaining dice");
+  assertEquals(
+    gameState.phase,
+    "action",
+    "Should still be in action phase after spending die",
+  );
+  assertEquals(
+    player1.oracleDice.length,
+    initialDiceCount - 1,
+    "Should have remaining dice",
+  );
   assert(player1.oracleDice.length > 0, "Should have dice remaining to use");
 });
 

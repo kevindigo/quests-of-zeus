@@ -547,6 +547,74 @@ export class OracleGameEngine {
   }
 
   /**
+   * Recolor a die during the action phase
+   * For each favor spent, advance the color one position along the color wheel
+   * Color wheel: black → pink → blue → yellow → green → red → black
+   */
+  public recolorDie(
+    playerId: number,
+    dieColor: HexColor,
+    favorSpent: number,
+  ): boolean {
+    if (!this.state) {
+      throw new Error("Game not initialized. Call initializeGame() first.");
+    }
+    const player = this.state.players.find((p) => p.id === playerId);
+    if (!player || this.state.phase !== "action") {
+      return false;
+    }
+
+    // Check if player has the specified die
+    if (!player.oracleDice.includes(dieColor)) {
+      return false;
+    }
+
+    // Check if player has enough favor
+    if (player.favor < favorSpent) {
+      return false;
+    }
+
+    // Define the color wheel order
+    const colorWheel: HexColor[] = [
+      "black",
+      "pink",
+      "blue",
+      "yellow",
+      "green",
+      "red",
+    ];
+
+    // Find current color position
+    const currentIndex = colorWheel.indexOf(dieColor);
+    if (currentIndex === -1) {
+      return false; // Invalid color
+    }
+
+    // Calculate new color position (wrapping around)
+    const newIndex = (currentIndex + favorSpent) % colorWheel.length;
+    const newColor = colorWheel[newIndex];
+
+    // Replace the die with the new color
+    const dieIndex = player.oracleDice.indexOf(dieColor);
+    if (dieIndex !== -1) {
+      player.oracleDice[dieIndex] = newColor;
+    } else {
+      // This should not happen since we checked above, but log for debugging
+      console.warn(
+        `Attempted to recolor die ${dieColor} but it was not found in player's oracle dice: [${
+          player.oracleDice.join(", ")
+        }]`,
+      );
+      return false;
+    }
+
+    // Spend favor
+    player.favor -= favorSpent;
+
+    return true;
+  }
+
+  /**
    * Check if a player can place a statue on the current city
    */
   public canPlaceStatueOnCity(playerId: number): boolean {
@@ -868,7 +936,12 @@ export class OracleGameEngine {
     }
 
     const currentPos = player.shipPosition;
-    const availableMoves: { q: number; r: number; dieColor: HexColor; favorCost: number }[] = [];
+    const availableMoves: {
+      q: number;
+      r: number;
+      dieColor: HexColor;
+      favorCost: number;
+    }[] = [];
     const maxFavorToSpend = Math.min(player.favor, 5); // Cap at 5 favor to prevent excessive computation
 
     // Check moves for each possible favor spending amount
@@ -889,7 +962,8 @@ export class OracleGameEngine {
         ) {
           // Only add if this move isn't already available with less favor
           const existingMove = availableMoves.find((move) =>
-            move.q === seaTile.q && move.r === seaTile.r && move.dieColor === seaTile.color
+            move.q === seaTile.q && move.r === seaTile.r &&
+            move.dieColor === seaTile.color
           );
           if (!existingMove) {
             availableMoves.push({

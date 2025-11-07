@@ -1,7 +1,7 @@
 // Comprehensive test for the statue system
 
 import { assert, assertEquals } from "@std/assert";
-import { HexMap, type HexColor } from "../src/hexmap.ts";
+import { type HexColor, HexMap } from "../src/hexmap.ts";
 import { OracleGameEngine } from "../src/game-engine.ts";
 
 Deno.test("StatueSystem - HexMap statue operations", () => {
@@ -95,7 +95,14 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
   );
   if (emptySlotIndex !== -1) {
     // Find a color different from the city
-    const availableColors: HexColor[] = ["red", "blue", "green", "yellow", "pink", "black"];
+    const availableColors: HexColor[] = [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "pink",
+      "black",
+    ];
     const wrongColor = availableColors.find((color) =>
       color !== gameCity.color
     ) || "red";

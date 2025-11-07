@@ -121,9 +121,9 @@ Deno.test("MonsterDistribution - statistical analysis", () => {
     engine.initializeGame();
     const monsterHexes = engine.getMonsterHexes();
 
-    const monstersPerHex = monsterHexes.map((hex: { monsterColors: string[] }) =>
-      hex.monsterColors.length
-    );
+    const monstersPerHex = monsterHexes.map((
+      hex: { monsterColors: string[] },
+    ) => hex.monsterColors.length);
     const pattern = monstersPerHex.sort().join("");
     distributionStats.distributionPatterns.set(
       pattern,

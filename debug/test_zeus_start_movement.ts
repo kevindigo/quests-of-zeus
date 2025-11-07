@@ -35,7 +35,13 @@ adjacentCells.forEach((cell) => {
 
 // Test reachability logic directly
 console.log("\n=== Testing Reachability from Zeus ===");
-const reachableTiles = (engine as OracleGameEngine & { getReachableSeaTiles: (q: number, r: number, maxSteps: number) => { q: number; r: number; color: HexColor }[] }).getReachableSeaTiles(
+const reachableTiles = (engine as OracleGameEngine & {
+  getReachableSeaTiles: (
+    q: number,
+    r: number,
+    maxSteps: number,
+  ) => { q: number; r: number; color: HexColor }[];
+}).getReachableSeaTiles(
   player.shipPosition.q,
   player.shipPosition.r,
   3,
@@ -43,11 +49,15 @@ const reachableTiles = (engine as OracleGameEngine & { getReachableSeaTiles: (q:
 console.log("Reachable sea tiles from Zeus:", reachableTiles.length);
 
 // Group by steps for debugging
-const tilesBySteps: { [steps: number]: { q: number; r: number; color: HexColor }[] } = {};
+const tilesBySteps: {
+  [steps: number]: { q: number; r: number; color: HexColor }[];
+} = {};
 reachableTiles.forEach((tile) => {
   // For now, we don't track steps in the return value, but we can estimate
   // This is just for debugging
-  const distance = (engine as OracleGameEngine & { hexDistance: (q1: number, r1: number, q2: number, r2: number) => number }).hexDistance(
+  const distance = (engine as OracleGameEngine & {
+    hexDistance: (q1: number, r1: number, q2: number, r2: number) => number;
+  }).hexDistance(
     player.shipPosition.q,
     player.shipPosition.r,
     tile.q,

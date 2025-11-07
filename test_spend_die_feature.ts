@@ -27,7 +27,10 @@ console.log("  Favor:", player1.favor);
 console.log("  Dice:", player1.oracleDice);
 console.log("  Phase:", engine.getGameState().phase);
 
-if (success && player1.favor === 5 && player1.oracleDice.length === 2 && engine.getGameState().phase === "action") {
+if (
+  success && player1.favor === 5 && player1.oracleDice.length === 2 &&
+  engine.getGameState().phase === "action"
+) {
   console.log("\n✅ Feature working correctly!");
 } else {
   console.log("\n❌ Feature not working as expected!");

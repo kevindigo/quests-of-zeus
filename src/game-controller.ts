@@ -4,7 +4,7 @@
 import { OracleGameEngine } from "./game-engine.ts";
 import { HexMapSVG } from "./hexmap-svg.ts";
 import type { HexColor } from "./hexmap.ts";
-import type { GameState, Player, CubeHex, MonsterHex } from "./game-engine.ts";
+import type { CubeHex, GameState, MonsterHex, Player } from "./game-engine.ts";
 
 // Type declarations for DOM APIs (for Deno type checking)
 
@@ -48,6 +48,7 @@ export class GameController {
               <li>Roll oracle dice to determine movement options</li>
               <li>Move your ship across the sea and land hexes</li>
               <li>Spend favor to extend your movement range (1 extra hex per favor spent)</li>
+              <li>Recolor dice by spending favor (1 favor per color advancement)</li>
               <li>Collect cubes and statues, fight monsters, and build temples</li>
               <li>Complete quests to win the game</li>
               <li>First player to complete 3 of each quest type (Temple Offering, Monster, Foundation, Cloud) wins!</li>
@@ -67,6 +68,8 @@ export class GameController {
               <li><strong>Oracle Phase:</strong> Roll 3 colored dice</li>
               <li><strong>Action Phase:</strong> First select a die, then perform actions (move, collect offerings, fight monsters, etc.)</li>
               <li>You can change your selected die before making a move</li>
+              <li>You can recolor dice by spending favor (1 favor per color advancement)</li>
+              <li>Color wheel: black → pink → blue → yellow → green → red → black</li>
             </ul>
           </div>
         </div>
@@ -131,7 +134,8 @@ export class GameController {
       this.getColorHex(_currentPlayer.color)
     }"></span>
             ${
-      _currentPlayer.color.charAt(0).toUpperCase() + _currentPlayer.color.slice(1)
+      _currentPlayer.color.charAt(0).toUpperCase() +
+      _currentPlayer.color.slice(1)
     }
           </div>
           <div><strong>Completed Quests:</strong> ${_currentPlayer.completedQuests}/12</div>
@@ -374,7 +378,9 @@ export class GameController {
 
   private highlightAvailableMoves(): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
-    const availableMoves = this.gameEngine.getAvailableMovesWithFavor(currentPlayer.id);
+    const availableMoves = this.gameEngine.getAvailableMovesWithFavor(
+      currentPlayer.id,
+    );
 
     // Clear previous highlights
     document.querySelectorAll(".available-move").forEach((cell) => {
@@ -454,16 +460,14 @@ export class GameController {
             }"></span> ${this.selectedDieColor}</p>`;
 
           // Show favor status
-          actions +=
-            `<p>Available favor: ${currentPlayer.favor}</p>`;
+          actions += `<p>Available favor: ${currentPlayer.favor}</p>`;
 
           // Movement is always available during action phase with a selected die
           if (this.isFavorMode) {
             actions +=
               `<p><strong>Favor Mode Active:</strong> Ready to spend ${this.selectedFavorSpent} favor. Click a silver-highlighted hex to confirm move.</p>`;
           } else {
-            actions +=
-              `<p>Click on highlighted hexes to move your ship:</p>
+            actions += `<p>Click on highlighted hexes to move your ship:</p>
                <ul style="margin-left: 1rem;">
                  <li>White highlights: Normal range (3 hexes)</li>
                  <li>Silver highlights: Extended range (costs favor)</li>
@@ -473,6 +477,24 @@ export class GameController {
           // Spend die for favor action is always available during action phase with a selected die
           actions +=
             `<button id="spendDieForFavor" class="action-btn">Spend Die for 2 Favor</button>`;
+
+          // Recolor die action is available if player has favor
+          if (currentPlayer.favor > 0) {
+            actions += `<div style="margin-top: 1rem;">
+                 <h4>Recolor Die</h4>
+                 <p>Spend favor to advance die color along the wheel:</p>
+                 <p style="font-size: 0.9rem; opacity: 0.8;">black → pink → blue → yellow → green → red → black</p>
+                 <div class="recolor-options" style="margin-top: 0.5rem;">
+                   ${
+              [1, 2, 3, 4, 5].map((favorCost) =>
+                currentPlayer.favor >= favorCost
+                  ? `<button class="action-btn secondary" data-recolor-favor="${favorCost}">Recolor +${favorCost} (${favorCost} favor)</button>`
+                  : `<button class="action-btn secondary" disabled>Recolor +${favorCost} (${favorCost} favor)</button>`
+              ).join("")
+            }
+                 </div>
+               </div>`;
+          }
 
           if (currentCell?.terrain === "cubes") {
             actions +=
@@ -571,13 +593,13 @@ export class GameController {
           if (targetMove.favorCost > 0 && !this.isFavorMode) {
             // Ask player if they want to spend favor
             const confirmSpend = confirm(
-              `This move requires spending ${targetMove.favorCost} favor to reach. Do you want to spend favor to move here?`
+              `This move requires spending ${targetMove.favorCost} favor to reach. Do you want to spend favor to move here?`,
             );
             if (confirmSpend) {
               this.selectedFavorSpent = targetMove.favorCost;
               this.isFavorMode = true;
               this.showMessage(
-                `Ready to move! Will spend ${targetMove.favorCost} favor. Click the hex again to confirm.`
+                `Ready to move! Will spend ${targetMove.favorCost} favor. Click the hex again to confirm.`,
               );
               return;
             } else {
@@ -594,7 +616,8 @@ export class GameController {
             this.selectedFavorSpent,
           );
           if (success) {
-            let message = `Ship moved to (${q}, ${r}) using ${this.selectedDieColor} die`;
+            let message =
+              `Ship moved to (${q}, ${r}) using ${this.selectedDieColor} die`;
             if (this.selectedFavorSpent > 0) {
               message += ` and ${this.selectedFavorSpent} favor`;
             }
@@ -653,6 +676,11 @@ export class GameController {
         if (dieColor) {
           this.selectDie(dieColor);
         }
+      } else if (target.hasAttribute("data-recolor-favor")) {
+        const favorCost = parseInt(
+          target.getAttribute("data-recolor-favor") || "0",
+        );
+        this.recolorDie(favorCost);
       }
     });
   }
@@ -776,7 +804,7 @@ export class GameController {
 
   private spendDieForFavor(): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
-    
+
     if (!this.selectedDieColor) {
       this.showMessage("Please select a die first!");
       return;
@@ -793,6 +821,35 @@ export class GameController {
       this.renderGameState();
     } else {
       this.showMessage("Cannot spend die for favor at this time");
+    }
+  }
+
+  private recolorDie(favorSpent: number): void {
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+
+    if (!this.selectedDieColor) {
+      this.showMessage("Please select a die first!");
+      return;
+    }
+
+    const success = this.gameEngine.recolorDie(
+      currentPlayer.id,
+      this.selectedDieColor,
+      favorSpent,
+    );
+    if (success) {
+      // Get the new die color to display in the message
+      const newDieColor = currentPlayer.oracleDice.find((color) =>
+        color !== this.selectedDieColor
+      ) || this.selectedDieColor;
+      this.showMessage(
+        `Recolored die from ${this.selectedDieColor} to ${newDieColor} for ${favorSpent} favor!`,
+      );
+      // Update the selected die color to the new color
+      this.selectedDieColor = newDieColor;
+      this.renderGameState();
+    } else {
+      this.showMessage("Cannot recolor die at this time");
     }
   }
 
@@ -824,7 +881,7 @@ export class GameController {
     // Call the game engine's endTurn method to advance to the next player
     // Note: This will reset oracle dice and advance the current player index
     this.gameEngine.endTurn();
-    
+
     this.showMessage(
       "Turn ended. Next player's turn begins.",
     );
