@@ -23,6 +23,7 @@ export interface Player {
     cloud: number;
   };
   oracleDice: HexColor[]; // Current oracle dice values
+  favor: number; // Player's favor resource
 }
 
 export interface CubeHex {
@@ -124,11 +125,14 @@ export class OracleGameEngine {
       : { q: 0, r: 0 };
 
     // Initialize players (2-4 players)
-    const players: Player[] = [
-      {
-        id: 1,
-        name: "Player 1",
-        color: COLORS.RED,
+    const playerColors = [COLORS.RED, COLORS.BLUE, COLORS.GREEN, COLORS.YELLOW];
+    const players: Player[] = [];
+    
+    for (let i = 0; i < 2; i++) { // Start with 2 players for now
+      players.push({
+        id: i + 1,
+        name: `Player ${i + 1}`,
+        color: playerColors[i],
         shipPosition: zeusPosition, // All players start on Zeus hex
         storage: createEmptyStorage(),
         completedQuests: 0,
@@ -139,23 +143,9 @@ export class OracleGameEngine {
           cloud: 0,
         },
         oracleDice: [],
-      },
-      {
-        id: 2,
-        name: "Player 2",
-        color: COLORS.BLUE,
-        shipPosition: zeusPosition, // All players start on Zeus hex
-        storage: createEmptyStorage(),
-        completedQuests: 0,
-        completedQuestTypes: {
-          temple_offering: 0,
-          monster: 0,
-          foundation: 0,
-          cloud: 0,
-        },
-        oracleDice: [],
-      },
-    ];
+        favor: 3 + i, // First player gets 3 favor, each subsequent gets 1 more
+      });
+    }
 
     // Initialize cube hexes with Offering cubes
     const cubeHexes = this.initializeOfferingCubes(map, players.length);

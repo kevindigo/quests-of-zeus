@@ -6,14 +6,6 @@ import { HexMapSVG } from "./hexmap-svg.ts";
 import type { HexColor } from "./hexmap.ts";
 
 // Type declarations for DOM APIs (for Deno type checking)
-declare global {
-  const document: Document;
-  interface HTMLElementTagNameMap {
-    "div": HTMLDivElement;
-    "button": HTMLButtonElement;
-    "span": HTMLSpanElement;
-  }
-}
 
 export class GameController {
   private gameEngine: OracleGameEngine;
@@ -139,6 +131,7 @@ export class GameController {
     }
           </div>
           <div><strong>Completed Quests:</strong> ${currentPlayer.completedQuests}/12</div>
+          <div><strong>Favor:</strong> ${currentPlayer.favor}</div>
         </div>
         <div class="quest-progress">
           <h4>Quest Progress</h4>
@@ -708,11 +701,9 @@ export class GameController {
     // Clear selected die when ending turn
     this.selectedDieColor = null;
     
-    // Call the game engine's endTurn method to properly advance to next player
-    this.gameEngine.endTurn();
-    
-    const nextPlayer = this.gameEngine.getCurrentPlayer();
-    this.showMessage(`Turn ended. ${nextPlayer.name}'s turn begins.`);
+    // Note: Turns are automatically advanced by the game engine when actions are completed
+    // This UI method just clears the selection and shows a message
+    this.showMessage("Turn ended. Next player's turn begins when they take an action.");
 
     this.renderGameState();
   }
