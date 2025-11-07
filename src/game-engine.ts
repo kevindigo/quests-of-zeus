@@ -1017,6 +1017,9 @@ export class OracleGameEngine {
       dieColor: HexColor;
       favorCost: number;
     }[] = [];
+    
+    // Calculate maximum favor that can be spent for extra range moves
+    // Must account for recoloring costs that will be subtracted when the die is used
     const maxFavorToSpend = Math.min(player.favor, 5); // Cap at 5 favor to prevent excessive computation
 
     // Check moves for each possible favor spending amount
@@ -1037,18 +1040,27 @@ export class OracleGameEngine {
           // Check if player has a die that matches this sea tile color, considering recoloring intentions
           const matchingDie = this.getMatchingDieForSeaTile(player, seaTile.color);
           if (matchingDie) {
-            // Only add if this move isn't already available with less favor
-            const existingMove = availableMoves.find((move) =>
-              move.q === seaTile.q && move.r === seaTile.r &&
-              move.dieColor === seaTile.color
-            );
-            if (!existingMove) {
-              availableMoves.push({
-                q: seaTile.q,
-                r: seaTile.r,
-                dieColor: seaTile.color,
-                favorCost: favorSpent,
-              });
+            // Calculate the total favor cost including any recoloring
+            let totalFavorCost = favorSpent;
+            if (player.recoloredDice && player.recoloredDice[matchingDie]) {
+              totalFavorCost += player.recoloredDice[matchingDie].favorCost;
+            }
+            
+            // Only show moves that the player can actually afford
+            if (totalFavorCost <= player.favor) {
+              // Only add if this move isn't already available with less favor
+              const existingMove = availableMoves.find((move) =>
+                move.q === seaTile.q && move.r === seaTile.r &&
+                move.dieColor === seaTile.color
+              );
+              if (!existingMove) {
+                availableMoves.push({
+                  q: seaTile.q,
+                  r: seaTile.r,
+                  dieColor: seaTile.color,
+                  favorCost: favorSpent,
+                });
+              }
             }
           }
         }

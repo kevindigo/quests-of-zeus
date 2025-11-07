@@ -1,7 +1,3 @@
-== Make testing easier ==
-
-- free: die change
-
 == Prerequisite ==
 
 - setup: shield
