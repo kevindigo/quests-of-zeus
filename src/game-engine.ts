@@ -499,6 +499,43 @@ export class OracleGameEngine {
   }
 
   /**
+   * Spend any die to gain 2 favor during the action phase
+   */
+  public spendDieForFavor(playerId: number, dieColor: HexColor): boolean {
+    if (!this.state) {
+      throw new Error("Game not initialized. Call initializeGame() first.");
+    }
+    const player = this.state.players.find((p) => p.id === playerId);
+    if (!player || this.state.phase !== "action") {
+      return false;
+    }
+
+    // Check if player has the specified die
+    if (!player.oracleDice.includes(dieColor)) {
+      return false;
+    }
+
+    // Consume the oracle die
+    const dieIndex = player.oracleDice.indexOf(dieColor);
+    if (dieIndex !== -1) {
+      player.oracleDice.splice(dieIndex, 1);
+    } else {
+      // This should not happen since we checked above, but log for debugging
+      console.warn(
+        `Attempted to consume die ${dieColor} but it was not found in player's oracle dice: [${
+          player.oracleDice.join(", ")
+        }]`,
+      );
+      return false;
+    }
+
+    // Gain 2 favor
+    player.favor += 2;
+
+    return true;
+  }
+
+  /**
    * Check if a player can place a statue on the current city
    */
   public canPlaceStatueOnCity(playerId: number): boolean {

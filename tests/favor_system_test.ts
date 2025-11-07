@@ -2,6 +2,7 @@
 
 import { assert, assertEquals } from "@std/assert";
 import { OracleGameEngine } from "../src/game-engine.ts";
+import type { HexColor } from "../src/hexmap.ts";
 
 Deno.test("Favor System - player initialization", () => {
   const engine = new OracleGameEngine();
@@ -51,6 +52,91 @@ Deno.test("Favor System - favor progression pattern", () => {
       `Player ${i + 1} should have 1 more favor than Player ${i}`,
     );
   }
+});
+
+Deno.test("Spend Die for Favor - basic functionality", () => {
+  const engine = new OracleGameEngine();
+  engine.initializeGame();
+
+  const player1 = engine.getPlayer(1);
+  assertExists(player1);
+
+  // Start in oracle phase, roll dice to get to action phase
+  engine.rollOracleDice(1);
+  
+  const initialFavor = player1.favor;
+  const initialDiceCount = player1.oracleDice.length;
+  
+  // Spend a die for favor
+  const dieColor = player1.oracleDice[0];
+  const success = engine.spendDieForFavor(1, dieColor);
+  
+  assert(success, "Should successfully spend die for favor");
+  assertEquals(player1.favor, initialFavor + 2, "Should gain 2 favor");
+  assertEquals(player1.oracleDice.length, initialDiceCount - 1, "Should consume one die");
+  assert(!player1.oracleDice.includes(dieColor), "Spent die should be removed from player's dice");
+});
+
+Deno.test("Spend Die for Favor - invalid scenarios", () => {
+  const engine = new OracleGameEngine();
+  engine.initializeGame();
+
+  const player1 = engine.getPlayer(1);
+  assertExists(player1);
+
+  // Try to spend die in oracle phase (should fail)
+  const fail1 = engine.spendDieForFavor(1, "red");
+  assert(!fail1, "Should not be able to spend die in oracle phase");
+
+  // Roll dice to get to action phase
+  engine.rollOracleDice(1);
+  
+  // Try to spend a die the player doesn't have (should fail)
+  // Use a color that's definitely not in the player's dice by checking all possible colors
+  const allColors: HexColor[] = ["red", "pink", "blue", "black", "green", "yellow"];
+  let unavailableColor: HexColor = "red"; // Default fallback
+  for (const color of allColors) {
+    if (!player1.oracleDice.includes(color)) {
+      unavailableColor = color;
+      break;
+    }
+  }
+  
+  // If somehow all colors are present (shouldn't happen with 3 dice), use a made-up color
+  // But since we can't use non-HexColor types, we'll just use the first color and accept it might fail
+  // This is extremely unlikely with only 3 dice out of 6 colors
+  
+  const fail2 = engine.spendDieForFavor(1, unavailableColor);
+  assert(!fail2, "Should not be able to spend die player doesn't have");
+  
+  // Verify favor and dice count didn't change
+  assertEquals(player1.favor, 3, "Favor should not change on failed spend");
+  assertEquals(player1.oracleDice.length, 3, "Dice count should not change on failed spend");
+});
+
+Deno.test("Spend Die for Favor - turn continues after spending", () => {
+  const engine = new OracleGameEngine();
+  engine.initializeGame();
+
+  const player1 = engine.getPlayer(1);
+  assertExists(player1);
+
+  // Roll dice to get to action phase
+  engine.rollOracleDice(1);
+  
+  const initialDiceCount = player1.oracleDice.length;
+  
+  // Spend one die for favor
+  const dieColor = player1.oracleDice[0];
+  const success = engine.spendDieForFavor(1, dieColor);
+  
+  assert(success, "Should successfully spend die for favor");
+  
+  // Verify turn is still in action phase and player can use remaining dice
+  const gameState = engine.getGameState();
+  assertEquals(gameState.phase, "action", "Should still be in action phase after spending die");
+  assertEquals(player1.oracleDice.length, initialDiceCount - 1, "Should have remaining dice");
+  assert(player1.oracleDice.length > 0, "Should have dice remaining to use");
 });
 
 // Helper function for assertions

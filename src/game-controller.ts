@@ -444,6 +444,10 @@ export class GameController {
           actions +=
             `<p>Click on an adjacent highlighted hex to move your ship</p>`;
 
+          // Spend die for favor action is always available during action phase with a selected die
+          actions +=
+            `<button id="spendDieForFavor" class="action-btn">Spend Die for 2 Favor</button>`;
+
           if (currentCell?.terrain === "cubes") {
             actions +=
               `<button id="collectOffering" class="action-btn">Collect Offering</button>`;
@@ -582,6 +586,8 @@ export class GameController {
         this.completeCloudQuest();
       } else if (target.id === "placeStatue") {
         this.placeStatueOnCity();
+      } else if (target.id === "spendDieForFavor") {
+        this.spendDieForFavor();
       } else if (target.id === "endTurn") {
         this.endTurn();
       } else if (target.id === "clearDieSelection") {
@@ -709,6 +715,28 @@ export class GameController {
       this.renderGameState();
     } else {
       this.showMessage("Cannot place statue on this city");
+    }
+  }
+
+  private spendDieForFavor(): void {
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    
+    if (!this.selectedDieColor) {
+      this.showMessage("Please select a die first!");
+      return;
+    }
+
+    const success = this.gameEngine.spendDieForFavor(
+      currentPlayer.id,
+      this.selectedDieColor,
+    );
+    if (success) {
+      this.showMessage(`Spent ${this.selectedDieColor} die to gain 2 favor!`);
+      // Don't clear selected die - player can continue using other dice
+      // The spent die will be automatically removed from the display
+      this.renderGameState();
+    } else {
+      this.showMessage("Cannot spend die for favor at this time");
     }
   }
 
