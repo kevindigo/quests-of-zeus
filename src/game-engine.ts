@@ -573,46 +573,45 @@ export class OracleGameEngine {
     // Get all cube hexes from the map
     const cubeCells = map.getCellsByTerrain("cubes");
 
-    // Shuffle the cube hexes for random distribution
-    const shuffledCubeHexes = [...cubeCells];
-    this.shuffleArray(shuffledCubeHexes);
-
-    // Create a pool of colors to distribute
-    const colorPool: HexColor[] = [];
-
-    // Add playerCount copies of each color to the pool
-    for (let i = 0; i < playerCount; i++) {
-      colorPool.push(...ALL_COLORS);
+    // We should have exactly 6 cube hexes
+    if (cubeCells.length !== 6) {
+      console.warn(`Expected 6 cube hexes but found ${cubeCells.length}`);
     }
 
-    // Shuffle the color pool for random distribution
-    this.shuffleArray(colorPool);
-
-    // Distribute colors to hexes
-    let colorIndex = 0;
-    for (const cell of shuffledCubeHexes) {
-      const cubeColors: HexColor[] = [];
-
-      // Add playerCount colors to this hex, ensuring no duplicates
-      for (let i = 0; i < playerCount && colorIndex < colorPool.length; i++) {
-        // Find the next color that isn't already on this hex
-        while (
-          colorIndex < colorPool.length &&
-          cubeColors.includes(colorPool[colorIndex])
-        ) {
-          colorIndex++;
-        }
-
-        if (colorIndex < colorPool.length) {
-          cubeColors.push(colorPool[colorIndex]);
-          colorIndex++;
-        }
-      }
-
+    // Use a Latin square approach to ensure perfect distribution
+    // Each hex gets exactly playerCount cubes, each color appears exactly playerCount times
+    // and no color appears twice on the same hex
+    
+    // Create a base pattern that ensures each color appears once in each position
+    const basePattern: HexColor[][] = [];
+    
+    // Create a shuffled copy of colors for the first hex
+    const shuffledColors = [...ALL_COLORS];
+    this.shuffleArray(shuffledColors);
+    
+    // For the first hex, use the shuffled colors
+    basePattern.push([...shuffledColors]);
+    
+    // For subsequent hexes, rotate the pattern to ensure no duplicates in columns
+    for (let i = 1; i < 6; i++) {
+      const rotated = [...basePattern[i - 1]];
+      // Rotate the array to create a Latin square
+      const first = rotated.shift();
+      if (first) rotated.push(first);
+      basePattern.push(rotated);
+    }
+    
+    // Now assign cubes to hexes based on playerCount
+    // For playerCount = 2, each hex gets the first 2 colors from its pattern
+    // For playerCount = 3, each hex gets the first 3 colors, etc.
+    for (let i = 0; i < cubeCells.length && i < 6; i++) {
+      const cell = cubeCells[i];
+      const hexColors = basePattern[i].slice(0, playerCount);
+      
       cubeHexes.push({
         q: cell.q,
         r: cell.r,
-        cubeColors,
+        cubeColors: hexColors,
       });
     }
 

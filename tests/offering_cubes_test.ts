@@ -1,67 +1,48 @@
-#!/usr/bin/env -S deno run --allow-read
-
+import { assertEquals } from "@std/assert";
 import { OracleGameEngine } from "../src/game-engine.ts";
 
-function testOfferingCubes() {
-  try {
-    const gameEngine = new OracleGameEngine();
-    const gameState = gameEngine.initializeGame();
+Deno.test("offering cubes configuration", () => {
+  const gameEngine = new OracleGameEngine();
+  const gameState = gameEngine.initializeGame();
 
-    // Check that each cube hex has exactly playerCount cubes
-    const validCubeHexes = gameState.cubeHexes.filter((ch) =>
-      ch.cubeColors.length === gameState.players.length
-    );
+  // Check that each cube hex has exactly playerCount cubes
+  const validCubeHexes = gameState.cubeHexes.filter((ch) =>
+    ch.cubeColors.length === gameState.players.length
+  );
 
-    if (validCubeHexes.length === 6) {
-      console.log(
-        // `✅ All cube hexes have exactly ${gameState.players.length} cubes`,
-      );
-    } else {
-      console.log(
-        `❌ ${validCubeHexes.length} of 6 cube hexes have valid cube configuration`,
-      );
-    }
+  assertEquals(
+    validCubeHexes.length,
+    6,
+    `Expected all 6 cube hexes to have exactly ${gameState.players.length} cubes, but found ${validCubeHexes.length} valid hexes`
+  );
 
-    // Check that all 6 colors are represented (each color should appear playerCount times)
-    const allCubeColors = gameState.cubeHexes.flatMap((ch) => ch.cubeColors);
-    const colorCounts: Record<string, number> = {};
-    allCubeColors.forEach((color) => {
-      colorCounts[color] = (colorCounts[color] || 0) + 1;
-    });
+  // Check that all 6 colors are represented (each color should appear playerCount times)
+  const allCubeColors = gameState.cubeHexes.flatMap((ch) => ch.cubeColors);
+  const colorCounts: Record<string, number> = {};
+  allCubeColors.forEach((color) => {
+    colorCounts[color] = (colorCounts[color] || 0) + 1;
+  });
 
-    const expectedColorCount = gameState.players.length;
-    const correctColorCounts = Object.values(colorCounts).filter((count) =>
-      count === expectedColorCount
-    );
+  const expectedColorCount = gameState.players.length;
+  const correctColorCounts = Object.values(colorCounts).filter((count) =>
+    count === expectedColorCount
+  );
 
-    if (correctColorCounts.length === 6) {
-      console.log(
-        // `✅ All 6 colors are represented ${expectedColorCount} times each`,
-      );
-    } else {
-      console.log(
-        `❌ Expected 6 colors each appearing ${expectedColorCount} times, found ${correctColorCounts.length} colors with correct count`,
-      );
-    }
+  assertEquals(
+    correctColorCounts.length,
+    6,
+    `Expected 6 colors each appearing ${expectedColorCount} times, but found ${correctColorCounts.length} colors with correct count`
+  );
 
-    // Check that no color appears twice on the same hex
-    const hexesWithDuplicates = gameState.cubeHexes.filter((ch) => {
-      const uniqueColors = new Set(ch.cubeColors);
-      return uniqueColors.size !== ch.cubeColors.length;
-    });
+  // Check that no color appears twice on the same hex
+  const hexesWithDuplicates = gameState.cubeHexes.filter((ch) => {
+    const uniqueColors = new Set(ch.cubeColors);
+    return uniqueColors.size !== ch.cubeColors.length;
+  });
 
-    if (hexesWithDuplicates.length === 0) {
-      // console.log("✅ No color appears twice on any island");
-    } else {
-      console.log(
-        `❌ Found ${hexesWithDuplicates.length} hexes with duplicate colors`,
-      );
-    }
-  } catch (error) {
-    console.error("❌ Error:", error);
-  }
-}
-
-if (import.meta.main) {
-  testOfferingCubes();
-}
+  assertEquals(
+    hexesWithDuplicates.length,
+    0,
+    `Found ${hexesWithDuplicates.length} hexes with duplicate colors`
+  );
+});
