@@ -1011,13 +1011,9 @@ export class HexMap {
       }
     }
 
-    // Count and log adjacent same-color sea hexes for debugging
+    // Count adjacent same-color sea hexes for debugging
     const conflicts = this.countAdjacentSameColorSeaHexes(grid);
-    if (conflicts > 0) {
-      console.log(
-        `Assigned colors to ${seaCells.length} sea hexes with ${conflicts} same-color adjacencies`,
-      );
-      }
+    // Note: conflicts are expected in some cases due to map constraints
   }
 
   /**
@@ -1300,10 +1296,8 @@ export class HexMap {
       cell.statues < 3
     ) {
       cell.statues++;
-      console.log(`Added statue to city at (${q}, ${r}). Now has ${cell.statues}/3 statues.`);
       return true;
     }
-    console.log(`Failed to add statue to city at (${q}, ${r}): cell=${cell ? "found" : "not found"}, terrain=${cell?.terrain}, statues=${cell?.statues}`);
     return false;
   }
 
@@ -1330,10 +1324,8 @@ export class HexMap {
   getStatuesOnCity(q: number, r: number): number {
     const cell = this.getCell(q, r);
     if (cell && cell.terrain === "city" && cell.statues !== undefined) {
-      console.log(`Retrieved ${cell.statues} statues from city at (${q}, ${r})`);
       return cell.statues;
     }
-    console.log(`Failed to retrieve statues from city at (${q}, ${r}): cell=${cell ? "found" : "not found"}, terrain=${cell?.terrain}, statues=${cell?.statues}`);
     return -1;
   }
 
@@ -1381,7 +1373,6 @@ export function getCurrentMap(): HexMap {
 // UI Functions
 export function generateNewMap(): HexMap {
   gameMap = new HexMap();
-  console.log("New map generated (old method)");
   return gameMap;
 }
 
