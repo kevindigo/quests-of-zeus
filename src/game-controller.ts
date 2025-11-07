@@ -4,6 +4,7 @@
 import { OracleGameEngine } from "./game-engine.ts";
 import { HexMapSVG } from "./hexmap-svg.ts";
 import type { HexColor } from "./hexmap.ts";
+import type { GameState, Player, CubeHex, MonsterHex } from "./game-engine.ts";
 
 // Type declarations for DOM APIs (for Deno type checking)
 
@@ -201,7 +202,7 @@ export class GameController {
     `;
   }
 
-  private renderMap(gameState: any): void {
+  private renderMap(gameState: GameState): void {
     const hexMapContainer = document.getElementById("hexMapSVG");
     if (!hexMapContainer) return;
 
@@ -216,11 +217,11 @@ export class GameController {
 
     try {
       // Update the hex map SVG with cube hex data
-      const cubeHexes = (gameState as any).cubeHexes || [];
+      const cubeHexes: CubeHex[] = gameState.cubeHexes || [];
       console.log("Cube hexes for rendering:", cubeHexes);
 
       // Debug: Log cube hex details
-      cubeHexes.forEach((cubeHex: any, index: number) => {
+      cubeHexes.forEach((cubeHex: CubeHex, index: number) => {
         console.log(
           `Cube hex ${index}: (${cubeHex.q}, ${cubeHex.r}) with colors:`,
           cubeHex.cubeColors,
@@ -228,11 +229,11 @@ export class GameController {
       });
 
       // Update the hex map SVG with monster hex data
-      const monsterHexes = (gameState as any).monsterHexes || [];
+      const monsterHexes: MonsterHex[] = gameState.monsterHexes || [];
       console.log("Monster hexes for rendering:", monsterHexes);
 
       // Debug: Log monster hex details
-      monsterHexes.forEach((monsterHex: any, index: number) => {
+      monsterHexes.forEach((monsterHex: MonsterHex, index: number) => {
         console.log(
           `Monster hex ${index}: (${monsterHex.q}, ${monsterHex.r}) with colors:`,
           monsterHex.monsterColors,
@@ -270,10 +271,10 @@ export class GameController {
       }
 
       // Add player markers to the map
-      this.addPlayerMarkers((gameState as any).players);
+      this.addPlayerMarkers(gameState.players);
 
       // Highlight available moves
-      if ((gameState as any).phase === "action") {
+      if (gameState.phase === "action") {
         this.highlightAvailableMoves();
       }
     } catch (error) {
@@ -286,9 +287,9 @@ export class GameController {
     }
   }
 
-  private addPlayerMarkers(players: any[]): void {
+  private addPlayerMarkers(players: Player[]): void {
     // Group players by their position
-    const playersByPosition = new Map<string, any[]>();
+    const playersByPosition = new Map<string, Player[]>();
     players.forEach((player) => {
       const positionKey = `${player.shipPosition.q},${player.shipPosition.r}`;
       if (!playersByPosition.has(positionKey)) {
@@ -298,7 +299,7 @@ export class GameController {
     });
 
     // Add markers for each position group
-    playersByPosition.forEach((playersAtPosition, positionKey) => {
+    playersByPosition.forEach((playersAtPosition: Player[], positionKey) => {
       const [q, r] = positionKey.split(",").map(Number);
       const cell = document.querySelector(`[data-q="${q}"][data-r="${r}"]`);
       if (cell) {
@@ -307,7 +308,7 @@ export class GameController {
         if (svg) {
           const point = svg.createSVGPoint();
 
-          playersAtPosition.forEach((player, index) => {
+          playersAtPosition.forEach((player: Player, index: number) => {
             // Calculate position in one of the four quadrants of the hex
             // Use smaller offsets to position dots closer to the center
             const quadrant = index % 4;
@@ -518,7 +519,7 @@ export class GameController {
       const { q, r } = customEvent.detail;
       const gameState = this.gameEngine.getGameState();
 
-      if ((gameState as any).phase === "action") {
+      if (gameState.phase === "action") {
         const currentPlayer = this.gameEngine.getCurrentPlayer();
 
         if (!this.selectedDieColor) {

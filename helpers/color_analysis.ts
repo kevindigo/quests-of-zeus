@@ -1,4 +1,4 @@
-import { getMapStatistics, HexMap, HexCell } from "./src/hexmap.ts";
+import { getMapStatistics, HexMap, HexCell, HexColor } from "./src/hexmap.ts";
 
 /**
  * Test to analyze the distribution of colors across sea tiles
@@ -7,12 +7,12 @@ import { getMapStatistics, HexMap, HexCell } from "./src/hexmap.ts";
 function testSeaColorDistribution(): void {
   const testCount = 50; // More tests for better statistics
   const colorStats: Record<
-    string,
+    HexColor,
     { min: number; max: number; total: number; counts: number[] }
-  > = {};
+  > = {} as Record<HexColor, { min: number; max: number; total: number; counts: number[] }>;
 
   // Initialize stats for each color
-  const colors = ["red", "pink", "blue", "black", "green", "yellow"];
+  const colors: HexColor[] = ["red", "pink", "blue", "black", "green", "yellow"];
   for (const color of colors) {
     colorStats[color] = {
       min: Infinity,
