@@ -15,11 +15,11 @@ export type TerrainType =
 export type HexColor =
   | "none"
   | "red"
+  | "black"
   | "pink"
   | "blue"
-  | "black"
-  | "green"
-  | "yellow";
+  | "yellow"
+  | "green";
 
 // Color constants for the 6 fundamental colors
 // These colors are used to power actions in the game
