@@ -6,7 +6,7 @@ console.log("Testing favor spending for movement range extension...\n");
 
 // Initialize game
 const engine = new OracleGameEngine();
-const gameState = engine.initializeGame();
+const _gameState = engine.initializeGame();
 
 // Get first player
 const player1 = engine.getPlayer(1)!;

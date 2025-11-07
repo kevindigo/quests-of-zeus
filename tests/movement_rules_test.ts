@@ -96,7 +96,7 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
   const player = engine.getCurrentPlayer();
 
   // Roll dice to enter action phase
-  const initialDice = engine.rollOracleDice(player.id);
+  const _initialDice = engine.rollOracleDice(player.id);
   // Store the initial dice state before movement
   const initialDiceColors = [...player.oracleDice];
   const initialDiceCount = initialDiceColors.length;

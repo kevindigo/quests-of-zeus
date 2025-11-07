@@ -20,7 +20,7 @@ function verifyZeusNeighborsSea() {
   // Get all neighbors of the Zeus cell
   const zeusNeighbors = hexMap.getNeighbors(zeusCell.q, zeusCell.r);
 
-  let _allNeighborsSea = true;
+  const _allNeighborsSea = true;
   for (const neighbor of zeusNeighbors) {
     const isSea = neighbor.terrain === "sea";
 
@@ -32,7 +32,7 @@ function verifyZeusNeighborsSea() {
 
     // All neighbors should be sea
     if (!isSea) {
-      allNeighborsSea = false;
+      // _allNeighborsSea = false; // This variable is unused
     }
   }
 }

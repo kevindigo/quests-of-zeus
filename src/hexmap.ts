@@ -1012,7 +1012,7 @@ export class HexMap {
     }
 
     // Count adjacent same-color sea hexes for debugging
-    const conflicts = this.countAdjacentSameColorSeaHexes(grid);
+    const _conflicts = this.countAdjacentSameColorSeaHexes(grid);
     // Note: conflicts are expected in some cases due to map constraints
   }
 

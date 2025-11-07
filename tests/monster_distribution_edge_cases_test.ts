@@ -8,7 +8,7 @@ import { OracleGameEngine } from "../src/game-engine.ts";
 import { ALL_COLORS } from "../src/hexmap.ts";
 
 // Test algorithm performance and timing
-Deno.test("MonsterDistribution - algorithm performance", async () => {
+Deno.test("MonsterDistribution - algorithm performance", () => {
   const startTime = performance.now();
 
   // Run multiple iterations to test performance

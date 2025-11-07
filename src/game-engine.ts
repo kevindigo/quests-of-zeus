@@ -699,7 +699,7 @@ export class OracleGameEngine {
 
     // Calculate total monsters needed
     const totalMonstersPerColor = playerCount;
-    const totalMonsters = totalMonstersPerColor * ALL_COLORS.length;
+    const _totalMonsters = totalMonstersPerColor * ALL_COLORS.length;
 
     // Create a shuffled list of all monster colors to place
     const monsterColors = [...ALL_COLORS];

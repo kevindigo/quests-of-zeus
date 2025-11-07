@@ -1,4 +1,4 @@
-import { type assert, assertEquals } from "@std/assert";
+import { assertEquals } from "@std/assert";
 import { type HexColor, HexMap } from "../src/hexmap.ts";
 
 Deno.test("Cloud hex color assignment", () => {

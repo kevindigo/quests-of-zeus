@@ -1,7 +1,7 @@
 // Comprehensive test for the statue system
 
 import { assert, assertEquals } from "@std/assert";
-import { HexMap, HexColor } from "../src/hexmap.ts";
+import { HexMap, type HexColor } from "../src/hexmap.ts";
 import { OracleGameEngine } from "../src/game-engine.ts";
 
 Deno.test("StatueSystem - HexMap statue operations", () => {
@@ -90,7 +90,7 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
   );
 
   // Add statue of wrong color
-  let emptySlotIndex = player.storage.findIndex((slot) =>
+  const emptySlotIndex = player.storage.findIndex((slot) =>
     slot.type === "empty"
   );
   if (emptySlotIndex !== -1) {
@@ -152,7 +152,7 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
   // Test actual placement
   const placementSuccess = game.placeStatueOnCity(player.id);
   assert(placementSuccess, "Failed to place statue on city");
-  const statuesAfterPlacement = gameState.map.getStatuesOnCity(
+  const _statuesAfterPlacement = gameState.map.getStatuesOnCity(
     gameCity.q,
     gameCity.r,
   );

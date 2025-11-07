@@ -47,7 +47,7 @@ function testSeaColorDistribution(): void {
   }
 
   let maxDifference = 0;
-  let mostUnevenMap = -1;
+  let _mostUnevenMap = -1;
   let mostUnevenDifference = 0;
 
   for (const color of colors) {
@@ -55,7 +55,7 @@ function testSeaColorDistribution(): void {
     const average = stats.total / testCount;
     const variance = stats.counts.reduce((sum, count) =>
       sum + Math.pow(count - average, 2), 0) / testCount;
-    const stdDev = Math.sqrt(variance);
+    const _stdDev = Math.sqrt(variance);
 
     // Track maximum difference
     const colorRange = stats.max - stats.min;
@@ -70,7 +70,7 @@ function testSeaColorDistribution(): void {
     const mapDifference = Math.max(...counts) - Math.min(...counts);
     if (mapDifference > mostUnevenDifference) {
       mostUnevenDifference = mapDifference;
-      mostUnevenMap = i;
+      _mostUnevenMap = i;
     }
   }
 

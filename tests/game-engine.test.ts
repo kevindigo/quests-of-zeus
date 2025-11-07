@@ -136,7 +136,7 @@ Deno.test("GameEngine - quest completion", () => {
 
   // Initialize the game
   engine.initializeGame();
-  const state = engine.getGameState();
+  const _state = engine.getGameState();
 
   // Check that players start with 0 completed quests
   const player1 = engine.getPlayer(1);

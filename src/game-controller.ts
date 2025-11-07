@@ -120,6 +120,7 @@ export class GameController {
     const playerInfoContainer = document.getElementById("playerInfo");
     if (!playerInfoContainer) return;
 
+    // Get current player for display
     const currentPlayer = this.gameEngine.getCurrentPlayer();
 
     playerInfoContainer.innerHTML = `

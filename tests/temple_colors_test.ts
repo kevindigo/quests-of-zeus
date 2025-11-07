@@ -3,7 +3,7 @@ import {
   assertGreaterOrEqual,
   assertNotEquals,
 } from "@std/assert";
-import { HexMap, HexCell } from "../src/hexmap.ts";
+import { HexMap, type HexCell } from "../src/hexmap.ts";
 
 Deno.test("Temple color assignment - should have exactly 6 temples", () => {
   const hexMap = new HexMap();
