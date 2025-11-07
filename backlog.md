@@ -1,7 +1,3 @@
-== Prerequisite ==
-
-- setup: shield
-
 == Oracle cards ==
 
 - setup: oracle card
@@ -31,6 +27,10 @@
 
 - effect: ability to move to zeus after 12 quests completed
 - round: detect end of game and determine winner
+
+== Peek ==
+
+- action: peek at up to 2 cloud tiles
 
 == Wounds ==
 

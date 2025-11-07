@@ -56,6 +56,10 @@ Deno.test("GameEngine - player creation", () => {
   assertEquals(player1?.storage[1].type, "empty");
   assertEquals(player2?.storage[0].type, "empty");
   assertEquals(player2?.storage[1].type, "empty");
+
+  // Check that players start with 0 shield
+  assertEquals(player1?.shield, 0, "Player 1 should start with 0 shield");
+  assertEquals(player2?.shield, 0, "Player 2 should start with 0 shield");
 });
 
 Deno.test("GameEngine - oracle dice rolling", () => {
@@ -165,6 +169,35 @@ Deno.test("GameEngine - win condition", () => {
   const winCondition = engine.checkWinCondition();
   assertEquals(winCondition.gameOver, false);
   assertEquals(winCondition.winner, null);
+});
+
+Deno.test("GameEngine - shield resource", () => {
+  const engine = new OracleGameEngine();
+  engine.initializeGame();
+
+  const player1 = engine.getPlayer(1);
+  const player2 = engine.getPlayer(2);
+
+  assertExists(player1);
+  assertExists(player2);
+
+  // Test that shield property exists and is initialized to 0
+  assertEquals("shield" in player1, true, "Player 1 should have shield property");
+  assertEquals("shield" in player2, true, "Player 2 should have shield property");
+  assertEquals(player1.shield, 0, "Player 1 shield should be 0");
+  assertEquals(player2.shield, 0, "Player 2 shield should be 0");
+  assertEquals(typeof player1.shield, "number", "Player 1 shield should be a number");
+  assertEquals(typeof player2.shield, "number", "Player 2 shield should be a number");
+
+  // Test that shield is properly serialized in game state
+  const gameState = engine.getGameState();
+  const serializedPlayer1 = gameState.players.find(p => p.id === 1);
+  const serializedPlayer2 = gameState.players.find(p => p.id === 2);
+
+  assertExists(serializedPlayer1);
+  assertExists(serializedPlayer2);
+  assertEquals(serializedPlayer1.shield, 0, "Player 1 shield should be 0 in serialized state");
+  assertEquals(serializedPlayer2.shield, 0, "Player 2 shield should be 0 in serialized state");
 });
 
 Deno.test("GameEngine - storage system", () => {

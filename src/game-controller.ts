@@ -140,6 +140,7 @@ export class GameController {
           </div>
           <div><strong>Completed Quests:</strong> ${_currentPlayer.completedQuests}/12</div>
           <div><strong>Favor:</strong> ${_currentPlayer.favor}</div>
+          <div><strong>Shield:</strong> ${_currentPlayer.shield}</div>
         </div>
         <div class="quest-progress">
           <h4>Quest Progress</h4>

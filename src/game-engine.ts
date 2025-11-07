@@ -24,6 +24,7 @@ export interface Player {
   };
   oracleDice: HexColor[]; // Current oracle dice values
   favor: number; // Player's favor resource
+  shield: number; // Player's shield resource
   recoloredDice: { [dieColor: string]: { newColor: HexColor; favorCost: number } }; // Track recoloring intentions
 }
 
@@ -145,6 +146,7 @@ export class OracleGameEngine {
         },
         oracleDice: [],
         favor: 3 + i, // First player gets 3 favor, each subsequent gets 1 more
+        shield: 0, // Players start with 0 shield
         recoloredDice: {}, // Track recoloring intentions
       });
     }
