@@ -69,12 +69,19 @@ Deno.test("Spend Die for Favor - basic functionality", () => {
   
   // Spend a die for favor
   const dieColor = player1.oracleDice[0];
+  
+  // Count how many dice of this color the player has before spending
+  const initialColorCount = player1.oracleDice.filter(color => color === dieColor).length;
+  
   const success = engine.spendDieForFavor(1, dieColor);
   
   assert(success, "Should successfully spend die for favor");
   assertEquals(player1.favor, initialFavor + 2, "Should gain 2 favor");
   assertEquals(player1.oracleDice.length, initialDiceCount - 1, "Should consume one die");
-  assert(!player1.oracleDice.includes(dieColor), "Spent die should be removed from player's dice");
+  
+  // Check that the number of dice of the spent color decreased by 1
+  const finalColorCount = player1.oracleDice.filter(color => color === dieColor).length;
+  assertEquals(finalColorCount, initialColorCount - 1, "Should have one less die of the spent color");
 });
 
 Deno.test("Spend Die for Favor - invalid scenarios", () => {
