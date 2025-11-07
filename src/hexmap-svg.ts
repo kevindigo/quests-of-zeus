@@ -103,7 +103,7 @@ export class HexMapSVG {
       />`;
 
       // Add an even more inset polygon for highlighting (won't cover the colored border)
-      const highlightInsetAmount = insetAmount + effectiveStrokeWidth;
+      const highlightInsetAmount = insetAmount + effectiveStrokeWidth + 2;
       const highlightHexPoints = this.calculateHexPoints(
         x + highlightInsetAmount,
         y + highlightInsetAmount,
@@ -115,7 +115,7 @@ export class HexMapSVG {
         points="${highlightHexPoints}" 
         fill="none" 
         stroke="transparent" 
-        stroke-width="4"
+        stroke-width="2"
         stroke-linejoin="round"
         stroke-linecap="round"
         data-q="${cell.q}" 
@@ -125,7 +125,7 @@ export class HexMapSVG {
       />`;
     } else {
       // For uncolored hexes, add a highlight polygon at the same inset as colored hexes
-      const highlightInsetAmount = 8; // Similar to what colored hexes would have
+      const highlightInsetAmount = 10; // Similar to what colored hexes would have
       const highlightHexPoints = this.calculateHexPoints(
         x + highlightInsetAmount,
         y + highlightInsetAmount,
@@ -137,7 +137,7 @@ export class HexMapSVG {
         points="${highlightHexPoints}" 
         fill="none" 
         stroke="transparent" 
-        stroke-width="4"
+        stroke-width="2"
         stroke-linejoin="round"
         stroke-linecap="round"
         data-q="${cell.q}" 
