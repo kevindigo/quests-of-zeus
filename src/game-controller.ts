@@ -121,37 +121,37 @@ export class GameController {
     if (!playerInfoContainer) return;
 
     // Get current player for display
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const _currentPlayer = this.gameEngine.getCurrentPlayer();
 
     playerInfoContainer.innerHTML = `
       <div class="player-info">
-        <h3>Current Player: ${currentPlayer.name}</h3>
+        <h3>Current Player: ${_currentPlayer.name}</h3>
         <div class="player-stats">
           <div><strong>Color:</strong> 
             <span class="color-swatch" style="background-color: ${
-      this.getColorHex(currentPlayer.color)
+      this.getColorHex(_currentPlayer.color)
     }"></span>
             ${
-      currentPlayer.color.charAt(0).toUpperCase() + currentPlayer.color.slice(1)
+      _currentPlayer.color.charAt(0).toUpperCase() + _currentPlayer.color.slice(1)
     }
           </div>
-          <div><strong>Completed Quests:</strong> ${currentPlayer.completedQuests}/12</div>
-          <div><strong>Favor:</strong> ${currentPlayer.favor}</div>
+          <div><strong>Completed Quests:</strong> ${_currentPlayer.completedQuests}/12</div>
+          <div><strong>Favor:</strong> ${_currentPlayer.favor}</div>
         </div>
         <div class="quest-progress">
           <h4>Quest Progress</h4>
           <div class="quest-types">
-            <div class="quest-type-item">Temple Offering: ${currentPlayer.completedQuestTypes.temple_offering}/3</div>
-            <div class="quest-type-item">Monster: ${currentPlayer.completedQuestTypes.monster}/3</div>
-            <div class="quest-type-item">Foundation: ${currentPlayer.completedQuestTypes.foundation}/3</div>
-            <div class="quest-type-item">Cloud: ${currentPlayer.completedQuestTypes.cloud}/3</div>
+            <div class="quest-type-item">Temple Offering: ${_currentPlayer.completedQuestTypes.temple_offering}/3</div>
+            <div class="quest-type-item">Monster: ${_currentPlayer.completedQuestTypes.monster}/3</div>
+            <div class="quest-type-item">Foundation: ${_currentPlayer.completedQuestTypes.foundation}/3</div>
+            <div class="quest-type-item">Cloud: ${_currentPlayer.completedQuestTypes.cloud}/3</div>
           </div>
         </div>
         <div class="storage">
           <h4>Storage (2 slots)</h4>
           <div class="storage-slots">
             ${
-      currentPlayer.storage.map((slot, index) =>
+      _currentPlayer.storage.map((slot, index) =>
         `<div class="storage-slot slot-${index} ${slot.type}">
                 <div class="slot-content">
                   ${
@@ -173,7 +173,7 @@ export class GameController {
           <h4>Oracle Dice</h4>
           <div class="dice-container">
             ${
-      currentPlayer.oracleDice.map((color) => {
+      _currentPlayer.oracleDice.map((color) => {
         const isSelected = this.selectedDieColor === color;
         return `<div class="die color-${color} ${
           isSelected ? "selected-die" : ""
@@ -185,13 +185,13 @@ export class GameController {
       }).join("")
     }
             ${
-      currentPlayer.oracleDice.length === 0
+      _currentPlayer.oracleDice.length === 0
         ? '<div class="no-dice">No dice rolled yet</div>'
         : ""
     }
           </div>
           ${
-      this.selectedDieColor && currentPlayer.oracleDice.length > 0
+      this.selectedDieColor && _currentPlayer.oracleDice.length > 0
         ? `<div class="selected-die-info">
              Selected: <span class="color-swatch" style="background-color: ${
           this.getColorHex(this.selectedDieColor)
