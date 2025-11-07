@@ -510,7 +510,8 @@ export function generateStatueIcons(
 
   // Position statues at the bottom of the hex, below the city icon
   const startY = size * 0.8; // Position below the city buildings
-  const totalWidth = statueCount * statueWidth + (statueCount - 1) * statueSpacing;
+  const totalWidth = statueCount * statueWidth +
+    (statueCount - 1) * statueSpacing;
   const startX = -totalWidth / 2; // Center the statues horizontally
 
   // Generate statues based on count (0-3)

@@ -13,7 +13,7 @@ Deno.test("offering cubes configuration", () => {
   assertEquals(
     validCubeHexes.length,
     6,
-    `Expected all 6 cube hexes to have exactly ${gameState.players.length} cubes, but found ${validCubeHexes.length} valid hexes`
+    `Expected all 6 cube hexes to have exactly ${gameState.players.length} cubes, but found ${validCubeHexes.length} valid hexes`,
   );
 
   // Check that all 6 colors are represented (each color should appear playerCount times)
@@ -31,7 +31,7 @@ Deno.test("offering cubes configuration", () => {
   assertEquals(
     correctColorCounts.length,
     6,
-    `Expected 6 colors each appearing ${expectedColorCount} times, but found ${correctColorCounts.length} colors with correct count`
+    `Expected 6 colors each appearing ${expectedColorCount} times, but found ${correctColorCounts.length} colors with correct count`,
   );
 
   // Check that no color appears twice on the same hex
@@ -43,6 +43,6 @@ Deno.test("offering cubes configuration", () => {
   assertEquals(
     hexesWithDuplicates.length,
     0,
-    `Found ${hexesWithDuplicates.length} hexes with duplicate colors`
+    `Found ${hexesWithDuplicates.length} hexes with duplicate colors`,
   );
 });

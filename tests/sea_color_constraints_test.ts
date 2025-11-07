@@ -1,5 +1,5 @@
 import { assert } from "@std/assert";
-import { HexMap, type HexCell } from "../src/hexmap.ts";
+import { type HexCell, HexMap } from "../src/hexmap.ts";
 
 /**
  * Test to verify that sea hex colors follow constraint-based placement
@@ -45,7 +45,10 @@ Deno.test("Sea color constraints - adjacent sea hexes should not have same color
 /**
  * Count adjacent sea hexes with the same color
  */
-function countAdjacentSameColorSeaHexes(map: HexMap, grid: HexCell[][]): number {
+function countAdjacentSameColorSeaHexes(
+  map: HexMap,
+  grid: HexCell[][],
+): number {
   let conflicts = 0;
   const processedPairs = new Set<string>();
 

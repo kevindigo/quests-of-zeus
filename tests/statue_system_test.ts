@@ -1,6 +1,6 @@
 // Comprehensive test for the statue system
 
-import { assert, assertEquals, assertExists } from "@std/assert";
+import { assert, assertEquals, type assertExists } from "@std/assert";
 import { HexMap } from "../src/hexmap.ts";
 import { OracleGameEngine } from "../src/game-engine.ts";
 
@@ -58,19 +58,24 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
   // Use the game engine's movement system to properly position the player
   // First, roll oracle dice to enter action phase
   game.rollOracleDice(player.id);
-  
+
   // Move player to the city using the game engine's movement system
   // We need to find a sea path to the city
   const availableMoves = game.getAvailableMoves(player.id);
-  
+
   // Find a move that gets us close to the city
-  const moveToCity = availableMoves.find(move => 
+  const moveToCity = availableMoves.find((move) =>
     Math.abs(move.q - gameCity.q) <= 1 && Math.abs(move.r - gameCity.r) <= 1
   );
-  
+
   if (moveToCity) {
     // Move to adjacent sea tile
-    const moveSuccess = game.moveShip(player.id, moveToCity.q, moveToCity.r, moveToCity.dieColor);
+    const moveSuccess = game.moveShip(
+      player.id,
+      moveToCity.q,
+      moveToCity.r,
+      moveToCity.dieColor,
+    );
     assert(moveSuccess, "Failed to move player near city");
   } else {
     // If no adjacent sea move found, just set position directly (for testing)
@@ -79,7 +84,10 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
 
   // Test without statue
   const canPlaceWithout = game.canPlaceStatueOnCity(player.id);
-  assert(!canPlaceWithout, "Should not allow placing statue without statue in storage");
+  assert(
+    !canPlaceWithout,
+    "Should not allow placing statue without statue in storage",
+  );
 
   // Add statue of wrong color
   let emptySlotIndex = player.storage.findIndex((slot) =>
@@ -88,8 +96,13 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
   if (emptySlotIndex !== -1) {
     // Find a color different from the city
     const availableColors = ["red", "blue", "green", "yellow", "pink", "black"];
-    const wrongColor = availableColors.find(color => color !== gameCity.color) || "red";
-    player.storage[emptySlotIndex] = { type: "statue", color: wrongColor as any };
+    const wrongColor = availableColors.find((color) =>
+      color !== gameCity.color
+    ) || "red";
+    player.storage[emptySlotIndex] = {
+      type: "statue",
+      color: wrongColor as any,
+    };
   } else {
     // If no empty slots, we can't proceed with this test
     return;
@@ -97,11 +110,20 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
 
   // Test with wrong color statue
   const canPlaceWrongColor = game.canPlaceStatueOnCity(player.id);
-  assert(!canPlaceWrongColor, "Should not allow placing statue with wrong color");
+  assert(
+    !canPlaceWrongColor,
+    "Should not allow placing statue with wrong color",
+  );
 
   // First, remove one statue from the city so we can place one
-  const removeSuccess = gameState.map.removeStatueFromCity(gameCity.q, gameCity.r);
-  assert(removeSuccess, "Failed to remove statue from city to make room for placement");
+  const removeSuccess = gameState.map.removeStatueFromCity(
+    gameCity.q,
+    gameCity.r,
+  );
+  assert(
+    removeSuccess,
+    "Failed to remove statue from city to make room for placement",
+  );
 
   // Add statue of correct color
   const anotherEmptySlot = player.storage.findIndex((slot) =>
@@ -122,18 +144,27 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
 
   // Test with correct color statue
   const canPlaceCorrectColor = game.canPlaceStatueOnCity(player.id);
-  assert(canPlaceCorrectColor, "Should allow placing statue with correct color");
+  assert(
+    canPlaceCorrectColor,
+    "Should allow placing statue with correct color",
+  );
 
   // Test actual placement
   const placementSuccess = game.placeStatueOnCity(player.id);
   assert(placementSuccess, "Failed to place statue on city");
-  const statuesAfterPlacement = gameState.map.getStatuesOnCity(gameCity.q, gameCity.r);
+  const statuesAfterPlacement = gameState.map.getStatuesOnCity(
+    gameCity.q,
+    gameCity.r,
+  );
 
   // Test statue was consumed from storage
   const statueStillInStorage = player.storage.some((slot) =>
     slot.type === "statue" && slot.color === gameCity.color
   );
-  assert(!statueStillInStorage, "Statue should have been consumed from storage");
+  assert(
+    !statueStillInStorage,
+    "Statue should have been consumed from storage",
+  );
 });
 
 Deno.test("StatueSystem - Multiple cities statue operations", () => {

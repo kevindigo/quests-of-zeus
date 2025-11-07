@@ -110,7 +110,7 @@ Deno.test("GameEngine - movement validation", () => {
 
   // With new movement rules, available moves should include die color information
   assertEquals(Array.isArray(availableMoves), true);
-  
+
   // Check that each move has the required properties
   if (availableMoves.length > 0) {
     const firstMove = availableMoves[0];

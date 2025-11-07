@@ -15,7 +15,10 @@ const player = engine.getCurrentPlayer();
 console.log("Initial ship position:", player.shipPosition);
 
 // Check what terrain the ship starts on
-const startCell = gameState.map.getCell(player.shipPosition.q, player.shipPosition.r);
+const startCell = gameState.map.getCell(
+  player.shipPosition.q,
+  player.shipPosition.r,
+);
 console.log("Starting terrain:", startCell?.terrain);
 
 // Roll dice to enter action phase
@@ -28,7 +31,11 @@ console.log("\nAvailable moves:", availableMoves.length);
 
 // Test reachability logic directly
 console.log("\n=== Testing Reachability Logic ===");
-const reachableTiles = (engine as any).getReachableSeaTiles(player.shipPosition.q, player.shipPosition.r, 3);
+const reachableTiles = (engine as any).getReachableSeaTiles(
+  player.shipPosition.q,
+  player.shipPosition.r,
+  3,
+);
 console.log("Reachable sea tiles:", reachableTiles.length);
 
 // Test a specific scenario: try to find hexes that are within 3 hexes straight-line distance
@@ -47,14 +54,14 @@ for (const seaTile of allSeaTiles) {
     player.shipPosition.q,
     player.shipPosition.r,
     seaTile.q,
-    seaTile.r
+    seaTile.r,
   );
-  
+
   if (straightLineDistance <= 3) {
-    const isReachable = reachableTiles.some(tile => 
+    const isReachable = reachableTiles.some((tile) =>
       tile.q === seaTile.q && tile.r === seaTile.r
     );
-    
+
     if (!isReachable) {
       unreachableWithinRange.push({
         q: seaTile.q,
@@ -66,25 +73,39 @@ for (const seaTile of allSeaTiles) {
   }
 }
 
-console.log("\nSea tiles within 3 hexes straight-line distance but NOT reachable due to land obstacles:", unreachableWithinRange.length);
+console.log(
+  "\nSea tiles within 3 hexes straight-line distance but NOT reachable due to land obstacles:",
+  unreachableWithinRange.length,
+);
 
 if (unreachableWithinRange.length > 0) {
   console.log("\nExamples of unreachable tiles within range:");
   unreachableWithinRange.slice(0, 5).forEach((tile, index) => {
-    console.log(`  Tile ${index + 1}: (${tile.q}, ${tile.r}) color ${tile.color}, straight-line distance: ${tile.straightLineDistance}`);
+    console.log(
+      `  Tile ${
+        index + 1
+      }: (${tile.q}, ${tile.r}) color ${tile.color}, straight-line distance: ${tile.straightLineDistance}`,
+    );
   });
-  
+
   // Try to move to one of these unreachable tiles to verify the fix
   const testTile = unreachableWithinRange[0];
   console.log(`\n=== Testing Movement to Unreachable Tile ===`);
-  console.log(`Attempting to move to (${testTile.q}, ${testTile.r}) with ${testTile.color} die...`);
-  
+  console.log(
+    `Attempting to move to (${testTile.q}, ${testTile.r}) with ${testTile.color} die...`,
+  );
+
   // Check if player has the required die color
   if (player.oracleDice.includes(testTile.color)) {
-    const success = engine.moveShip(player.id, testTile.q, testTile.r, testTile.color);
+    const success = engine.moveShip(
+      player.id,
+      testTile.q,
+      testTile.r,
+      testTile.color,
+    );
     console.log("Move successful:", success);
     console.log("Expected: false (should be blocked by land obstacles)");
-    
+
     if (!success) {
       console.log("✓ SUCCESS: Movement correctly blocked by land obstacles!");
     } else {
@@ -94,5 +115,7 @@ if (unreachableWithinRange.length > 0) {
     console.log(`Cannot test - player doesn't have ${testTile.color} die`);
   }
 } else {
-  console.log("\nNo unreachable tiles found within range - this map might not have land obstacles blocking sea paths");
+  console.log(
+    "\nNo unreachable tiles found within range - this map might not have land obstacles blocking sea paths",
+  );
 }

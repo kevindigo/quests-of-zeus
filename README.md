@@ -62,7 +62,8 @@ favor with the gods.
      - **Fight Monsters** on monster hexes
      - **Build Temples** on temple hexes (requires cube of matching color)
      - **Build Foundations** on foundation hexes
-     - **Complete Cloud Quests** on cloud hexes (requires statue of matching color)
+     - **Complete Cloud Quests** on cloud hexes (requires statue of matching
+       color)
    - **Note**: You can change your selected die before making a move
 
 ### Victory Condition

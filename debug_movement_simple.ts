@@ -21,12 +21,17 @@ console.log("Available moves:", availableMoves.length);
 if (availableMoves.length > 0) {
   const firstMove = availableMoves[0];
   console.log("\nFirst available move:", firstMove);
-  
+
   // Try to move
   console.log("\nAttempting movement...");
-  const success = engine.moveShip(player.id, firstMove.q, firstMove.r, firstMove.dieColor);
+  const success = engine.moveShip(
+    player.id,
+    firstMove.q,
+    firstMove.r,
+    firstMove.dieColor,
+  );
   console.log("Movement success:", success);
-  
+
   if (success) {
     console.log("New ship position:", player.shipPosition);
     console.log("Remaining dice:", player.oracleDice);

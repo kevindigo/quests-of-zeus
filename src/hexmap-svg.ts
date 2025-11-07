@@ -14,8 +14,6 @@ import {
   generateZeusIcon,
 } from "./icons-svg.ts";
 
-
-
 export interface HexMapSVGOptions {
   cellSize?: number;
   strokeWidth?: number;
@@ -165,9 +163,13 @@ export class HexMapSVG {
 
       // Add statue icons if there are statues on this city
       // Debug: Log statue information for troubleshooting
-      console.log(`City at (${cell.q}, ${cell.r}): statues = ${cell.statues}, color = ${cell.color}`);
+      console.log(
+        `City at (${cell.q}, ${cell.r}): statues = ${cell.statues}, color = ${cell.color}`,
+      );
       if (cell.statues !== undefined && cell.statues > 0) {
-        console.log(`  Generating ${cell.statues} statue(s) for city at (${cell.q}, ${cell.r})`);
+        console.log(
+          `  Generating ${cell.statues} statue(s) for city at (${cell.q}, ${cell.r})`,
+        );
         cellContent += generateStatueIcons({
           centerX,
           centerY,

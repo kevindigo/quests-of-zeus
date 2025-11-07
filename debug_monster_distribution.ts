@@ -61,11 +61,11 @@ function debugMonsterDistribution(): void {
   console.log("==================");
 
   // Rule 1: Even distribution (difference between min and max monsters per hex ≤ 1)
-  const monstersPerHex = monsterHexes.map(hex => hex.monsterColors.length);
+  const monstersPerHex = monsterHexes.map((hex) => hex.monsterColors.length);
   const minMonsters = Math.min(...monstersPerHex);
   const maxMonsters = Math.max(...monstersPerHex);
   const distributionEven = maxMonsters - minMonsters <= 1;
-  
+
   console.log(
     `✅ Monster distribution: ${minMonsters}-${maxMonsters} per hex ${
       distributionEven ? "✓" : "✗"

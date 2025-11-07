@@ -1,4 +1,8 @@
-import { assertEquals, assertGreaterOrEqual, assertNotEquals } from "@std/assert";
+import {
+  assertEquals,
+  assertGreaterOrEqual,
+  assertNotEquals,
+} from "@std/assert";
 import { HexMap } from "../src/hexmap.ts";
 
 Deno.test("Temple color assignment - should have exactly 6 temples", () => {
@@ -45,13 +49,29 @@ Deno.test("Temple color assignment - all temples should have colors", () => {
 
   // Check that all temples have colors assigned
   const coloredTemples = templeCells.filter((cell) => cell.color !== "none");
-  assertEquals(coloredTemples.length, 6, "All temples should have colors assigned");
+  assertEquals(
+    coloredTemples.length,
+    6,
+    "All temples should have colors assigned",
+  );
 
   // Additional assertions for temple properties
   templeCells.forEach((cell, index) => {
-    assertNotEquals(cell.q, undefined, `Temple ${index + 1} should have q coordinate`);
-    assertNotEquals(cell.r, undefined, `Temple ${index + 1} should have r coordinate`);
-    assertNotEquals(cell.color, "none", `Temple ${index + 1} should have a color assigned`);
+    assertNotEquals(
+      cell.q,
+      undefined,
+      `Temple ${index + 1} should have q coordinate`,
+    );
+    assertNotEquals(
+      cell.r,
+      undefined,
+      `Temple ${index + 1} should have r coordinate`,
+    );
+    assertNotEquals(
+      cell.color,
+      "none",
+      `Temple ${index + 1} should have a color assigned`,
+    );
   });
 });
 
@@ -75,7 +95,11 @@ Deno.test("Temple color assignment - temples should have colored outlines", () =
   }
 
   // Check that temples have colored outlines (at least one unique color)
-  assertGreaterOrEqual(templeColors.size, 1, "Temples should have at least one unique color for outlines");
+  assertGreaterOrEqual(
+    templeColors.size,
+    1,
+    "Temples should have at least one unique color for outlines",
+  );
 });
 
 Deno.test("Temple color assignment - all temples should have unique coordinates", () => {
@@ -109,7 +133,11 @@ Deno.test("Temple color assignment - all temples should have unique coordinates"
     coordinateSet.add(coord);
   });
 
-  assertEquals(duplicateCoordinates.size, 0, "All temples should have unique coordinates");
+  assertEquals(
+    duplicateCoordinates.size,
+    0,
+    "All temples should have unique coordinates",
+  );
 });
 
 Deno.test("HexMap grid structure - should have valid grid", () => {
@@ -118,11 +146,15 @@ Deno.test("HexMap grid structure - should have valid grid", () => {
 
   // Basic grid structure checks
   assertGreaterOrEqual(grid.length, 1, "Grid should have at least one row");
-  
+
   // Check that grid is properly structured
   grid.forEach((row, rowIndex) => {
     if (row) {
-      assertGreaterOrEqual(row.length, 1, `Row ${rowIndex} should have at least one cell`);
+      assertGreaterOrEqual(
+        row.length,
+        1,
+        `Row ${rowIndex} should have at least one cell`,
+      );
     }
   });
 });

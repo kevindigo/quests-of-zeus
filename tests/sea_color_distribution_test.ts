@@ -80,20 +80,32 @@ Deno.test("Sea color distribution - balanced distribution across multiple maps",
 
   // Assertions for color distribution
   // The maximum difference between min and max occurrences of any color should be reasonable
-  assert(maxDifference <= 16, `Maximum color difference ${maxDifference} should be <= 16`);
-  
+  assert(
+    maxDifference <= 16,
+    `Maximum color difference ${maxDifference} should be <= 16`,
+  );
+
   // Check that no color consistently appears too many or too few times
   for (const color of colors) {
     const stats = colorStats[color];
     const average = stats.total / testCount;
-    
+
     // Average should be reasonable (between 7 and 14 for a balanced distribution)
     // Based on actual game behavior, some colors may appear more frequently
-    assert(average >= 7, `Color ${color} average count ${average} should be >= 7`);
-    assert(average <= 14, `Color ${color} average count ${average} should be <= 14`);
-    
+    assert(
+      average >= 7,
+      `Color ${color} average count ${average} should be >= 7`,
+    );
+    assert(
+      average <= 14,
+      `Color ${color} average count ${average} should be <= 14`,
+    );
+
     // No color should ever be completely missing
-    assert(stats.min > 0, `Color ${color} should appear at least once in all maps`);
+    assert(
+      stats.min > 0,
+      `Color ${color} should appear at least once in all maps`,
+    );
   }
 
   // Check for extreme cases (adjust thresholds based on actual game behavior)
@@ -119,16 +131,22 @@ Deno.test("Sea color distribution - adjacent same color conflicts", () => {
   }
 
   const averageConflicts = totalConflicts / testCount;
-  
+
   // Assert that adjacent same-color sea tiles are relatively rare
   // This is a quality check for the map generation algorithm
-  assert(averageConflicts < 5, `Average conflicts ${averageConflicts} should be < 5`);
+  assert(
+    averageConflicts < 5,
+    `Average conflicts ${averageConflicts} should be < 5`,
+  );
 });
 
 /**
  * Count adjacent sea hexes with the same color
  */
-function countAdjacentSameColorSeaHexes(map: HexMap, grid: unknown[][]): number {
+function countAdjacentSameColorSeaHexes(
+  map: HexMap,
+  grid: unknown[][],
+): number {
   let conflicts = 0;
   const processedPairs = new Set<string>();
 

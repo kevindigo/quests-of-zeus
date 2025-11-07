@@ -1,6 +1,6 @@
 // Tests for terrain distribution in the game map
 
-import { assertGreater, assertLessOrEqual, assertExists } from "@std/assert";
+import { assertExists, assertGreater, assertLessOrEqual } from "@std/assert";
 import { HexMap } from "../src/hexmap.ts";
 
 Deno.test("Terrain distribution - all expected terrains present", () => {
@@ -36,17 +36,17 @@ Deno.test("Terrain distribution - all expected terrains present", () => {
     "city",
     "foundations",
   ];
-  
+
   // Assert all expected terrains are present
   for (const terrain of expectedTerrains) {
     assertExists(
       terrainCounts[terrain],
-      `Expected terrain "${terrain}" should be present`
+      `Expected terrain "${terrain}" should be present`,
     );
     assertGreater(
       terrainCounts[terrain] || 0,
       0,
-      `Expected terrain "${terrain}" should have at least 1 cell`
+      `Expected terrain "${terrain}" should have at least 1 cell`,
     );
   }
 });
@@ -80,12 +80,12 @@ Deno.test("Terrain distribution - constraints satisfied", () => {
   assertLessOrEqual(
     shallowCount,
     10,
-    `Shallow terrain should have at most 10 cells, but has ${shallowCount}`
+    `Shallow terrain should have at most 10 cells, but has ${shallowCount}`,
   );
   assertGreater(
     seaCount,
     20,
-    `Sea terrain should have more than 20 cells, but has ${seaCount}`
+    `Sea terrain should have more than 20 cells, but has ${seaCount}`,
   );
 });
 

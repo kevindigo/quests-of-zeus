@@ -16,7 +16,7 @@ Deno.test("Favor System - player initialization", () => {
 
   // First player should have 3 favor
   assertEquals(player1.favor, 3, "Player 1 should start with 3 favor");
-  
+
   // Second player should have 4 favor (1 more than previous)
   assertEquals(player2.favor, 4, "Player 2 should start with 4 favor");
 });
@@ -39,22 +39,25 @@ Deno.test("Favor System - favor progression pattern", () => {
 
   // Verify the favor progression pattern: 3, 4, 5, 6 for 4 players
   const players = engine.getGameState().players;
-  
+
   // Check that each player has 1 more favor than the previous
   for (let i = 1; i < players.length; i++) {
     const currentPlayer = players[i];
     const previousPlayer = players[i - 1];
-    
+
     assertEquals(
       currentPlayer.favor,
       previousPlayer.favor + 1,
-      `Player ${i + 1} should have 1 more favor than Player ${i}`
+      `Player ${i + 1} should have 1 more favor than Player ${i}`,
     );
   }
 });
 
 // Helper function for assertions
-function assertExists<T>(value: T | null | undefined, message?: string): asserts value is T {
+function assertExists<T>(
+  value: T | null | undefined,
+  message?: string,
+): asserts value is T {
   if (value === null || value === undefined) {
     throw new Error(message || "Value should exist");
   }

@@ -170,7 +170,9 @@ export class GameController {
             ${
       currentPlayer.oracleDice.map((color) => {
         const isSelected = this.selectedDieColor === color;
-        return `<div class="die color-${color} ${isSelected ? 'selected-die' : ''}" 
+        return `<div class="die color-${color} ${
+          isSelected ? "selected-die" : ""
+        }" 
                      style="background-color: ${this.getColorHex(color)}"
                      data-die-color="${color}">
                 ${color.charAt(0).toUpperCase()}
@@ -186,7 +188,9 @@ export class GameController {
           ${
       this.selectedDieColor && currentPlayer.oracleDice.length > 0
         ? `<div class="selected-die-info">
-             Selected: <span class="color-swatch" style="background-color: ${this.getColorHex(this.selectedDieColor)}"></span>
+             Selected: <span class="color-swatch" style="background-color: ${
+          this.getColorHex(this.selectedDieColor)
+        }"></span>
              ${this.selectedDieColor}
              <button id="clearDieSelection" class="action-btn secondary">Clear</button>
            </div>`
@@ -274,7 +278,9 @@ export class GameController {
       }
     } catch (error) {
       console.error("Error generating SVG:", error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error
+        ? error.message
+        : String(error);
       hexMapContainer.innerHTML =
         `<div class="welcome-map"><p>Error generating map: ${errorMessage}</p></div>`;
     }
@@ -381,11 +387,14 @@ export class GameController {
           const highlightCell = document.querySelector(
             `.hex-highlight[data-q="${move.q}"][data-r="${move.r}"]`,
           );
-          
+
           if (highlightCell) {
             highlightCell.classList.add("available-move");
             // Add tooltip to show required die color
-            highlightCell.setAttribute("title", `Move using ${move.dieColor} die`);
+            highlightCell.setAttribute(
+              "title",
+              `Move using ${move.dieColor} die`,
+            );
           }
         }
       });
@@ -421,14 +430,18 @@ export class GameController {
         );
 
         let actions = "";
-        
+
         if (this.selectedDieColor) {
           // Die is selected - show available actions
-          actions += `<p>Selected die: <span class="color-swatch" style="background-color: ${this.getColorHex(this.selectedDieColor)}"></span> ${this.selectedDieColor}</p>`;
-          
+          actions +=
+            `<p>Selected die: <span class="color-swatch" style="background-color: ${
+              this.getColorHex(this.selectedDieColor)
+            }"></span> ${this.selectedDieColor}</p>`;
+
           // Movement is always available during action phase with a selected die
-          actions += `<p>Click on an adjacent highlighted hex to move your ship</p>`;
-          
+          actions +=
+            `<p>Click on an adjacent highlighted hex to move your ship</p>`;
+
           if (currentCell?.terrain === "cubes") {
             actions +=
               `<button id="collectOffering" class="action-btn">Collect Offering</button>`;
@@ -467,7 +480,9 @@ export class GameController {
         } else {
           // No die selected - show selection instructions
           actions += `<p>Select an oracle die to perform actions</p>`;
-          actions += `<p>Available dice: ${currentPlayer.oracleDice.join(", ")}</p>`;
+          actions += `<p>Available dice: ${
+            currentPlayer.oracleDice.join(", ")
+          }</p>`;
         }
 
         if (!actions) {
@@ -502,21 +517,33 @@ export class GameController {
 
       if ((gameState as any).phase === "action") {
         const currentPlayer = this.gameEngine.getCurrentPlayer();
-        
+
         if (!this.selectedDieColor) {
           this.showMessage("Please select a die first!");
           return;
         }
-        
+
         // Get available moves to find the required die color for this target
-        const availableMoves = this.gameEngine.getAvailableMoves(currentPlayer.id);
-        const targetMove = availableMoves.find(move => move.q === q && move.r === r && move.dieColor === this.selectedDieColor);
-        
+        const availableMoves = this.gameEngine.getAvailableMoves(
+          currentPlayer.id,
+        );
+        const targetMove = availableMoves.find((move) =>
+          move.q === q && move.r === r &&
+          move.dieColor === this.selectedDieColor
+        );
+
         if (targetMove) {
           // Use the selected die color
-          const success = this.gameEngine.moveShip(currentPlayer.id, q, r, this.selectedDieColor);
+          const success = this.gameEngine.moveShip(
+            currentPlayer.id,
+            q,
+            r,
+            this.selectedDieColor,
+          );
           if (success) {
-            this.showMessage(`Ship moved to (${q}, ${r}) using ${this.selectedDieColor} die`);
+            this.showMessage(
+              `Ship moved to (${q}, ${r}) using ${this.selectedDieColor} die`,
+            );
             // Clear selected die after successful move
             this.selectedDieColor = null;
             this.renderGameState();
@@ -524,7 +551,9 @@ export class GameController {
             this.showMessage("Invalid move!");
           }
         } else {
-          this.showMessage(`Cannot move to this hex using ${this.selectedDieColor} die! Must be a sea hex within 3 hexes of matching color.`);
+          this.showMessage(
+            `Cannot move to this hex using ${this.selectedDieColor} die! Must be a sea hex within 3 hexes of matching color.`,
+          );
         }
       }
     });
@@ -578,8 +607,6 @@ export class GameController {
       this.showMessage("Cannot roll dice at this time");
     }
   }
-
-
 
   private collectOffering(): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
@@ -683,7 +710,7 @@ export class GameController {
 
   private selectDie(dieColor: HexColor): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
-    
+
     // Check if the player has this die
     if (currentPlayer.oracleDice.includes(dieColor)) {
       this.selectedDieColor = dieColor;
@@ -701,10 +728,12 @@ export class GameController {
   private endTurn(): void {
     // Clear selected die when ending turn
     this.selectedDieColor = null;
-    
+
     // Note: Turns are automatically advanced by the game engine when actions are completed
     // This UI method just clears the selection and shows a message
-    this.showMessage("Turn ended. Next player's turn begins when they take an action.");
+    this.showMessage(
+      "Turn ended. Next player's turn begins when they take an action.",
+    );
 
     this.renderGameState();
   }
@@ -721,7 +750,9 @@ export class GameController {
     }
   }
 
-  private showGameOver(winner: { name: string; color: string; completedQuests: number }): void {
+  private showGameOver(
+    winner: { name: string; color: string; completedQuests: number },
+  ): void {
     const message = `Game Over! ${winner.name} (${
       winner.color.charAt(0).toUpperCase() + winner.color.slice(1)
     }) wins by completing ${winner.completedQuests} quests!`;

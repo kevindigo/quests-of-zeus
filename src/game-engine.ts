@@ -127,7 +127,7 @@ export class OracleGameEngine {
     // Initialize players (2-4 players)
     const playerColors = [COLORS.RED, COLORS.BLUE, COLORS.GREEN, COLORS.YELLOW];
     const players: Player[] = [];
-    
+
     for (let i = 0; i < 2; i++) { // Start with 2 players for now
       players.push({
         id: i + 1,
@@ -194,7 +194,12 @@ export class OracleGameEngine {
     return dice;
   }
 
-  public moveShip(playerId: number, targetQ: number, targetR: number, dieColor?: HexColor): boolean {
+  public moveShip(
+    playerId: number,
+    targetQ: number,
+    targetR: number,
+    dieColor?: HexColor,
+  ): boolean {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
@@ -238,11 +243,11 @@ export class OracleGameEngine {
       currentPos.r,
       3,
     );
-    
-    const isReachable = reachableSeaTiles.some(tile => 
+
+    const isReachable = reachableSeaTiles.some((tile) =>
       tile.q === targetQ && tile.r === targetR
     );
-    
+
     if (!isReachable) {
       return false;
     }
@@ -253,7 +258,11 @@ export class OracleGameEngine {
       player.oracleDice.splice(dieIndex, 1);
     } else {
       // This should not happen since we checked above, but log for debugging
-      console.warn(`Attempted to consume die ${dieColor} but it was not found in player's oracle dice: [${player.oracleDice.join(", ")}]`);
+      console.warn(
+        `Attempted to consume die ${dieColor} but it was not found in player's oracle dice: [${
+          player.oracleDice.join(", ")
+        }]`,
+      );
       return false;
     }
 
@@ -581,17 +590,17 @@ export class OracleGameEngine {
     // Use a Latin square approach to ensure perfect distribution
     // Each hex gets exactly playerCount cubes, each color appears exactly playerCount times
     // and no color appears twice on the same hex
-    
+
     // Create a base pattern that ensures each color appears once in each position
     const basePattern: HexColor[][] = [];
-    
+
     // Create a shuffled copy of colors for the first hex
     const shuffledColors = [...ALL_COLORS];
     this.shuffleArray(shuffledColors);
-    
+
     // For the first hex, use the shuffled colors
     basePattern.push([...shuffledColors]);
-    
+
     // For subsequent hexes, rotate the pattern to ensure no duplicates in columns
     for (let i = 1; i < 6; i++) {
       const rotated = [...basePattern[i - 1]];
@@ -600,14 +609,14 @@ export class OracleGameEngine {
       if (first) rotated.push(first);
       basePattern.push(rotated);
     }
-    
+
     // Now assign cubes to hexes based on playerCount
     // For playerCount = 2, each hex gets the first 2 colors from its pattern
     // For playerCount = 3, each hex gets the first 3 colors, etc.
     for (let i = 0; i < cubeCells.length && i < 6; i++) {
       const cell = cubeCells[i];
       const hexColors = basePattern[i].slice(0, playerCount);
-      
+
       cubeHexes.push({
         q: cell.q,
         r: cell.r,
@@ -653,7 +662,7 @@ export class OracleGameEngine {
     for (let i = 0; i < playerCount; i++) {
       monsterColorsToPlace.push(...monsterColors);
     }
-    
+
     // Initialize empty monster hexes
     for (const cell of shuffledMonsterHexes) {
       monsterHexes.push({
@@ -721,7 +730,9 @@ export class OracleGameEngine {
     return this.state.players.find((p) => p.id === playerId);
   }
 
-  public getAvailableMoves(playerId: number): { q: number; r: number; dieColor: HexColor }[] {
+  public getAvailableMoves(
+    playerId: number,
+  ): { q: number; r: number; dieColor: HexColor }[] {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
@@ -798,7 +809,11 @@ export class OracleGameEngine {
    * Movement is only allowed through sea tiles (land blocks movement)
    * Ships can start on non-sea tiles (like Zeus) and move to adjacent sea tiles
    */
-  private getReachableSeaTiles(startQ: number, startR: number, range: number): { q: number; r: number; color: HexColor }[] {
+  private getReachableSeaTiles(
+    startQ: number,
+    startR: number,
+    range: number,
+  ): { q: number; r: number; color: HexColor }[] {
     if (!this.state) {
       return [];
     }
@@ -815,21 +830,29 @@ export class OracleGameEngine {
     // Continue BFS up to the movement range
     while (queue.length > 0) {
       const current = queue.shift()!;
-      
+
       // If we've reached the maximum range, don't explore further
       if (current.steps >= range) {
         continue;
       }
 
       const neighbors = this.state.map.getNeighbors(current.q, current.r);
-      
+
       for (const neighbor of neighbors) {
         if (neighbor.terrain === "sea") {
           const key = `${neighbor.q},${neighbor.r}`;
           if (!visited.has(key)) {
             visited.add(key);
-            queue.push({ q: neighbor.q, r: neighbor.r, steps: current.steps + 1 });
-            reachableTiles.push({ q: neighbor.q, r: neighbor.r, color: neighbor.color });
+            queue.push({
+              q: neighbor.q,
+              r: neighbor.r,
+              steps: current.steps + 1,
+            });
+            reachableTiles.push({
+              q: neighbor.q,
+              r: neighbor.r,
+              color: neighbor.color,
+            });
           }
         }
       }
