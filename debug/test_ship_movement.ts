@@ -1,5 +1,5 @@
 // Simple test for ship movement logic
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { OracleGameEngine } from "../src/game-engine.ts";
 
 const engine = new OracleGameEngine();
 engine.initializeGame();

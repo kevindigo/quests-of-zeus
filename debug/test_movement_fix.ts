@@ -2,7 +2,7 @@
 // This tests that ships cannot move to hexes that are within 3 hexes straight-line distance
 // but require more than 3 sea steps due to land obstacles
 
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { OracleGameEngine } from "../src/game-engine.ts";
 
 console.log("=== Testing Movement Fix for Land Obstacles ===\n");
 

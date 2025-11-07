@@ -1,5 +1,5 @@
 // Test script to verify movement works correctly when starting from Zeus
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { OracleGameEngine } from "../src/game-engine.ts";
 
 console.log("=== Testing Movement from Zeus Starting Position ===\n");
 

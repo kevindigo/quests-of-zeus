@@ -1,5 +1,5 @@
 // Minimal test to isolate movement issue
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { OracleGameEngine } from "../src/game-engine.ts";
 
 const engine = new OracleGameEngine();
 engine.initializeGame();

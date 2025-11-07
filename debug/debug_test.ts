@@ -5,7 +5,7 @@
  * Use this when you want to test individual components without starting the Oak server
  */
 
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { OracleGameEngine } from "../src/game-engine.ts";
 
 async function testGameInitialization() {
   console.log("🧪 Testing game initialization changes...\n");

@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { OracleGameEngine } from "../src/game-engine.ts";
 
 function simpleOfferingTest() {
   console.log("Simple Offering cubes test...\n");

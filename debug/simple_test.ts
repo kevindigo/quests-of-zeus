@@ -1,5 +1,5 @@
 // Simple test to verify basic movement
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { OracleGameEngine } from "../src/game-engine.ts";
 
 try {
   const engine = new OracleGameEngine();

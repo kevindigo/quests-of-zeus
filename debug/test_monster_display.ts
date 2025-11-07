@@ -2,8 +2,8 @@
  * Test script to verify monster display functionality
  */
 
-import { OracleGameEngine } from "./src/game-engine.ts";
-import { HexMapSVG } from "./src/hexmap-svg.ts";
+import { OracleGameEngine } from "../src/game-engine.ts";
+import { HexMapSVG } from "../src/hexmap-svg.ts";
 
 function testMonsterDisplay(): void {
   console.log("=== Monster Display Test ===\n");
