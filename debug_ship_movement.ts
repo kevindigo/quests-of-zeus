@@ -37,9 +37,9 @@ availableMoves.forEach((move, index) => {
 
 // Test reachability logic directly
 console.log("\n=== Testing Reachability Logic ===");
-const reachableTiles = (engine as any).getReachableSeaTiles(player.shipPosition.q, player.shipPosition.r, 3);
+const reachableTiles = (engine as unknown as { getReachableSeaTiles: (q: number, r: number, steps: number) => Array<{ q: number; r: number; color: string }> }).getReachableSeaTiles(player.shipPosition.q, player.shipPosition.r, 3);
 console.log("Reachable sea tiles:", reachableTiles.length);
-reachableTiles.slice(0, 10).forEach((tile: any, index: number) => {
+reachableTiles.slice(0, 10).forEach((tile: { q: number; r: number; color: string }, index: number) => {
   console.log(`  Tile ${index + 1}: (${tile.q}, ${tile.r}) color ${tile.color}`);
 });
 

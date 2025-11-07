@@ -23,7 +23,7 @@ Deno.test("Sea to shallows conversion - basic functionality", () => {
   }
 
   const shallowCount = terrainCounts["shallow"] || 0;
-  const seaCount = terrainCounts["sea"] || 0;
+  const _seaCount = terrainCounts["sea"] || 0;
 
   // After sea-to-shallows conversion, we should have between 0 and 10 shallows
   // (we make 10 attempts on random sea hexes)

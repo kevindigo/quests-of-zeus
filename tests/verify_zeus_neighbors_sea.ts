@@ -5,7 +5,7 @@ import { HexMap } from "../src/hexmap.ts";
 // Simple verification that Zeus neighbors are sea
 function verifyZeusNeighborsSea() {
   const hexMap = new HexMap();
-  const grid = hexMap.getGrid();
+  const _grid = hexMap.getGrid();
 
   // Get the Zeus cell
   const zeusCells = hexMap.getCellsByTerrain("zeus");
@@ -20,7 +20,7 @@ function verifyZeusNeighborsSea() {
   // Get all neighbors of the Zeus cell
   const zeusNeighbors = hexMap.getNeighbors(zeusCell.q, zeusCell.r);
 
-  let allNeighborsSea = true;
+  let _allNeighborsSea = true;
   for (const neighbor of zeusNeighbors) {
     const isSea = neighbor.terrain === "sea";
 

@@ -6,7 +6,7 @@ import { HexMap } from "../src/hexmap.ts";
 // Test the new Zeus placement logic
 Deno.test("Zeus placement - randomly in neighbor hexes", () => {
   const hexMap = new HexMap();
-  const grid = hexMap.getGrid();
+  const _grid = hexMap.getGrid();
 
   // Get all Zeus cells
   const zeusCells = hexMap.getCellsByTerrain("zeus");

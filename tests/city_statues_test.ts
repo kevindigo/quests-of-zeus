@@ -10,7 +10,7 @@ Deno.test("City Statue Functionality - Basic Operations", () => {
   assert(cities.length > 0, "Should find at least one city on the map");
 
   // Test statue operations on each city
-  cities.forEach((city, index) => {
+  cities.forEach((city, _index) => {
     const initialStatues = map.getStatuesOnCity(city.q, city.r);
     
     // Test initial statue count

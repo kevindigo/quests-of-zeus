@@ -20,7 +20,7 @@ Deno.test("MonsterDistribution - algorithm performance", async () => {
     
     // Basic validation
     assertEquals(monsterHexes.length, 9);
-    const totalMonsters = monsterHexes.reduce((sum: number, hex: any) => sum + hex.monsterColors.length, 0);
+    const totalMonsters = monsterHexes.reduce((sum: number, hex: { monsterColors: string[] }) => sum + hex.monsterColors.length, 0);
     assertEquals(totalMonsters, 2 * ALL_COLORS.length);
   }
   
@@ -45,7 +45,7 @@ Deno.test("MonsterDistribution - always valid results", () => {
       // All constraints must be satisfied
       assertEquals(monsterHexes.length, 9);
       
-      const totalMonsters = monsterHexes.reduce((sum: number, hex: any) => sum + hex.monsterColors.length, 0);
+      const totalMonsters = monsterHexes.reduce((sum: number, hex: { monsterColors: string[] }) => sum + hex.monsterColors.length, 0);
       assertEquals(totalMonsters, 2 * ALL_COLORS.length);
       
       // Check color distribution
@@ -61,7 +61,7 @@ Deno.test("MonsterDistribution - always valid results", () => {
       }
       
       // Check even distribution
-      const monstersPerHex = monsterHexes.map((hex: any) => hex.monsterColors.length);
+      const monstersPerHex = monsterHexes.map((hex: { monsterColors: string[] }) => hex.monsterColors.length);
       const min = Math.min(...monstersPerHex);
       const max = Math.max(...monstersPerHex);
       assert(max - min <= 1);

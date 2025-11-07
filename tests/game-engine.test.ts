@@ -10,7 +10,8 @@ Deno.test("GameEngine - initialization", () => {
   assertEquals(engine.isGameInitialized(), false);
 
   // Initialize the game
-  const state = engine.initializeGame();
+  engine.initializeGame();
+  const state = engine.getGameState();
 
   assertExists(state.map);
   assertEquals(state.players.length, 2);
@@ -181,7 +182,7 @@ Deno.test("GameEngine - storage system", () => {
 
 Deno.test("GameEngine - all players start on Zeus hex", () => {
   const engine = new OracleGameEngine();
-  const state = engine.initializeGame();
+  engine.initializeGame();
 
   // Get all players
   const player1 = engine.getPlayer(1);
@@ -191,6 +192,7 @@ Deno.test("GameEngine - all players start on Zeus hex", () => {
   assertExists(player2);
 
   // Find the Zeus hex in the map
+  const state = engine.getGameState();
   const zeusCells = state.map.getCellsByTerrain("zeus");
   assertEquals(zeusCells.length, 1, "There should be exactly one Zeus hex");
 

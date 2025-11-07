@@ -39,7 +39,7 @@ reachableTiles.forEach(tile => {
 
 Object.keys(tilesBySteps).sort((a, b) => parseInt(a) - parseInt(b)).forEach(steps => {
   console.log(`\n  Steps ${steps}: ${tilesBySteps[steps].length} tiles`);
-  tilesBySteps[steps].slice(0, 5).forEach((tile: any, index: number) => {
+  tilesBySteps[steps].slice(0, 5).forEach((tile: { q: number; r: number; color: string }, index: number) => {
     console.log(`    Tile ${index + 1}: (${tile.q}, ${tile.r}) color ${tile.color}`);
   });
   if (tilesBySteps[steps].length > 5) {

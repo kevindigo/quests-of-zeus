@@ -5,7 +5,7 @@ import { OracleGameEngine } from "../src/game-engine.ts";
 
 Deno.test("Favor System - player initialization", () => {
   const engine = new OracleGameEngine();
-  const state = engine.initializeGame();
+  engine.initializeGame();
 
   // Check that players have the correct favor values
   const player1 = engine.getPlayer(1);
@@ -23,7 +23,7 @@ Deno.test("Favor System - player initialization", () => {
 
 Deno.test("Favor System - favor property exists", () => {
   const engine = new OracleGameEngine();
-  const state = engine.initializeGame();
+  engine.initializeGame();
 
   const player1 = engine.getPlayer(1);
   assertExists(player1);
@@ -35,10 +35,10 @@ Deno.test("Favor System - favor property exists", () => {
 
 Deno.test("Favor System - favor progression pattern", () => {
   const engine = new OracleGameEngine();
-  const state = engine.initializeGame();
+  engine.initializeGame();
 
   // Verify the favor progression pattern: 3, 4, 5, 6 for 4 players
-  const players = state.players;
+  const players = engine.getGameState().players;
   
   // Check that each player has 1 more favor than the previous
   for (let i = 1; i < players.length; i++) {

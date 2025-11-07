@@ -4,7 +4,7 @@ import { OracleGameEngine } from "../src/game-engine.ts";
 const engine = new OracleGameEngine();
 engine.initializeGame();
 
-const gameState = engine.getGameState();
+const _gameState = engine.getGameState();
 const player = engine.getCurrentPlayer();
 
 console.log("Initial ship position:", player.shipPosition);

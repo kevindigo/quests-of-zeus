@@ -6,7 +6,7 @@ import { HexMap } from "../src/hexmap.ts";
 // Test that all neighbors of the Zeus hex are sea
 Deno.test("Zeus neighbors should all be sea", () => {
   const hexMap = new HexMap();
-  const grid = hexMap.getGrid();
+  const _grid = hexMap.getGrid();
 
   // Get the Zeus cell
   const zeusCells = hexMap.getCellsByTerrain("zeus");

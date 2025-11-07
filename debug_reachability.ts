@@ -24,22 +24,22 @@ adjacentCells.forEach(cell => {
 
 // Test reachability logic directly
 console.log("\n=== Testing Reachability Logic ===");
-const reachableTiles = (engine as any).getReachableSeaTiles(player.shipPosition.q, player.shipPosition.r, 3);
+const reachableTiles = (engine as unknown as { getReachableSeaTiles: (q: number, r: number, steps: number) => Array<{ q: number; r: number; color: string }> }).getReachableSeaTiles(player.shipPosition.q, player.shipPosition.r, 3);
 console.log("Reachable sea tiles:", reachableTiles.length);
 
 // Group by steps for debugging
-const tilesBySteps: { [steps: number]: any[] } = {};
+const tilesBySteps: { [steps: number]: Array<{ q: number; r: number; color: string }> } = {};
 reachableTiles.forEach(tile => {
   // For now, we don't track steps in the return value, but we can estimate
   // This is just for debugging
-  const distance = (engine as any).hexDistance(player.shipPosition.q, player.shipPosition.r, tile.q, tile.r);
+  const distance = (engine as unknown as { hexDistance: (q1: number, r1: number, q2: number, r2: number) => number }).hexDistance(player.shipPosition.q, player.shipPosition.r, tile.q, tile.r);
   if (!tilesBySteps[distance]) tilesBySteps[distance] = [];
   tilesBySteps[distance].push(tile);
 });
 
 Object.keys(tilesBySteps).sort((a, b) => parseInt(a) - parseInt(b)).forEach(steps => {
   console.log(`\n  Steps ${steps}: ${tilesBySteps[steps].length} tiles`);
-  tilesBySteps[steps].slice(0, 5).forEach((tile: any, index: number) => {
+  tilesBySteps[steps].slice(0, 5).forEach((tile: { q: number; r: number; color: string }, index: number) => {
     console.log(`    Tile ${index + 1}: (${tile.q}, ${tile.r}) color ${tile.color}`);
   });
   if (tilesBySteps[steps].length > 5) {

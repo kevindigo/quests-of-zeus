@@ -7,7 +7,7 @@ function compareColorDistributions(): void {
   console.log("=== Comparing Color Distribution Methods ===\n");
 
   const testCount = 30;
-  const colors = ["red", "pink", "blue", "black", "green", "yellow"];
+  const _colors = ["red", "pink", "blue", "black", "green", "yellow"];
 
   // Test with current implementation (least-used preference)
   console.log("Testing with LEAST-USED COLOR PREFERENCE:");
@@ -71,7 +71,7 @@ function compareColorDistributions(): void {
 function runColorDistributionTest(
   testCount: number,
   useOldMethod: boolean = false,
-): any {
+): { avgConflicts: number; maxDifference: number; avgStdDev: number } {
   const colorStats: Record<
     string,
     {
@@ -84,7 +84,7 @@ function runColorDistributionTest(
   > = {};
 
   // Initialize stats for each color
-  const colors = ["red", "pink", "blue", "black", "green", "yellow"];
+  const _colors = ["red", "pink", "blue", "black", "green", "yellow"];
   for (const color of colors) {
     colorStats[color] = {
       min: Infinity,
@@ -176,7 +176,7 @@ function runColorDistributionTest(
  */
 function simulateOldRandomAssignment(map: HexMap): void {
   const grid = map.getGrid();
-  const seaCells: any[] = [];
+  const seaCells: { q: number; r: number; terrain: string; color: string }[] = [];
 
   // Collect all sea cells
   for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
@@ -228,7 +228,7 @@ function simulateOldRandomAssignment(map: HexMap): void {
 /**
  * Count adjacent sea hexes with the same color
  */
-function countAdjacentSameColorSeaHexes(map: HexMap, grid: any[][]): number {
+function countAdjacentSameColorSeaHexes(map: HexMap, grid: { q: number; r: number; terrain: string; color: string }[][]): number {
   let conflicts = 0;
   const processedPairs = new Set<string>();
 
@@ -264,7 +264,7 @@ function countAdjacentSameColorSeaHexes(map: HexMap, grid: any[][]): number {
 /**
  * Generate a unique key for a pair of cells to avoid double counting conflicts
  */
-function getPairKey(cell1: any, cell2: any): string {
+function getPairKey(cell1: { q: number; r: number }, cell2: { q: number; r: number }): string {
   const [minQ, maxQ] = [Math.min(cell1.q, cell2.q), Math.max(cell1.q, cell2.q)];
   const [minR, maxR] = [Math.min(cell1.r, cell2.r), Math.max(cell1.r, cell2.r)];
   return `${minQ},${minR}-${maxQ},${maxR}`;

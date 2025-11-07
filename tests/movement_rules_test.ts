@@ -2,7 +2,7 @@
 
 import { assert, assertEquals } from "@std/assert";
 import { OracleGameEngine } from "../src/game-engine.ts";
-import { HexMap } from "../src/hexmap.ts";
+import type { HexMap } from "../src/hexmap.ts";
 
 Deno.test("Movement Rules - Only move to sea spaces", () => {
   const engine = new OracleGameEngine();

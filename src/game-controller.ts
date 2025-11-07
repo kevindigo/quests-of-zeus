@@ -112,7 +112,7 @@ export class GameController {
     }
   }
 
-  private updatePlayerInfo(gameState: any): void {
+  private updatePlayerInfo(_gameState: unknown): void {
     const playerInfoContainer = document.getElementById("playerInfo");
     if (!playerInfoContainer) return;
 
@@ -197,7 +197,7 @@ export class GameController {
     `;
   }
 
-  private renderMap(gameState: any): void {
+  private renderMap(gameState: unknown): void {
     const hexMapContainer = document.getElementById("hexMapSVG");
     if (!hexMapContainer) return;
 
@@ -216,7 +216,7 @@ export class GameController {
       console.log("Cube hexes for rendering:", cubeHexes);
 
       // Debug: Log cube hex details
-      cubeHexes.forEach((cubeHex: any, index: number) => {
+      cubeHexes.forEach((cubeHex: unknown, index: number) => {
         console.log(
           `Cube hex ${index}: (${cubeHex.q}, ${cubeHex.r}) with colors:`,
           cubeHex.cubeColors,
@@ -228,7 +228,7 @@ export class GameController {
       console.log("Monster hexes for rendering:", monsterHexes);
 
       // Debug: Log monster hex details
-      monsterHexes.forEach((monsterHex: any, index: number) => {
+      monsterHexes.forEach((monsterHex: unknown, index: number) => {
         console.log(
           `Monster hex ${index}: (${monsterHex.q}, ${monsterHex.r}) with colors:`,
           monsterHex.monsterColors,
@@ -261,7 +261,7 @@ export class GameController {
         // Use Function constructor instead of direct eval to avoid bundler warnings
         const executeScript = new Function(script);
         executeScript();
-      } catch (error) {
+      } catch (_error) {
         console.error("Error executing hex map script:", error);
       }
 
@@ -272,7 +272,7 @@ export class GameController {
       if (gameState.phase === "action") {
         this.highlightAvailableMoves();
       }
-    } catch (error) {
+    } catch (_error) {
       console.error("Error generating SVG:", error);
       const errorMessage = error instanceof Error ? error.message : String(error);
       hexMapContainer.innerHTML =
@@ -493,7 +493,7 @@ export class GameController {
     });
 
     // Hex cell click for movement
-    document.addEventListener("hexCellClick", (event: any) => {
+    document.addEventListener("hexCellClick", (event: CustomEvent<{ q: number; r: number }>) => {
       if (!this.gameEngine.isGameInitialized()) return;
 
       const { q, r } = event.detail;
@@ -573,7 +573,7 @@ export class GameController {
       const dice = this.gameEngine.rollOracleDice(currentPlayer.id);
       this.showMessage(`Rolled oracle dice: ${dice.join(", ")}`);
       this.renderGameState();
-    } catch (error) {
+    } catch (_error) {
       this.showMessage("Cannot roll dice at this time");
     }
   }
@@ -720,7 +720,7 @@ export class GameController {
     }
   }
 
-  private showGameOver(winner: any): void {
+  private showGameOver(winner: { name: string; color: string; completedQuests: number }): void {
     const message = `Game Over! ${winner.name} (${
       winner.color.charAt(0).toUpperCase() + winner.color.slice(1)
     }) wins by completing ${winner.completedQuests} quests!`;

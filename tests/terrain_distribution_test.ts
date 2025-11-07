@@ -1,6 +1,6 @@
 // Tests for terrain distribution in the game map
 
-import { assert, assertEquals, assertGreater, assertLessOrEqual, assertExists } from "@std/assert";
+import { assertGreater, assertLessOrEqual, assertExists } from "@std/assert";
 import { HexMap } from "../src/hexmap.ts";
 
 Deno.test("Terrain distribution - all expected terrains present", () => {

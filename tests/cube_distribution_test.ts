@@ -1,7 +1,7 @@
 // Tests for cube distribution in the Oracle of Delphi game
 
 import { assert, assertEquals } from "@std/assert";
-import { ALL_COLORS, HexMap } from "../src/hexmap.ts";
+import { HexMap } from "../src/hexmap.ts";
 
 Deno.test("Cube distribution - correct number of cube hexes", () => {
   const hexMap = new HexMap();

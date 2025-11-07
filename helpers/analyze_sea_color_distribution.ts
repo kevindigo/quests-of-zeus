@@ -25,7 +25,7 @@ function analyzeSeaColorDistribution(): void {
 
   for (let i = 0; i < testCount; i++) {
     console.log(`Generating map ${i + 1}...`);
-    const map = new HexMap();
+    const _map = new HexMap();
     const stats = getMapStatistics();
 
     // Update stats for each color

@@ -19,8 +19,8 @@ async function createSimpleIcon(
     await Deno.writeFile(filename, pngData);
     console.log(`✓ Created ${filename} (${width}x${height})`);
     return true;
-  } catch (error) {
-    console.error(`✘ Failed to create ${filename}:`, error.message);
+  } catch (_error) {
+    console.error(`✘ Failed to create ${filename}`);
     return false;
   }
 }
@@ -46,7 +46,7 @@ async function generateColoredPNG(
     }
     const buffer = await response.arrayBuffer();
     return new Uint8Array(buffer);
-  } catch (error) {
+  } catch (_error) {
     // Fallback: create a minimal colored PNG
     return createMinimalColoredPNG(width, height);
   }
@@ -59,7 +59,7 @@ function createMinimalColoredPNG(width: number, height: number): Uint8Array {
   // This creates a very basic colored PNG
   // It's better than the 1x1 transparent PNG but still minimal
 
-  const color = width === 192 ? [102, 126, 234] : [118, 75, 162];
+  const _color = width === 192 ? [102, 126, 234] : [118, 75, 162];
 
   // Simple PNG structure for a solid color image
   const pngData = [

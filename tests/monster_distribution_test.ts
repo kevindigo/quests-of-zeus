@@ -22,7 +22,7 @@ function runDistributionTests(engine: OracleGameEngine, runNumber?: number): voi
 
   // Test 2: Total monsters should be 2 * number of colors (since we have 2 players)
   const totalMonsters = monsterHexes.reduce(
-    (sum: number, hex: any) => sum + hex.monsterColors.length,
+    (sum: number, hex: { monsterColors: string[] }) => sum + hex.monsterColors.length,
     0
   );
   const expectedTotalMonsters = 2 * ALL_COLORS.length;
@@ -59,7 +59,7 @@ function runDistributionTests(engine: OracleGameEngine, runNumber?: number): voi
   }
 
   // Test 5: Monsters should be evenly distributed (difference ≤ 1)
-  const monstersPerHex = monsterHexes.map((hex: any) => hex.monsterColors.length);
+  const monstersPerHex = monsterHexes.map((hex: { monsterColors: string[] }) => hex.monsterColors.length);
   const minMonsters = Math.min(...monstersPerHex);
   const maxMonsters = Math.max(...monstersPerHex);
   assert(
@@ -101,7 +101,7 @@ Deno.test("MonsterDistribution - edge cases", () => {
 
 // Test algorithm completeness and robustness
 Deno.test("MonsterDistribution - algorithm completeness", () => {
-  const playerCount = 2;
+  const _playerCount = 2;
   
   for (let run = 0; run < 10; run++) {
     const engine = new OracleGameEngine();
@@ -112,14 +112,14 @@ Deno.test("MonsterDistribution - algorithm completeness", () => {
 
 // Test that distribution is always even across many runs
 Deno.test("MonsterDistribution - even distribution across runs", () => {
-  const playerCount = 2;
+  const _playerCount = 2;
   
   for (let run = 0; run < 20; run++) {
     const engine = new OracleGameEngine();
     engine.initializeGame();
     const monsterHexes = engine.getMonsterHexes();
     
-    const monstersPerHex = monsterHexes.map((hex: any) => hex.monsterColors.length);
+    const monstersPerHex = monsterHexes.map((hex: { monsterColors: string[] }) => hex.monsterColors.length);
     const min = Math.min(...monstersPerHex);
     const max = Math.max(...monstersPerHex);
     
@@ -130,7 +130,7 @@ Deno.test("MonsterDistribution - even distribution across runs", () => {
 
 // Test color distribution is correct across multiple runs
 Deno.test("MonsterDistribution - color distribution consistency", () => {
-  const playerCount = 2;
+  const _playerCount = 2;
   
   for (let run = 0; run < 5; run++) {
     const engine = new OracleGameEngine();
@@ -145,23 +145,23 @@ Deno.test("MonsterDistribution - color distribution consistency", () => {
       }
     }
     
-    // Each color should appear exactly playerCount times
+    // Each color should appear exactly 2 times (for 2 players)
     for (const color of ALL_COLORS) {
-      assertEquals(colorCounts[color], playerCount, `Run ${run + 1}: Color ${color} appears ${colorCounts[color]} times, expected ${playerCount}`);
+      assertEquals(colorCounts[color], 2, `Run ${run + 1}: Color ${color} appears ${colorCounts[color]} times, expected 2`);
     }
   }
 });
 
 // Test that no hex has more than 2 monsters across multiple runs
 Deno.test("MonsterDistribution - max monsters per hex", () => {
-  const playerCount = 2;
+  const _playerCount = 2;
   
   for (let run = 0; run < 10; run++) {
     const engine = new OracleGameEngine();
     engine.initializeGame();
     const monsterHexes = engine.getMonsterHexes();
     
-    const maxMonsters = Math.max(...monsterHexes.map((hex: any) => hex.monsterColors.length));
+    const maxMonsters = Math.max(...monsterHexes.map((hex: { monsterColors: string[] }) => hex.monsterColors.length));
     
     // No hex should have more than 2 monsters
     assert(maxMonsters <= 2, `Run ${run + 1}: Some hex has ${maxMonsters} monsters (should be ≤ 2)`);
@@ -170,7 +170,7 @@ Deno.test("MonsterDistribution - max monsters per hex", () => {
 
 // Test the algorithm with the actual player count (2 players)
 Deno.test("MonsterDistribution - actual player count (2 players)", () => {
-  const playerCount = 2;
+  const _playerCount = 2;
   
   // 2 players * 6 colors = 12 monsters total
   // With 9 hexes, the only possible even distribution is:
@@ -184,7 +184,7 @@ Deno.test("MonsterDistribution - actual player count (2 players)", () => {
     engine.initializeGame();
     const monsterHexes = engine.getMonsterHexes();
     
-    const monstersPerHex = monsterHexes.map((hex: any) => hex.monsterColors.length);
+    const monstersPerHex = monsterHexes.map((hex: { monsterColors: string[] }) => hex.monsterColors.length);
     
     // Verify all constraints
     const totalMonsters = monstersPerHex.reduce((sum: number, count: number) => sum + count, 0);
