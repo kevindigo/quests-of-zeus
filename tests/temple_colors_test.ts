@@ -3,14 +3,14 @@ import {
   assertGreaterOrEqual,
   assertNotEquals,
 } from "@std/assert";
-import { HexMap } from "../src/hexmap.ts";
+import { HexMap, HexCell } from "../src/hexmap.ts";
 
 Deno.test("Temple color assignment - should have exactly 6 temples", () => {
   const hexMap = new HexMap();
   const grid = hexMap.getGrid();
 
   // Find all temple cells
-  const templeCells: any[] = [];
+  const templeCells: HexCell[] = [];
 
   for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
     const row = grid[arrayQ];
@@ -33,7 +33,7 @@ Deno.test("Temple color assignment - all temples should have colors", () => {
   const grid = hexMap.getGrid();
 
   // Find all temple cells
-  const templeCells: any[] = [];
+  const templeCells: HexCell[] = [];
 
   for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
     const row = grid[arrayQ];
@@ -107,7 +107,7 @@ Deno.test("Temple color assignment - all temples should have unique coordinates"
   const grid = hexMap.getGrid();
 
   // Find all temple cells
-  const templeCells: any[] = [];
+  const templeCells: HexCell[] = [];
 
   for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
     const row = grid[arrayQ];

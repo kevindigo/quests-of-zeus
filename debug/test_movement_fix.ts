@@ -3,6 +3,7 @@
 // but require more than 3 sea steps due to land obstacles
 
 import { OracleGameEngine } from "../src/game-engine.ts";
+import type { HexColor } from "../src/hexmap.ts";
 
 console.log("=== Testing Movement Fix for Land Obstacles ===\n");
 
@@ -47,7 +48,7 @@ const allSeaTiles = gameState.map.getCellsByTerrain("sea");
 console.log("Total sea tiles on map:", allSeaTiles.length);
 
 // Find sea tiles that are within 3 hexes straight-line distance but not reachable
-const unreachableWithinRange: any[] = [];
+const unreachableWithinRange: { q: number; r: number; color: HexColor; straightLineDistance: number }[] = [];
 
 for (const seaTile of allSeaTiles) {
   const straightLineDistance = (engine as any).hexDistance(

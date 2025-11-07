@@ -1,5 +1,6 @@
 // Test script to verify movement works correctly when starting from Zeus
 import { OracleGameEngine } from "../src/game-engine.ts";
+import type { HexColor } from "../src/hexmap.ts";
 
 console.log("=== Testing Movement from Zeus Starting Position ===\n");
 
@@ -42,7 +43,7 @@ const reachableTiles = (engine as any).getReachableSeaTiles(
 console.log("Reachable sea tiles from Zeus:", reachableTiles.length);
 
 // Group by steps for debugging
-const tilesBySteps: { [steps: number]: any[] } = {};
+const tilesBySteps: { [steps: number]: { q: number; r: number; color: HexColor }[] } = {};
 reachableTiles.forEach((tile) => {
   // For now, we don't track steps in the return value, but we can estimate
   // This is just for debugging

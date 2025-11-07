@@ -1,7 +1,7 @@
 // Comprehensive test for the statue system
 
 import { assert, assertEquals, type assertExists } from "@std/assert";
-import { HexMap } from "../src/hexmap.ts";
+import { HexMap, HexColor } from "../src/hexmap.ts";
 import { OracleGameEngine } from "../src/game-engine.ts";
 
 Deno.test("StatueSystem - HexMap statue operations", () => {
@@ -101,7 +101,7 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
     ) || "red";
     player.storage[emptySlotIndex] = {
       type: "statue",
-      color: wrongColor as any,
+      color: wrongColor as HexColor,
     };
   } else {
     // If no empty slots, we can't proceed with this test
