@@ -89,7 +89,7 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
     // Find a color different from the city
     const availableColors = ["red", "blue", "green", "yellow", "pink", "black"];
     const wrongColor = availableColors.find(color => color !== gameCity.color) || "red";
-    player.storage[emptySlotIndex] = { type: "statue", color: wrongColor };
+    player.storage[emptySlotIndex] = { type: "statue", color: wrongColor as any };
   } else {
     // If no empty slots, we can't proceed with this test
     return;

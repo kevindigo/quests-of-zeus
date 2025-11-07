@@ -197,7 +197,7 @@ export class GameController {
     `;
   }
 
-  private renderMap(gameState: unknown): void {
+  private renderMap(gameState: any): void {
     const hexMapContainer = document.getElementById("hexMapSVG");
     if (!hexMapContainer) return;
 
@@ -212,11 +212,11 @@ export class GameController {
 
     try {
       // Update the hex map SVG with cube hex data
-      const cubeHexes = gameState.cubeHexes || [];
+      const cubeHexes = (gameState as any).cubeHexes || [];
       console.log("Cube hexes for rendering:", cubeHexes);
 
       // Debug: Log cube hex details
-      cubeHexes.forEach((cubeHex: unknown, index: number) => {
+      cubeHexes.forEach((cubeHex: any, index: number) => {
         console.log(
           `Cube hex ${index}: (${cubeHex.q}, ${cubeHex.r}) with colors:`,
           cubeHex.cubeColors,
@@ -224,11 +224,11 @@ export class GameController {
       });
 
       // Update the hex map SVG with monster hex data
-      const monsterHexes = gameState.monsterHexes || [];
+      const monsterHexes = (gameState as any).monsterHexes || [];
       console.log("Monster hexes for rendering:", monsterHexes);
 
       // Debug: Log monster hex details
-      monsterHexes.forEach((monsterHex: unknown, index: number) => {
+      monsterHexes.forEach((monsterHex: any, index: number) => {
         console.log(
           `Monster hex ${index}: (${monsterHex.q}, ${monsterHex.r}) with colors:`,
           monsterHex.monsterColors,
@@ -261,18 +261,18 @@ export class GameController {
         // Use Function constructor instead of direct eval to avoid bundler warnings
         const executeScript = new Function(script);
         executeScript();
-      } catch (_error) {
+      } catch (error) {
         console.error("Error executing hex map script:", error);
       }
 
       // Add player markers to the map
-      this.addPlayerMarkers(gameState.players);
+      this.addPlayerMarkers((gameState as any).players);
 
       // Highlight available moves
-      if (gameState.phase === "action") {
+      if ((gameState as any).phase === "action") {
         this.highlightAvailableMoves();
       }
-    } catch (_error) {
+    } catch (error) {
       console.error("Error generating SVG:", error);
       const errorMessage = error instanceof Error ? error.message : String(error);
       hexMapContainer.innerHTML =
@@ -493,13 +493,14 @@ export class GameController {
     });
 
     // Hex cell click for movement
-    document.addEventListener("hexCellClick", (event: CustomEvent<{ q: number; r: number }>) => {
+    document.addEventListener("hexCellClick", (event: Event) => {
       if (!this.gameEngine.isGameInitialized()) return;
 
-      const { q, r } = event.detail;
+      const customEvent = event as CustomEvent<{ q: number; r: number }>;
+      const { q, r } = customEvent.detail;
       const gameState = this.gameEngine.getGameState();
 
-      if (gameState.phase === "action") {
+      if ((gameState as any).phase === "action") {
         const currentPlayer = this.gameEngine.getCurrentPlayer();
         
         if (!this.selectedDieColor) {

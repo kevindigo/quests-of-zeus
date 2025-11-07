@@ -76,7 +76,7 @@ Deno.test("MonsterDistribution - always valid results", () => {
       validRuns++;
     } catch (error) {
       // If any test fails, the algorithm is not robust
-      throw new Error(`Algorithm failed on run ${run + 1}: ${error.message}`);
+      throw new Error(`Algorithm failed on run ${run + 1}: ${(error as Error).message}`);
     }
   }
   
