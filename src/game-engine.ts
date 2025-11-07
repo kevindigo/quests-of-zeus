@@ -199,6 +199,7 @@ export class OracleGameEngine {
     targetQ: number,
     targetR: number,
     dieColor?: HexColor,
+    favorSpent?: number,
   ): boolean {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
@@ -236,12 +237,14 @@ export class OracleGameEngine {
       return false;
     }
 
-    // Rule 2: Each ship has a movement value of 3 (can move up to 3 steps on sea tiles)
-    // Check if the target is reachable within 3 steps on sea tiles
+    // Calculate movement range (base 3 + 1 per favor spent)
+    const movementRange = 3 + (favorSpent || 0);
+
+    // Check if the target is reachable within the movement range on sea tiles
     const reachableSeaTiles = this.getReachableSeaTiles(
       currentPos.q,
       currentPos.r,
-      3,
+      movementRange,
     );
 
     const isReachable = reachableSeaTiles.some((tile) =>
@@ -264,6 +267,14 @@ export class OracleGameEngine {
         }]`,
       );
       return false;
+    }
+
+    // Spend favor if specified
+    if (favorSpent && favorSpent > 0) {
+      if (player.favor < favorSpent) {
+        return false; // Not enough favor
+      }
+      player.favor -= favorSpent;
     }
 
     // Move the ship
@@ -769,6 +780,7 @@ export class OracleGameEngine {
 
   public getAvailableMoves(
     playerId: number,
+    favorSpent?: number,
   ): { q: number; r: number; dieColor: HexColor }[] {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
@@ -780,7 +792,7 @@ export class OracleGameEngine {
 
     const currentPos = player.shipPosition;
     const availableMoves: { q: number; r: number; dieColor: HexColor }[] = [];
-    const movementRange = 3;
+    const movementRange = 3 + (favorSpent || 0);
 
     // Get all reachable sea tiles within range using BFS
     const reachableSeaTiles = this.getReachableSeaTiles(
@@ -838,6 +850,60 @@ export class OracleGameEngine {
       mh.q === q && mh.r === r
     );
     return monsterHex ? monsterHex.monsterColors : [];
+  }
+
+  /**
+   * Get available moves with favor spending options
+   * Returns moves grouped by the favor cost required to reach them
+   */
+  public getAvailableMovesWithFavor(
+    playerId: number,
+  ): { q: number; r: number; dieColor: HexColor; favorCost: number }[] {
+    if (!this.state) {
+      throw new Error("Game not initialized. Call initializeGame() first.");
+    }
+    const player = this.state.players.find((p) => p.id === playerId);
+    if (!player || this.state.phase !== "action") {
+      return [];
+    }
+
+    const currentPos = player.shipPosition;
+    const availableMoves: { q: number; r: number; dieColor: HexColor; favorCost: number }[] = [];
+    const maxFavorToSpend = Math.min(player.favor, 5); // Cap at 5 favor to prevent excessive computation
+
+    // Check moves for each possible favor spending amount
+    for (let favorSpent = 0; favorSpent <= maxFavorToSpend; favorSpent++) {
+      const movementRange = 3 + favorSpent;
+      const reachableSeaTiles = this.getReachableSeaTiles(
+        currentPos.q,
+        currentPos.r,
+        movementRange,
+      );
+
+      // Filter by player's available dice colors and exclude current position
+      for (const seaTile of reachableSeaTiles) {
+        if (
+          seaTile.color !== "none" &&
+          player.oracleDice.includes(seaTile.color) &&
+          !(seaTile.q === currentPos.q && seaTile.r === currentPos.r)
+        ) {
+          // Only add if this move isn't already available with less favor
+          const existingMove = availableMoves.find((move) =>
+            move.q === seaTile.q && move.r === seaTile.r && move.dieColor === seaTile.color
+          );
+          if (!existingMove) {
+            availableMoves.push({
+              q: seaTile.q,
+              r: seaTile.r,
+              dieColor: seaTile.color,
+              favorCost: favorSpent,
+            });
+          }
+        }
+      }
+    }
+
+    return availableMoves;
   }
 
   /**

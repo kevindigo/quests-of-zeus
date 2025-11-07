@@ -1,8 +1,6 @@
 == Make testing easier ==
 
-- action: spend a die to gain favor
 - free: die change
-- free: move farther
 
 == Prerequisite ==
 

@@ -12,6 +12,8 @@ export class GameController {
   private gameEngine: OracleGameEngine;
   private hexMapSVG: HexMapSVG;
   private selectedDieColor: HexColor | null = null;
+  private selectedFavorSpent: number = 0;
+  private isFavorMode: boolean = false;
 
   constructor() {
     this.gameEngine = new OracleGameEngine();
@@ -45,6 +47,7 @@ export class GameController {
             <ul>
               <li>Roll oracle dice to determine movement options</li>
               <li>Move your ship across the sea and land hexes</li>
+              <li>Spend favor to extend your movement range (1 extra hex per favor spent)</li>
               <li>Collect cubes and statues, fight monsters, and build temples</li>
               <li>Complete quests to win the game</li>
               <li>First player to complete 3 of each quest type (Temple Offering, Monster, Foundation, Cloud) wins!</li>
@@ -371,11 +374,12 @@ export class GameController {
 
   private highlightAvailableMoves(): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
-    const availableMoves = this.gameEngine.getAvailableMoves(currentPlayer.id);
+    const availableMoves = this.gameEngine.getAvailableMovesWithFavor(currentPlayer.id);
 
     // Clear previous highlights
     document.querySelectorAll(".available-move").forEach((cell) => {
       cell.classList.remove("available-move");
+      cell.classList.remove("available-move-favor");
       cell.removeAttribute("title");
     });
 
@@ -390,12 +394,21 @@ export class GameController {
           );
 
           if (highlightCell) {
-            highlightCell.classList.add("available-move");
-            // Add tooltip to show required die color
-            highlightCell.setAttribute(
-              "title",
-              `Move using ${move.dieColor} die`,
-            );
+            if (move.favorCost > 0) {
+              highlightCell.classList.add("available-move-favor");
+              // Add tooltip to show required die color and favor cost
+              highlightCell.setAttribute(
+                "title",
+                `Move using ${move.dieColor} die (costs ${move.favorCost} favor)`,
+              );
+            } else {
+              highlightCell.classList.add("available-move");
+              // Add tooltip to show required die color
+              highlightCell.setAttribute(
+                "title",
+                `Move using ${move.dieColor} die`,
+              );
+            }
           }
         }
       });
@@ -440,9 +453,22 @@ export class GameController {
               this.getColorHex(this.selectedDieColor)
             }"></span> ${this.selectedDieColor}</p>`;
 
-          // Movement is always available during action phase with a selected die
+          // Show favor status
           actions +=
-            `<p>Click on an adjacent highlighted hex to move your ship</p>`;
+            `<p>Available favor: ${currentPlayer.favor}</p>`;
+
+          // Movement is always available during action phase with a selected die
+          if (this.isFavorMode) {
+            actions +=
+              `<p><strong>Favor Mode Active:</strong> Ready to spend ${this.selectedFavorSpent} favor. Click a golden-highlighted hex to confirm move.</p>`;
+          } else {
+            actions +=
+              `<p>Click on highlighted hexes to move your ship:</p>
+               <ul style="margin-left: 1rem;">
+                 <li>White highlights: Normal range (3 hexes)</li>
+                 <li>Golden highlights: Extended range (costs favor)</li>
+               </ul>`;
+          }
 
           // Spend die for favor action is always available during action phase with a selected die
           actions +=
@@ -531,8 +557,8 @@ export class GameController {
           return;
         }
 
-        // Get available moves to find the required die color for this target
-        const availableMoves = this.gameEngine.getAvailableMoves(
+        // Get available moves with favor options
+        const availableMoves = this.gameEngine.getAvailableMovesWithFavor(
           currentPlayer.id,
         );
         const targetMove = availableMoves.find((move) =>
@@ -541,27 +567,57 @@ export class GameController {
         );
 
         if (targetMove) {
-          // Use the selected die color
+          // Check if this move requires favor spending
+          if (targetMove.favorCost > 0 && !this.isFavorMode) {
+            // Ask player if they want to spend favor
+            const confirmSpend = confirm(
+              `This move requires spending ${targetMove.favorCost} favor to reach. Do you want to spend favor to move here?`
+            );
+            if (confirmSpend) {
+              this.selectedFavorSpent = targetMove.favorCost;
+              this.isFavorMode = true;
+              this.showMessage(
+                `Ready to move! Will spend ${targetMove.favorCost} favor. Click the hex again to confirm.`
+              );
+              return;
+            } else {
+              return; // Player declined
+            }
+          }
+
+          // Use the selected die color and favor spent
           const success = this.gameEngine.moveShip(
             currentPlayer.id,
             q,
             r,
             this.selectedDieColor,
+            this.selectedFavorSpent,
           );
           if (success) {
-            this.showMessage(
-              `Ship moved to (${q}, ${r}) using ${this.selectedDieColor} die`,
-            );
-            // Clear selected die after successful move
+            let message = `Ship moved to (${q}, ${r}) using ${this.selectedDieColor} die`;
+            if (this.selectedFavorSpent > 0) {
+              message += ` and ${this.selectedFavorSpent} favor`;
+            }
+            this.showMessage(message);
+            // Clear selections after successful move
             this.selectedDieColor = null;
+            this.selectedFavorSpent = 0;
+            this.isFavorMode = false;
             this.renderGameState();
           } else {
             this.showMessage("Invalid move!");
           }
         } else {
-          this.showMessage(
-            `Cannot move to this hex using ${this.selectedDieColor} die! Must be a sea hex within 3 hexes of matching color.`,
-          );
+          if (this.isFavorMode) {
+            // Cancel favor mode if clicking a different hex
+            this.selectedFavorSpent = 0;
+            this.isFavorMode = false;
+            this.showMessage("Favor spending cancelled.");
+          } else {
+            this.showMessage(
+              `Cannot move to this hex using ${this.selectedDieColor} die! Must be a sea hex within range of matching color.`,
+            );
+          }
         }
       }
     });
@@ -753,13 +809,17 @@ export class GameController {
 
   private clearDieSelection(): void {
     this.selectedDieColor = null;
+    this.selectedFavorSpent = 0;
+    this.isFavorMode = false;
     this.showMessage("Die selection cleared");
     this.renderGameState();
   }
 
   private endTurn(): void {
-    // Clear selected die when ending turn
+    // Clear selections when ending turn
     this.selectedDieColor = null;
+    this.selectedFavorSpent = 0;
+    this.isFavorMode = false;
 
     // Call the game engine's endTurn method to advance to the next player
     // Note: This will reset oracle dice and advance the current player index
