@@ -543,7 +543,7 @@ export class OracleGameEngine {
     player.completedQuestTypes[questType]++;
   }
 
-  private endTurn(): void {
+  public endTurn(): void {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }

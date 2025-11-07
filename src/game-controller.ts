@@ -733,10 +733,12 @@ export class GameController {
     // Clear selected die when ending turn
     this.selectedDieColor = null;
 
-    // Note: Turns are automatically advanced by the game engine when actions are completed
-    // This UI method just clears the selection and shows a message
+    // Call the game engine's endTurn method to advance to the next player
+    // Note: This will reset oracle dice and advance the current player index
+    this.gameEngine.endTurn();
+    
     this.showMessage(
-      "Turn ended. Next player's turn begins when they take an action.",
+      "Turn ended. Next player's turn begins.",
     );
 
     this.renderGameState();

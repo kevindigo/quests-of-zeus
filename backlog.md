@@ -1,6 +1,5 @@
 == Make testing easier ==
 
-- setup: favors
 - action: spend a die to gain favor
 - free: die change
 - free: move farther
