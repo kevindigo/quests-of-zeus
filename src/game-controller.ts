@@ -460,13 +460,13 @@ export class GameController {
           // Movement is always available during action phase with a selected die
           if (this.isFavorMode) {
             actions +=
-              `<p><strong>Favor Mode Active:</strong> Ready to spend ${this.selectedFavorSpent} favor. Click a golden-highlighted hex to confirm move.</p>`;
+              `<p><strong>Favor Mode Active:</strong> Ready to spend ${this.selectedFavorSpent} favor. Click a silver-highlighted hex to confirm move.</p>`;
           } else {
             actions +=
               `<p>Click on highlighted hexes to move your ship:</p>
                <ul style="margin-left: 1rem;">
                  <li>White highlights: Normal range (3 hexes)</li>
-                 <li>Golden highlights: Extended range (costs favor)</li>
+                 <li>Silver highlights: Extended range (costs favor)</li>
                </ul>`;
           }
 
