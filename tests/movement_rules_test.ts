@@ -112,13 +112,13 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
     ).length;
 
     // Move to the target hex
-    const success = engine.moveShip(
+    const moveResult = engine.moveShip(
       player.id,
       firstMove.q,
       firstMove.r,
       firstMove.dieColor,
     );
-    assert(success, "Movement should be successful");
+    assert(moveResult.success, "Movement should be successful");
 
     // Get fresh player reference after movement - ensure we get the actual current player
     const updatedPlayer = engine.getCurrentPlayer();
@@ -167,8 +167,8 @@ Deno.test("Movement Rules - Invalid movement attempts", () => {
   const landCells = gameState.map.getCellsByTerrain("city");
   if (landCells.length > 0) {
     const landCell = landCells[0];
-    const success = engine.moveShip(player.id, landCell.q, landCell.r, "red");
-    assert(!success, "Movement to land hex should fail");
+    const moveResult = engine.moveShip(player.id, landCell.q, landCell.r, "red");
+    assert(!moveResult.success, "Movement to land hex should fail");
   }
 
   // Try to move to a sea hex with wrong die color (should fail)
@@ -177,13 +177,13 @@ Deno.test("Movement Rules - Invalid movement attempts", () => {
     const seaCell = seaCells[0];
     // Use a color that doesn't match the sea hex
     const wrongColor = seaCell.color === "red" ? "blue" : "red";
-    const success = engine.moveShip(
+    const moveResult = engine.moveShip(
       player.id,
       seaCell.q,
       seaCell.r,
       wrongColor,
     );
-    assert(!success, "Movement with wrong die color should fail");
+    assert(!moveResult.success, "Movement with wrong die color should fail");
   }
 
   // Try to move to a sea hex that's not reachable within 3 steps (should fail)
@@ -195,12 +195,12 @@ Deno.test("Movement Rules - Invalid movement attempts", () => {
 
   if (unreachableSeaCells.length > 0) {
     const unreachableCell = unreachableSeaCells[0];
-    const success = engine.moveShip(
+    const moveResult = engine.moveShip(
       player.id,
       unreachableCell.q,
       unreachableCell.r,
       unreachableCell.color,
     );
-    assert(!success, "Movement to unreachable sea hex should fail");
+    assert(!moveResult.success, "Movement to unreachable sea hex should fail");
   }
 });

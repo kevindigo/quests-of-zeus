@@ -28,6 +28,8 @@
 
 ## Testing Workflow
 
+- Before declaring any work complete, `deno test` should succeed
+
 ### Available Test Commands:
 
 - `deno task test` - Run all tests

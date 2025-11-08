@@ -70,7 +70,7 @@ for (const dieColor of player1.oracleDice) {
     );
     console.log(`  This move requires ${moveWithFavor.favorCost} favor`);
 
-    const success = engine.moveShip(
+    const moveResult = engine.moveShip(
       1,
       moveWithFavor.q,
       moveWithFavor.r,
@@ -78,12 +78,14 @@ for (const dieColor of player1.oracleDice) {
       moveWithFavor.favorCost,
     );
 
-    console.log("  Move result:", success ? "SUCCESS" : "FAILED");
+    console.log("  Move result:", moveResult.success ? "SUCCESS" : "FAILED");
 
-    if (success) {
+    if (moveResult.success) {
       const updatedPlayer = engine.getPlayer(1)!;
       console.log("  New position:", updatedPlayer.shipPosition);
       console.log("  Remaining favor:", updatedPlayer.favor);
+    } else if (moveResult.error) {
+      console.log("  Error details:", moveResult.error);
     }
     break; // Only test one move
   }

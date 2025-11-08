@@ -1,9 +1,9 @@
 // Debug script to test ship reachability logic
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from "./src/game-engine.ts";
 
 console.log("=== Testing Ship Reachability Logic ===\n");
 
-const engine = new OracleGameEngine();
+const engine = new QuestsZeusGameEngine();
 engine.initializeGame();
 
 const gameState = engine.getGameState();

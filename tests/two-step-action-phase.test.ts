@@ -56,13 +56,13 @@ Deno.test("GameController - movement with selected die", () => {
     ).length;
 
     // Test moving with the correct die color
-    const success = engine.moveShip(
+    const moveResult = engine.moveShip(
       1,
       firstMove.q,
       firstMove.r,
       requiredDieColor,
     );
-    assertEquals(success, true, "Move should succeed with correct die color");
+    assertEquals(moveResult.success, true, "Move should succeed with correct die color");
 
     // Verify exactly one die of this color was consumed
     const diceCountAfter = player.oracleDice.filter((color: string) =>

@@ -1,13 +1,13 @@
 // Test for the new radio button recoloring feature
 // This tests that favor is only spent when the die is actually used
 
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from "./src/game-engine.ts";
 import type { Player } from "./src/game-engine.ts";
 
 function testRecolorRadioFeature() {
   console.log("Testing radio button recoloring feature...\n");
 
-  const gameEngine = new OracleGameEngine();
+  const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
   // Get the first player

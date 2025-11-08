@@ -1,9 +1,9 @@
 // Simple debug script for movement
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from "./src/game-engine.ts";
 
 console.log("=== Simple Movement Debug ===\n");
 
-const engine = new OracleGameEngine();
+const engine = new QuestsZeusGameEngine();
 engine.initializeGame();
 
 const player = engine.getCurrentPlayer();
@@ -24,19 +24,20 @@ if (availableMoves.length > 0) {
 
   // Try to move
   console.log("\nAttempting movement...");
-  const success = engine.moveShip(
+  const moveResult = engine.moveShip(
     player.id,
     firstMove.q,
     firstMove.r,
     firstMove.dieColor,
   );
-  console.log("Movement success:", success);
+  console.log("Movement success:", moveResult.success);
 
-  if (success) {
+  if (moveResult.success) {
     console.log("New ship position:", player.shipPosition);
     console.log("Remaining dice:", player.oracleDice);
   } else {
     console.log("Movement failed!");
+    console.log("Error details:", moveResult.error);
   }
 } else {
   console.log("No available moves");

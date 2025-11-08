@@ -70,13 +70,13 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
 
   if (moveToCity) {
     // Move to adjacent sea tile
-    const moveSuccess = game.moveShip(
+    const moveResult = game.moveShip(
       player.id,
       moveToCity.q,
       moveToCity.r,
       moveToCity.dieColor,
     );
-    assert(moveSuccess, "Failed to move player near city");
+    assert(moveResult.success, "Failed to move player near city");
   } else {
     // If no adjacent sea move found, just set position directly (for testing)
     player.shipPosition = { q: gameCity.q, r: gameCity.r };

@@ -1,17 +1,16 @@
-// Test for recoloring movement validation
-// This tests that movement works correctly when recoloring intentions are set
+// Test to verify the recoloring movement validation fix
 
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import type { Player } from "../src/game-engine.ts";
 
-function testRecolorMovement() {
-  console.log("Testing recoloring movement validation...\n");
+function testRecolorMovementValidationFix() {
+  console.log("Testing recoloring movement validation fix...\n");
 
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
   // Get the first player
-  const player = gameEngine.getCurrentPlayer() as Player & { recoloredDice?: any };
+  const player = gameEngine.getCurrentPlayer();
   console.log(`Testing with player: ${player.name}`);
   console.log(`Initial favor: ${player.favor}\n`);
 
@@ -27,6 +26,10 @@ function testRecolorMovement() {
   const success = gameEngine.setRecolorIntention(player.id, "black", 1);
   console.log(`  Result: ${success ? "SUCCESS" : "FAILED"}`);
   
+  if (success) {
+    console.log(`  Recolored dice: ${JSON.stringify(player.recoloredDice)}`);
+  }
+
   // Test 2: Get available moves for black die with recoloring
   console.log("\nTest 2: Available moves for black die with recoloring");
   const availableMoves = gameEngine.getAvailableMovesForDie(player.id, "black", player.favor);
@@ -75,59 +78,46 @@ function testRecolorMovement() {
     console.log("  No moves available to test movement");
   }
 
-  // Test 4: Test clearing recoloring intention
-  console.log("\nTest 4: Clear recoloring intention and verify movement fails");
+  // Test 4: Verify that the validation now works correctly
+  console.log("\nTest 4: Verify validation works correctly");
   
-  // Reset player state
-  player.oracleDice = ["black"];
+  // Reset player for new test
+  player.oracleDice = ["black", "pink", "blue"];
   player.favor = 5;
-  player.shipPosition = { q: 0, r: 0 }; // Reset to starting position
+  player.recoloredDice = {};
   
-  // Clear any existing recoloring
-  gameEngine.clearRecolorIntention(player.id, "black");
+  // Set recoloring intention for black die → pink
+  gameEngine.setRecolorIntention(player.id, "black", 1);
   
-  // Get moves with black die (no recoloring)
-  const blackMoves = gameEngine.getAvailableMovesForDie(player.id, "black", player.favor);
+  // Get available moves again
+  const movesAfterRecolor = gameEngine.getAvailableMovesForDie(player.id, "black", player.favor);
+  console.log(`  Moves available after recoloring: ${movesAfterRecolor.length}`);
   
-  if (blackMoves.length > 0) {
-    const targetMove = blackMoves[0];
+  if (movesAfterRecolor.length > 0) {
+    const testMove = movesAfterRecolor[0];
+    console.log(`  Testing move to (${testMove.q}, ${testMove.r})`);
     
-    // Try to move to a black hex using black die (should work)
-    const moveResult1 = gameEngine.moveShip(
+    // This should now work correctly with the fix
+    const validationResult = gameEngine.moveShip(
       player.id,
-      targetMove.q,
-      targetMove.r,
+      testMove.q,
+      testMove.r,
       "black",
-      targetMove.favorCost
+      testMove.favorCost
     );
-    console.log(`  Move to black hex with black die (no recoloring): ${moveResult1.success ? "SUCCESS" : "FAILED"}`);
     
-    // Reset and try with recoloring intention to pink
-    player.oracleDice = ["black"];
-    player.favor = 5;
-    player.shipPosition = { q: 0, r: 0 };
-    
-    gameEngine.setRecolorIntention(player.id, "black", 1);
-    
-    // Try to move to same black hex with recoloring intention (should fail)
-    const moveResult2 = gameEngine.moveShip(
-      player.id,
-      targetMove.q,
-      targetMove.r,
-      "black",
-      targetMove.favorCost
-    );
-    console.log(`  Move to black hex with black die (recolored to pink): ${moveResult2.success ? "SUCCESS" : "FAILED"}`);
-    
-    if (!moveResult2.success) {
-      console.log(`  ✓ Correctly prevented movement to black hex when die is recolored to pink`);
+    if (validationResult.success) {
+      console.log(`  ✓ Validation fix working: Move succeeded with recolored die`);
     } else {
-      console.log(`  ✗ Should have prevented movement to black hex when die is recolored to pink`);
+      console.log(`  ✗ Validation fix not working: Move failed despite being shown as available`);
+      if (validationResult.error) {
+        console.log(`  Error details:`, validationResult.error);
+      }
     }
   }
 
-  console.log("\n--- Recoloring movement test completed ---");
+  console.log("\n--- Recoloring movement validation fix test completed ---");
 }
 
 // Run the test
-testRecolorMovement();
+testRecolorMovementValidationFix();

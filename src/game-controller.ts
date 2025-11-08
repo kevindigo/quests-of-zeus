@@ -4,7 +4,7 @@
 import { QuestsZeusGameEngine } from "./game-engine.ts";
 import { HexMapSVG } from "./hexmap-svg.ts";
 import type { HexColor } from "./hexmap.ts";
-import type { CubeHex, GameState, MonsterHex, Player } from "./game-engine.ts";
+import type { CubeHex, GameState, MonsterHex, Player, MoveShipResult } from "./game-engine.ts";
 
 // Type declarations for DOM APIs (for Deno type checking)
 
@@ -600,14 +600,14 @@ export class GameController {
               this.selectedFavorSpent = targetMove.favorCost;
               
               // Execute the move immediately after confirmation
-              const success = this.gameEngine.moveShip(
+              const moveResult = this.gameEngine.moveShip(
                 currentPlayer.id,
                 q,
                 r,
                 this.selectedDieColor,
                 this.selectedFavorSpent,
               );
-              if (success) {
+              if (moveResult.success) {
                 // Get the effective die color that was actually used
                 let effectiveDieColor = this.selectedDieColor;
                 if (currentPlayer.recoloredDice && currentPlayer.recoloredDice[this.selectedDieColor]) {
@@ -625,7 +625,24 @@ export class GameController {
                 this.selectedFavorSpent = 0;
                 this.renderGameState();
               } else {
-                this.showMessage("Invalid move!");
+                // Use the detailed error information
+                const errorMessage = this.formatMoveErrorMessage(moveResult.error);
+                this.showMessage(errorMessage);
+                
+                // Debug: Log the failure details
+                console.log("Move failed with details:", {
+                  playerId: currentPlayer.id,
+                  targetQ: q,
+                  targetR: r,
+                  dieColor: this.selectedDieColor,
+                  favorSpent: this.selectedFavorSpent,
+                  playerFavor: currentPlayer.favor,
+                  playerDice: currentPlayer.oracleDice,
+                  recoloredDice: currentPlayer.recoloredDice,
+                  targetCell: this.gameEngine.getGameState().map.getCell(q, r),
+                  moveResult
+                });
+                
                 // Reset favor spent if move failed
                 this.selectedFavorSpent = 0;
               }
@@ -637,14 +654,14 @@ export class GameController {
 
           // Use the selected die color and favor spent
           // The game engine will handle recoloring internally
-          const success = this.gameEngine.moveShip(
+          const moveResult = this.gameEngine.moveShip(
             currentPlayer.id,
             q,
             r,
             this.selectedDieColor,
             this.selectedFavorSpent,
           );
-          if (success) {
+          if (moveResult.success) {
             // Get the effective die color that was actually used
             let effectiveDieColor = this.selectedDieColor;
             if (currentPlayer.recoloredDice && currentPlayer.recoloredDice[this.selectedDieColor]) {
@@ -662,7 +679,23 @@ export class GameController {
             this.selectedFavorSpent = 0;
             this.renderGameState();
           } else {
-            this.showMessage("Invalid move!");
+            // Use the detailed error information
+            const errorMessage = this.formatMoveErrorMessage(moveResult.error);
+            this.showMessage(errorMessage);
+            
+            // Debug: Log the failure details
+            console.log("Move failed with details:", {
+              playerId: currentPlayer.id,
+              targetQ: q,
+              targetR: r,
+              dieColor: this.selectedDieColor,
+              favorSpent: this.selectedFavorSpent,
+              playerFavor: currentPlayer.favor,
+              playerDice: currentPlayer.oracleDice,
+              recoloredDice: currentPlayer.recoloredDice,
+              targetCell: this.gameEngine.getGameState().map.getCell(q, r),
+              moveResult
+            });
           }
         } else {
           this.showMessage(
@@ -1023,5 +1056,50 @@ export class GameController {
       yellow: "#ffff00",
     };
     return colors[color] || "#333333";
+  }
+
+  /**
+   * Format a detailed error message from move ship result
+   */
+  private formatMoveErrorMessage(error?: MoveShipResult["error"]): string {
+    if (!error) {
+      return "Invalid move! Unknown error occurred.";
+    }
+
+    switch (error.type) {
+      case "invalid_player":
+        return "Invalid player or not your turn!";
+      
+      case "wrong_phase":
+        return `Cannot move during ${error.details?.phase} phase!`;
+      
+      case "invalid_target":
+        return `Target cell (${error.details?.targetQ}, ${error.details?.targetR}) does not exist!`;
+      
+      case "not_sea":
+        return `Cannot move to ${error.details?.targetTerrain} terrain! Ships can only move to sea hexes.`;
+      
+      case "no_die":
+        return "No die color specified for movement! Please select a die first.";
+      
+      case "die_not_available":
+        return `You don't have a ${error.details?.dieColor} die! Available dice: ${error.details?.availableDice?.join(", ") || "none"}.`;
+      
+      case "wrong_color":
+        return `Target hex is ${error.details?.targetColor}, but die is ${error.details?.requiredColor}!`;
+      
+      case "not_reachable":
+        return `Target is not reachable within ${error.details?.movementRange} movement range!`;
+      
+      case "not_enough_favor":
+        return `Not enough favor! Need ${error.details?.favorSpent} but only have ${error.details?.availableFavor}.`;
+      
+      case "recoloring_failed":
+        return `Recoloring failed! Not enough favor for recoloring cost of ${error.details?.recoloringCost}.`;
+      
+      case "unknown":
+      default:
+        return "Invalid move! Please check your die selection, favor, and target hex.";
+    }
   }
 }

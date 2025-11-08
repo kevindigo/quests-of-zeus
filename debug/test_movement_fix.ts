@@ -2,12 +2,12 @@
 // This tests that ships cannot move to hexes that are within 3 hexes straight-line distance
 // but require more than 3 sea steps due to land obstacles
 
-import { OracleGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import type { HexColor } from "../src/hexmap.ts";
 
 console.log("=== Testing Movement Fix for Land Obstacles ===\n");
 
-const engine = new OracleGameEngine();
+const engine = new QuestsZeusGameEngine();
 engine.initializeGame();
 
 const gameState = engine.getGameState();
@@ -32,7 +32,7 @@ console.log("\nAvailable moves:", availableMoves.length);
 
 // Test reachability logic directly
 console.log("\n=== Testing Reachability Logic ===");
-const reachableTiles = (engine as OracleGameEngine & {
+const reachableTiles = (engine as QuestsZeusGameEngine & {
   getReachableSeaTiles: (
     q: number,
     r: number,
@@ -62,7 +62,7 @@ const unreachableWithinRange: {
 }[] = [];
 
 for (const seaTile of allSeaTiles) {
-  const straightLineDistance = (engine as OracleGameEngine & {
+  const straightLineDistance = (engine as QuestsZeusGameEngine & {
     hexDistance: (q1: number, r1: number, q2: number, r2: number) => number;
   }).hexDistance(
     player.shipPosition.q,
@@ -111,17 +111,20 @@ if (unreachableWithinRange.length > 0) {
 
   // Check if player has the required die color
   if (player.oracleDice.includes(testTile.color)) {
-    const success = engine.moveShip(
+    const moveResult = engine.moveShip(
       player.id,
       testTile.q,
       testTile.r,
       testTile.color,
     );
-    console.log("Move successful:", success);
+    console.log("Move successful:", moveResult.success);
     console.log("Expected: false (should be blocked by land obstacles)");
 
-    if (!success) {
+    if (!moveResult.success) {
       console.log("✓ SUCCESS: Movement correctly blocked by land obstacles!");
+      if (moveResult.error) {
+        console.log("Error details:", moveResult.error);
+      }
     } else {
       console.log("✗ FAILURE: Movement allowed despite land obstacles!");
     }

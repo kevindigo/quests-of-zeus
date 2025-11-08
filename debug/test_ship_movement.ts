@@ -1,7 +1,7 @@
 // Simple test for ship movement logic
-import { OracleGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 
-const engine = new OracleGameEngine();
+const engine = new QuestsZeusGameEngine();
 engine.initializeGame();
 
 const _gameState = engine.getGameState();
@@ -30,13 +30,16 @@ if (availableMoves.length > 0) {
   console.log(
     `\nAttempting to move to (${firstMove.q}, ${firstMove.r}) with ${firstMove.dieColor} die...`,
   );
-  const success = engine.moveShip(
+  const moveResult = engine.moveShip(
     player.id,
     firstMove.q,
     firstMove.r,
     firstMove.dieColor,
   );
-  console.log("Move successful:", success);
+  console.log("Move successful:", moveResult.success);
+  if (!moveResult.success && moveResult.error) {
+    console.log("Move error:", moveResult.error);
+  }
   console.log("New ship position:", player.shipPosition);
   console.log("Remaining dice:", player.oracleDice);
 }

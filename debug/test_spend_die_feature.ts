@@ -1,9 +1,9 @@
 // Quick test to verify the spend die for favor feature
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from "./src/game-engine.ts";
 
 console.log("Testing spend die for favor feature...");
 
-const engine = new OracleGameEngine();
+const engine = new QuestsZeusGameEngine();
 engine.initializeGame();
 
 const player1 = engine.getPlayer(1)!;

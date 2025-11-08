@@ -1,10 +1,10 @@
 // Test script to verify movement works correctly when starting from Zeus
-import { OracleGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import type { HexColor } from "../src/hexmap.ts";
 
 console.log("=== Testing Movement from Zeus Starting Position ===\n");
 
-const engine = new OracleGameEngine();
+const engine = new QuestsZeusGameEngine();
 engine.initializeGame();
 
 const gameState = engine.getGameState();
@@ -35,7 +35,7 @@ adjacentCells.forEach((cell) => {
 
 // Test reachability logic directly
 console.log("\n=== Testing Reachability from Zeus ===");
-const reachableTiles = (engine as OracleGameEngine & {
+const reachableTiles = (engine as QuestsZeusGameEngine & {
   getReachableSeaTiles: (
     q: number,
     r: number,
@@ -55,7 +55,7 @@ const tilesBySteps: {
 reachableTiles.forEach((tile) => {
   // For now, we don't track steps in the return value, but we can estimate
   // This is just for debugging
-  const distance = (engine as OracleGameEngine & {
+  const distance = (engine as QuestsZeusGameEngine & {
     hexDistance: (q1: number, r1: number, q2: number, r2: number) => number;
   }).hexDistance(
     player.shipPosition.q,
@@ -105,20 +105,23 @@ if (availableMoves.length > 0) {
   console.log(
     `Attempting to move to (${firstMove.q}, ${firstMove.r}) with ${firstMove.dieColor} die...`,
   );
-  const success = engine.moveShip(
+  const moveResult = engine.moveShip(
     player.id,
     firstMove.q,
     firstMove.r,
     firstMove.dieColor,
   );
-  console.log("Move successful:", success);
+  console.log("Move successful:", moveResult.success);
 
-  if (success) {
+  if (moveResult.success) {
     console.log("✓ SUCCESS: Movement from Zeus works correctly!");
     console.log("New ship position:", player.shipPosition);
     console.log("Remaining dice:", player.oracleDice);
   } else {
     console.log("✗ FAILURE: Movement from Zeus failed!");
+    if (moveResult.error) {
+      console.log("Error details:", moveResult.error);
+    }
   }
 } else {
   console.log(

@@ -1,12 +1,12 @@
 // Test for die recoloring feature
 
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from "./src/game-engine.ts";
 import type { Player } from "./src/game-engine.ts";
 
 function testRecolorDie() {
   console.log("Testing die recoloring feature...\n");
 
-  const gameEngine = new OracleGameEngine();
+  const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
   // Get the first player
@@ -68,12 +68,12 @@ function testRecolorDie() {
   // Test with insufficient favor
   const highFavorCost = player.favor + 10;
   console.log(`\nTesting with insufficient favor (${highFavorCost} when player has ${player.favor}):`);
-  const insufficientFavorResult = gameEngine.recolorDie(player.id, player.oracleDice[0], highFavorCost);
+  const insufficientFavorResult = gameEngine.setRecolorIntention(player.id, player.oracleDice[0], highFavorCost);
   console.log(`  Result: ${insufficientFavorResult ? "✗ Should have failed" : "✓ Correctly failed"}`);
 
   // Test with invalid die color
   console.log("\nTesting with invalid die color:");
-  const invalidColorResult = gameEngine.recolorDie(player.id, "none" as "none", 1);
+  const invalidColorResult = gameEngine.setRecolorIntention(player.id, "none" as "none", 1);
   console.log(`  Result: ${invalidColorResult ? "✗ Should have failed" : "✓ Correctly failed"}`);
 
   console.log("\n--- Die recoloring feature test completed ---");
