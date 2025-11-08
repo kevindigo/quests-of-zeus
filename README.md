@@ -1,10 +1,11 @@
 # Quests of Zeus PWA
 
-A Progressive Web App implementation of the Quests of Zeus boardgame with AI
-opponents, built with Deno 2.5.
+A Progressive Web App implementation of the Quests of Zeus boardgame, built with Deno 2.5.
 
 The rules and gameplay concepts in this project were heavily inspired by the board game The Oracle of Delphi, designed by Stefan Feld and copyright 2016 by Hall Games.
 No copyrighted materials, trademarks, or proprietary assets from that game are used. This project is entirely independent and not endorsed by or associated with its creators or publishers.
+
+Note: This app was developed with a lot of assistance from AI. 
 
 ## Features
 
