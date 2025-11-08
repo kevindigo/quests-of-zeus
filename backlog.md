@@ -1,7 +1,5 @@
 == Oracle cards ==
 
-- setup: oracle card
-- action: spend a die to gain oracle card
 - action: spend oracle card
 
 == Quests ==

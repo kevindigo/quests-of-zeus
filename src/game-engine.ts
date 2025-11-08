@@ -140,6 +140,8 @@ function removeStatueFromStorage(player: Player, color: HexColor): boolean {
 export class QuestsZeusGameEngine {
   private state: GameState | null = null;
 
+  private oracleCardDeck: HexColor[] = [];
+
   constructor() {
     // Game is not initialized by default
   }
@@ -186,6 +188,19 @@ export class QuestsZeusGameEngine {
         oracleCards: [], // Initialize oracle cards as empty array
       });
     }
+
+    // Initialize the oracle card deck with 30 cards, 5 of each color
+    this.oracleCardDeck = [];
+    const cardColors: HexColor[] = [COLORS.BLACK, COLORS.PINK, COLORS.BLUE, COLORS.YELLOW, COLORS.GREEN, COLORS.RED];
+    // The deck consists of 5 copies of each of the 6 colors (5 * 6 = 30 cards)
+    for (const color of cardColors) {
+      for (let i = 0; i < 5; i++) {
+        this.oracleCardDeck.push(color);
+      }
+    }
+
+    // Shuffle the oracle card deck
+    this.shuffleArray(this.oracleCardDeck);
 
     // Initialize cube hexes with Offering cubes
     const cubeHexes = this.initializeOfferingCubes(map, players.length);
@@ -739,6 +754,59 @@ export class QuestsZeusGameEngine {
 
     // Gain 2 favor
     player.favor += 2;
+
+    return true;
+  }
+
+  /**
+   * Draw an oracle card by spending any die during the action phase
+   * The oracle card is drawn from the deck and added to the player's hand
+   */
+  public drawOracleCard(playerId: number, dieColor: HexColor): boolean {
+    if (!this.state) {
+      throw new Error("Game not initialized. Call initializeGame() first.");
+    }
+    if (!this.oracleCardDeck || this.oracleCardDeck.length === 0) {
+      console.warn("Oracle card deck is not initialized or empty.");
+      return false;
+    }
+    const player = this.state.players.find((p) => p.id === playerId);
+    if (!player || this.state.phase !== "action") {
+      return false;
+    }
+
+    // Check if player has the specified die
+    if (!player.oracleDice.includes(dieColor)) {
+      return false;
+    }
+
+    // Apply recoloring if there's an intention for this die
+    const originalDieColor = dieColor;
+    if (player.recoloredDice && player.recoloredDice[dieColor]) {
+      const recoloringApplied = this.applyRecoloring(player, dieColor);
+      if (recoloringApplied) {
+        dieColor = player.recoloredDice[originalDieColor]?.newColor || dieColor;
+      }
+    }
+
+    // Consume the oracle die - use the current dieColor after recoloring
+    const dieIndex = player.oracleDice.indexOf(dieColor);
+    if (dieIndex !== -1) {
+      player.oracleDice.splice(dieIndex, 1);
+    } else {
+      console.warn(`Attempted to consume die ${dieColor} but it was not found in player's oracle dice: [${player.oracleDice.join(", ")}]`);
+      return false;
+    }
+
+    // Draw top oracle card from deck
+    const card = this.oracleCardDeck.pop();
+    if (!card) {
+      console.warn("Oracle card deck is empty when trying to draw card.");
+      return false;
+    }
+
+    // Add card to player's hand
+    player.oracleCards.push(card);
 
     return true;
   }

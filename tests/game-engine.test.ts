@@ -276,3 +276,69 @@ Deno.test("GameEngine - all players start on Zeus hex", () => {
   assertExists(player2Cell);
   assertEquals(player2Cell.terrain, "zeus", "Player 2 should be on a Zeus hex");
 });
+
+Deno.test("GameEngine - draw oracle card by spending die", () => {
+  const engine = new QuestsZeusGameEngine();
+  engine.initializeGame();
+
+  const playerId = 1;
+  const player = engine.getPlayer(playerId);
+  assertExists(player);
+
+  // Player must have some dice available
+  assert(player.oracleDice.length > 0, "Player must have oracle dice");
+
+  // Save initial counts
+  const initialDiceCount = player.oracleDice.length;
+  const initialCardCount = player.oracleCards.length;
+  const initialDeckSize = engine["oracleCardDeck"].length;
+
+  // Use the first die color to draw an oracle card
+  const dieColor = player.oracleDice[0];
+  const success = engine.drawOracleCard(playerId, dieColor);
+
+  assert(success, "Should successfully draw oracle card");
+
+  // Validate that one die was consumed
+  assertEquals(
+    player.oracleDice.length,
+    initialDiceCount - 1,
+    "Player should have one less oracle die",
+  );
+
+  // Validate that one card was added
+  assertEquals(
+    player.oracleCards.length,
+    initialCardCount + 1,
+    "Player should have one more oracle card",
+  );
+
+  // Validate that the deck size decreased by 1
+  assertEquals(
+    engine["oracleCardDeck"].length,
+    initialDeckSize - 1,
+    "Oracle card deck size should be reduced by one",
+  );
+
+  // Test with a die color the player does not have
+  const invalidColor = "black";
+  if (player.oracleDice.includes(invalidColor)) {
+    // Remove the black die to simulate no black die available
+    player.oracleDice = player.oracleDice.filter(c => c !== invalidColor);
+  }
+  const fail = engine.drawOracleCard(playerId, invalidColor);
+  assert(!fail, "Drawing with invalid die color should fail");
+
+  // Test when game phase is not action
+  engine["state"]!.phase = "oracle";
+  const failPhase = engine.drawOracleCard(playerId, dieColor);
+  assert(!failPhase, "Drawing in non-action phase should fail");
+
+  // Restore phase for further tests
+  engine["state"]!.phase = "action";
+
+  // Exhaust the deck
+  engine["oracleCardDeck"] = [];
+  const failEmptyDeck = engine.drawOracleCard(playerId, dieColor);
+  assert(!failEmptyDeck, "Drawing with empty deck should fail");
+});

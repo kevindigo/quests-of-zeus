@@ -497,6 +497,10 @@ export class GameController {
           actions +=
             `<button id="spendDieForFavor" class="action-btn">Spend Die for 2 Favor</button>`;
 
+          // New button to spend die to draw an oracle card
+          actions +=
+            `<button id="drawOracleCard" class="action-btn">Spend Die to Draw Oracle Card</button>`;
+
           // Recolor die options are now displayed in the player info panel as radio buttons
           // The favor will be spent when the die is actually used for movement or other actions
 
@@ -736,6 +740,8 @@ export class GameController {
         this.placeStatueOnCity();
       } else if (target.id === "spendDieForFavor") {
         this.spendDieForFavor();
+      } else if (target.id === "drawOracleCard") {
+        this.drawOracleCard();
       } else if (target.id === "endTurn") {
         this.endTurn();
       } else if (target.id === "clearDieSelection") {
@@ -890,6 +896,28 @@ export class GameController {
       this.renderGameState();
     } else {
       this.showMessage("Cannot spend die for favor at this time");
+    }
+  }
+
+  private drawOracleCard(): void {
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+
+    if (!this.selectedDieColor) {
+      this.showMessage("Please select a die first!");
+      return;
+    }
+
+    const success = this.gameEngine.drawOracleCard(
+      currentPlayer.id,
+      this.selectedDieColor,
+    );
+    if (success) {
+      this.showMessage(`Spent ${this.selectedDieColor} die to draw an oracle card!`);
+      // Don't clear selected die - player can continue using other dice
+      // The spent die will be automatically removed from the display
+      this.renderGameState();
+    } else {
+      this.showMessage("Cannot draw oracle card at this time");
     }
   }
 
