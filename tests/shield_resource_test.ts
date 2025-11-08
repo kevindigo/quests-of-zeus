@@ -1,12 +1,12 @@
 // Test file for shield resource functionality
 
-import { OracleGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 
 // Test that players start with 0 shield
 function testShieldInitialization(): void {
   console.log("Testing shield initialization...");
   
-  const gameEngine = new OracleGameEngine();
+  const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
   
   const gameState = gameEngine.getGameState();
@@ -30,7 +30,7 @@ function testShieldInitialization(): void {
 function testShieldSerialization(): void {
   console.log("Testing shield serialization...");
   
-  const gameEngine = new OracleGameEngine();
+  const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
   
   const gameState = gameEngine.getGameState();
@@ -54,7 +54,7 @@ function testShieldSerialization(): void {
 function testShieldModification(): void {
   console.log("Testing shield modification...");
   
-  const gameEngine = new OracleGameEngine();
+  const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
   
   const gameState = gameEngine.getGameState();

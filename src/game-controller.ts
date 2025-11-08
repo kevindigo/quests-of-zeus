@@ -1,7 +1,7 @@
 // Game Controller for Quests of Zeus
 // Manages the game UI and user interactions
 
-import { OracleGameEngine } from "./game-engine.ts";
+import { QuestsZeusGameEngine } from "./game-engine.ts";
 import { HexMapSVG } from "./hexmap-svg.ts";
 import type { HexColor } from "./hexmap.ts";
 import type { CubeHex, GameState, MonsterHex, Player } from "./game-engine.ts";
@@ -9,14 +9,14 @@ import type { CubeHex, GameState, MonsterHex, Player } from "./game-engine.ts";
 // Type declarations for DOM APIs (for Deno type checking)
 
 export class GameController {
-  private gameEngine: OracleGameEngine;
+  private gameEngine: QuestsZeusGameEngine;
   private hexMapSVG: HexMapSVG;
   private selectedDieColor: HexColor | null = null;
   private selectedFavorSpent: number = 0;
   private isFavorMode: boolean = false;
 
   constructor() {
-    this.gameEngine = new OracleGameEngine();
+    this.gameEngine = new QuestsZeusGameEngine();
     this.hexMapSVG = new HexMapSVG({
       cellSize: 30,
       showCoordinates: false,
@@ -155,7 +155,7 @@ export class GameController {
           <h4>Storage (2 slots)</h4>
           <div class="storage-slots">
             ${
-      _currentPlayer.storage.map((slot, index) =>
+      _currentPlayer.storage.map((slot: { type: string; color: string }, index: number) =>
         `<div class="storage-slot slot-${index} ${slot.type}">
                 <div class="slot-content">
                   ${
@@ -177,7 +177,7 @@ export class GameController {
           <h4>Oracle Dice</h4>
           <div class="dice-container">
             ${
-      _currentPlayer.oracleDice.map((color) => {
+      _currentPlayer.oracleDice.map((color: string) => {
         const isSelected = this.selectedDieColor === color;
         return `<div class="die color-${color} ${
           isSelected ? "selected-die" : ""
@@ -403,7 +403,7 @@ export class GameController {
         effectiveDieColor = currentPlayer.recoloredDice[this.selectedDieColor].newColor;
       }
 
-      availableMoves.forEach((move) => {
+      availableMoves.forEach((move: { q: number; r: number; dieColor: string; favorCost: number }) => {
         // Only highlight moves that match the effective die color
         // The game engine returns moves based on sea tile color, which should match our effective die color
         if (move.dieColor === effectiveDieColor) {
@@ -588,7 +588,7 @@ export class GameController {
           effectiveDieColor = currentPlayer.recoloredDice[this.selectedDieColor].newColor;
         }
         
-        const targetMove = availableMoves.find((move) =>
+        const targetMove = availableMoves.find((move: { q: number; r: number; dieColor: string; favorCost: number }) =>
           move.q === q && move.r === r &&
           move.dieColor === effectiveDieColor
         );

@@ -2,7 +2,7 @@
 
 import { assert, assertEquals } from "@std/assert";
 import { GameController } from "../src/game-controller.ts";
-import { OracleGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 
 Deno.test("GameController - die selection", () => {
   const _controller = new GameController();
@@ -12,7 +12,7 @@ Deno.test("GameController - die selection", () => {
   // For now, we'll test the behavior through public methods
 
   // Initialize a game engine directly for testing
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   // Roll dice to get some oracle dice
@@ -32,7 +32,7 @@ Deno.test("GameController - die selection", () => {
 });
 
 Deno.test("GameController - movement with selected die", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   // Roll dice to get some oracle dice
@@ -56,7 +56,7 @@ Deno.test("GameController - movement with selected die", () => {
     );
 
     // Count how many dice of this color the player has before the move
-    const diceCountBefore = player.oracleDice.filter((color) =>
+    const diceCountBefore = player.oracleDice.filter((color: string) =>
       color === requiredDieColor
     ).length;
 
@@ -70,7 +70,7 @@ Deno.test("GameController - movement with selected die", () => {
     assertEquals(success, true, "Move should succeed with correct die color");
 
     // Verify exactly one die of this color was consumed
-    const diceCountAfter = player.oracleDice.filter((color) =>
+    const diceCountAfter = player.oracleDice.filter((color: string) =>
       color === requiredDieColor
     ).length;
     assertEquals(

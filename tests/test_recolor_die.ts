@@ -1,12 +1,12 @@
 // Unit test for die recoloring feature
 
-import { OracleGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import type { HexColor } from "../src/hexmap.ts";
 
 function testRecolorDie() {
   console.log("Running die recoloring unit tests...\n");
 
-  const gameEngine = new OracleGameEngine();
+  const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();

@@ -1,11 +1,11 @@
 // Test for the favor system in Quests of Zeus
 
 import { assert, assertEquals } from "@std/assert";
-import { OracleGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import type { HexColor } from "../src/hexmap.ts";
 
 Deno.test("Favor System - player initialization", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   // Check that players have the correct favor values
@@ -23,7 +23,7 @@ Deno.test("Favor System - player initialization", () => {
 });
 
 Deno.test("Favor System - favor property exists", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   const player1 = engine.getPlayer(1);
@@ -35,7 +35,7 @@ Deno.test("Favor System - favor property exists", () => {
 });
 
 Deno.test("Favor System - favor progression pattern", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   // Verify the favor progression pattern: 3, 4, 5, 6 for 4 players
@@ -55,7 +55,7 @@ Deno.test("Favor System - favor progression pattern", () => {
 });
 
 Deno.test("Spend Die for Favor - basic functionality", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   const player1 = engine.getPlayer(1);
@@ -72,7 +72,7 @@ Deno.test("Spend Die for Favor - basic functionality", () => {
 
   // Count how many dice of this color the player has before spending
   const initialColorCount =
-    player1.oracleDice.filter((color) => color === dieColor).length;
+    player1.oracleDice.filter((color: string) => color === dieColor).length;
 
   const success = engine.spendDieForFavor(1, dieColor);
 
@@ -86,7 +86,7 @@ Deno.test("Spend Die for Favor - basic functionality", () => {
 
   // Check that the number of dice of the spent color decreased by 1
   const finalColorCount =
-    player1.oracleDice.filter((color) => color === dieColor).length;
+    player1.oracleDice.filter((color: string) => color === dieColor).length;
   assertEquals(
     finalColorCount,
     initialColorCount - 1,
@@ -95,7 +95,7 @@ Deno.test("Spend Die for Favor - basic functionality", () => {
 });
 
 Deno.test("Spend Die for Favor - invalid scenarios", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   const player1 = engine.getPlayer(1);
@@ -143,7 +143,7 @@ Deno.test("Spend Die for Favor - invalid scenarios", () => {
 });
 
 Deno.test("Spend Die for Favor - turn continues after spending", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   const player1 = engine.getPlayer(1);

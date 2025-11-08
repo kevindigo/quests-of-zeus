@@ -2,7 +2,7 @@
 
 import { assert, assertEquals } from "@std/assert";
 import { type HexColor, HexMap } from "../src/hexmap.ts";
-import { OracleGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 
 Deno.test("StatueSystem - HexMap statue operations", () => {
   const map = new HexMap();
@@ -46,7 +46,7 @@ Deno.test("StatueSystem - HexMap statue operations", () => {
 });
 
 Deno.test("StatueSystem - Game Engine statue operations", () => {
-  const game = new OracleGameEngine();
+  const game = new QuestsZeusGameEngine();
   const gameState = game.initializeGame();
   const player = game.getCurrentPlayer();
 
