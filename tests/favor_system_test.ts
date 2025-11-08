@@ -61,8 +61,7 @@ Deno.test("Spend Die for Favor - basic functionality", () => {
   const player1 = engine.getPlayer(1);
   assertExists(player1);
 
-  // Start in oracle phase, roll dice to get to action phase
-  engine.rollOracleDice(1);
+  // Game now starts in action phase with dice already rolled
 
   const initialFavor = player1.favor;
   const initialDiceCount = player1.oracleDice.length;
@@ -101,13 +100,7 @@ Deno.test("Spend Die for Favor - invalid scenarios", () => {
   const player1 = engine.getPlayer(1);
   assertExists(player1);
 
-  // Try to spend die in oracle phase (should fail)
-  const fail1 = engine.spendDieForFavor(1, "red");
-  assert(!fail1, "Should not be able to spend die in oracle phase");
-
-  // Roll dice to get to action phase
-  engine.rollOracleDice(1);
-
+  // Game now starts in action phase with dice already rolled
   // Try to spend a die the player doesn't have (should fail)
   // Use a color that's definitely not in the player's dice by checking all possible colors
   const allColors: HexColor[] = [
@@ -125,10 +118,6 @@ Deno.test("Spend Die for Favor - invalid scenarios", () => {
       break;
     }
   }
-
-  // If somehow all colors are present (shouldn't happen with 3 dice), use a made-up color
-  // But since we can't use non-HexColor types, we'll just use the first color and accept it might fail
-  // This is extremely unlikely with only 3 dice out of 6 colors
 
   const fail2 = engine.spendDieForFavor(1, unavailableColor);
   assert(!fail2, "Should not be able to spend die player doesn't have");
@@ -149,8 +138,7 @@ Deno.test("Spend Die for Favor - turn continues after spending", () => {
   const player1 = engine.getPlayer(1);
   assertExists(player1);
 
-  // Roll dice to get to action phase
-  engine.rollOracleDice(1);
+  // Game now starts in action phase with dice already rolled
 
   const initialDiceCount = player1.oracleDice.length;
 

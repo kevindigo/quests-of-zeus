@@ -15,16 +15,13 @@ Deno.test("GameController - die selection", () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  // Roll dice to get some oracle dice
-  const dice = engine.rollOracleDice(1);
-  assertEquals(dice.length, 3);
-
-  // Test that we can select a die (simulating the controller behavior)
+  // Game now starts with dice already rolled
   const player = engine.getPlayer(1);
   assertExists(player);
+  assertEquals(player.oracleDice.length, 3);
 
   // The first die should be available for selection
-  const firstDieColor = dice[0];
+  const firstDieColor = player.oracleDice[0];
   assert(
     player.oracleDice.includes(firstDieColor),
     "Player should have the die",
@@ -35,12 +32,10 @@ Deno.test("GameController - movement with selected die", () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  // Roll dice to get some oracle dice
-  const dice = engine.rollOracleDice(1);
-  assertEquals(dice.length, 3);
-
+  // Game now starts with dice already rolled
   const player = engine.getPlayer(1);
   assertExists(player);
+  assertEquals(player.oracleDice.length, 3);
 
   // Get available moves
   const availableMoves = engine.getAvailableMoves(1);

@@ -13,7 +13,6 @@ export class GameController {
   private hexMapSVG: HexMapSVG;
   private selectedDieColor: HexColor | null = null;
   private selectedFavorSpent: number = 0;
-  private isFavorMode: boolean = false;
 
   constructor() {
     this.gameEngine = new QuestsZeusGameEngine();
@@ -477,16 +476,11 @@ export class GameController {
           actions += `<p>Available favor: ${currentPlayer.favor}</p>`;
 
           // Movement is always available during action phase with a selected die
-          if (this.isFavorMode) {
-            actions +=
-              `<p><strong>Favor Mode Active:</strong> Ready to spend ${this.selectedFavorSpent} favor. Click a silver-highlighted hex to confirm move.</p>`;
-          } else {
-            actions += `<p>Click on highlighted hexes to move your ship:</p>
-               <ul style="margin-left: 1rem;">
-                 <li>White highlights: Normal range (3 hexes)</li>
-                 <li>Silver highlights: Extended range (costs favor)</li>
-               </ul>`;
-          }
+          actions += `<p>Click on highlighted hexes to move your ship:</p>
+             <ul style="margin-left: 1rem;">
+               <li>White highlights: Normal range (3 hexes)</li>
+               <li>Silver highlights: Extended range (costs favor)</li>
+             </ul>`;
 
           // Spend die for favor action is always available during action phase with a selected die
           actions +=
@@ -596,17 +590,44 @@ export class GameController {
 
         if (targetMove) {
           // Check if this move requires favor spending
-          if (targetMove.favorCost > 0 && !this.isFavorMode) {
+          if (targetMove.favorCost > 0) {
             // Ask player if they want to spend favor
             const confirmSpend = confirm(
               `This move requires spending ${targetMove.favorCost} favor to reach using ${effectiveDieColor} die. Do you want to spend favor to move here?`,
             );
             if (confirmSpend) {
               this.selectedFavorSpent = targetMove.favorCost;
-              this.isFavorMode = true;
-              this.showMessage(
-                `Ready to move! Will spend ${targetMove.favorCost} favor. Click the hex again to confirm.`,
+              
+              // Execute the move immediately after confirmation
+              const success = this.gameEngine.moveShip(
+                currentPlayer.id,
+                q,
+                r,
+                this.selectedDieColor,
+                this.selectedFavorSpent,
               );
+              if (success) {
+                // Get the effective die color that was actually used
+                let effectiveDieColor = this.selectedDieColor;
+                if (currentPlayer.recoloredDice && currentPlayer.recoloredDice[this.selectedDieColor]) {
+                  effectiveDieColor = currentPlayer.recoloredDice[this.selectedDieColor].newColor;
+                }
+                
+                let message =
+                  `Ship moved to (${q}, ${r}) using ${effectiveDieColor} die`;
+                if (this.selectedFavorSpent > 0) {
+                  message += ` and ${this.selectedFavorSpent} favor`;
+                }
+                this.showMessage(message);
+                // Clear selections after successful move
+                this.selectedDieColor = null;
+                this.selectedFavorSpent = 0;
+                this.renderGameState();
+              } else {
+                this.showMessage("Invalid move!");
+                // Reset favor spent if move failed
+                this.selectedFavorSpent = 0;
+              }
               return;
             } else {
               return; // Player declined
@@ -638,22 +659,14 @@ export class GameController {
             // Clear selections after successful move
             this.selectedDieColor = null;
             this.selectedFavorSpent = 0;
-            this.isFavorMode = false;
             this.renderGameState();
           } else {
             this.showMessage("Invalid move!");
           }
         } else {
-          if (this.isFavorMode) {
-            // Cancel favor mode if clicking a different hex
-            this.selectedFavorSpent = 0;
-            this.isFavorMode = false;
-            this.showMessage("Favor spending cancelled.");
-          } else {
-            this.showMessage(
-              `Cannot move to this hex using ${effectiveDieColor} die! Must be a sea hex within range of matching color.`,
-            );
-          }
+          this.showMessage(
+            `Cannot move to this hex using ${effectiveDieColor} die! Must be a sea hex within range of matching color.`,
+          );
         }
       }
     });
@@ -896,7 +909,6 @@ export class GameController {
   private clearDieSelection(): void {
     this.selectedDieColor = null;
     this.selectedFavorSpent = 0;
-    this.isFavorMode = false;
     this.showMessage("Die selection cleared");
     this.renderGameState();
   }
@@ -905,7 +917,6 @@ export class GameController {
     // Clear selections when ending turn
     this.selectedDieColor = null;
     this.selectedFavorSpent = 0;
-    this.isFavorMode = false;
 
     // Call the game engine's endTurn method to advance to the next player
     // This will roll dice for the next player and advance the current player index

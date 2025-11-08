@@ -14,16 +14,8 @@ console.log(`Player 1 initial state:`);
 console.log(`  Favor: ${player1.favor}`);
 console.log(`  Oracle Dice: ${player1.oracleDice.join(", ")}`);
 
-// Test 1: Try to spend die in oracle phase (should fail)
-console.log("\nTest 1: Try to spend die in oracle phase");
-const result1 = engine.spendDieForFavor(1, "red");
-console.log(`  Result: ${result1} (expected: false)`);
-console.log(`  Favor after attempt: ${player1.favor}`);
-
-// Roll dice to get to action phase
-engine.rollOracleDice(1);
-console.log(`\nAfter rolling dice:`);
-console.log(`  Phase: ${engine.getGameState().phase}`);
+// Game now starts in action phase with dice already rolled
+console.log(`\nGame starts in: ${engine.getGameState().phase}`);
 console.log(`  Oracle Dice: ${player1.oracleDice.join(", ")}`);
 
 // Test 2: Try to spend a die the player doesn't have (should fail)
