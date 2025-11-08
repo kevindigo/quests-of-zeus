@@ -1,5 +1,12 @@
 # Instructions for AI
 
+## Rules - always follow these!
+- Never consider a task done until `deno test` passes
+- Unit tests should not use console.log
+- Manually-run tests and debug scripts should not be in the tests/ folder
+- Minimize duplicate code; don't be afraid to extract functions
+- Never run `deno task start` or `deno task dev`, as they will hang
+
 ## Context
 
 - This is a PWA app using deno 2.5
@@ -11,7 +18,6 @@
 
 - Keep code simple and readable
 - Always update unit tests when adding features
-- Unit tests should use assert, not console log
 - Use consistent naming conventions
 - Prefer composition over inheritance
 - Only use comments for workarounds or confusing code
@@ -28,7 +34,7 @@
 
 ## Testing Workflow
 
-- Before declaring any work complete, `deno test` should succeed
+- Before declaring any work complete, `deno test` should pass
 
 ### Available Test Commands:
 
