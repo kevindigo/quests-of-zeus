@@ -1016,12 +1016,18 @@ export class QuestsZeusGameEngine {
   }
 
   /**
-   * Get available moves with favor spending options
-   * Returns moves grouped by the favor cost required to reach them
+   * Get available moves for a specific die color and available favor
+   * Returns moves that can be reached using the specified die color
+   * @param playerId The player ID
+   * @param dieColor The die color to use for movement
+   * @param availableFavor The available favor that can be spent
+   * @returns Array of reachable moves with favor cost information
    */
-  public getAvailableMovesWithFavor(
+  public getAvailableMovesForDie(
     playerId: number,
-  ): { q: number; r: number; dieColor: HexColor; favorCost: number }[] {
+    dieColor: HexColor,
+    availableFavor: number,
+  ): { q: number; r: number; favorCost: number }[] {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
@@ -1030,20 +1036,28 @@ export class QuestsZeusGameEngine {
       return [];
     }
 
+    // Check if player has the specified die
+    if (!player.oracleDice.includes(dieColor)) {
+      return [];
+    }
+
     const currentPos = player.shipPosition;
-    const availableMoves: {
-      q: number;
-      r: number;
-      dieColor: HexColor;
-      favorCost: number;
-    }[] = [];
+    const availableMoves: { q: number; r: number; favorCost: number }[] = [];
     
+    // Get effective die color considering recoloring intention
+    let effectiveDieColor = dieColor;
+    let recoloringCost = 0;
+    if (player.recoloredDice && player.recoloredDice[dieColor]) {
+      effectiveDieColor = player.recoloredDice[dieColor].newColor;
+      recoloringCost = player.recoloredDice[dieColor].favorCost;
+    }
+
     // Calculate maximum favor that can be spent for extra range moves
     // Must account for recoloring costs that will be subtracted when the die is used
-    const maxFavorToSpend = Math.min(player.favor, 5); // Cap at 5 favor to prevent excessive computation
+    const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5); // Cap at 5 favor to prevent excessive computation
 
     // Check moves for each possible favor spending amount
-    for (let favorSpent = 0; favorSpent <= maxFavorToSpend; favorSpent++) {
+    for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
       const movementRange = 3 + favorSpent;
       const reachableSeaTiles = this.getReachableSeaTiles(
         currentPos.q,
@@ -1051,36 +1065,28 @@ export class QuestsZeusGameEngine {
         movementRange,
       );
 
-      // Filter by player's available dice colors (including recoloring intentions) and exclude current position
+      // Filter by the effective die color and exclude current position
       for (const seaTile of reachableSeaTiles) {
         if (
           seaTile.color !== "none" &&
+          seaTile.color === effectiveDieColor &&
           !(seaTile.q === currentPos.q && seaTile.r === currentPos.r)
         ) {
-          // Check if player has a die that matches this sea tile color, considering recoloring intentions
-          const matchingDie = this.getMatchingDieForSeaTile(player, seaTile.color);
-          if (matchingDie) {
-            // Calculate the total favor cost including any recoloring
-            let totalFavorCost = favorSpent;
-            if (player.recoloredDice && player.recoloredDice[matchingDie]) {
-              totalFavorCost += player.recoloredDice[matchingDie].favorCost;
-            }
-            
-            // Only show moves that the player can actually afford
-            if (totalFavorCost <= player.favor) {
-              // Only add if this move isn't already available with less favor
-              const existingMove = availableMoves.find((move) =>
-                move.q === seaTile.q && move.r === seaTile.r &&
-                move.dieColor === seaTile.color
-              );
-              if (!existingMove) {
-                availableMoves.push({
-                  q: seaTile.q,
-                  r: seaTile.r,
-                  dieColor: seaTile.color,
-                  favorCost: favorSpent,
-                });
-              }
+          // Calculate the total favor cost including recoloring
+          const totalFavorCost = favorSpent + recoloringCost;
+          
+          // Only show moves that the player can actually afford
+          if (totalFavorCost <= availableFavor) {
+            // Only add if this move isn't already available with less favor
+            const existingMove = availableMoves.find((move) =>
+              move.q === seaTile.q && move.r === seaTile.r
+            );
+            if (!existingMove) {
+              availableMoves.push({
+                q: seaTile.q,
+                r: seaTile.r,
+                favorCost: favorSpent,
+              });
             }
           }
         }
@@ -1090,26 +1096,7 @@ export class QuestsZeusGameEngine {
     return availableMoves;
   }
 
-  /**
-   * Check if player has a die that matches the sea tile color, considering recoloring intentions
-   */
-  private getMatchingDieForSeaTile(player: Player, seaTileColor: HexColor): HexColor | null {
-    // First check if player has a die of this color
-    if (player.oracleDice.includes(seaTileColor)) {
-      return seaTileColor;
-    }
 
-    // Then check if player has a die that can be recolored to this color
-    for (const dieColor of player.oracleDice) {
-      if (player.recoloredDice && player.recoloredDice[dieColor]) {
-        if (player.recoloredDice[dieColor].newColor === seaTileColor) {
-          return dieColor;
-        }
-      }
-    }
-
-    return null;
-  }
 
   /**
    * Get all reachable sea tiles within movement range using BFS

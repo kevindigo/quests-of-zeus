@@ -1,13 +1,13 @@
 // Test for recoloring feature with map highlighting
 // This tests that when recoloring intentions change, the available moves on the map are updated
 
-import { OracleGameEngine } from "./src/game-engine.ts";
-import type { Player } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
+import type { Player } from "../src/game-engine.ts";
 
 function testRecolorMapHighlighting() {
   console.log("Testing recoloring feature with map highlighting...\n");
 
-  const gameEngine = new OracleGameEngine();
+  const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
   // Get the first player
@@ -24,10 +24,9 @@ function testRecolorMapHighlighting() {
 
   // Test 1: Get available moves with black die
   console.log("Test 1: Available moves with black die (no recoloring)");
-  const movesBeforeRecolor = gameEngine.getAvailableMovesWithFavor(player.id);
-  const blackMoves = movesBeforeRecolor.filter(move => move.dieColor === "black");
-  console.log(`  Moves available with black die: ${blackMoves.length}`);
-  blackMoves.forEach(move => {
+  const movesBeforeRecolor = gameEngine.getAvailableMovesForDie(player.id, "black", player.favor);
+  console.log(`  Moves available with black die: ${movesBeforeRecolor.length}`);
+  movesBeforeRecolor.forEach(move => {
     console.log(`    - (${move.q}, ${move.r}) - ${move.favorCost} favor`);
   });
 
@@ -38,33 +37,42 @@ function testRecolorMapHighlighting() {
   
   // Test 3: Get available moves after recoloring intention
   console.log("\nTest 3: Available moves after recoloring intention");
-  const movesAfterRecolor = gameEngine.getAvailableMovesWithFavor(player.id);
-  const pinkMoves = movesAfterRecolor.filter(move => move.dieColor === "pink");
-  console.log(`  Moves available with pink die: ${pinkMoves.length}`);
-  pinkMoves.forEach(move => {
+  const movesAfterRecolor = gameEngine.getAvailableMovesForDie(player.id, "black", player.favor);
+  console.log(`  Moves available with recolored black die: ${movesAfterRecolor.length}`);
+  movesAfterRecolor.forEach(move => {
     console.log(`    - (${move.q}, ${move.r}) - ${move.favorCost} favor`);
   });
 
-  // Test 4: Verify that black moves are no longer available
-  console.log("\nTest 4: Verify black moves are no longer available");
-  const blackMovesAfter = movesAfterRecolor.filter(move => move.dieColor === "black");
-  console.log(`  Moves still available with black die: ${blackMovesAfter.length}`);
-  if (blackMovesAfter.length === 0) {
-    console.log("  ✓ Black moves correctly removed (die will become pink)");
+  // Test 4: Verify that moves now go to pink sea tiles
+  console.log("\nTest 4: Verify moves go to pink sea tiles");
+  const gameState = gameEngine.getGameState();
+  const movesToPinkTiles = movesAfterRecolor.filter(move => {
+    const cell = gameState.map.getCell(move.q, move.r);
+    return cell && cell.color === "pink";
+  });
+  console.log(`  Moves to pink sea tiles: ${movesToPinkTiles.length}`);
+  if (movesToPinkTiles.length > 0) {
+    console.log("  ✓ Black die correctly recolored to enable pink moves");
   } else {
-    console.log("  ✗ Black moves still available (should be removed)");
+    console.log("  ✗ Black die not recoloring to enable pink moves");
   }
 
   // Test 5: Clear recoloring intention
   console.log("\nTest 5: Clear recoloring intention");
   gameEngine.clearRecolorIntention(player.id, "black");
-  const movesAfterClear = gameEngine.getAvailableMovesWithFavor(player.id);
-  const blackMovesAfterClear = movesAfterClear.filter(move => move.dieColor === "black");
-  console.log(`  Moves available with black die after clearing: ${blackMovesAfterClear.length}`);
-  if (blackMovesAfterClear.length > 0) {
+  const movesAfterClear = gameEngine.getAvailableMovesForDie(player.id, "black", player.favor);
+  console.log(`  Moves available with black die after clearing: ${movesAfterClear.length}`);
+  
+  // Verify moves go back to black sea tiles
+  const movesToBlackTiles = movesAfterClear.filter(move => {
+    const cell = gameState.map.getCell(move.q, move.r);
+    return cell && cell.color === "black";
+  });
+  console.log(`  Moves to black sea tiles after clearing: ${movesToBlackTiles.length}`);
+  if (movesToBlackTiles.length === movesAfterClear.length) {
     console.log("  ✓ Black moves correctly restored after clearing intention");
   } else {
-    console.log("  ✗ Black moves not restored after clearing intention");
+    console.log("  ✗ Black moves not fully restored after clearing intention");
   }
 
   // Test 6: Test multiple dice recoloring
@@ -72,16 +80,25 @@ function testRecolorMapHighlighting() {
   gameEngine.setRecolorIntention(player.id, "black", 1); // black → pink
   gameEngine.setRecolorIntention(player.id, "pink", 2);  // pink → blue
   
-  const movesWithMultiple = gameEngine.getAvailableMovesWithFavor(player.id);
-  const pinkMovesMultiple = movesWithMultiple.filter(move => move.dieColor === "pink");
-  const blueMovesMultiple = movesWithMultiple.filter(move => move.dieColor === "blue");
+  const movesForBlack = gameEngine.getAvailableMovesForDie(player.id, "black", player.favor);
+  const movesForPink = gameEngine.getAvailableMovesForDie(player.id, "pink", player.favor);
   
-  console.log(`  Moves available with pink die: ${pinkMovesMultiple.length}`);
-  console.log(`  Moves available with blue die: ${blueMovesMultiple.length}`);
+  console.log(`  Moves available with recolored black die: ${movesForBlack.length}`);
+  console.log(`  Moves available with recolored pink die: ${movesForPink.length}`);
   
-  // The black die becomes pink, so pink moves should be available
-  // The pink die becomes blue, so blue moves should be available
-  if (pinkMovesMultiple.length > 0 && blueMovesMultiple.length > 0) {
+  // The black die becomes pink, so should enable moves to pink sea tiles
+  const blackToPinkMoves = movesForBlack.filter(move => {
+    const cell = gameState.map.getCell(move.q, move.r);
+    return cell && cell.color === "pink";
+  });
+  
+  // The pink die becomes blue, so should enable moves to blue sea tiles
+  const pinkToBlueMoves = movesForPink.filter(move => {
+    const cell = gameState.map.getCell(move.q, move.r);
+    return cell && cell.color === "blue";
+  });
+  
+  if (blackToPinkMoves.length > 0 && pinkToBlueMoves.length > 0) {
     console.log("  ✓ Multiple recoloring intentions work correctly");
   } else {
     console.log("  ✗ Multiple recoloring intentions not working correctly");

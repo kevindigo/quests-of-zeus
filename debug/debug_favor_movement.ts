@@ -1,6 +1,6 @@
 // Debug script to test favor spending for movement range extension
 
-import { QuestsZeusGameEngine } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 
 console.log("Testing favor spending for movement range extension...\n");
 
@@ -28,39 +28,45 @@ movesWithoutFavor.slice(0, 5).forEach((move, index) => {
   );
 });
 
-// Test available moves with favor spending
-console.log("\nAvailable moves with favor spending:");
-const movesWithFavor = engine.getAvailableMovesWithFavor(1);
-console.log("  Count:", movesWithFavor.length);
+// Test available moves with favor spending for each die color
+console.log("\nAvailable moves with favor spending by die color:");
 
-// Group moves by favor cost
-const movesByFavorCost = new Map<number, typeof movesWithFavor>();
-movesWithFavor.forEach((move) => {
-  if (!movesByFavorCost.has(move.favorCost)) {
-    movesByFavorCost.set(move.favorCost, []);
-  }
-  movesByFavorCost.get(move.favorCost)!.push(move);
-});
+for (const dieColor of player1.oracleDice) {
+  console.log(`\n  Moves for ${dieColor} die:`);
+  const movesWithFavor = engine.getAvailableMovesForDie(1, dieColor, player1.favor);
+  console.log("    Count:", movesWithFavor.length);
 
-movesByFavorCost.forEach((moves, favorCost) => {
-  console.log(`\n  Moves costing ${favorCost} favor (${moves.length} total):`);
-  moves.slice(0, 3).forEach((move, index) => {
-    console.log(
-      `    ${index + 1}. (${move.q}, ${move.r}) with ${move.dieColor} die`,
-    );
+  // Group moves by favor cost
+  const movesByFavorCost = new Map<number, typeof movesWithFavor>();
+  movesWithFavor.forEach((move) => {
+    if (!movesByFavorCost.has(move.favorCost)) {
+      movesByFavorCost.set(move.favorCost, []);
+    }
+    movesByFavorCost.get(move.favorCost)!.push(move);
   });
-  if (moves.length > 3) {
-    console.log(`    ... and ${moves.length - 3} more`);
-  }
-});
+
+  movesByFavorCost.forEach((moves, favorCost) => {
+    console.log(`\n    Moves costing ${favorCost} favor (${moves.length} total):`);
+    moves.slice(0, 3).forEach((move, index) => {
+      console.log(
+        `      ${index + 1}. (${move.q}, ${move.r})`,
+      );
+    });
+    if (moves.length > 3) {
+      console.log(`      ... and ${moves.length - 3} more`);
+    }
+  });
+}
 
 // Test moving with favor spending
-if (movesWithFavor.length > 0) {
+for (const dieColor of player1.oracleDice) {
+  const movesWithFavor = engine.getAvailableMovesForDie(1, dieColor, player1.favor);
   const moveWithFavor = movesWithFavor.find((move) => move.favorCost > 0);
+  
   if (moveWithFavor) {
     console.log("\nTesting movement with favor spending:");
     console.log(
-      `  Attempting to move to (${moveWithFavor.q}, ${moveWithFavor.r}) with ${moveWithFavor.dieColor} die`,
+      `  Attempting to move to (${moveWithFavor.q}, ${moveWithFavor.r}) with ${dieColor} die`,
     );
     console.log(`  This move requires ${moveWithFavor.favorCost} favor`);
 
@@ -68,7 +74,7 @@ if (movesWithFavor.length > 0) {
       1,
       moveWithFavor.q,
       moveWithFavor.r,
-      moveWithFavor.dieColor,
+      dieColor,
       moveWithFavor.favorCost,
     );
 
@@ -79,8 +85,7 @@ if (movesWithFavor.length > 0) {
       console.log("  New position:", updatedPlayer.shipPosition);
       console.log("  Remaining favor:", updatedPlayer.favor);
     }
-  } else {
-    console.log("\nNo moves available that require favor spending.");
+    break; // Only test one move
   }
 }
 

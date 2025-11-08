@@ -1,8 +1,8 @@
 // Test for recoloring movement validation
 // This tests that movement works correctly when recoloring intentions are set
 
-import { QuestsZeusGameEngine } from "./src/game-engine.ts";
-import type { Player } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
+import type { Player } from "../src/game-engine.ts";
 
 function testRecolorMovement() {
   console.log("Testing recoloring movement validation...\n");
@@ -27,15 +27,14 @@ function testRecolorMovement() {
   const success = gameEngine.setRecolorIntention(player.id, "black", 1);
   console.log(`  Result: ${success ? "SUCCESS" : "FAILED"}`);
   
-  // Test 2: Get available moves with pink die (after recoloring)
-  console.log("\nTest 2: Available moves with pink die (after recoloring)");
-  const availableMoves = gameEngine.getAvailableMovesWithFavor(player.id);
-  const pinkMoves = availableMoves.filter(move => move.dieColor === "pink");
-  console.log(`  Moves available with pink die: ${pinkMoves.length}`);
+  // Test 2: Get available moves for black die with recoloring
+  console.log("\nTest 2: Available moves for black die with recoloring");
+  const availableMoves = gameEngine.getAvailableMovesForDie(player.id, "black", player.favor);
+  console.log(`  Moves available with recolored black die: ${availableMoves.length}`);
   
-  if (pinkMoves.length > 0) {
+  if (availableMoves.length > 0) {
     // Test 3: Try to move to a pink hex using black die (with recoloring)
-    const targetMove = pinkMoves[0];
+    const targetMove = availableMoves[0];
     console.log(`\nTest 3: Attempting to move to (${targetMove.q}, ${targetMove.r}) using black die with recoloring`);
     
     const moveSuccess = gameEngine.moveShip(
@@ -73,7 +72,7 @@ function testRecolorMovement() {
       console.log(`  This indicates the movement validation is not working with recoloring`);
     }
   } else {
-    console.log("  No pink moves available to test movement");
+    console.log("  No moves available to test movement");
   }
 
   // Test 4: Test clearing recoloring intention
@@ -88,7 +87,7 @@ function testRecolorMovement() {
   gameEngine.clearRecolorIntention(player.id, "black");
   
   // Get moves with black die (no recoloring)
-  const blackMoves = gameEngine.getAvailableMovesWithFavor(player.id).filter(move => move.dieColor === "black");
+  const blackMoves = gameEngine.getAvailableMovesForDie(player.id, "black", player.favor);
   
   if (blackMoves.length > 0) {
     const targetMove = blackMoves[0];

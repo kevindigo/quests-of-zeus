@@ -383,9 +383,6 @@ export class GameController {
 
   private highlightAvailableMoves(): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
-    const availableMoves = this.gameEngine.getAvailableMovesWithFavor(
-      currentPlayer.id,
-    );
 
     // Clear previous highlights
     document.querySelectorAll(".available-move").forEach((cell) => {
@@ -396,37 +393,40 @@ export class GameController {
 
     // Only highlight moves if a die is selected
     if (this.selectedDieColor) {
+      // Get available moves for the selected die color and available favor
+      const availableMoves = this.gameEngine.getAvailableMovesForDie(
+        currentPlayer.id,
+        this.selectedDieColor,
+        currentPlayer.favor,
+      );
+
       // Get the effective die color considering recoloring intention
       let effectiveDieColor = this.selectedDieColor;
       if (currentPlayer.recoloredDice && currentPlayer.recoloredDice[this.selectedDieColor]) {
         effectiveDieColor = currentPlayer.recoloredDice[this.selectedDieColor].newColor;
       }
 
-      availableMoves.forEach((move: { q: number; r: number; dieColor: string; favorCost: number }) => {
-        // Only highlight moves that match the effective die color
-        // The game engine returns moves based on sea tile color, which should match our effective die color
-        if (move.dieColor === effectiveDieColor) {
-          // Highlight the new hex-highlight polygons (centered, won't cover colored border)
-          const highlightCell = document.querySelector(
-            `.hex-highlight[data-q="${move.q}"][data-r="${move.r}"]`,
-          );
+      availableMoves.forEach((move: { q: number; r: number; favorCost: number }) => {
+        // Highlight the new hex-highlight polygons (centered, won't cover colored border)
+        const highlightCell = document.querySelector(
+          `.hex-highlight[data-q="${move.q}"][data-r="${move.r}"]`,
+        );
 
-          if (highlightCell) {
-            if (move.favorCost > 0) {
-              highlightCell.classList.add("available-move-favor");
-              // Add tooltip to show required die color and favor cost
-              highlightCell.setAttribute(
-                "title",
-                `Move using ${effectiveDieColor} die (costs ${move.favorCost} favor)`,
-              );
-            } else {
-              highlightCell.classList.add("available-move");
-              // Add tooltip to show required die color
-              highlightCell.setAttribute(
-                "title",
-                `Move using ${effectiveDieColor} die`,
-              );
-            }
+        if (highlightCell) {
+          if (move.favorCost > 0) {
+            highlightCell.classList.add("available-move-favor");
+            // Add tooltip to show required die color and favor cost
+            highlightCell.setAttribute(
+              "title",
+              `Move using ${effectiveDieColor} die (costs ${move.favorCost} favor)`,
+            );
+          } else {
+            highlightCell.classList.add("available-move");
+            // Add tooltip to show required die color
+            highlightCell.setAttribute(
+              "title",
+              `Move using ${effectiveDieColor} die`,
+            );
           }
         }
       });
@@ -572,9 +572,11 @@ export class GameController {
           return;
         }
 
-        // Get available moves with favor options
-        const availableMoves = this.gameEngine.getAvailableMovesWithFavor(
+        // Get available moves for the selected die color and available favor
+        const availableMoves = this.gameEngine.getAvailableMovesForDie(
           currentPlayer.id,
+          this.selectedDieColor,
+          currentPlayer.favor,
         );
         
         // Get the effective die color considering recoloring intention
@@ -583,9 +585,8 @@ export class GameController {
           effectiveDieColor = currentPlayer.recoloredDice[this.selectedDieColor].newColor;
         }
         
-        const targetMove = availableMoves.find((move: { q: number; r: number; dieColor: string; favorCost: number }) =>
-          move.q === q && move.r === r &&
-          move.dieColor === effectiveDieColor
+        const targetMove = availableMoves.find((move: { q: number; r: number; favorCost: number }) =>
+          move.q === q && move.r === r
         );
 
         if (targetMove) {
