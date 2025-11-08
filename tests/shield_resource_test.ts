@@ -1,81 +1,43 @@
-// Test file for shield resource functionality
-
+import { assertEquals, assert, assertExists } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 
-// Test that players start with 0 shield
-function testShieldInitialization(): void {
+Deno.test("Shield resource - players start with 0 shield", () => {
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
-  
-  const gameState = gameEngine.getGameState();
-  
-  // Check that all players have shield property initialized to 0
-  gameState.players.forEach((player, index) => {
-    console.assert(
-      player.shield === 0,
-      `Player ${index + 1} should start with 0 shield, but has ${player.shield}`
-    );
-    console.assert(
-      typeof player.shield === "number",
-      `Player ${index + 1} shield should be a number, but is ${typeof player.shield}`
-    );
-  });
-}
 
-// Test that shield is properly serialized in game state
-function testShieldSerialization(): void {
-  const gameEngine = new QuestsZeusGameEngine();
-  gameEngine.initializeGame();
-  
   const gameState = gameEngine.getGameState();
-  
-  // Verify shield is present in serialized state
-  gameState.players.forEach((player, index) => {
-    console.assert(
-      "shield" in player,
-      `Player ${index + 1} should have shield property in game state`
-    );
-    console.assert(
-      player.shield === 0,
-      `Player ${index + 1} shield should be 0 in serialized state, but is ${player.shield}`
-    );
-  });
-}
 
-// Test that shield can be modified (simulating future game mechanics)
-function testShieldModification(): void {
+  gameState.players.forEach((player, index) => {
+    assertExists(player.shield, `Player ${index + 1} should have shield property`);
+    assertEquals(player.shield, 0, `Player ${index + 1} should start with 0 shield`);
+    assert(typeof player.shield === "number", `Player ${index + 1} shield should be a number`);
+  });
+});
+
+Deno.test("Shield resource - shield is serialized in game state", () => {
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
-  
+
+  const gameState = gameEngine.getGameState();
+
+  gameState.players.forEach((player, index) => {
+    assert("shield" in player, `Player ${index + 1} should have shield property in game state`);
+    assertEquals(player.shield, 0, `Player ${index + 1} shield should be 0 in serialized state`);
+  });
+});
+
+Deno.test("Shield resource - shield can be modified", () => {
+  const gameEngine = new QuestsZeusGameEngine();
+  gameEngine.initializeGame();
+
   const gameState = gameEngine.getGameState();
   const player = gameState.players[0];
-  
-  // Simulate gaining shield (this would be done through game mechanics)
-  const originalShield = player.shield;
-  player.shield = 3; // Simulate gaining 3 shield
-  
-  console.assert(
-    player.shield === 3,
-    `Player shield should be 3 after modification, but is ${player.shield}`
-  );
-  
+
+  // Simulate gaining shield
+  player.shield = 3;
+  assertEquals(player.shield, 3, "Player shield should be 3 after modification");
+
   // Simulate losing shield
-  player.shield = 1; // Simulate losing 2 shield
-  
-  console.assert(
-    player.shield === 1,
-    `Player shield should be 1 after losing shield, but is ${player.shield}`
-  );
-}
-
-// Run all tests
-function runShieldTests(): void {
-  testShieldInitialization();
-  testShieldSerialization();
-  testShieldModification();
-}
-
-// Execute tests if this file is run directly
-if (import.meta.main) {
-  runShieldTests();
-}
+  player.shield = 1;
+  assertEquals(player.shield, 1, "Player shield should be 1 after losing shield");
+});
