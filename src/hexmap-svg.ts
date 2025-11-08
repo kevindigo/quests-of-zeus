@@ -522,7 +522,7 @@ export class HexMapSVG {
       pink: "#ff69b4", // More vibrant pink
       blue: "#0000ff", // More vibrant blue
       black: "#000000", // Pure black
-      green: "#00ff00", // More vibrant green
+      green: "#008000", // Consistent green (same as hex outlines)
       yellow: "#ffff00", // More vibrant yellow
     };
     return colors[color] || "#cccccc";
