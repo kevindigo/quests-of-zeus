@@ -43,6 +43,8 @@
 - Individual test files can be run directly with `deno run`
 - Avoid importing `src/main.ts` in tests to prevent server hangs
 - Use `test_utils.ts` for test helper functions
+- Unit tests should comply with deno norms and be in the tests/ folder
+- Other diagnostic tests and debug scripts should go in the debug/ folder
 
 ### When Running Tests:
 
