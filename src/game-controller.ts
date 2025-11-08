@@ -172,6 +172,17 @@ export class GameController {
     }
           </div>
         </div>
+        <div class="oracle-cards">
+          <h4>Oracle Cards</h4>
+          <div class="oracle-cards-container">
+            ${_currentPlayer.oracleCards.length === 0 ? '<div class="no-cards">No oracle cards</div>' : ''}
+            ${_currentPlayer.oracleCards.map((color: string, index: number) => `
+              <div class="oracle-card color-${color}" style="background-color: ${this.getColorHex(color)}" title="Oracle Card: ${color}">
+                ${color.charAt(0).toUpperCase()}
+              </div>
+            `).join('')}
+          </div>
+        </div>
         <div class="oracle-dice">
           <h4>Oracle Dice</h4>
           <div class="dice-container">
