@@ -1,12 +1,12 @@
 // Simple test for die recoloring feature
 
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from "./src/game-engine.ts";
 import type { Player } from "./src/game-engine.ts";
 
 function testRecolorSimple() {
   console.log("Simple die recoloring test...\n");
 
-  const gameEngine = new OracleGameEngine();
+  const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer() as Player & { recoloredDice?: any };

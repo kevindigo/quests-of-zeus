@@ -1,4 +1,4 @@
-// Tests for cube distribution in the Oracle of Delphi game
+// Tests for cube distribution in the Quests of Zeus game
 
 import { assert, assertEquals } from "@std/assert";
 import { HexMap } from "../src/hexmap.ts";

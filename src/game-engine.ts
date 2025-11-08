@@ -1,4 +1,4 @@
-// Oracle of Delphi Game Engine
+// Quests of Zeus Game Engine
 // Core game mechanics and state management
 
 import type { HexColor } from "./hexmap.ts";
@@ -110,7 +110,7 @@ function removeStatueFromStorage(player: Player, color: HexColor): boolean {
   return false;
 }
 
-export class OracleGameEngine {
+export class QuestsZeusGameEngine {
   private state: GameState | null = null;
 
   constructor() {

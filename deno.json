@@ -1,7 +1,7 @@
 {
-  "name": "oracle-of-delphi-pwa",
+  "name": "quests-of-zeus-pwa",
   "version": "0.1.0",
-  "description": "A PWA implementation of the Oracle of Delphi boardgame with AI opponents",
+  "description": "Quests of Zeus, based on the Oracle of Delphi boardgame",
   "tasks": {
     "dev": "deno run --watch --allow-net --allow-read src/main.ts",
     "start": "deno run --allow-net --allow-read src/main.ts",

@@ -2,13 +2,13 @@
  * Debug script to visualize monster distribution
  */
 
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from "./src/game-engine.ts";
 
 function debugMonsterDistribution(): void {
   console.log("=== Monster Distribution Debug ===\n");
 
   // Create game engine and initialize
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   const state = engine.initializeGame();
 
   // Get monster hexes

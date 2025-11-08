@@ -1,12 +1,12 @@
 // Unit test for recoloring favor calculation in extra range moves
 
-import { OracleGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import type { HexColor } from "../src/hexmap.ts";
 
 function testRecolorFavorCalculation() {
   console.log("Running recoloring favor calculation unit tests...\n");
 
-  const gameEngine = new OracleGameEngine();
+  const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();

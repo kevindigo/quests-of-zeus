@@ -37,8 +37,8 @@ async function createColoredPNG(
   try {
     // Use a simple reliable service
     const services = [
-      `https://dummyimage.com/${width}x${height}/667eea/ffffff&text=Oracle`,
-      `https://placehold.co/${width}x${height}/667eea/ffffff/png?text=Oracle`,
+      `https://dummyimage.com/${width}x${height}/667eea/ffffff&text=Zeus`,
+      `https://placehold.co/${width}x${height}/667eea/ffffff/png?text=Zeus`,
     ];
 
     for (const service of services) {
@@ -138,8 +138,8 @@ async function main() {
     console.log("\nApproach 2: Trying alternative services...");
 
     const alternativeServices = [
-      `https://via.placeholder.com/192x192/667eea/ffffff?text=Oracle+192`,
-      `https://via.placeholder.com/512x512/764ba2/ffffff?text=Oracle+512`,
+      `https://via.placeholder.com/192x192/667eea/ffffff?text=Zeus+192`,
+      `https://via.placeholder.com/512x512/764ba2/ffffff?text=Zeus+512`,
     ];
 
     if (!success192) {

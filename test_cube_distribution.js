@@ -1,12 +1,12 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from "./src/game-engine.ts";
 
 function testCubeDistribution() {
   console.log("Testing new cube distribution logic...\n");
 
   try {
-    const gameEngine = new OracleGameEngine();
+    const gameEngine = new QuestsZeusGameEngine();
     const gameState = gameEngine.initializeGame();
 
     console.log("✓ Game initialized successfully");

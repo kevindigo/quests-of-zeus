@@ -1,4 +1,4 @@
-const CACHE_NAME = "oracle-delphi-v2";
+const CACHE_NAME = "quests-zeus-v2";
 const urlsToCache = [
   "/",
   "/index.html",

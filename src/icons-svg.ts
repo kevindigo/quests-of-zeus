@@ -1,4 +1,4 @@
-// SVG Icons for Oracle of Delphi
+// SVG Icons for Quests of Zeus
 // Centralized location for all game icons
 
 export interface IconOptions {

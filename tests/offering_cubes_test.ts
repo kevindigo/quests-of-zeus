@@ -1,8 +1,8 @@
 import { assertEquals } from "@std/assert";
-import { OracleGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 
 Deno.test("offering cubes configuration", () => {
-  const gameEngine = new OracleGameEngine();
+  const gameEngine = new QuestsZeusGameEngine();
   const gameState = gameEngine.initializeGame();
 
   // Check that each cube hex has exactly playerCount cubes

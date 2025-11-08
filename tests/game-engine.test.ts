@@ -1,10 +1,10 @@
-// Tests for the Oracle of Delphi game engine
+// Tests for the Quests of Zeus game engine
 
 import { assert, assertEquals, assertExists } from "@std/assert";
-import { OracleGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 
 Deno.test("GameEngine - initialization", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
 
   // Game should not be initialized by default
   assertEquals(engine.isGameInitialized(), false);
@@ -23,7 +23,7 @@ Deno.test("GameEngine - initialization", () => {
 });
 
 Deno.test("GameEngine - player creation", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
 
   // Should throw error when game is not initialized
   try {
@@ -63,7 +63,7 @@ Deno.test("GameEngine - player creation", () => {
 });
 
 Deno.test("GameEngine - oracle dice rolling", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
 
   // Should throw error when game is not initialized
   try {
@@ -89,7 +89,7 @@ Deno.test("GameEngine - oracle dice rolling", () => {
 });
 
 Deno.test("GameEngine - movement validation", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
 
   // Should throw error when game is not initialized
   try {
@@ -125,7 +125,7 @@ Deno.test("GameEngine - movement validation", () => {
 });
 
 Deno.test("GameEngine - quest completion", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
 
   // Should throw error when game is not initialized
   try {
@@ -149,7 +149,7 @@ Deno.test("GameEngine - quest completion", () => {
 });
 
 Deno.test("GameEngine - win condition", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
 
   // Should throw error when game is not initialized
   try {
@@ -172,7 +172,7 @@ Deno.test("GameEngine - win condition", () => {
 });
 
 Deno.test("GameEngine - shield resource", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   const player1 = engine.getPlayer(1);
@@ -201,7 +201,7 @@ Deno.test("GameEngine - shield resource", () => {
 });
 
 Deno.test("GameEngine - storage system", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   const player = engine.getPlayer(1);
@@ -214,7 +214,7 @@ Deno.test("GameEngine - storage system", () => {
 });
 
 Deno.test("GameEngine - all players start on Zeus hex", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   // Get all players

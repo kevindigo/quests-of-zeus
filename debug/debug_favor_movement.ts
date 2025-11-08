@@ -1,11 +1,11 @@
 // Debug script to test favor spending for movement range extension
 
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from "./src/game-engine.ts";
 
 console.log("Testing favor spending for movement range extension...\n");
 
 // Initialize game
-const engine = new OracleGameEngine();
+const engine = new QuestsZeusGameEngine();
 const _gameState = engine.initializeGame();
 
 // Get first player

@@ -1,7 +1,7 @@
 {
-  "name": "Oracle of Delphi",
-  "short_name": "OracleDelphi",
-  "description": "A PWA implementation of the Oracle of Delphi boardgame with AI opponents",
+  "name": "Quests of Zeus",
+  "short_name": "QuestsZeus",
+  "description": "A PWA implementation of the Quests of Zeus boardgame with AI opponents",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a202c",

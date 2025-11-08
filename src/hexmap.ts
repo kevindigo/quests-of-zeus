@@ -1,4 +1,4 @@
-// Hexagonal map representation for Oracle of Delphi
+// Hexagonal map representation for Quests of Zeus
 // The game uses a hexagon-shaped grid with radius 6 and various terrain types
 
 export type TerrainType =
@@ -72,7 +72,7 @@ export class HexMap {
 
   /**
    * Generate a hexagon-shaped grid with radius 6
-   * for the Oracle of Delphi game
+   * for the Quests of Zeus game
    */
   private generateGrid(): HexCell[][] {
     const grid: HexCell[][] = [];

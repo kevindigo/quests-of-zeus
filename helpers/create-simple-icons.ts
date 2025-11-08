@@ -34,7 +34,7 @@ async function generateColoredPNG(
 ): Promise<Uint8Array> {
   // Use a reliable online service to generate the icon
   const color = width === 192 ? "667eea" : "764ba2";
-  const text = width === 192 ? "Oracle" : "Oracle";
+  const text = width === 192 ? "Zeus" : "Zeus";
 
   const url =
     `https://dummyimage.com/${width}x${height}/${color}/ffffff&text=${text}`;

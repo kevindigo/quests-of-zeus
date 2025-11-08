@@ -1,13 +1,13 @@
 // Test for recoloring movement validation
 // This tests that movement works correctly when recoloring intentions are set
 
-import { OracleGameEngine } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from "./src/game-engine.ts";
 import type { Player } from "./src/game-engine.ts";
 
 function testRecolorMovement() {
   console.log("Testing recoloring movement validation...\n");
 
-  const gameEngine = new OracleGameEngine();
+  const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
   // Get the first player

@@ -1,4 +1,4 @@
-// Game Controller for Oracle of Delphi
+// Game Controller for Quests of Zeus
 // Manages the game UI and user interactions
 
 import { OracleGameEngine } from "./game-engine.ts";
@@ -39,7 +39,7 @@ export class GameController {
     if (playerInfoContainer) {
       playerInfoContainer.innerHTML = `
         <div class="welcome-screen">
-          <h3>Welcome to Oracle of Delphi</h3>
+          <h3>Welcome to Quests of Zeus</h3>
           <p>A strategic board game of ancient Greece</p>
           <button id="startGame" class="action-btn">Start New Game</button>
           <div class="game-info">

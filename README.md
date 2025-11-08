@@ -1,11 +1,14 @@
-# Oracle of Delphi PWA
+# Quests of Zeus PWA
 
-A Progressive Web App implementation of the Oracle of Delphi boardgame with AI
+A Progressive Web App implementation of the Quests of Zeus boardgame with AI
 opponents, built with Deno 2.5.
+
+The rules and gameplay concepts in this project were heavily inspired by the board game The Oracle of Delphi, designed by Stefan Feld and copyright 2016 by Hall Games.
+No copyrighted materials, trademarks, or proprietary assets from that game are used. This project is entirely independent and not endorsed by or associated with its creators or publishers.
 
 ## Features
 
-- 🎮 **Playable Board Game** - Full Oracle of Delphi gameplay implementation
+- 🎮 **Playable Board Game** - Full Quests of Zeus gameplay implementation
 - 🗺️ **Procedural Map Generation** - Hexagonal map with authentic terrain
 - 🎲 **Game Mechanics** - Oracle dice, movement, quests, and combat
 - 🤖 **Multiplayer Support** - 2-4 player game (AI coming soon)
@@ -47,7 +50,7 @@ deno task dev
 
 ## How to Play
 
-Oracle of Delphi is a pick-up-and-deliver board game set in Greek mythology.
+Quests of Zeus is a pick-up-and-deliver board game set in the era of Greek mythology.
 Players sail their ships around the Greek islands to complete quests and gain
 favor with the gods.
 
@@ -137,7 +140,7 @@ Each of the 6 cities on the map has a unique color and can hold up to 3 statues:
 
 ### Core Components
 
-1. **HexMap** - Procedural map generation with authentic Oracle of Delphi
+1. **HexMap** - Procedural map generation 
    terrain
 2. **GameEngine** - Core game mechanics, state management, and rules enforcement
 3. **GameController** - UI management, user interactions, and game flow
@@ -157,21 +160,25 @@ Each of the 6 cities on the map has a unique color and can hold up to 3 statues:
 ✅ **Completed Features**:
 
 - Hexagonal map generation (radius 6)
-- Procedural terrain placement
-- All Oracle of Delphi terrain types
-- Core game engine with rules
-- Player movement and actions
-- Quest system with victory points
+- Procedural terrain placement and other setup
+- All Quests of Zeus terrain types
+- Player movement
 - Interactive UI with player markers
 - SVG-based map visualization
 
 🔄 **In Progress**:
 
+- Various types of quests
+- Wounds
+- Gods
+- Equipment
+- Companions
+- Game end
 - AI opponent implementation
 - Enhanced UI/UX improvements
 - Game state persistence
 
-📋 **Planned Features**:
+📋 **Possible future Features**:
 
 - Advanced AI strategies
 - Game statistics and analytics
@@ -181,7 +188,7 @@ Each of the 6 cities on the map has a unique color and can hold up to 3 statues:
 
 ## Game Rules Implementation
 
-The game follows the official Oracle of Delphi rules by Stefan Feld:
+The game closely aligns with the official Oracle of Delphi rules by Stefan Feld, but has variations:
 
 - **Map**: Hexagonal grid with radius 6
 - **Players**: 2-4 players (currently 2 implemented)
@@ -190,7 +197,7 @@ The game follows the official Oracle of Delphi rules by Stefan Feld:
 - **Movement**: Land hexes free, sea hexes require matching oracle dice
 - **Actions**: Collect cubes, fight monsters, build temples/foundations,
   complete cloud quests
-- **Victory**: First to complete 3 of each quest type wins
+- **Victory**: First to complete 12 quests and return to Zeus wins
 
 ## Contributing
 
@@ -202,4 +209,4 @@ The game follows the official Oracle of Delphi rules by Stefan Feld:
 
 ## License
 
-MIT
+GPL 3.0

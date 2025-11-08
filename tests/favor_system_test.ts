@@ -1,4 +1,4 @@
-// Test for the favor system in Oracle of Delphi
+// Test for the favor system in Quests of Zeus
 
 import { assert, assertEquals } from "@std/assert";
 import { OracleGameEngine } from "../src/game-engine.ts";

@@ -1,10 +1,10 @@
 // Tests for the new movement rules
 
 import { assert, assertEquals } from "@std/assert";
-import { OracleGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 
 Deno.test("Movement Rules - Only move to sea spaces", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   const gameState = engine.getGameState();
@@ -28,7 +28,7 @@ Deno.test("Movement Rules - Only move to sea spaces", () => {
 });
 
 Deno.test("Movement Rules - Movement range of 3 steps on sea tiles", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   const gameState = engine.getGameState();
@@ -59,7 +59,7 @@ Deno.test("Movement Rules - Movement range of 3 steps on sea tiles", () => {
 });
 
 Deno.test("Movement Rules - Die color requirement", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   const gameState = engine.getGameState();
@@ -89,7 +89,7 @@ Deno.test("Movement Rules - Die color requirement", () => {
 });
 
 Deno.test("Movement Rules - Successful movement consumes die", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   const player = engine.getCurrentPlayer();
@@ -154,7 +154,7 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
 });
 
 Deno.test("Movement Rules - Invalid movement attempts", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   const gameState = engine.getGameState();

@@ -1,3 +1,9 @@
+== Turn order ==
+
+- Remove pointless right panel
+- Roll dice at start of game instead of start of turn
+- Roll dice at end of turn
+
 == Oracle cards ==
 
 - setup: oracle card

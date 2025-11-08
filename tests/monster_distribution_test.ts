@@ -5,12 +5,12 @@
  */
 
 import { assert, assertEquals } from "@std/assert";
-import { OracleGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import { ALL_COLORS } from "../src/hexmap.ts";
 
 // Helper function to run distribution tests
 function runDistributionTests(
-  engine: OracleGameEngine,
+  engine: QuestsZeusGameEngine,
   runNumber?: number,
 ): void {
   const monsterHexes = engine.getMonsterHexes();
@@ -88,7 +88,7 @@ function runDistributionTests(
 
 // Basic distribution test with 2 players
 Deno.test("MonsterDistribution - basic distribution with 2 players", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
   runDistributionTests(engine);
 });
@@ -98,7 +98,7 @@ Deno.test("MonsterDistribution - distribution consistency", () => {
   const testRuns = 10;
 
   for (let run = 0; run < testRuns; run++) {
-    const engine = new OracleGameEngine();
+    const engine = new QuestsZeusGameEngine();
     engine.initializeGame();
     runDistributionTests(engine, run + 1);
   }
@@ -106,7 +106,7 @@ Deno.test("MonsterDistribution - distribution consistency", () => {
 
 // Test edge cases
 Deno.test("MonsterDistribution - edge cases", () => {
-  const engine = new OracleGameEngine();
+  const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
   runDistributionTests(engine);
 });
@@ -116,7 +116,7 @@ Deno.test("MonsterDistribution - algorithm completeness", () => {
   const _playerCount = 2;
 
   for (let run = 0; run < 10; run++) {
-    const engine = new OracleGameEngine();
+    const engine = new QuestsZeusGameEngine();
     engine.initializeGame();
     runDistributionTests(engine, run + 1);
   }
@@ -127,7 +127,7 @@ Deno.test("MonsterDistribution - even distribution across runs", () => {
   const _playerCount = 2;
 
   for (let run = 0; run < 20; run++) {
-    const engine = new OracleGameEngine();
+    const engine = new QuestsZeusGameEngine();
     engine.initializeGame();
     const monsterHexes = engine.getMonsterHexes();
 
@@ -150,7 +150,7 @@ Deno.test("MonsterDistribution - color distribution consistency", () => {
   const _playerCount = 2;
 
   for (let run = 0; run < 5; run++) {
-    const engine = new OracleGameEngine();
+    const engine = new QuestsZeusGameEngine();
     engine.initializeGame();
     const monsterHexes = engine.getMonsterHexes();
 
@@ -180,7 +180,7 @@ Deno.test("MonsterDistribution - max monsters per hex", () => {
   const _playerCount = 2;
 
   for (let run = 0; run < 10; run++) {
-    const engine = new OracleGameEngine();
+    const engine = new QuestsZeusGameEngine();
     engine.initializeGame();
     const monsterHexes = engine.getMonsterHexes();
 
@@ -210,7 +210,7 @@ Deno.test("MonsterDistribution - actual player count (2 players)", () => {
   // So sorted distribution pattern should always be "111111222"
 
   for (let run = 0; run < 50; run++) {
-    const engine = new OracleGameEngine();
+    const engine = new QuestsZeusGameEngine();
     engine.initializeGame();
     const monsterHexes = engine.getMonsterHexes();
 
