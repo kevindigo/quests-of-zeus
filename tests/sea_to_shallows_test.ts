@@ -85,18 +85,14 @@ Deno.test("Sea to shallows conversion - basic functionality", () => {
           // For sea neighbors: check if they can reach zeus
           if (!hexMap["canReachZeus"](neighbor, grid)) {
             allConstraintsSatisfied = false;
-            console.log(
-              `Sea neighbor at (${neighbor.q}, ${neighbor.r}) cannot reach zeus`,
-            );
+
             break;
           }
         } else if (neighbor.terrain !== "shallow") {
           // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
           if (!hexMap["hasNeighborOfType"](neighbor, grid, "sea")) {
             allConstraintsSatisfied = false;
-            console.log(
-              `Land neighbor at (${neighbor.q}, ${neighbor.r}) does not have sea access`,
-            );
+
             break;
           }
         }
@@ -110,8 +106,6 @@ Deno.test("Sea to shallows conversion - basic functionality", () => {
       );
     }
   } else {
-    console.log(
-      "No shallow cells were converted (all constraints were too restrictive)",
-    );
+    // No shallow cells were converted (all constraints were too restrictive)
   }
 });
