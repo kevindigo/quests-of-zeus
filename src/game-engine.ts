@@ -27,6 +27,7 @@ export interface Player {
   shield: number; // Player's shield resource
   recoloredDice: { [dieColor: string]: { newColor: HexColor; favorCost: number } }; // Track recoloring intentions
   oracleCards: HexColor[]; // Oracle cards held by player
+  usedOracleCardThisTurn: boolean; // Track if player has used an oracle card this turn
 }
 
 export interface CubeHex {
@@ -186,6 +187,7 @@ export class QuestsZeusGameEngine {
         shield: 0, // Players start with 0 shield
         recoloredDice: {}, // Track recoloring intentions
         oracleCards: [], // Initialize oracle cards as empty array
+        usedOracleCardThisTurn: false, // No oracle cards used at start of turn
       });
     }
 
@@ -759,6 +761,250 @@ export class QuestsZeusGameEngine {
   }
 
   /**
+   * Spend an oracle card as if it were a die for movement
+   * Players can only use 1 oracle card per turn
+   */
+  public spendOracleCardForMovement(
+    playerId: number,
+    targetQ: number,
+    targetR: number,
+    cardColor: HexColor,
+    favorSpent?: number,
+  ): MoveShipResult {
+    if (!this.state) {
+      throw new Error("Game not initialized. Call initializeGame() first.");
+    }
+    
+    const player = this.state.players.find((p) => p.id === playerId);
+    if (
+      !player || this.state.currentPlayerIndex !== this.getPlayerIndex(playerId)
+    ) {
+      return {
+        success: false,
+        error: {
+          type: "invalid_player",
+          message: "Invalid player or not your turn",
+          details: { playerId }
+        }
+      };
+    }
+
+    if (this.state.phase !== "action") {
+      return {
+        success: false,
+        error: {
+          type: "wrong_phase",
+          message: `Cannot move during ${this.state.phase} phase`,
+          details: { phase: this.state.phase }
+        }
+      };
+    }
+
+    // Check if player has already used an oracle card this turn
+    if (player.usedOracleCardThisTurn) {
+      return {
+        success: false,
+        error: {
+          type: "unknown",
+          message: "You can only use 1 oracle card per turn",
+          details: { playerId }
+        }
+      };
+    }
+
+    const currentPos = player.shipPosition;
+    const targetCell = this.state.map.getCell(targetQ, targetR);
+
+    if (!targetCell) {
+      return {
+        success: false,
+        error: {
+          type: "invalid_target",
+          message: "Target cell does not exist",
+          details: { targetQ, targetR }
+        }
+      };
+    }
+
+    // Rule 1: You can only move to sea spaces
+    if (targetCell.terrain !== "sea") {
+      return {
+        success: false,
+        error: {
+          type: "not_sea",
+          message: `Cannot move to ${targetCell.terrain} terrain`,
+          details: { 
+            targetQ, 
+            targetR, 
+            targetTerrain: targetCell.terrain,
+            targetColor: targetCell.color
+          }
+        }
+      };
+    }
+
+    // Check if player has the specified oracle card
+    if (!player.oracleCards.includes(cardColor)) {
+      return {
+        success: false,
+        error: {
+          type: "die_not_available",
+          message: `You don't have a ${cardColor} oracle card available`,
+          details: { 
+            dieColor: cardColor, 
+            availableDice: player.oracleCards,
+            playerId
+          }
+        }
+      };
+    }
+
+    // Rule 3: Can only land on sea hexes of the color of the card they used
+    if (!cardColor || targetCell.color !== cardColor) {
+      return {
+        success: false,
+        error: {
+          type: "wrong_color",
+          message: `Target hex is ${targetCell.color}, but oracle card is ${cardColor}`,
+          details: { 
+            targetQ, 
+            targetR, 
+            targetColor: targetCell.color,
+            requiredColor: cardColor,
+          }
+        }
+      };
+    }
+
+    // Calculate movement range (base 3 + 1 per favor spent)
+    const movementRange = 3 + (favorSpent || 0);
+
+    // Check if the target is reachable within the movement range on sea tiles
+    const reachableSeaTiles = this.getReachableSeaTiles(
+      currentPos.q,
+      currentPos.r,
+      movementRange,
+    );
+
+    const isReachable = reachableSeaTiles.some((tile) =>
+      tile.q === targetQ && tile.r === targetR && tile.color === cardColor
+    );
+
+    if (!isReachable) {
+      return {
+        success: false,
+        error: {
+          type: "not_reachable",
+          message: `Target is not reachable within ${movementRange} movement range`,
+          details: { 
+            targetQ, 
+            targetR, 
+            movementRange,
+            currentQ: currentPos.q,
+            currentR: currentPos.r,
+            dieColor: cardColor
+          }
+        }
+      };
+    }
+
+    // Spend favor if specified
+    if (favorSpent && favorSpent > 0) {
+      if (player.favor < favorSpent) {
+        return {
+          success: false,
+          error: {
+            type: "not_enough_favor",
+            message: `Not enough favor to spend ${favorSpent} (only have ${player.favor})`,
+            details: { 
+              favorSpent,
+              availableFavor: player.favor,
+            }
+          }
+        };
+      }
+      player.favor -= favorSpent;
+    }
+
+    // Consume the oracle card
+    const cardIndex = player.oracleCards.indexOf(cardColor);
+    if (cardIndex !== -1) {
+      player.oracleCards.splice(cardIndex, 1);
+    } else {
+      // This should not happen since we checked above, but log for debugging
+      console.warn(
+        `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${
+          player.oracleCards.join(", ")
+        }]`,
+      );
+      return {
+        success: false,
+        error: {
+          type: "unknown",
+          message: "Unexpected error: oracle card not found after validation",
+          details: { dieColor: cardColor, availableDice: player.oracleCards }
+        }
+      };
+    }
+
+    // Mark that player has used an oracle card this turn
+    player.usedOracleCardThisTurn = true;
+
+    // Move the ship
+    player.shipPosition = { q: targetQ, r: targetR };
+
+    return {
+      success: true
+    };
+  }
+
+  /**
+   * Spend an oracle card to gain 2 favor during the action phase
+   * Players can only use 1 oracle card per turn
+   */
+  public spendOracleCardForFavor(playerId: number, cardColor: HexColor): boolean {
+    if (!this.state) {
+      throw new Error("Game not initialized. Call initializeGame() first.");
+    }
+    const player = this.state.players.find((p) => p.id === playerId);
+    if (!player || this.state.phase !== "action") {
+      return false;
+    }
+
+    // Check if player has already used an oracle card this turn
+    if (player.usedOracleCardThisTurn) {
+      return false;
+    }
+
+    // Check if player has the specified oracle card
+    if (!player.oracleCards.includes(cardColor)) {
+      return false;
+    }
+
+    // Consume the oracle card
+    const cardIndex = player.oracleCards.indexOf(cardColor);
+    if (cardIndex !== -1) {
+      player.oracleCards.splice(cardIndex, 1);
+    } else {
+      // This should not happen since we checked above, but log for debugging
+      console.warn(
+        `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${
+          player.oracleCards.join(", ")
+        }]`,
+      );
+      return false;
+    }
+
+    // Mark that player has used an oracle card this turn
+    player.usedOracleCardThisTurn = true;
+
+    // Gain 2 favor
+    player.favor += 2;
+
+    return true;
+  }
+
+  /**
    * Draw an oracle card by spending any die during the action phase
    * The oracle card is drawn from the deck and added to the player's hand
    */
@@ -979,6 +1225,13 @@ export class QuestsZeusGameEngine {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
     
+    // Reset oracle card usage for the current player
+    const currentPlayer = this.state.players[this.state.currentPlayerIndex];
+    currentPlayer.usedOracleCardThisTurn = false;
+    
+    // Clear any recoloring intentions for the current player
+    currentPlayer.recoloredDice = {};
+
     // Roll dice for the NEXT player at the end of the current turn
     const nextPlayerIndex = (this.state.currentPlayerIndex + 1) % this.state.players.length;
     const nextPlayer = this.state.players[nextPlayerIndex];
@@ -991,10 +1244,6 @@ export class QuestsZeusGameEngine {
       dice.push(randomColor);
     }
     nextPlayer.oracleDice = dice;
-    
-    // Clear any recoloring intentions for the current player
-    const currentPlayer = this.state.players[this.state.currentPlayerIndex];
-    currentPlayer.recoloredDice = {};
 
     // Move to next player
     this.state.currentPlayerIndex = nextPlayerIndex;
