@@ -1,6 +1,16 @@
 == Oracle cards ==
 
 - action: spend oracle card
+  - Should be able to recolor a card
+  - Selecting die should clear selected card and vice versa
+  - Ideally sort cards by color
+  - Ideally only highlight the actual selected die/card
+  - Ideally unselect (clear) a die/card by clicking it again
+
+== Other ==
+
+- Remove the "how to play" contents from the setup page
+- Remove console output from tests
 
 == Quests ==
 
