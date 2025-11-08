@@ -131,6 +131,14 @@ export class QuestsZeusGameEngine {
     const players: Player[] = [];
 
     for (let i = 0; i < 2; i++) { // Start with 2 players for now
+      // Roll initial oracle dice for all players during setup
+      const initialDice: HexColor[] = [];
+      for (let j = 0; j < 3; j++) {
+        const randomColor =
+          ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)];
+        initialDice.push(randomColor);
+      }
+
       players.push({
         id: i + 1,
         name: `Player ${i + 1}`,
@@ -144,7 +152,7 @@ export class QuestsZeusGameEngine {
           foundation: 0,
           cloud: 0,
         },
-        oracleDice: [],
+        oracleDice: initialDice, // All players start with dice already rolled
         favor: 3 + i, // First player gets 3 favor, each subsequent gets 1 more
         shield: 0, // Players start with 0 shield
         recoloredDice: {}, // Track recoloring intentions
@@ -162,7 +170,7 @@ export class QuestsZeusGameEngine {
       players,
       currentPlayerIndex: 0,
       round: 1,
-      phase: "oracle",
+      phase: "action", // Start directly in action phase since dice are already rolled
       monsterStrength: 3,
       weatherDice: [],
       cubeHexes,
@@ -193,7 +201,7 @@ export class QuestsZeusGameEngine {
     }
 
     player.oracleDice = dice;
-    this.state.phase = "action";
+    // Note: Phase remains "action" since dice are now rolled automatically at end of turn
 
     return dice;
   }
@@ -737,24 +745,34 @@ export class QuestsZeusGameEngine {
     if (!this.state) {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
-    // Reset oracle dice
+    
+    // Roll dice for the NEXT player at the end of the current turn
+    const nextPlayerIndex = (this.state.currentPlayerIndex + 1) % this.state.players.length;
+    const nextPlayer = this.state.players[nextPlayerIndex];
+    
+    // Roll 3 oracle dice for the next player
+    const dice: HexColor[] = [];
+    for (let i = 0; i < 3; i++) {
+      const randomColor =
+        ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)];
+      dice.push(randomColor);
+    }
+    nextPlayer.oracleDice = dice;
+    
+    // Clear any recoloring intentions for the current player
     const currentPlayer = this.state.players[this.state.currentPlayerIndex];
-    currentPlayer.oracleDice = [];
-
-    // Clear any recoloring intentions
     currentPlayer.recoloredDice = {};
 
     // Move to next player
-    this.state.currentPlayerIndex = (this.state.currentPlayerIndex + 1) %
-      this.state.players.length;
+    this.state.currentPlayerIndex = nextPlayerIndex;
 
     // If all players have taken their turn, advance round
     if (this.state.currentPlayerIndex === 0) {
       this.state.round++;
     }
 
-    // Reset phase for next player
-    this.state.phase = "oracle";
+    // Next player starts in action phase since dice are already rolled
+    this.state.phase = "action";
   }
 
   private getPlayerIndex(playerId: number): number {

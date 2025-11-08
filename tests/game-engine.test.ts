@@ -16,7 +16,12 @@ Deno.test("GameEngine - initialization", () => {
   assertExists(state.map);
   assertEquals(state.players.length, 2);
   assertEquals(state.round, 1);
-  assertEquals(state.phase, "oracle");
+  assertEquals(state.phase, "action"); // Game starts in action phase since dice are already rolled
+
+  // All players should start with dice already rolled
+  state.players.forEach(player => {
+    assertEquals(player.oracleDice.length, 3, "Each player should start with 3 dice");
+  });
 
   // Now game should be initialized
   assertEquals(engine.isGameInitialized(), true);
@@ -79,12 +84,16 @@ Deno.test("GameEngine - oracle dice rolling", () => {
   // Initialize the game
   engine.initializeGame();
 
-  // Test rolling dice for current player
+  // Players should already have dice from initialization
+  const player = engine.getPlayer(1);
+  assertExists(player);
+  assertEquals(player?.oracleDice.length, 3);
+
+  // Test manually rolling dice (for debugging or special cases)
   const dice = engine.rollOracleDice(1);
   assertEquals(dice.length, 3);
 
-  const player = engine.getPlayer(1);
-  assertExists(player);
+  // Player should still have dice after manual roll
   assertEquals(player?.oracleDice.length, 3);
 });
 
@@ -105,8 +114,9 @@ Deno.test("GameEngine - movement validation", () => {
   // Initialize the game
   engine.initializeGame();
 
-  // First roll dice to enter action phase
-  engine.rollOracleDice(1);
+  // Game should already be in action phase with dice ready
+  const state = engine.getGameState();
+  assertEquals(state.phase, "action");
 
   // Get available moves
   const availableMoves = engine.getAvailableMoves(1);

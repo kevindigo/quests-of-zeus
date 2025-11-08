@@ -45,8 +45,8 @@ export class GameController {
           <div class="game-info">
             <h4>How to Play:</h4>
             <ul>
-              <li>Roll oracle dice to determine movement options</li>
-              <li>Move your ship across the sea and land hexes</li>
+              <li>Oracle dice are rolled automatically at the end of each turn</li>
+              <li>Move your ship across the sea and land hexes using dice colors</li>
               <li>Spend favor to extend your movement range (1 extra hex per favor spent)</li>
               <li>Recolor dice by spending favor (1 favor per color advancement)</li>
               <li>Collect cubes and statues, fight monsters, and build temples</li>
@@ -65,8 +65,8 @@ export class GameController {
           <div class="rules-section">
             <h4>Phases:</h4>
             <ul>
-              <li><strong>Oracle Phase:</strong> Roll 3 colored dice</li>
-              <li><strong>Action Phase:</strong> First select a die, then perform actions (move, collect offerings, fight monsters, etc.)</li>
+              <li><strong>Action Phase:</strong> Select a die and perform actions (move, collect offerings, fight monsters, etc.)</li>
+              <li><strong>End of Turn:</strong> Dice are automatically rolled for the next player</li>
               <li>You can change your selected die before making a move</li>
               <li>You can recolor dice by spending favor (1 favor per color advancement)</li>
               <li>Color wheel: black → pink → blue → yellow → green → red → black</li>
@@ -453,8 +453,9 @@ export class GameController {
 
     switch (phase) {
       case "oracle": {
+        // This phase should no longer occur since dice are rolled at end of previous turn
         return `
-          <button id="rollDice" class="action-btn">Roll Oracle Dice</button>
+          <p>Dice are being rolled...</p>
         `;
       }
       case "action": {
@@ -663,9 +664,7 @@ export class GameController {
 
       const target = event.target as HTMLElement;
 
-      if (target.id === "rollDice") {
-        this.rollOracleDice();
-      } else if (target.id === "collectOffering") {
+      if (target.id === "collectOffering") {
         this.collectOffering();
       } else if (target.id === "fightMonster") {
         this.fightMonster();
@@ -698,10 +697,12 @@ export class GameController {
   private startNewGame(): void {
     this.gameEngine.initializeGame();
     this.renderGameState();
-    this.showMessage("New game started! Player 1's turn begins.");
+    this.showMessage("New game started! All players have rolled their dice. Player 1's turn begins.");
   }
 
   private rollOracleDice(): void {
+    // This method is kept for compatibility but dice are now rolled automatically
+    // at the end of each turn. This can be used for debugging or special cases.
     try {
       const currentPlayer = this.gameEngine.getCurrentPlayer();
       const dice = this.gameEngine.rollOracleDice(currentPlayer.id);
@@ -907,11 +908,11 @@ export class GameController {
     this.isFavorMode = false;
 
     // Call the game engine's endTurn method to advance to the next player
-    // Note: This will reset oracle dice and advance the current player index
+    // This will roll dice for the next player and advance the current player index
     this.gameEngine.endTurn();
 
     this.showMessage(
-      "Turn ended. Next player's turn begins.",
+      "Turn ended. Dice rolled for next player.",
     );
 
     this.renderGameState();
