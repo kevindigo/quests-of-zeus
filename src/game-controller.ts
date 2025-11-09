@@ -4,7 +4,7 @@
 import { QuestsZeusGameEngine } from "./game-engine.ts";
 import { HexMapSVG } from "./hexmap-svg.ts";
 import type { HexColor } from "./hexmap.ts";
-import type { CubeHex, GameState, MonsterHex, Player, MoveShipResult } from "./game-engine.ts";
+import type { CubeHex, GameState, MonsterHex, Player, MoveShipResult } from "./types.ts";
 
 // Type declarations for DOM APIs (for Deno type checking)
 

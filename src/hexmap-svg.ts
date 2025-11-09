@@ -2,7 +2,7 @@
 // Generates an SVG representation of the hex map
 
 import type { HexCell, HexColor, TerrainType } from "./hexmap.ts";
-import type { CubeHex, MonsterHex } from "./game-engine.ts";
+import type { CubeHex, MonsterHex } from "./types.ts";
 import {
   generateCityIcon,
   generateCloudsIcon,

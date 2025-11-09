@@ -2,7 +2,7 @@
 // This tests that when recoloring intentions change, the available moves on the map are updated
 
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { Player } from "../src/game-engine.ts";
+import type { Player } from "../src/types.ts";
 
 function testRecolorMapHighlighting() {
   console.log("Testing recoloring feature with map highlighting...\n");

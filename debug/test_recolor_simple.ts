@@ -1,7 +1,7 @@
 // Simple test for die recoloring feature
 
 import { QuestsZeusGameEngine } from "./src/game-engine.ts";
-import type { Player } from "./src/game-engine.ts";
+import type { Player } from "./src/types.ts";
 
 function testRecolorSimple() {
   console.log("Simple die recoloring test...\n");

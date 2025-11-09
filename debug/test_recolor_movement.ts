@@ -2,7 +2,7 @@
 // This tests that movement works correctly when recoloring intentions are set
 
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { Player } from "../src/game-engine.ts";
+import type { Player } from "../src/types.ts";
 
 function testRecolorMovement() {
   console.log("Testing recoloring movement validation...\n");

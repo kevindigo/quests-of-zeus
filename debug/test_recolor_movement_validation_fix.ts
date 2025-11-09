@@ -1,7 +1,7 @@
 // Test to verify the recoloring movement validation fix
 
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { Player } from "../src/game-engine.ts";
+import type { Player } from "../src/types.ts";
 
 function testRecolorMovementValidationFix() {
   console.log("Testing recoloring movement validation fix...\n");
