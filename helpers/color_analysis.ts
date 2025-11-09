@@ -3,7 +3,7 @@ import {
   type HexCell,
   type HexColor,
   HexMap,
-} from "./src/hexmap.ts";
+} from "../src/hexmap.ts";
 
 /**
  * Test to analyze the distribution of colors across sea tiles

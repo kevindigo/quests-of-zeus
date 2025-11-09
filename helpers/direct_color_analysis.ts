@@ -1,4 +1,4 @@
-import { getMapStatistics, HexMap } from "./src/hexmap.ts";
+import { getMapStatistics, HexMap } from "../src/hexmap.ts";
 
 /**
  * Test to analyze the distribution of colors across sea tiles

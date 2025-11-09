@@ -45,6 +45,7 @@ async function build() {
         "src/hexmap-svg.ts",
         "src/game-engine.ts",
         "src/game-controller.ts",
+        "src/hexmap/index.ts",
       ],
       bundle: true,
       outdir: "dist",

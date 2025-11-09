@@ -1,0 +1,157 @@
+// Refactored HexMap class - Main container that coordinates between services
+
+import type { TerrainType, HexColor, HexCell } from "../types.ts";
+import { TerrainPlacementManager } from "./TerrainPlacementManager.ts";
+import { SeaColorManager } from "./SeaColorManager.ts";
+import { HexGridOperations } from "./HexGridOperations.ts";
+import { PathfindingService } from "./PathfindingService.ts";
+import { CityManager } from "./CityManager.ts";
+import { UtilityService } from "./UtilityService.ts";
+
+export interface HexMapService {
+  getGrid(): HexCell[][];
+  getCell(q: number, r: number): HexCell | null;
+  getNeighbors(q: number, r: number): HexCell[];
+  getCellsByTerrain(terrain: TerrainType): HexCell[];
+  setCellColor(q: number, r: number, color: HexColor): void;
+  addStatueToCity(q: number, r: number): boolean;
+  removeStatueFromCity(q: number, r: number): boolean;
+  getStatuesOnCity(q: number, r: number): number;
+  isCityComplete(q: number, r: number): boolean;
+  getCompleteCities(): HexCell[];
+  serialize(): HexCell[][];
+}
+
+export class HexMap implements HexMapService {
+  private grid: HexCell[][];
+  readonly width: number = 13; // -6 to +6 inclusive
+  readonly height: number = 13; // -6 to +6 inclusive
+
+  private terrainPlacementManager: TerrainPlacementManager;
+  private seaColorManager: SeaColorManager;
+  private hexGridOperations: HexGridOperations;
+  private pathfindingService: PathfindingService;
+  private cityManager: CityManager;
+  private utilityService: UtilityService;
+
+  constructor() {
+    this.utilityService = new UtilityService();
+    this.hexGridOperations = new HexGridOperations();
+    this.pathfindingService = new PathfindingService(this.hexGridOperations);
+    this.cityManager = new CityManager();
+    this.seaColorManager = new SeaColorManager(this.hexGridOperations, this.utilityService);
+    this.terrainPlacementManager = new TerrainPlacementManager(
+      this.hexGridOperations,
+      this.pathfindingService,
+      this.seaColorManager,
+      this.utilityService
+    );
+    
+    this.grid = this.terrainPlacementManager.generateGrid();
+  }
+
+  /**
+   * Get the grid for external access
+   */
+  getGrid(): HexCell[][] {
+    return this.grid;
+  }
+
+  /**
+   * Get a cell at specific coordinates
+   */
+  getCell(q: number, r: number): HexCell | null {
+    return this.hexGridOperations.getCellFromGrid(this.grid, q, r);
+  }
+
+  /**
+   * Get all neighboring cells for a given cell
+   */
+  getNeighbors(q: number, r: number): HexCell[] {
+    return this.hexGridOperations.getNeighborsFromGrid(q, r, this.grid);
+  }
+
+  /**
+   * Get all cells of a specific terrain type
+   */
+  getCellsByTerrain(terrain: TerrainType): HexCell[] {
+    const cells: HexCell[] = [];
+    // The grid is a jagged array (hexagon shape), so we need to iterate through each row
+    for (let arrayQ = 0; arrayQ < this.grid.length; arrayQ++) {
+      const row = this.grid[arrayQ];
+      if (row) {
+        for (let arrayR = 0; arrayR < row.length; arrayR++) {
+          const cell = row[arrayR];
+          if (cell && cell.terrain === terrain) {
+            cells.push(cell);
+          }
+        }
+      }
+    }
+    return cells;
+  }
+
+  /**
+   * Set the color of a specific cell
+   */
+  setCellColor(q: number, r: number, color: HexColor): void {
+    const cell = this.getCell(q, r);
+    if (cell) {
+      cell.color = color;
+    }
+  }
+
+  /**
+   * Add a statue to a city
+   * Returns true if successful, false if city is full or not a city
+   */
+  addStatueToCity(q: number, r: number): boolean {
+    return this.cityManager.addStatueToCity(this.getCell(q, r));
+  }
+
+  /**
+   * Remove a statue from a city
+   * Returns true if successful, false if no statues or not a city
+   */
+  removeStatueFromCity(q: number, r: number): boolean {
+    return this.cityManager.removeStatueFromCity(this.getCell(q, r));
+  }
+
+  /**
+   * Get the number of statues on a city
+   * Returns the count, or -1 if not a city
+   */
+  getStatuesOnCity(q: number, r: number): number {
+    return this.cityManager.getStatuesOnCity(this.getCell(q, r));
+  }
+
+  /**
+   * Check if a city has all 3 statues placed
+   */
+  isCityComplete(q: number, r: number): boolean {
+    return this.cityManager.isCityComplete(this.getCell(q, r));
+  }
+
+  /**
+   * Get all cities that are complete (have all 3 statues)
+   */
+  getCompleteCities(): HexCell[] {
+    return this.cityManager.getCompleteCities(this.getCellsByTerrain("city"));
+  }
+
+  /**
+   * Serialize the map for storage or transmission
+   */
+  serialize(): HexCell[][] {
+    return JSON.parse(JSON.stringify(this.grid));
+  }
+
+  /**
+   * Deserialize a map from stored data
+   */
+  static deserialize(data: HexCell[][]): HexMap {
+    const map = new HexMap();
+    map.grid = data;
+    return map;
+  }
+}
