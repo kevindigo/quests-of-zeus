@@ -433,6 +433,14 @@ export class GameController {
         effectiveDieColor = currentPlayer.recoloredDice[this.selectedDieColor].newColor;
       }
 
+      // Debug logging
+      console.log(`Highlighting moves for ${effectiveDieColor} die (original: ${this.selectedDieColor}):`, {
+        availableMovesCount: availableMoves.length,
+        movesWithFavor: availableMoves.filter(move => move.favorCost > 0).length,
+        movesWithoutFavor: availableMoves.filter(move => move.favorCost === 0).length,
+        playerFavor: currentPlayer.favor
+      });
+
       availableMoves.forEach((move: { q: number; r: number; favorCost: number }) => {
         // Highlight the new hex-highlight polygons (centered, won't cover colored border)
         const highlightCell = document.querySelector(
@@ -447,6 +455,7 @@ export class GameController {
               "title",
               `Move using ${effectiveDieColor} die (costs ${move.favorCost} favor)`,
             );
+            console.log(`Added favor highlight to (${move.q}, ${move.r}) with cost ${move.favorCost}`);
           } else {
             highlightCell.classList.add("available-move");
             // Add tooltip to show required die color
@@ -455,6 +464,8 @@ export class GameController {
               `Move using ${effectiveDieColor} die`,
             );
           }
+        } else {
+          console.warn(`Could not find hex-highlight element for (${move.q}, ${move.r})`);
         }
       });
     }
@@ -541,7 +552,7 @@ export class GameController {
           actions += `<p>Click on highlighted hexes to move your ship:</p>
              <ul style="margin-left: 1rem;">
                <li>White highlights: Normal range (3 hexes)</li>
-               <li>Silver highlights: Extended range (costs favor)</li>
+               <li>Tan dashed highlights: Extended range (costs favor)</li>
              </ul>`;
 
           // Spend die for favor action is always available during action phase with a selected die

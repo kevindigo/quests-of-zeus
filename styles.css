@@ -106,9 +106,32 @@ footer {
   font-size: 0.9rem;
 }
 
+/* Tooltip styling for hex highlights */
+.hex-highlight[title] {
+  position: relative;
+}
+
+.hex-highlight[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+}
+
 /* Move destination highlighting */
 .hex-highlight {
   pointer-events: none;
+  /* Debug: Make sure hex-highlight elements are visible during development */
+  /* display: block !important; */
 }
 
 .hex-highlight.available-move {
@@ -118,9 +141,13 @@ footer {
 }
 
 .hex-highlight.available-move-favor {
-  stroke: silver !important;
-  stroke-width: 3px !important;
-  animation: pulse-silver 1.5s infinite;
+  stroke: tan !important;
+  stroke-width: 4px !important; /* Reduced from 8px to prevent covering interior */
+  animation: pulse-silver 1.5s infinite !important;
+  z-index: 10 !important;
+  filter: drop-shadow(0 0 8px tan
+  stroke-dasharray: 8, 4; /* Dashed pattern to make it stand out */
+  paint-order: stroke; /* Ensure stroke is painted on top, not covering fill */
 }
 
 .hex-highlight.available-move-oracle-card {
@@ -147,9 +174,15 @@ footer {
 @keyframes pulse-silver {
   0%, 100% {
     stroke-opacity: 1;
+    stroke-width: 4px;
+    filter: drop-shadow(0 0 8px rgba(255, 69, 0, 0.9));
+    stroke-dasharray: 8, 4;
   }
   50% {
-    stroke-opacity: 0.6;
+    stroke-opacity: 0.9;
+    stroke-width: 6px;
+    filter: drop-shadow(0 0 12px rgba(255, 69, 0, 1.2));
+    stroke-dasharray: 12, 6;
   }
 }
 

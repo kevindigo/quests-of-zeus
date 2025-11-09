@@ -103,7 +103,7 @@ export class HexMapSVG {
       />`;
 
       // Add an even more inset polygon for highlighting (won't cover the colored border)
-      const highlightInsetAmount = insetAmount + effectiveStrokeWidth + 2;
+      const highlightInsetAmount = insetAmount + effectiveStrokeWidth + 4; // Increased for smaller highlights
       const highlightHexPoints = this.calculateHexPoints(
         x + highlightInsetAmount,
         y + highlightInsetAmount,
@@ -122,10 +122,14 @@ export class HexMapSVG {
         data-r="${cell.r}"
         data-terrain="${cell.terrain}"
         class="hex-highlight ${this.getTerrainClass(cell.terrain)}"
+        style="pointer-events: none;"
       />`;
+      
+      // Debug: Log hex-highlight creation for colored hexes
+      console.log(`Created hex-highlight for colored hex at (${cell.q}, ${cell.r})`);
     } else {
       // For uncolored hexes, add a highlight polygon at the same inset as colored hexes
-      const highlightInsetAmount = 10; // Similar to what colored hexes would have
+      const highlightInsetAmount = 16; // Increased from 10 to 16 for smaller highlights (consistent with colored hexes)
       const highlightHexPoints = this.calculateHexPoints(
         x + highlightInsetAmount,
         y + highlightInsetAmount,
@@ -144,7 +148,11 @@ export class HexMapSVG {
         data-r="${cell.r}"
         data-terrain="${cell.terrain}"
         class="hex-highlight ${this.getTerrainClass(cell.terrain)}"
+        style="pointer-events: none;"
       />`;
+      
+      // Debug: Log hex-highlight creation for uncolored hexes
+      console.log(`Created hex-highlight for uncolored hex at (${cell.q}, ${cell.r})`);
     }
 
     // Add Greek god head icon for Zeus hex
