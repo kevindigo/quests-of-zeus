@@ -1013,7 +1013,6 @@ export class QuestsZeusGameEngine {
       throw new Error("Game not initialized. Call initializeGame() first.");
     }
     if (!this.oracleCardDeck || this.oracleCardDeck.length === 0) {
-      console.warn("Oracle card deck is not initialized or empty.");
       return false;
     }
     const player = this.state.players.find((p) => p.id === playerId);
