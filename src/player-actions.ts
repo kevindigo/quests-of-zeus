@@ -137,6 +137,7 @@ export class PlayerActions {
 
     if (!validation.isValid) {
       console.log(`DEBUG: Move validation failed: ${validation.error}`);
+      console.log(`DEBUG: Move details: from (${currentPos.q}, ${currentPos.r}) to (${targetQ}, ${targetR}) with die ${dieColor}, range ${movementRange}`);
       return {
         success: false,
         error: {

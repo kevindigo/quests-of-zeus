@@ -20,6 +20,9 @@ export interface HexMapService {
   isCityComplete(q: number, r: number): boolean;
   getCompleteCities(): HexCell[];
   serialize(): HexCell[][];
+  hasNeighborOfType(cell: HexCell, grid: HexCell[][], terrainType: TerrainType): boolean;
+  canReachZeus(cell: HexCell, grid: HexCell[][]): boolean;
+  canReachZeusFromSeaNeighbor(seaNeighbor: HexCell, candidateCell: HexCell, grid: HexCell[][]): boolean;
 }
 
 export class HexMap implements HexMapService {
@@ -171,6 +174,18 @@ export class HexMap implements HexMapService {
    */
   canReachZeus(cell: HexCell, grid: HexCell[][]): boolean {
     return this.pathfindingService.canReachZeus(cell, grid);
+  }
+
+  /**
+   * Check if a sea neighbor can reach zeus, considering that the candidate cell
+   * might be converted to shallows (so we exclude it from the path)
+   */
+  canReachZeusFromSeaNeighbor(
+    seaNeighbor: HexCell,
+    candidateCell: HexCell,
+    grid: HexCell[][],
+  ): boolean {
+    return this.pathfindingService.canReachZeusFromSeaNeighbor(seaNeighbor, candidateCell, grid);
   }
 
   /**

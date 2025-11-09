@@ -113,7 +113,8 @@ export class PathfindingService {
         }
 
         // If we haven't visited this cell and it's sea (valid path)
-        if (!visited.has(cellKey) && adjacentCell.terrain === "sea") {
+        // Also allow shallow cells as valid paths since they were originally sea
+        if (!visited.has(cellKey) && (adjacentCell.terrain === "sea" || adjacentCell.terrain === "shallow")) {
           visited.add(cellKey);
           queue.push(adjacentCell);
         }

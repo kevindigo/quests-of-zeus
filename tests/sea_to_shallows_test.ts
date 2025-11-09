@@ -54,51 +54,76 @@ Deno.test("Sea to shallows conversion - basic functionality", () => {
     // Verify each shallow cell meets the constraints
     for (const shallowCell of shallowCells) {
       // 1. Should not have zeus as neighbor
-      const hasZeusNeighbor = hexMap.hasNeighborOfType(
+      const hasZeusNeighborCheck = hexMap.hasNeighborOfType(
         shallowCell,
         grid,
         "zeus",
       );
       assertEquals(
-        hasZeusNeighbor,
+        hasZeusNeighborCheck,
         false,
         `Shallow cell at (${shallowCell.q}, ${shallowCell.r}) should not have zeus neighbor`,
       );
 
       // 2. Should not have city as neighbor
-      const hasCityNeighbor = hexMap.hasNeighborOfType(
+      const hasCityNeighborCheck = hexMap.hasNeighborOfType(
         shallowCell,
         grid,
         "city",
       );
       assertEquals(
-        hasCityNeighbor,
+        hasCityNeighborCheck,
         false,
         `Shallow cell at (${shallowCell.q}, ${shallowCell.r}) should not have city neighbor`,
       );
 
       // 3. Check all neighbors of the shallow cell
-      const allNeighbors = hexMap.getNeighbors(shallowCell.q, shallowCell.r);
+      // To properly test the constraints, we need to simulate what the state was
+      // during the conversion by temporarily converting the shallow cell back to sea
+      // and then checking if it would pass the eligibility criteria
+      
+      // Temporarily convert back to sea for constraint checking
+      const originalTerrain = shallowCell.terrain;
+      const originalColor = shallowCell.color;
+      shallowCell.terrain = "sea";
+      shallowCell.color = originalColor !== "none" ? originalColor : "blue"; // Use a default color if needed
+      
       let allConstraintsSatisfied = true;
+      
+      // Constraint 1: Should not have zeus as neighbor
+      const hasZeusNeighborConstraint = hexMap.hasNeighborOfType(shallowCell, grid, "zeus");
+      if (hasZeusNeighborConstraint) {
+        allConstraintsSatisfied = false;
+      }
 
+      // Constraint 2: Should not have city as neighbor
+      const hasCityNeighborConstraint = hexMap.hasNeighborOfType(shallowCell, grid, "city");
+      if (hasCityNeighborConstraint) {
+        allConstraintsSatisfied = false;
+      }
+
+      // Constraint 3: Check all neighbors
+      const allNeighbors = hexMap.getNeighbors(shallowCell.q, shallowCell.r);
       for (const neighbor of allNeighbors) {
         if (neighbor.terrain === "sea") {
-          // For sea neighbors: check if they can reach zeus
-          if (!hexMap.canReachZeus(neighbor, grid)) {
+          // For sea neighbors: check if they can reach zeus (excluding the candidate cell)
+          if (!hexMap.canReachZeusFromSeaNeighbor(neighbor, shallowCell, grid)) {
             allConstraintsSatisfied = false;
-
             break;
           }
         } else if (neighbor.terrain !== "shallow") {
           // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
           if (!hexMap.hasNeighborOfType(neighbor, grid, "sea")) {
             allConstraintsSatisfied = false;
-
             break;
           }
         }
         // For shallow neighbors, no additional checks needed
       }
+      
+      // Restore the shallow cell
+      shallowCell.terrain = originalTerrain;
+      shallowCell.color = originalColor;
 
       assertEquals(
         allConstraintsSatisfied,
