@@ -1,5 +1,6 @@
 import { assert } from "@std/assert";
-import { type HexCell, HexMap } from "../src/hexmap.ts";
+import { type HexCell } from "../src/types.ts";
+import { HexMap } from "../src/hexmap.ts";
 
 /**
  * Test to verify that sea hex colors follow constraint-based placement

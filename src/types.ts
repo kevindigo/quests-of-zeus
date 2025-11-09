@@ -1,6 +1,60 @@
 // Game type definitions for Quests of Zeus
 
-import type { HexColor } from "./hexmap.ts";
+// Terrain types for the hexagonal map
+export type TerrainType =
+  | "zeus" // Zeus locations
+  | "sea" // Sea tiles
+  | "shallow" // Shallow water
+  | "monsters" // Monster locations
+  | "cubes" // Cube locations
+  | "temple" // Temple locations
+  | "clouds" // Cloud locations
+  | "city" // City locations
+  | "foundations"; // Foundation locations
+
+// Color types for hex cells
+export type HexColor =
+  | "none"
+  | "red"
+  | "black"
+  | "pink"
+  | "blue"
+  | "yellow"
+  | "green";
+
+// Color constants for the 6 fundamental colors
+// These colors are used to power actions in the game
+export const COLORS = {
+  BLACK: "black" as HexColor,
+  BLUE: "blue" as HexColor,
+  RED: "red" as HexColor,
+  YELLOW: "yellow" as HexColor,
+  GREEN: "green" as HexColor,
+  PINK: "pink" as HexColor,
+} as const;
+
+export const ALL_COLORS: HexColor[] = [
+  COLORS.BLACK,
+  COLORS.BLUE,
+  COLORS.RED,
+  COLORS.YELLOW,
+  COLORS.GREEN,
+  COLORS.PINK,
+];
+
+export interface HexCell {
+  // Coordinates using axial coordinate system for hex grids
+  q: number; // Column coordinate
+  r: number; // Row coordinate
+
+  // Cell characteristics
+  terrain: TerrainType;
+  color: HexColor;
+
+  // City-specific properties
+  statues?: number; // Number of statues placed on this city (0-3)
+}
+
 import type { HexMap } from "./hexmap.ts";
 
 export interface StorageSlot {

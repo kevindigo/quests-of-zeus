@@ -1,7 +1,8 @@
 // Comprehensive test for the statue system
 
 import { assert, assertEquals } from "@std/assert";
-import { type HexColor, HexMap } from "../src/hexmap.ts";
+import { type HexColor } from "../src/types.ts";
+import { HexMap } from "../src/hexmap.ts";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 
 Deno.test("StatueSystem - HexMap statue operations", () => {

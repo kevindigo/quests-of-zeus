@@ -1,7 +1,7 @@
 // SVG Hex Map Generator for Quests of Zeus
 // Generates an SVG representation of the hex map
 
-import type { HexCell, HexColor, TerrainType } from "./hexmap.ts";
+import type { HexCell, HexColor, TerrainType } from "./types.ts";
 import type { CubeHex, MonsterHex } from "./types.ts";
 import {
   generateCityIcon,

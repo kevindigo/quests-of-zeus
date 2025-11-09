@@ -6,7 +6,7 @@
 
 import { assert, assertEquals } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import { ALL_COLORS } from "../src/hexmap.ts";
+import { ALL_COLORS } from "../src/types.ts";
 
 // Helper function to run distribution tests
 function runDistributionTests(

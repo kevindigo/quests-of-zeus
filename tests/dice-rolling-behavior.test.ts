@@ -2,7 +2,7 @@
 
 import { assert, assertEquals, assertExists } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { HexColor } from "../src/hexmap.ts";
+import type { HexColor } from "../src/types.ts";
 
 Deno.test("DiceRolling - all players start with dice rolled", () => {
   const engine = new QuestsZeusGameEngine();

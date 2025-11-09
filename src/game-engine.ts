@@ -1,8 +1,9 @@
 // Quests of Zeus Game Engine
 // Core game mechanics and state management
 
-import type { HexColor } from "./hexmap.ts";
-import { ALL_COLORS, COLORS, HexMap } from "./hexmap.ts";
+import type { HexColor } from "./types.ts";
+import { ALL_COLORS, COLORS } from "./types.ts";
+import { HexMap } from "./hexmap.ts";
 import type { StorageSlot, Player, CubeHex, MonsterHex, MoveShipResult, GameState } from "./types.ts";
 
 // Helper function to create empty storage slots

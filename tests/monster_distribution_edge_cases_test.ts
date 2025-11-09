@@ -5,7 +5,7 @@
 
 import { assert, assertEquals } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import { ALL_COLORS } from "../src/hexmap.ts";
+import { ALL_COLORS } from "../src/types.ts";
 
 // Test algorithm performance and timing
 Deno.test("MonsterDistribution - algorithm performance", () => {

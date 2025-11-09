@@ -2,7 +2,7 @@
 
 import { assert, assertEquals } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { HexColor } from "../src/hexmap.ts";
+import type { HexColor } from "../src/types.ts";
 
 Deno.test("getAvailableMovesForDie - basic functionality", () => {
   const gameEngine = new QuestsZeusGameEngine();
