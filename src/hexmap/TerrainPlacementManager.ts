@@ -418,9 +418,46 @@ export class TerrainPlacementManager {
 
     // Final step: Convert ALL remaining shallows to sea (100% conversion)
     this.convertShallowsToSea(grid);
+
+    // Assign colors to all sea hexes
+    console.log("DEBUG: About to assign colors to sea hexes");
+    this.seaColorManager.assignColorsToSeaHexes(grid);
+    console.log("DEBUG: Completed sea color assignment");
   }
 
-  // Note: Additional methods like landmassSize, isValidTerrainPlacement, 
-  // hasShallowsOrSeaNeighbor, convertShallowsToSea, and tryConvertSeaToShallows
-  // would be added here in a complete implementation
+  /**
+   * Check if a cell is valid for terrain placement
+   * Currently uses a simple constraint: must have at least one sea or shallow neighbor
+   */
+  private isValidTerrainPlacement(cell: HexCell, grid: HexCell[][]): boolean {
+    // For now, use a simple constraint: cell must have at least one sea or shallow neighbor
+    return this.hasShallowsOrSeaNeighbor(cell, grid);
+  }
+
+  /**
+   * Check if a cell has at least one neighbor that is shallows or sea
+   */
+  private hasShallowsOrSeaNeighbor(cell: HexCell, grid: HexCell[][]): boolean {
+    const neighbors = this.hexGridOperations.getNeighborsFromGrid(cell.q, cell.r, grid);
+    return neighbors.some(neighbor => 
+      neighbor.terrain === "shallow" || neighbor.terrain === "sea"
+    );
+  }
+
+  /**
+   * Convert all remaining shallows to sea (100% conversion)
+   */
+  private convertShallowsToSea(grid: HexCell[][]): void {
+    for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
+      const row = grid[arrayQ];
+      if (row) {
+        for (let arrayR = 0; arrayR < row.length; arrayR++) {
+          const cell = row[arrayR];
+          if (cell && cell.terrain === "shallow") {
+            cell.terrain = "sea";
+          }
+        }
+      }
+    }
+  }
 }

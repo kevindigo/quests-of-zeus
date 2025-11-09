@@ -48,6 +48,9 @@ export class HexMap implements HexMapService {
     );
     
     this.grid = this.terrainPlacementManager.generateGrid();
+    
+    // Convert some sea cells to shallows based on game constraints
+    this.convertSeaToShallows();
   }
 
   /**
@@ -153,5 +156,96 @@ export class HexMap implements HexMapService {
     const map = new HexMap();
     map.grid = data;
     return map;
+  }
+
+  /**
+   * Check if a cell has a neighbor of a specific terrain type
+   */
+  hasNeighborOfType(cell: HexCell, grid: HexCell[][], terrainType: TerrainType): boolean {
+    const neighbors = this.hexGridOperations.getNeighborsFromGrid(cell.q, cell.r, grid);
+    return neighbors.some(neighbor => neighbor.terrain === terrainType);
+  }
+
+  /**
+   * Check if a cell can reach Zeus through a path of sea cells
+   */
+  canReachZeus(cell: HexCell, grid: HexCell[][]): boolean {
+    return this.pathfindingService.canReachZeus(cell, grid);
+  }
+
+  /**
+   * Convert some sea cells to shallows based on game constraints
+   * This simulates the sea-to-shallows conversion that happens during gameplay
+   */
+  convertSeaToShallows(): void {
+    const seaCells: HexCell[] = [];
+
+    // Collect all sea cells
+    for (let arrayQ = 0; arrayQ < this.grid.length; arrayQ++) {
+      const row = this.grid[arrayQ];
+      if (row) {
+        for (let arrayR = 0; arrayR < row.length; arrayR++) {
+          const cell = row[arrayR];
+          if (cell && cell.terrain === "sea") {
+            seaCells.push(cell);
+          }
+        }
+      }
+    }
+
+    // Shuffle sea cells for random selection
+    this.utilityService.shuffleArray(seaCells);
+
+    let conversions = 0;
+    const maxConversions = 10;
+
+    // Try to convert up to 10 sea cells to shallows
+    for (const cell of seaCells) {
+      if (conversions >= maxConversions) {
+        break;
+      }
+
+      // Check if this cell meets the constraints for conversion
+      if (this.isEligibleForSeaToShallowsConversion(cell)) {
+        cell.terrain = "shallow";
+        cell.color = "none"; // Reset color when converting to shallows
+        conversions++;
+      }
+    }
+  }
+
+  /**
+   * Check if a sea cell is eligible for conversion to shallows
+   */
+  private isEligibleForSeaToShallowsConversion(cell: HexCell): boolean {
+    // Constraint 1: Should not have zeus as neighbor
+    if (this.hasNeighborOfType(cell, this.grid, "zeus")) {
+      return false;
+    }
+
+    // Constraint 2: Should not have city as neighbor
+    if (this.hasNeighborOfType(cell, this.grid, "city")) {
+      return false;
+    }
+
+    // Constraint 3: Check all neighbors
+    const neighbors = this.getNeighbors(cell.q, cell.r);
+    
+    for (const neighbor of neighbors) {
+      if (neighbor.terrain === "sea") {
+        // For sea neighbors: check if they can reach zeus (excluding the candidate cell)
+        if (!this.pathfindingService.canReachZeusFromSeaNeighbor(neighbor, cell, this.grid)) {
+          return false;
+        }
+      } else if (neighbor.terrain !== "shallow") {
+        // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
+        if (!this.hasNeighborOfType(neighbor, this.grid, "sea")) {
+          return false;
+        }
+      }
+      // For shallow neighbors, no additional checks needed
+    }
+
+    return true;
   }
 }

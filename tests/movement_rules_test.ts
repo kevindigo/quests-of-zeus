@@ -94,8 +94,7 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
 
   const player = engine.getCurrentPlayer();
 
-  // Roll dice to enter action phase
-  const _initialDice = engine.rollOracleDice(player.id);
+  // Players already have dice from initialization, no need to roll again
   // Store the initial dice state before movement
   const initialDiceColors = [...player.oracleDice];
   const initialDiceCount = initialDiceColors.length;
@@ -103,8 +102,10 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
   // Get available moves
   const availableMoves = engine.getAvailableMoves(player.id);
 
+  console.log(`DEBUG: Found ${availableMoves.length} available moves`);
   if (availableMoves.length > 0) {
     const firstMove = availableMoves[0];
+    console.log(`DEBUG: First move: ${JSON.stringify(firstMove)}`);
 
     // Count occurrences of the used die color before movement
     const initialCountOfUsedColor = initialDiceColors.filter((color) =>
@@ -118,23 +119,28 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
       firstMove.r,
       firstMove.dieColor,
     );
+    console.log(`DEBUG: Move result: ${JSON.stringify(moveResult)}`);
     assert(moveResult.success, "Movement should be successful");
 
-    // Get fresh player reference after movement - ensure we get the actual current player
-    const updatedPlayer = engine.getCurrentPlayer();
+    // Get the same player reference after movement (don't use getCurrentPlayer as turn may have ended)
+    // Use the original player reference since the player object should be updated
+    const samePlayer = engine.getPlayer(player.id);
+    if (!samePlayer) {
+      throw new Error("Player not found after movement");
+    }
 
     // Count occurrences of the used die color after movement
-    const finalCountOfUsedColor = updatedPlayer.oracleDice.filter((color) =>
+    const finalCountOfUsedColor = samePlayer.oracleDice.filter((color) =>
       color === firstMove.dieColor
     ).length;
 
     // Check that exactly one die was consumed
     assertEquals(
-      updatedPlayer.oracleDice.length,
+      samePlayer.oracleDice.length,
       initialDiceCount - 1,
       `One die should be consumed. Expected ${
         initialDiceCount - 1
-      }, got ${updatedPlayer.oracleDice.length}`,
+      }, got ${samePlayer.oracleDice.length}`,
     );
 
     // Check that exactly one die of the used color was removed
@@ -146,7 +152,7 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
 
     // Check that ship position was updated
     assertEquals(
-      updatedPlayer.shipPosition,
+      samePlayer.shipPosition,
       { q: firstMove.q, r: firstMove.r },
       "Ship position should be updated",
     );
