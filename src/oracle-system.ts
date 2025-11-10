@@ -284,7 +284,7 @@ export class OracleSystem {
     }
 
     // Apply recoloring if there's an intention for this card
-    const originalCardColor = cardColor;
+    const _originalCardColor = cardColor;
     if (player.recoloredCards && player.recoloredCards[cardColor]) {
       const recoloringApplied = this.applyRecoloringForCard(player, cardColor);
       if (recoloringApplied) {
@@ -331,7 +331,7 @@ export class OracleSystem {
     }
 
     // Apply recoloring if there's an intention for this card
-    const originalCardColor = cardColor;
+    const _originalCardColor = cardColor;
     if (player.recoloredCards && player.recoloredCards[cardColor]) {
       const recoloringApplied = this.applyRecoloringForCard(player, cardColor);
       if (recoloringApplied) {
@@ -386,7 +386,7 @@ export class OracleSystem {
     }
 
     // Apply recoloring if there's an intention for this card
-    const originalCardColor = cardColor;
+    const _originalCardColor = cardColor;
     if (player.recoloredCards && player.recoloredCards[cardColor]) {
       const recoloringApplied = this.applyRecoloringForCard(player, cardColor);
       if (recoloringApplied) {
