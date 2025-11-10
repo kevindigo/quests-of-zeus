@@ -1160,6 +1160,8 @@ export class GameController {
 
     // Check if the player has this die
     if (currentPlayer.oracleDice.includes(dieColor)) {
+      // Clear oracle card selection when selecting a die
+      this.selectedOracleCardColor = null;
       this.selectedDieColor = dieColor;
       this.showMessage(`Selected ${dieColor} die`);
       this.renderGameState();
@@ -1171,6 +1173,8 @@ export class GameController {
 
     // Check if the player has this oracle card
     if (currentPlayer.oracleCards.includes(cardColor)) {
+      // Clear die selection when selecting an oracle card
+      this.selectedDieColor = null;
       this.selectedOracleCardColor = cardColor;
       this.showMessage(`Selected ${cardColor} oracle card`);
       this.renderGameState();
