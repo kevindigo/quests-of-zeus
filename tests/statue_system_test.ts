@@ -160,10 +160,11 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
   // Test actual placement
   const placementSuccess = game.placeStatueOnCity(player.id);
   assert(placementSuccess, "Failed to place statue on city");
-  const _statuesAfterPlacement = gameState.map.getStatuesOnCity(
-    gameCity!.q,
-    gameCity!.r,
-  );
+  // Statues after placement variable intentionally unused for debugging
+  // const statuesAfterPlacement = gameState.map.getStatuesOnCity(
+  //   gameCity!.q,
+  //   gameCity!.r,
+  // );
 
   // Test statue was consumed from storage
   const statueStillInStorage = player.storage.some((slot) =>
