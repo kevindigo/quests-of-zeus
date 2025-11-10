@@ -1,12 +1,9 @@
 // Tests for the two-step action phase implementation
 
 import { assert, assertEquals } from "@std/assert";
-import { GameController } from "../src/game-controller.ts";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 
 Deno.test("GameController - die selection", () => {
-  const _controller = new GameController();
-
   // Test that selectedDieColor starts as null
   // Note: We need to access the private field through a test method or reflection
   // For now, we'll test the behavior through public methods
