@@ -1,7 +1,7 @@
 // Integration tests for resource selection behavior
 // Tests the interaction between die and oracle card selection and usage
 
-import { assert, assertEquals } from "@std/assert";
+import { assert, assertArrayIncludes, assertEquals, assertFalse } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import type { HexColor } from "../src/types.ts";
 
@@ -63,37 +63,17 @@ Deno.test("ResourceSelectionIntegration - cannot use multiple oracle cards in sa
   // Set up deterministic test conditions
   player.oracleCards = ["blue", "red"];
   player.favor = 5;
-  // Find a sea hex to start from instead of Zeus hex
-  const gameState = engine.getGameState();
-  const seaTiles = gameState.map.getCellsByTerrain("sea");
-  if (seaTiles.length > 0) {
-    player.shipPosition = { q: seaTiles[0].q, r: seaTiles[0].r };
-  }
   player.usedOracleCardThisTurn = false;
 
   // First oracle card usage should succeed
-  const blueSeaTiles = gameState.map.getCellsByTerrain("sea").filter(cell => cell.color === "blue");
-  
-  if (blueSeaTiles.length > 0) {
-    const firstTarget = blueSeaTiles[0];
-    const firstMoveResult = engine.spendOracleCardForMovement(player.id, firstTarget.q, firstTarget.r, "blue", 0);
+  const firstResult = engine.spendOracleCardForFavor(player.id, "blue");
+  assert(firstResult, `First oracle card usage should succeed`);
+  assert(player.usedOracleCardThisTurn, "Oracle card usage flag should be set");
     
-    assert(firstMoveResult.success, "First oracle card usage should succeed");
-    assertEquals(player.usedOracleCardThisTurn, true, "Oracle card usage flag should be set");
-    
-    // Second oracle card usage should fail
-    const redSeaTiles = gameState.map.getCellsByTerrain("sea").filter(cell => cell.color === "red");
-    
-    if (redSeaTiles.length > 0) {
-      const secondTarget = redSeaTiles[0];
-      const secondMoveResult = engine.spendOracleCardForMovement(player.id, secondTarget.q, secondTarget.r, "red", 0);
-      
-      assertEquals(secondMoveResult.success, false, "Second oracle card usage should fail");
-      
-      // Red oracle card should still be available
-      assertEquals(player.oracleCards.includes("red"), true, "Red oracle card should still be available");
-    }
-  }
+  const secondResult = engine.spendOracleCardForFavor(player.id, "red");
+  assertFalse(secondResult, "Second oracle card usage should fail");
+  // Red oracle card should still be available
+  assertArrayIncludes(player.oracleCards, ["red"], "Red oracle card should still be available");
 });
 
 Deno.test("ResourceSelectionIntegration - favor spending works with both resource types", () => {
