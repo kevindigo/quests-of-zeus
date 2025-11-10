@@ -559,9 +559,10 @@ export class GameController {
           actions +=
             `<button id="spendResourceForFavor" class="action-btn">Spend for 2 Favor</button>`;
 
-          // New button to spend die to draw an oracle card
+          // Unified button to spend resource to draw an oracle card
           actions +=
-            `<button id="drawOracleCard" class="action-btn">Spend Die to Draw Oracle Card</button>`;
+            `<button id="drawOracleCard" class="action-btn">Draw Oracle Card</button>`;
+          actions += `<p style="font-size: 0.9rem; opacity: 0.8;">Spend a die or oracle card to draw an oracle card from the deck</p>`;
 
           // Oracle card spending actions (only show if player has oracle cards and hasn't used one this turn)
           if (currentPlayer.oracleCards.length > 0 && !currentPlayer.usedOracleCardThisTurn) {
@@ -627,6 +628,11 @@ export class GameController {
 
           // Spend oracle card for favor action is available
           actions += `<button id="spendResourceForFavor" class="action-btn">Spend for 2 Favor</button>`;
+
+          // Draw oracle card button is also available
+          actions +=
+            `<button id="drawOracleCard" class="action-btn">Draw Oracle Card</button>`;
+          actions += `<p style="font-size: 0.9rem; opacity: 0.8;">Spend a die or oracle card to draw an oracle card from the deck</p>`;
         } else {
           // No resource selected - show selection instructions
           actions += `<p>Select a resource (die or oracle card) to perform actions</p>`;
@@ -1115,22 +1121,37 @@ export class GameController {
   private drawOracleCard(): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
 
-    if (!this.selectedDieColor) {
-      this.showMessage("Please select a die first!");
-      return;
+    // Check if a die is selected
+    if (this.selectedDieColor) {
+      const success = this.gameEngine.drawOracleCard(
+        currentPlayer.id,
+        this.selectedDieColor,
+      );
+      if (success) {
+        this.showMessage(`Spent ${this.selectedDieColor} die to draw an oracle card!`);
+        // Don't clear selected die - player can continue using other dice
+        // The spent die will be automatically removed from the display
+        this.renderGameState();
+      } else {
+        this.showMessage("Cannot draw oracle card at this time");
+      }
     }
-
-    const success = this.gameEngine.drawOracleCard(
-      currentPlayer.id,
-      this.selectedDieColor,
-    );
-    if (success) {
-      this.showMessage(`Spent ${this.selectedDieColor} die to draw an oracle card!`);
-      // Don't clear selected die - player can continue using other dice
-      // The spent die will be automatically removed from the display
-      this.renderGameState();
+    // Check if an oracle card is selected
+    else if (this.selectedOracleCardColor) {
+      const success = this.gameEngine.spendOracleCardToDrawCard(
+        currentPlayer.id,
+        this.selectedOracleCardColor,
+      );
+      if (success) {
+        this.showMessage(`Spent ${this.selectedOracleCardColor} oracle card to draw a new oracle card!`);
+        // Clear selected oracle card after successful spending
+        this.selectedOracleCardColor = null;
+        this.renderGameState();
+      } else {
+        this.showMessage("Cannot spend oracle card to draw another oracle card at this time");
+      }
     } else {
-      this.showMessage("Cannot draw oracle card at this time");
+      this.showMessage("Please select a resource (die or oracle card) first!");
     }
   }
 

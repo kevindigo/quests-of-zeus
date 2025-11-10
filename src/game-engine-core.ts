@@ -136,6 +136,12 @@ export class QuestsZeusGameEngine {
     return this.oracleSystem!.spendOracleCardForFavor(player, cardColor);
   }
 
+  public spendOracleCardToDrawCard(playerId: number, cardColor: HexColor): boolean {
+    this.ensureInitialized();
+    const player = this.getValidPlayer(playerId);
+    return this.oracleSystem!.spendOracleCardToDrawCard(player, cardColor);
+  }
+
   public drawOracleCard(playerId: number, dieColor: HexColor): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);

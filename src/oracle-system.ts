@@ -238,6 +238,56 @@ export class OracleSystem {
   }
 
   /**
+   * Spend an oracle card to draw a new oracle card from the deck
+   * Players can only use 1 oracle card per turn
+   */
+  public spendOracleCardToDrawCard(player: Player, cardColor: HexColor): boolean {
+    // Check if player has already used an oracle card this turn
+    if (player.usedOracleCardThisTurn) {
+      return false;
+    }
+
+    // Check if player has the specified oracle card
+    if (!player.oracleCards.includes(cardColor)) {
+      return false;
+    }
+
+    // Check if oracle card deck has cards
+    if (!this.oracleCardDeck || this.oracleCardDeck.length === 0) {
+      return false;
+    }
+
+    // Consume the oracle card
+    const cardIndex = player.oracleCards.indexOf(cardColor);
+    if (cardIndex !== -1) {
+      player.oracleCards.splice(cardIndex, 1);
+    } else {
+      // This should not happen since we checked above, but log for debugging
+      console.warn(
+        `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${
+          player.oracleCards.join(", ")
+        }]`,
+      );
+      return false;
+    }
+
+    // Draw top oracle card from deck
+    const newCard = this.oracleCardDeck.pop();
+    if (!newCard) {
+      console.warn("Oracle card deck is empty when trying to draw card.");
+      return false;
+    }
+
+    // Add new card to player's hand
+    player.oracleCards.push(newCard);
+
+    // Mark that player has used an oracle card this turn
+    player.usedOracleCardThisTurn = true;
+
+    return true;
+  }
+
+  /**
    * Get the current oracle card deck
    */
   public getOracleCardDeck(): HexColor[] {
