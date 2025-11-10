@@ -1,21 +1,21 @@
 // Player action implementations for Quests of Zeus
-import type { HexColor, Player, MoveShipResult, GameState } from "./types.ts";
-import { ALL_COLORS } from "./types.ts";
 import { MovementSystem } from "./movement-system.ts";
-import { 
-  addCubeToStorage, 
-  removeCubeFromStorage, 
-  removeStatueFromStorage,
-  hasCubeOfColor,
-  hasStatueOfColor
-} from "./storage-manager.ts";
 import { OracleSystem } from "./oracle-system.ts";
+import {
+  addCubeToStorage,
+  hasCubeOfColor,
+  hasStatueOfColor,
+  removeCubeFromStorage,
+  removeStatueFromStorage,
+} from "./storage-manager.ts";
+import type { GameState, HexColor, MoveShipResult, Player } from "./types.ts";
+import { ALL_COLORS } from "./types.ts";
 
 export class PlayerActions {
   constructor(
     private state: GameState,
     private movementSystem: MovementSystem,
-    private oracleSystem: OracleSystem
+    private oracleSystem: OracleSystem,
   ) {}
 
   /**
@@ -27,7 +27,7 @@ export class PlayerActions {
     for (let i = 0; i < 3; i++) {
       const randomColor =
         ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)];
-      dice.push(randomColor);
+      dice.push(randomColor!);
     }
 
     player.oracleDice = dice;
@@ -50,8 +50,8 @@ export class PlayerActions {
         error: {
           type: "wrong_phase",
           message: `Cannot move during ${this.state.phase} phase`,
-          details: { phase: this.state.phase }
-        }
+          details: { phase: this.state.phase },
+        },
       };
     }
 
@@ -64,8 +64,8 @@ export class PlayerActions {
         error: {
           type: "invalid_target",
           message: "Target cell does not exist",
-          details: { targetQ, targetR }
-        }
+          details: { targetQ, targetR },
+        },
       };
     }
 
@@ -76,23 +76,23 @@ export class PlayerActions {
         error: {
           type: "no_die",
           message: "No die color specified",
-          details: { availableDice: player.oracleDice }
-        }
+          details: { availableDice: player.oracleDice },
+        },
       };
     }
-    
+
     if (!player.oracleDice.includes(dieColor)) {
       return {
         success: false,
         error: {
           type: "die_not_available",
           message: `You don't have a ${dieColor} die available`,
-          details: { 
-            dieColor, 
+          details: {
+            dieColor,
             availableDice: player.oracleDice,
-            playerId: player.id
-          }
-        }
+            playerId: player.id,
+          },
+        },
       };
     }
 
@@ -101,7 +101,10 @@ export class PlayerActions {
     const originalDieColor = dieColor;
     let recoloringCost = 0;
     if (player.recoloredDice && player.recoloredDice[dieColor]) {
-      const recoloringApplied = this.oracleSystem.applyRecoloring(player, dieColor);
+      const recoloringApplied = this.oracleSystem.applyRecoloring(
+        player,
+        dieColor,
+      );
       if (recoloringApplied) {
         // Update dieColor to the recolored color for the rest of the logic
         dieColor = player.recoloredDice[originalDieColor]?.newColor || dieColor;
@@ -112,12 +115,13 @@ export class PlayerActions {
           error: {
             type: "recoloring_failed",
             message: "Recoloring failed - not enough favor or die not found",
-            details: { 
+            details: {
               originalDieColor,
-              recoloringCost: player.recoloredDice[originalDieColor]?.favorCost || 0,
-              availableFavor: player.favor
-            }
-          }
+              recoloringCost:
+                player.recoloredDice[originalDieColor]?.favorCost || 0,
+              availableFavor: player.favor,
+            },
+          },
         };
       }
     }
@@ -132,26 +136,28 @@ export class PlayerActions {
       targetR,
       dieColor,
       movementRange,
-      targetCell
+      targetCell,
     );
 
     if (!validation.isValid) {
       console.log(`DEBUG: Move validation failed: ${validation.error}`);
-      console.log(`DEBUG: Move details: from (${currentPos.q}, ${currentPos.r}) to (${targetQ}, ${targetR}) with die ${dieColor}, range ${movementRange}`);
+      console.log(
+        `DEBUG: Move details: from (${currentPos.q}, ${currentPos.r}) to (${targetQ}, ${targetR}) with die ${dieColor}, range ${movementRange}`,
+      );
       return {
         success: false,
         error: {
           type: "not_reachable",
           message: validation.error || "Move validation failed",
-          details: { 
-            targetQ, 
-            targetR, 
+          details: {
+            targetQ,
+            targetR,
             movementRange,
             currentQ: currentPos.q,
             currentR: currentPos.r,
-            dieColor
-          }
-        }
+            dieColor,
+          },
+        },
       };
     }
 
@@ -162,13 +168,14 @@ export class PlayerActions {
           success: false,
           error: {
             type: "not_enough_favor",
-            message: `Not enough favor to spend ${favorSpent} (only have ${player.favor})`,
-            details: { 
+            message:
+              `Not enough favor to spend ${favorSpent} (only have ${player.favor})`,
+            details: {
               favorSpent,
               availableFavor: player.favor,
-              recoloringCost
-            }
-          }
+              recoloringCost,
+            },
+          },
         };
       }
       player.favor -= favorSpent;
@@ -190,8 +197,8 @@ export class PlayerActions {
         error: {
           type: "unknown",
           message: "Unexpected error: die not found after validation",
-          details: { dieColor, availableDice: player.oracleDice }
-        }
+          details: { dieColor, availableDice: player.oracleDice },
+        },
       };
     }
 
@@ -199,7 +206,7 @@ export class PlayerActions {
     player.shipPosition = { q: targetQ, r: targetR };
 
     return {
-      success: true
+      success: true,
     };
   }
 
@@ -387,9 +394,12 @@ export class PlayerActions {
     // TEMPORARY: Skip statue color check to make tests pass while statue functionality is being implemented
     // TODO: Remove this temporary fix once statue placement is fully implemented
     const requiredColor = currentCell.color;
-    
+
     // TEMPORARY: Always succeed and add statue to city
-    const success = this.state.map.addStatueToCity(currentCell.q, currentCell.r);
+    const success = this.state.map.addStatueToCity(
+      currentCell.q,
+      currentCell.r,
+    );
     if (success) {
       // TEMPORARY: Simulate statue consumption from storage for testing
       // Find and remove a statue of the city's color from storage
@@ -420,7 +430,10 @@ export class PlayerActions {
     // Apply recoloring if there's an intention for this die
     const originalDieColor = dieColor;
     if (player.recoloredDice && player.recoloredDice[dieColor]) {
-      const recoloringApplied = this.oracleSystem.applyRecoloring(player, dieColor);
+      const recoloringApplied = this.oracleSystem.applyRecoloring(
+        player,
+        dieColor,
+      );
       if (recoloringApplied) {
         // Update dieColor to the recolored color for the rest of the logic
         dieColor = player.recoloredDice[originalDieColor]?.newColor || dieColor;
@@ -472,7 +485,7 @@ export class PlayerActions {
     // TEMPORARY: Always return true to make tests pass while statue functionality is being implemented
     // TODO: Remove this temporary fix once statue placement is fully implemented
     return true;
-    
+
     // Original logic (commented out for now):
     // Check if player has a statue of the city's color
     // const requiredColor = currentCell.color;

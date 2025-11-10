@@ -17,23 +17,23 @@ function debugMovement() {
   if (availableMoves.length > 0) {
     const firstMove = availableMoves[0];
     console.log("First move:", firstMove);
-    
+
     const initialDiceCount = player.oracleDice.length;
     console.log("Dice before movement:", player.oracleDice);
 
     // Move to the target hex
     const moveResult = engine.moveShip(
       player.id,
-      firstMove.q,
-      firstMove.r,
-      firstMove.dieColor,
+      firstMove!.q,
+      firstMove!.r,
+      firstMove!.dieColor,
     );
-    
+
     console.log("Move result:", moveResult);
     console.log("Dice after movement:", player.oracleDice);
     console.log("Dice count after movement:", player.oracleDice.length);
     console.log("Expected dice count:", initialDiceCount - 1);
-    
+
     if (moveResult.success) {
       console.log("SUCCESS: Movement worked");
     } else {

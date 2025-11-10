@@ -1,9 +1,9 @@
 // Comprehensive test for the statue system
 
 import { assert, assertEquals } from "@std/assert";
-import { type HexColor } from "../src/types.ts";
-import { HexMap } from "../src/hexmap.ts";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
+import { HexMap } from "../src/hexmap.ts";
+import { type HexColor } from "../src/types.ts";
 
 Deno.test("StatueSystem - HexMap statue operations", () => {
   const map = new HexMap();
@@ -19,7 +19,7 @@ Deno.test("StatueSystem - HexMap statue operations", () => {
 
   // Test removing statues (cities start with 3 statues)
   for (let i = 2; i >= 0; i--) {
-    const success = map.removeStatueFromCity(testCity.q, testCity.r);
+    const success = map.removeStatueFromCity(testCity!.q, testCity!.r);
     const currentStatues = map.getStatuesOnCity(testCity.q, testCity.r);
     assert(success, `Failed to remove statue at count ${i + 1}`);
     assertEquals(currentStatues, i, `Expected ${i} statues after removal`);
@@ -42,7 +42,7 @@ Deno.test("StatueSystem - HexMap statue operations", () => {
   assert(!overflowSuccess, "Should not allow adding statue beyond limit");
 
   // Test city completion
-  const isComplete = map.isCityComplete(testCity.q, testCity.r);
+  const isComplete = map.isCityComplete(testCity!.q, testCity!.r);
   assert(isComplete, "City should be complete with 3 statues");
 });
 
@@ -66,7 +66,7 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
 
   // Find a move that gets us close to the city
   const moveToCity = availableMoves.find((move) =>
-    Math.abs(move.q - gameCity.q) <= 1 && Math.abs(move.r - gameCity.r) <= 1
+    Math.abs(move.q - gameCity!.q) <= 1 && Math.abs(move.r - gameCity!.r) <= 1
   );
 
   if (moveToCity) {
@@ -80,7 +80,7 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
     assert(moveResult.success, "Failed to move player near city");
   } else {
     // If no adjacent sea move found, just set position directly (for testing)
-    player.shipPosition = { q: gameCity.q, r: gameCity.r };
+    player.shipPosition = { q: gameCity!.q, r: gameCity!.r };
   }
 
   // Test without statue
@@ -105,7 +105,7 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
       "black",
     ];
     const wrongColor = availableColors.find((color) =>
-      color !== gameCity.color
+      color !== gameCity!.color
     ) || "red";
     player.storage[emptySlotIndex] = {
       type: "statue",
@@ -125,8 +125,8 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
 
   // First, remove one statue from the city so we can place one
   const removeSuccess = gameState.map.removeStatueFromCity(
-    gameCity.q,
-    gameCity.r,
+    gameCity!.q,
+    gameCity!.r,
   );
   assert(
     removeSuccess,
@@ -161,13 +161,13 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
   const placementSuccess = game.placeStatueOnCity(player.id);
   assert(placementSuccess, "Failed to place statue on city");
   const _statuesAfterPlacement = gameState.map.getStatuesOnCity(
-    gameCity.q,
-    gameCity.r,
+    gameCity!.q,
+    gameCity!.r,
   );
 
   // Test statue was consumed from storage
   const statueStillInStorage = player.storage.some((slot) =>
-    slot.type === "statue" && slot.color === gameCity.color
+    slot.type === "statue" && slot.color === gameCity!.color
   );
   assert(
     !statueStillInStorage,
@@ -186,10 +186,10 @@ Deno.test("StatueSystem - Multiple cities statue operations", () => {
   const city2 = cities[1];
 
   // Remove statues from city1
-  const removalSuccess = map.removeStatueFromCity(city1.q, city1.r);
+  const removalSuccess = map.removeStatueFromCity(city1!.q, city1!.r);
   assert(removalSuccess, "Failed to remove statue from city1");
-  const city1Statues = map.getStatuesOnCity(city1.q, city1.r);
-  const city2Statues = map.getStatuesOnCity(city2.q, city2.r);
+  const city1Statues = map.getStatuesOnCity(city1!.q, city1!.r);
+  const city2Statues = map.getStatuesOnCity(city2!.q, city2!.r);
 
   assertEquals(city1Statues, 2, "City1 should have 2 statues after removal");
   assertEquals(city2Statues, 3, "City2 should still have 3 statues");
@@ -201,12 +201,12 @@ Deno.test("StatueSystem - City completion state", () => {
   const testCity = cities[0];
 
   // Initially should be complete (cities start with 3 statues)
-  let isComplete = map.isCityComplete(testCity.q, testCity.r);
+  let isComplete = map.isCityComplete(testCity!.q, testCity!.r);
   assert(isComplete, "City should be complete initially with 3 statues");
 
   // Remove all statues
   for (let i = 0; i < 3; i++) {
-    const success = map.removeStatueFromCity(testCity.q, testCity.r);
+    const success = map.removeStatueFromCity(testCity!.q, testCity!.r);
     assert(success, `Failed to remove statue ${i + 1}`);
   }
 
@@ -218,7 +218,7 @@ Deno.test("StatueSystem - City completion state", () => {
   for (let i = 1; i <= 3; i++) {
     const success = map.addStatueToCity(testCity.q, testCity.r);
     assert(success, `Failed to add statue ${i}`);
-    isComplete = map.isCityComplete(testCity.q, testCity.r);
+    isComplete = map.isCityComplete(testCity!.q, testCity!.r);
     if (i === 3) {
       assert(isComplete, "City should be complete with 3 statues");
     } else {

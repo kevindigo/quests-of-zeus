@@ -293,7 +293,7 @@ export class TerrainPlacementManager {
       // Set up to 2 random neighbors to sea
       const neighborsToConvert = Math.min(2, eligibleNeighbors.length);
       for (let i = 0; i < neighborsToConvert; i++) {
-        eligibleNeighbors[i].terrain = "sea";
+        eligibleNeighbors[i]!.terrain = "sea";
       }
     }
   }
@@ -376,17 +376,17 @@ export class TerrainPlacementManager {
         cellIndex++;
 
         // Check if this cell is a valid candidate for placement
-        if (this.isValidTerrainPlacement(cell, grid)) {
+        if (this.isValidTerrainPlacement(cell!, grid)) {
           // Only place if the cell is still shallows (not already taken by previous placement)
-          if (cell.terrain === "shallow") {
-            cell.terrain = terrainType;
+          if (cell!.terrain === "shallow") {
+            cell!.terrain = terrainType;
 
             // Assign random color to temples, similar to cities
             if (terrainType === "temple") {
-              cell.color = templeColors[placed];
+              cell!.color = templeColors[placed]!;
             } // Assign colors to clouds - each color appears on exactly 2 cloud hexes
             else if (terrainType === "clouds") {
-              cell.color = cloudColors[placed];
+              cell!.color = cloudColors[placed]!;
             }
 
             placed++;
@@ -410,15 +410,15 @@ export class TerrainPlacementManager {
           cellIndex++;
 
           // Fallback: place on any shallow cell without landmass constraint
-          if (cell.terrain === "shallow") {
-            cell.terrain = terrainType;
+          if (cell!.terrain === "shallow") {
+            cell!.terrain = terrainType;
 
             // Assign random color to temples, similar to cities
             if (terrainType === "temple") {
-              cell.color = templeColors[placed];
+              cell!.color = templeColors[placed]!;
             } // Assign colors to clouds - each color appears on exactly 2 cloud hexes
             else if (terrainType === "clouds") {
-              cell.color = cloudColors[placed];
+              cell!.color = cloudColors[placed]!;
             }
 
             placed++;

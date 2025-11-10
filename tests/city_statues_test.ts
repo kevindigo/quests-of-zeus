@@ -81,10 +81,10 @@ Deno.test("City Statue Functionality - Complete Cities", () => {
     const testCity = allCities[0];
 
     // Remove one statue
-    const removeSuccess = map.removeStatueFromCity(testCity.q, testCity.r);
+    const removeSuccess = map.removeStatueFromCity(testCity!.q, testCity!.r);
     assert(removeSuccess, "Should successfully remove statue");
 
-    const statuesAfterRemoval = map.getStatuesOnCity(testCity.q, testCity.r);
+    const statuesAfterRemoval = map.getStatuesOnCity(testCity!.q, testCity!.r);
     assertEquals(statuesAfterRemoval, 2, "Should have 2 statues after removal");
 
     const isStillComplete = map.isCityComplete(testCity.q, testCity.r);

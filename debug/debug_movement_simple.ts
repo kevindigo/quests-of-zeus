@@ -26,9 +26,9 @@ if (availableMoves.length > 0) {
   console.log("\nAttempting movement...");
   const moveResult = engine.moveShip(
     player.id,
-    firstMove.q,
-    firstMove.r,
-    firstMove.dieColor,
+    firstMove!.q,
+    firstMove!.r,
+    firstMove!.dieColor,
   );
   console.log("Movement success:", moveResult.success);
 

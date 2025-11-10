@@ -59,7 +59,7 @@ Deno.test("GameController - movement with selected die", () => {
     const moveResult = engine.moveShip(
       1,
       firstMove!.q,
-      firstMove.r,
+      firstMove!.r,
       requiredDieColor,
     );
     assertEquals(
