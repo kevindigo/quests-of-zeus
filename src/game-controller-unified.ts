@@ -20,6 +20,49 @@ export class GameController {
     this.setupEventListeners();
   }
 
+  private setupEventListeners(): void {
+    // Setup event listeners for game controls
+    const startGameButton = document.getElementById("startGame");
+    if (startGameButton) {
+      startGameButton.addEventListener("click", () => {
+        this.startNewGame();
+      });
+    }
+
+    // Setup resource selection event listeners
+    this.setupResourceSelectionListeners();
+  }
+
+  private setupResourceSelectionListeners(): void {
+    // This would be called when the DOM is updated to attach event listeners
+    // to resource elements (dice and cards)
+    document.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      if (target.classList.contains("resource-item")) {
+        const resourceType = target.getAttribute("data-resource-type");
+        const resourceColor = target.getAttribute(
+          "data-resource-color",
+        ) as HexColor;
+        if (resourceType && resourceColor) {
+          this.selectResource(resourceType, resourceColor);
+        }
+      }
+    });
+
+    // Clear resource selection
+    document.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      if (target.id === "clearResourceSelection") {
+        this.clearResourceSelection();
+      }
+    });
+  }
+
+  private startNewGame(): void {
+    this.gameEngine.initializeGame();
+    this.renderGameState();
+  }
+
   private showWelcomeScreen(): void {
     const playerInfoContainer = document.getElementById("playerInfo");
     const questInfoContainer = document.getElementById("questInfo");
@@ -240,7 +283,102 @@ export class GameController {
     `;
   }
 
-  // ... rest of the methods would be similar to the original but using the unified resource selection
+  private renderMap(_gameState: unknown): void {
+    // This would render the hex map with player positions and available moves
+    const hexMapContainer = document.getElementById("hexMapSVG");
+    if (!hexMapContainer) return;
+
+    hexMapContainer.innerHTML = `
+      <div class="map-placeholder">
+        <p>Game map rendering would go here</p>
+        <p>Player positions and available moves would be displayed</p>
+      </div>
+    `;
+  }
+
+  private updatePhaseDisplay(phase: string): void {
+    const phaseDisplay = document.getElementById("phaseDisplay");
+    if (!phaseDisplay) return;
+
+    phaseDisplay.innerHTML = `
+      <div class="phase-info">
+        <h3>Current Phase: ${
+      phase.charAt(0).toUpperCase() + phase.slice(1)
+    }</h3>
+        <p>Select a resource to perform actions</p>
+      </div>
+    `;
+  }
+
+  private showGameOver(winner: string): void {
+    const phaseDisplay = document.getElementById("phaseDisplay");
+    if (!phaseDisplay) return;
+
+    phaseDisplay.innerHTML = `
+      <div class="game-over">
+        <h2>Game Over!</h2>
+        <h3>Winner: ${winner}</h3>
+        <button id="newGame" class="action-btn">Start New Game</button>
+      </div>
+    `;
+
+    // Add event listener for new game button
+    const newGameButton = document.getElementById("newGame");
+    if (newGameButton) {
+      newGameButton.addEventListener("click", () => {
+        this.startNewGame();
+      });
+    }
+  }
+
+  private renderRecolorOptions(_player: unknown): string {
+    // This would render the recoloring options UI
+    return `
+      <div class="recolor-options">
+        <h5>Recolor Options</h5>
+        <p>Spend favor to change die color</p>
+        <div class="recolor-buttons">
+          <button class="action-btn secondary">+1 Favor</button>
+          <button class="action-btn secondary">+2 Favor</button>
+        </div>
+      </div>
+    `;
+  }
+
+  private selectResource(resourceType: string, resourceColor: HexColor): void {
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+
+    if (resourceType === "die") {
+      // Check if the player has this die
+      if (currentPlayer.oracleDice.includes(resourceColor)) {
+        this.selectedResourceType = "die";
+        this.selectedResourceColor = resourceColor;
+        this.showMessage(`Selected ${resourceColor} die`);
+        this.renderGameState();
+      }
+    } else if (resourceType === "card") {
+      // Check if the player has this oracle card
+      if (currentPlayer.oracleCards.includes(resourceColor)) {
+        this.selectedResourceType = "card";
+        this.selectedResourceColor = resourceColor;
+        this.showMessage(`Selected ${resourceColor} oracle card`);
+        this.renderGameState();
+      }
+    }
+  }
+
+  private clearResourceSelection(): void {
+    this.selectedResourceType = null;
+    this.selectedResourceColor = null;
+    this.showMessage("Resource selection cleared");
+    this.renderGameState();
+  }
+
+  private showMessage(message: string): void {
+    // Simple message display - could be enhanced with a proper notification system
+    console.log(message);
+    // In a real implementation, this would update a message area in the UI
+  }
 
   private getColorHex(color: string): string {
     const colors: Record<string, string> = {
@@ -254,7 +392,7 @@ export class GameController {
     return colors[color] || "#333333";
   }
 
-  // Note: The rest of the methods (renderMap, highlightAvailableMoves, etc.)
+  // Note: The rest of the methods (highlightAvailableMoves, etc.)
   // would need to be updated to use the unified resource selection system
   // This is a simplified example showing the core unified selection approach
 }
