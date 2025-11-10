@@ -113,7 +113,6 @@ export class SeaColorManager {
 
     // Count adjacent same-color sea hexes for debugging
     const conflicts = this.countAdjacentSameColorSeaHexes(grid);
-    console.log(`DEBUG: Sea color assignment completed. ${seaCells.length} sea cells colored with ${conflicts} conflicts.`);
     // Note: conflicts are expected in some cases due to map constraints
   }
 

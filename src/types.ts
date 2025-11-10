@@ -78,7 +78,8 @@ export interface Player {
   oracleDice: HexColor[]; // Current oracle dice values
   favor: number; // Player's favor resource
   shield: number; // Player's shield resource
-  recoloredDice: { [dieColor: string]: { newColor: HexColor; favorCost: number } }; // Track recoloring intentions
+  recoloredDice: { [dieColor: string]: { newColor: HexColor; favorCost: number } }; // Track recoloring intentions for dice
+  recoloredCards?: { [cardColor: string]: { newColor: HexColor; favorCost: number } }; // Track recoloring intentions for oracle cards
   oracleCards: HexColor[]; // Oracle cards held by player
   usedOracleCardThisTurn: boolean; // Track if player has used an oracle card this turn
 }

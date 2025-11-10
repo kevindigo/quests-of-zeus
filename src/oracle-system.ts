@@ -59,10 +59,71 @@ export class OracleSystem {
   }
 
   /**
+   * Set recoloring intention for an oracle card during the action phase
+   * For each favor spent, advance the color one position along the color wheel
+   * Color wheel: black → pink → blue → yellow → green → red → black
+   * The favor is not spent until the card is actually used
+   */
+  public setRecolorIntentionForCard(
+    player: Player,
+    cardColor: HexColor,
+    favorSpent: number,
+  ): boolean {
+    // Check if player has the specified oracle card
+    if (!player.oracleCards.includes(cardColor)) {
+      return false;
+    }
+
+    // Check if player has enough favor
+    if (player.favor < favorSpent) {
+      return false;
+    }
+
+    // Define the color wheel order
+    const colorWheel: HexColor[] = [
+      "black",
+      "pink",
+      "blue",
+      "yellow",
+      "green",
+      "red",
+    ];
+
+    // Find current color position
+    const currentIndex = colorWheel.indexOf(cardColor);
+    if (currentIndex === -1) {
+      return false; // Invalid color
+    }
+
+    // Calculate new color position (wrapping around)
+    const newIndex = (currentIndex + favorSpent) % colorWheel.length;
+    const newColor = colorWheel[newIndex];
+
+    // Store recoloring intention (favor is not spent yet)
+    player.recoloredCards = player.recoloredCards || {};
+    player.recoloredCards[cardColor] = {
+      newColor,
+      favorCost: favorSpent,
+    };
+
+    return true;
+  }
+
+  /**
    * Clear recoloring intention for a die
    */
   public clearRecolorIntention(player: Player, dieColor: HexColor): boolean {
     delete player.recoloredDice[dieColor];
+    return true;
+  }
+
+  /**
+   * Clear recoloring intention for an oracle card
+   */
+  public clearRecolorIntentionForCard(player: Player, cardColor: HexColor): boolean {
+    if (player.recoloredCards) {
+      delete player.recoloredCards[cardColor];
+    }
     return true;
   }
 
@@ -88,9 +149,7 @@ export class OracleSystem {
     } else {
       // This should not happen since we checked above, but log for debugging
       console.warn(
-        `Attempted to apply recoloring to die ${dieColor} but it was not found in player's oracle dice: [${
-          player.oracleDice.join(", ")
-        }]`,
+        `Attempted to apply recoloring to die ${dieColor} but it was not found in player's oracle dice: [${player.oracleDice.join(", ")}]`,
       );
       return false;
     }
@@ -100,6 +159,43 @@ export class OracleSystem {
 
     // Clear the recoloring intention
     delete player.recoloredDice[dieColor];
+
+    return true;
+  }
+
+  /**
+   * Apply recoloring when an oracle card is used (e.g., for movement)
+   * This is where the favor is actually spent
+   */
+  public applyRecoloringForCard(player: Player, cardColor: HexColor): boolean {
+    if (!player.recoloredCards || !player.recoloredCards[cardColor]) {
+      return false; // No recoloring intention for this card
+    }
+
+    const recoloring = player.recoloredCards[cardColor];
+
+    // Check if player still has enough favor
+    if (player.favor < recoloring.favorCost) {
+      return false;
+    }
+
+    // Replace the card with the new color
+    const cardIndex = player.oracleCards.indexOf(cardColor);
+    if (cardIndex !== -1) {
+      player.oracleCards[cardIndex] = recoloring.newColor;
+    } else {
+      // This should not happen since we checked above, but log for debugging
+      console.warn(
+        `Attempted to apply recoloring to oracle card ${cardColor} but it was not found in player's oracle cards: [${player.oracleCards.join(", ")}]`,
+      );
+      return false;
+    }
+
+    // Spend favor
+    player.favor -= recoloring.favorCost;
+
+    // Clear the recoloring intention
+    delete player.recoloredCards[cardColor];
 
     return true;
   }
@@ -176,16 +272,24 @@ export class OracleSystem {
       };
     }
 
-    // Consume the oracle card
+    // Apply recoloring if there's an intention for this card
+    const originalCardColor = cardColor;
+    let effectiveCardColor = cardColor;
+    if (player.recoloredCards && player.recoloredCards[cardColor]) {
+      const recoloringApplied = this.applyRecoloringForCard(player, cardColor);
+      if (recoloringApplied) {
+        effectiveCardColor = player.recoloredCards[originalCardColor]?.newColor || cardColor;
+      }
+    }
+
+    // Consume the oracle card - always consume the original card color
     const cardIndex = player.oracleCards.indexOf(cardColor);
     if (cardIndex !== -1) {
       player.oracleCards.splice(cardIndex, 1);
     } else {
       // This should not happen since we checked above, but log for debugging
       console.warn(
-        `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${
-          player.oracleCards.join(", ")
-        }]`,
+        `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${player.oracleCards.join(", ")}]`,
       );
       return {
         success: false,
@@ -214,16 +318,24 @@ export class OracleSystem {
       return false;
     }
 
-    // Consume the oracle card
+    // Apply recoloring if there's an intention for this card
+    const originalCardColor = cardColor;
+    let effectiveCardColor = cardColor;
+    if (player.recoloredCards && player.recoloredCards[cardColor]) {
+      const recoloringApplied = this.applyRecoloringForCard(player, cardColor);
+      if (recoloringApplied) {
+        effectiveCardColor = player.recoloredCards[originalCardColor]?.newColor || cardColor;
+      }
+    }
+
+    // Consume the oracle card - always consume the original card color
     const cardIndex = player.oracleCards.indexOf(cardColor);
     if (cardIndex !== -1) {
       player.oracleCards.splice(cardIndex, 1);
     } else {
       // This should not happen since we checked above, but log for debugging
       console.warn(
-        `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${
-          player.oracleCards.join(", ")
-        }]`,
+        `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${player.oracleCards.join(", ")}]`,
       );
       return false;
     }
@@ -257,16 +369,24 @@ export class OracleSystem {
       return false;
     }
 
-    // Consume the oracle card
+    // Apply recoloring if there's an intention for this card
+    const originalCardColor = cardColor;
+    let effectiveCardColor = cardColor;
+    if (player.recoloredCards && player.recoloredCards[cardColor]) {
+      const recoloringApplied = this.applyRecoloringForCard(player, cardColor);
+      if (recoloringApplied) {
+        effectiveCardColor = player.recoloredCards[originalCardColor]?.newColor || cardColor;
+      }
+    }
+
+    // Consume the oracle card - always consume the original card color
     const cardIndex = player.oracleCards.indexOf(cardColor);
     if (cardIndex !== -1) {
       player.oracleCards.splice(cardIndex, 1);
     } else {
       // This should not happen since we checked above, but log for debugging
       console.warn(
-        `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${
-          player.oracleCards.join(", ")
-        }]`,
+        `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${player.oracleCards.join(", ")}]`,
       );
       return false;
     }

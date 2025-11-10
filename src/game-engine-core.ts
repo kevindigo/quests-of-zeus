@@ -119,6 +119,92 @@ export class QuestsZeusGameEngine {
   public spendOracleCardForMovement(playerId: number, targetQ: number, targetR: number, cardColor: HexColor, favorSpent?: number): MoveShipResult {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
+    
+    // First validate the move using the same logic as getAvailableMovesForOracleCard
+    const currentPos = player.shipPosition;
+    const targetCell = this.state!.map.getCell(targetQ, targetR);
+
+    if (!targetCell) {
+      return {
+        success: false,
+        error: {
+          type: "invalid_target",
+          message: "Target cell does not exist",
+          details: { targetQ, targetR }
+        }
+      };
+    }
+
+    if (targetCell.terrain !== "sea") {
+      return {
+        success: false,
+        error: {
+          type: "not_sea",
+          message: `Cannot move to ${targetCell.terrain} terrain! Ships can only move to sea hexes.`,
+          details: { targetTerrain: targetCell.terrain }
+        }
+      };
+    }
+
+    // Get the effective card color considering recoloring intention
+    let effectiveCardColor = cardColor;
+    let recoloringCost = 0;
+    if (player.recoloredCards && player.recoloredCards[cardColor]) {
+      effectiveCardColor = player.recoloredCards[cardColor].newColor;
+      recoloringCost = player.recoloredCards[cardColor].favorCost;
+    }
+
+    // Check if the target hex color matches the effective card color
+    if (targetCell.color !== effectiveCardColor) {
+      return {
+        success: false,
+        error: {
+          type: "wrong_color",
+          message: `Target hex is ${targetCell.color}, but oracle card is ${effectiveCardColor}!`,
+          details: { targetColor: targetCell.color, requiredColor: effectiveCardColor }
+        }
+      };
+    }
+
+    // Calculate movement range (base 3 + 1 per favor spent)
+    const movementRange = 3 + (favorSpent || 0);
+
+    // Check if the target is reachable
+    const reachableSeaTiles = this.movementSystem!.getReachableSeaTiles(
+      currentPos.q,
+      currentPos.r,
+      movementRange,
+    );
+
+    const isReachable = reachableSeaTiles.some(tile => 
+      tile.q === targetQ && tile.r === targetR
+    );
+
+    if (!isReachable) {
+      return {
+        success: false,
+        error: {
+          type: "not_reachable",
+          message: `Target is not reachable within ${movementRange} movement range!`,
+          details: { movementRange, currentQ: currentPos.q, currentR: currentPos.r }
+        }
+      };
+    }
+
+    // Check if player has enough favor for recoloring and movement
+    const totalFavorCost = (favorSpent || 0) + recoloringCost;
+    if (player.favor < totalFavorCost) {
+      return {
+        success: false,
+        error: {
+          type: "not_enough_favor",
+          message: `Not enough favor! Need ${totalFavorCost} but only have ${player.favor}.`,
+          details: { favorSpent: totalFavorCost, availableFavor: player.favor, recoloringCost }
+        }
+      };
+    }
+
+    // Now call the oracle system to handle card consumption and recoloring
     const oracleResult = this.oracleSystem!.spendOracleCardForMovement(player, targetQ, targetR, cardColor, favorSpent);
     if (!oracleResult.success) {
       return {
@@ -126,6 +212,13 @@ export class QuestsZeusGameEngine {
         error: { type: "unknown", message: oracleResult.error || "Oracle card usage failed", details: { playerId } }
       };
     }
+
+    // Spend favor for movement if specified (recoloring favor is already spent by applyRecoloringForCard)
+    if (favorSpent && favorSpent > 0) {
+      player.favor -= favorSpent;
+    }
+
+    // Move the ship
     player.shipPosition = { q: targetQ, r: targetR };
     return { success: true };
   }
@@ -154,10 +247,22 @@ export class QuestsZeusGameEngine {
     return this.oracleSystem!.setRecolorIntention(player, dieColor, favorSpent);
   }
 
+  public setRecolorIntentionForCard(playerId: number, cardColor: HexColor, favorSpent: number): boolean {
+    this.ensureInitialized();
+    const player = this.getValidPlayer(playerId);
+    return this.oracleSystem!.setRecolorIntentionForCard(player, cardColor, favorSpent);
+  }
+
   public clearRecolorIntention(playerId: number, dieColor: HexColor): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
     return this.oracleSystem!.clearRecolorIntention(player, dieColor);
+  }
+
+  public clearRecolorIntentionForCard(playerId: number, cardColor: HexColor): boolean {
+    this.ensureInitialized();
+    const player = this.getValidPlayer(playerId);
+    return this.oracleSystem!.clearRecolorIntentionForCard(player, cardColor);
   }
 
   public canPlaceStatueOnCity(playerId: number): boolean {
@@ -178,6 +283,7 @@ export class QuestsZeusGameEngine {
     const currentPlayer = this.state!.players[this.state!.currentPlayerIndex];
     currentPlayer.usedOracleCardThisTurn = false;
     currentPlayer.recoloredDice = {};
+    currentPlayer.recoloredCards = {};
 
     const nextPlayerIndex = (this.state!.currentPlayerIndex + 1) % this.state!.players.length;
     const nextPlayer = this.state!.players[nextPlayerIndex];

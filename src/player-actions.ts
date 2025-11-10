@@ -178,7 +178,6 @@ export class PlayerActions {
     const dieIndex = player.oracleDice.indexOf(dieColor);
     if (dieIndex !== -1) {
       player.oracleDice.splice(dieIndex, 1);
-      console.log(`DEBUG: Consumed die ${dieColor}. Remaining dice: [${player.oracleDice.join(", ")}]`);
     } else {
       // This should not happen since we checked above, but log for debugging
       console.warn(

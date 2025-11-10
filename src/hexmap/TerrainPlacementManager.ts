@@ -420,9 +420,7 @@ export class TerrainPlacementManager {
     this.convertShallowsToSea(grid);
 
     // Assign colors to all sea hexes
-    console.log("DEBUG: About to assign colors to sea hexes");
     this.seaColorManager.assignColorsToSeaHexes(grid);
-    console.log("DEBUG: Completed sea color assignment");
   }
 
   /**

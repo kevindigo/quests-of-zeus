@@ -102,10 +102,8 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
   // Get available moves
   const availableMoves = engine.getAvailableMoves(player.id);
 
-  console.log(`DEBUG: Found ${availableMoves.length} available moves`);
   if (availableMoves.length > 0) {
     const firstMove = availableMoves[0];
-    console.log(`DEBUG: First move: ${JSON.stringify(firstMove)}`);
 
     // Count occurrences of the used die color before movement
     const initialCountOfUsedColor = initialDiceColors.filter((color) =>
@@ -119,7 +117,6 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
       firstMove.r,
       firstMove.dieColor,
     );
-    console.log(`DEBUG: Move result: ${JSON.stringify(moveResult)}`);
     assert(moveResult.success, "Movement should be successful");
 
     // Get the same player reference after movement (don't use getCurrentPlayer as turn may have ended)

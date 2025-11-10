@@ -48,7 +48,7 @@ export class GameController {
               <li>Oracle dice are rolled automatically at the end of each turn</li>
               <li>Move your ship across the sea and land hexes using dice colors</li>
               <li>Spend favor to extend your movement range (1 extra hex per favor spent)</li>
-              <li>Recolor dice by spending favor (1 favor per color advancement)</li>
+              <li>Recolor dice and oracle cards by spending favor (1 favor per color advancement)</li>
               <li>Collect cubes and statues, fight monsters, and build temples</li>
               <li>Spend dice to draw oracle cards, then use them as dice (1 per turn)</li>
               <li>Complete quests to win the game</li>
@@ -69,7 +69,7 @@ export class GameController {
               <li><strong>Action Phase:</strong> Select a die and perform actions (move, collect offerings, fight monsters, etc.)</li>
               <li><strong>End of Turn:</strong> Dice are automatically rolled for the next player</li>
               <li>You can change your selected die before making a move</li>
-              <li>You can recolor dice by spending favor (1 favor per color advancement)</li>
+              <li>You can recolor dice and oracle cards by spending favor (1 favor per color advancement)</li>
               <li>Color wheel: black → pink → blue → yellow → green → red → black</li>
             </ul>
           </div>
@@ -231,7 +231,7 @@ export class GameController {
     }
         </div>
         ${
-      this.selectedDieColor && _currentPlayer.favor > 0
+      (this.selectedDieColor || this.selectedOracleCardColor) && _currentPlayer.favor > 0
         ? this.renderRecolorOptions(_currentPlayer)
         : ""
     }
@@ -479,6 +479,12 @@ export class GameController {
         currentPlayer.favor,
       );
 
+      // Get the effective card color considering recoloring intention
+      let effectiveCardColor = this.selectedOracleCardColor;
+      if (currentPlayer.recoloredCards && currentPlayer.recoloredCards[this.selectedOracleCardColor]) {
+        effectiveCardColor = currentPlayer.recoloredCards[this.selectedOracleCardColor].newColor;
+      }
+
       availableMoves.forEach((move: { q: number; r: number; favorCost: number }) => {
         // Highlight the new hex-highlight polygons (centered, won't cover colored border)
         const highlightCell = document.querySelector(
@@ -491,14 +497,14 @@ export class GameController {
             // Add tooltip to show required oracle card color and favor cost
             highlightCell.setAttribute(
               "title",
-              `Move using ${this.selectedOracleCardColor} oracle card (costs ${move.favorCost} favor)`,
+              `Move using ${effectiveCardColor} oracle card (costs ${move.favorCost} favor)`,
             );
           } else {
             highlightCell.classList.add("available-move-oracle-card");
             // Add tooltip to show required oracle card color
             highlightCell.setAttribute(
               "title",
-              `Move using ${this.selectedOracleCardColor} oracle card`,
+              `Move using ${effectiveCardColor} oracle card`,
             );
           }
         }
@@ -541,9 +547,7 @@ export class GameController {
         if (this.selectedDieColor) {
           // Die is selected - show available actions
           actions +=
-            `<p>Selected die: <span class="color-swatch" style="background-color: ${
-              this.getColorHex(this.selectedDieColor)
-            }"></span> ${this.selectedDieColor}</p>`;
+            `<p>Selected die: <span class="color-swatch" style="background-color: ${this.getColorHex(this.selectedDieColor)}"></span> ${this.selectedDieColor}</p>`;
 
           // Show favor status
           actions += `<p>Available favor: ${currentPlayer.favor}</p>`;
@@ -563,8 +567,9 @@ export class GameController {
             <p style="font-size: 0.9rem; opacity: 0.8;">Spend selected resource for favor or to draw an oracle card</p>
           </div>`;
 
-          // Recolor die options are now displayed in the player info panel as radio buttons
-          // The favor will be spent when the die is actually used for movement or other actions
+          // Recolor options for selected resource
+          // Note: Recolor options are now displayed in the player info panel as radio buttons
+          // The favor will be spent when the resource is actually used for movement or other actions
 
           if (currentCell?.terrain === "cubes") {
             actions +=
@@ -594,18 +599,15 @@ export class GameController {
               actions +=
                 `<button id="placeStatue" class="action-btn">Place Statue on City</button>`;
             } else {
-              actions += `<p>Cannot place statue: ${
-                currentCell.statues === 3
-                  ? "City already has all 3 statues"
-                  : "No statue of city's color in storage"
+              actions += `<p>Cannot place statue: ${currentCell.statues === 3
+                ? "City already has all 3 statues"
+                : "No statue of city's color in storage"
               }</p>`;
             }
           }
         } else if (this.selectedOracleCardColor) {
           // Oracle card is selected - show available actions
-          actions += `<p>Selected oracle card: <span class="color-swatch" style="background-color: ${
-            this.getColorHex(this.selectedOracleCardColor)
-          }"></span> ${this.selectedOracleCardColor}</p>`;
+          actions += `<p>Selected oracle card: <span class="color-swatch" style="background-color: ${this.getColorHex(this.selectedOracleCardColor)}"></span> ${this.selectedOracleCardColor}</p>`;
 
           // Show favor status
           actions += `<p>Available favor: ${currentPlayer.favor}</p>`;
@@ -624,16 +626,14 @@ export class GameController {
             <button id="drawOracleCard" class="action-btn">Draw Oracle Card</button>
             <p style="font-size: 0.9rem; opacity: 0.8;">Spend selected resource for favor or to draw an oracle card</p>
           </div>`;
+
+          // Note: Recolor options are now displayed in the player info panel as radio buttons
         } else {
           // No resource selected - show selection instructions
           actions += `<p>Select a resource (die or oracle card) to perform actions</p>`;
-          actions += `<p>Available dice: ${
-            currentPlayer.oracleDice.join(", ")
-          }</p>`;
+          actions += `<p>Available dice: ${currentPlayer.oracleDice.join(", ")}</p>`;
           if (currentPlayer.oracleCards.length > 0) {
-            actions += `<p>Available oracle cards: ${
-              currentPlayer.oracleCards.join(", ")
-            }</p>`;
+            actions += `<p>Available oracle cards: ${currentPlayer.oracleCards.join(", ")}</p>`;
           }
         }
 
@@ -687,11 +687,17 @@ export class GameController {
           );
 
           if (targetMove) {
+            // Get the effective card color considering recoloring intention
+            let effectiveCardColor = this.selectedOracleCardColor;
+            if (currentPlayer.recoloredCards && currentPlayer.recoloredCards[this.selectedOracleCardColor]) {
+              effectiveCardColor = currentPlayer.recoloredCards[this.selectedOracleCardColor].newColor;
+            }
+
             // Check if this move requires favor spending
             if (targetMove.favorCost > 0) {
               // Ask player if they want to spend favor
               const confirmSpend = confirm(
-                `This move requires spending ${targetMove.favorCost} favor to reach using ${this.selectedOracleCardColor} oracle card. Do you want to spend favor to move here?`,
+                `This move requires spending ${targetMove.favorCost} favor to reach using ${effectiveCardColor} oracle card. Do you want to spend favor to move here?`,
               );
               if (confirmSpend) {
                 this.selectedFavorSpent = targetMove.favorCost;
@@ -706,7 +712,7 @@ export class GameController {
                 );
                 if (moveResult.success) {
                   let message =
-                    `Ship moved to (${q}, ${r}) using ${this.selectedOracleCardColor} oracle card`;
+                    `Ship moved to (${q}, ${r}) using ${effectiveCardColor} oracle card`;
                   if (this.selectedFavorSpent > 0) {
                     message += ` and ${this.selectedFavorSpent} favor`;
                   }
@@ -739,7 +745,7 @@ export class GameController {
             );
             if (moveResult.success) {
               let message =
-                `Ship moved to (${q}, ${r}) using ${this.selectedOracleCardColor} oracle card`;
+                `Ship moved to (${q}, ${r}) using ${effectiveCardColor} oracle card`;
               if (this.selectedFavorSpent > 0) {
                 message += ` and ${this.selectedFavorSpent} favor`;
               }
@@ -754,8 +760,13 @@ export class GameController {
               this.showMessage(errorMessage);
             }
           } else {
+            // Get the effective card color for the error message
+            let effectiveCardColor = this.selectedOracleCardColor;
+            if (currentPlayer.recoloredCards && currentPlayer.recoloredCards[this.selectedOracleCardColor]) {
+              effectiveCardColor = currentPlayer.recoloredCards[this.selectedOracleCardColor].newColor;
+            }
             this.showMessage(
-              `Cannot move to this hex using ${this.selectedOracleCardColor} oracle card! Must be a sea hex within range of matching color.`,
+              `Cannot move to this hex using ${effectiveCardColor} oracle card! Must be a sea hex within range of matching color.`,
             );
           }
         }
@@ -1149,43 +1160,64 @@ export class GameController {
   private setRecolorIntention(favorCost: number): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
 
-    if (!this.selectedDieColor) {
-      this.showMessage("Please select a die first!");
+    const selectedColor = this.selectedDieColor || this.selectedOracleCardColor;
+    if (!selectedColor) {
+      this.showMessage("Please select a resource (die or oracle card) first!");
       return;
     }
 
     if (favorCost === 0) {
       // Clear recoloring intention
-      const success = this.gameEngine.clearRecolorIntention(
-        currentPlayer.id,
-        this.selectedDieColor,
-      );
+      let success = false;
+      if (this.selectedDieColor) {
+        success = this.gameEngine.clearRecolorIntention(
+          currentPlayer.id,
+          selectedColor,
+        );
+      } else if (this.selectedOracleCardColor) {
+        success = this.gameEngine.clearRecolorIntentionForCard(
+          currentPlayer.id,
+          selectedColor,
+        );
+      }
+      
       if (success) {
         this.showMessage("Recoloring intention cleared");
         this.renderGameState();
-        // Update available moves since die color intention changed
+        // Update available moves since color intention changed
         this.highlightAvailableMoves();
       } else {
         this.showMessage("Cannot clear recoloring intention");
       }
     } else {
       // Set recoloring intention
-      const success = this.gameEngine.setRecolorIntention(
-        currentPlayer.id,
-        this.selectedDieColor,
-        favorCost,
-      );
+      let success = false;
+      const colorWheel: HexColor[] = ["black", "pink", "blue", "yellow", "green", "red"];
+      const currentIndex = colorWheel.indexOf(selectedColor);
+      const newIndex = (currentIndex + favorCost) % colorWheel.length;
+      const newColor = colorWheel[newIndex];
+      
+      if (this.selectedDieColor) {
+        success = this.gameEngine.setRecolorIntention(
+          currentPlayer.id,
+          selectedColor,
+          favorCost,
+        );
+      } else if (this.selectedOracleCardColor) {
+        success = this.gameEngine.setRecolorIntentionForCard(
+          currentPlayer.id,
+          selectedColor,
+          favorCost,
+        );
+      }
+      
       if (success) {
-        const colorWheel: HexColor[] = ["black", "pink", "blue", "yellow", "green", "red"];
-        const currentIndex = colorWheel.indexOf(this.selectedDieColor);
-        const newIndex = (currentIndex + favorCost) % colorWheel.length;
-        const newColor = colorWheel[newIndex];
-        
+        const resourceType = this.selectedDieColor ? "die" : "oracle card";
         this.showMessage(
-          `Die will be recolored from ${this.selectedDieColor} to ${newColor} when used (${favorCost} favor will be spent)`,
+          `${resourceType.charAt(0).toUpperCase() + resourceType.slice(1)} will be recolored from ${selectedColor} to ${newColor} when used (${favorCost} favor will be spent)`,
         );
         this.renderGameState();
-        // Update available moves since die color intention changed
+        // Update available moves since color intention changed
         this.highlightAvailableMoves();
       } else {
         this.showMessage("Cannot set recoloring intention");
@@ -1259,30 +1291,38 @@ export class GameController {
   }
 
   private renderRecolorOptions(player: Player): string {
-    if (!this.selectedDieColor) return "";
+    const selectedColor = this.selectedDieColor || this.selectedOracleCardColor;
+    if (!selectedColor) return "";
 
     const colorWheel: HexColor[] = ["black", "pink", "blue", "yellow", "green", "red"];
-    const currentIndex = colorWheel.indexOf(this.selectedDieColor);
+    const currentIndex = colorWheel.indexOf(selectedColor);
     
     if (currentIndex === -1) return "";
 
+    const resourceType = this.selectedDieColor ? "die" : "oracle card";
     let options = `
       <div class="recolor-section" style="margin-top: 1rem;">
-        <h4>Recolor Die (Favor will be spent when die is used)</h4>
+        <h4>Recolor ${resourceType.charAt(0).toUpperCase() + resourceType.slice(1)} (Favor will be spent when ${resourceType} is used)</h4>
         <p style="font-size: 0.9rem; opacity: 0.8;">Color wheel: black → pink → blue → yellow → green → red → black</p>
         <div class="recolor-options" style="margin-top: 0.5rem;">
     `;
 
     // Add "No Recolor" option
-    const hasRecolorIntention = player.recoloredDice && player.recoloredDice[this.selectedDieColor];
+    let hasRecolorIntention = false;
+    if (this.selectedDieColor && player.recoloredDice && player.recoloredDice[selectedColor]) {
+      hasRecolorIntention = true;
+    } else if (this.selectedOracleCardColor && player.recoloredCards && player.recoloredCards[selectedColor]) {
+      hasRecolorIntention = true;
+    }
+    
     options += `
       <div class="recolor-option" style="margin-bottom: 0.5rem;">
         <label style="display: flex; align-items: center; gap: 0.5rem;">
           <input type="radio" name="recolorOption" value="0" ${
             !hasRecolorIntention ? 'checked' : ''
           } data-recolor-favor="0">
-          <span class="color-swatch" style="background-color: ${this.getColorHex(this.selectedDieColor)}"></span>
-          Keep ${this.selectedDieColor} (0 favor)
+          <span class="color-swatch" style="background-color: ${this.getColorHex(selectedColor)}"></span>
+          Keep ${selectedColor} (0 favor)
         </label>
       </div>
     `;
@@ -1291,7 +1331,13 @@ export class GameController {
     for (let favorCost = 1; favorCost <= Math.min(player.favor, 5); favorCost++) {
       const newIndex = (currentIndex + favorCost) % colorWheel.length;
       const newColor = colorWheel[newIndex];
-      const isSelected = hasRecolorIntention && player.recoloredDice[this.selectedDieColor].favorCost === favorCost;
+      
+      let isSelected = false;
+      if (this.selectedDieColor && player.recoloredDice && player.recoloredDice[selectedColor]) {
+        isSelected = player.recoloredDice[selectedColor].favorCost === favorCost;
+      } else if (this.selectedOracleCardColor && player.recoloredCards && player.recoloredCards[selectedColor]) {
+        isSelected = player.recoloredCards[selectedColor].favorCost === favorCost;
+      }
       
       options += `
         <div class="recolor-option" style="margin-bottom: 0.5rem;">
@@ -1367,11 +1413,19 @@ export class GameController {
       return [];
     }
 
+    // Get the effective card color considering recoloring intention
+    let effectiveCardColor = cardColor;
+    let recoloringCost = 0;
+    if (player.recoloredCards && player.recoloredCards[cardColor]) {
+      effectiveCardColor = player.recoloredCards[cardColor].newColor;
+      recoloringCost = player.recoloredCards[cardColor].favorCost;
+    }
+
     const currentPos = player.shipPosition;
     const availableMoves: { q: number; r: number; favorCost: number }[] = [];
 
     // Calculate maximum favor that can be spent for extra range moves
-    const maxFavorForMovement = Math.min(availableFavor, 5); // Cap at 5 favor to prevent excessive computation
+    const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5); // Cap at 5 favor to prevent excessive computation
 
     // Check moves for each possible favor spending amount
     for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
@@ -1382,15 +1436,16 @@ export class GameController {
         movementRange,
       );
 
-      // Filter by the oracle card color and exclude current position
+      // Filter by the effective oracle card color and exclude current position
       for (const seaTile of reachableSeaTiles) {
         if (
           seaTile.color !== "none" &&
-          seaTile.color === cardColor &&
+          seaTile.color === effectiveCardColor &&
           !(seaTile.q === currentPos.q && seaTile.r === currentPos.r)
         ) {
           // Only show moves that the player can actually afford
-          if (favorSpent <= availableFavor) {
+          const totalFavorCost = favorSpent + recoloringCost;
+          if (totalFavorCost <= availableFavor) {
             // Only add if this move isn't already available with less favor
             const existingMove = availableMoves.find((move) =>
               move.q === seaTile.q && move.r === seaTile.r

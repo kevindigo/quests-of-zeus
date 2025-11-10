@@ -8,8 +8,7 @@ Deno.test("OracleCardSpending - basic functionality", () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const playerId = 1;
-  const player = engine.getPlayer(playerId);
+  const player = engine.getCurrentPlayer();
   assertExists(player);
 
   // Give player an oracle card
@@ -26,23 +25,26 @@ Deno.test("OracleCardSpending - spend for movement", () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const playerId = 1;
-  const player = engine.getPlayer(playerId);
+  const player = engine.getCurrentPlayer();
   assertExists(player);
 
   // Set up deterministic test conditions
   player.oracleCards = ["blue"];
   player.favor = 5;
-  player.shipPosition = { q: 0, r: 0 };
+  // Find a sea hex to start from instead of Zeus hex
+  const gameState = engine.getGameState();
+  const seaTiles = gameState.map.getCellsByTerrain("sea");
+  if (seaTiles.length > 0) {
+    player.shipPosition = { q: seaTiles[0].q, r: seaTiles[0].r };
+  }
   player.usedOracleCardThisTurn = false;
 
   // Find a reachable blue sea tile
-  const gameState = engine.getGameState();
   const blueSeaTiles = gameState.map.getCellsByTerrain("sea").filter(cell => cell.color === "blue");
   
   if (blueSeaTiles.length > 0) {
     const targetTile = blueSeaTiles[0];
-    const moveResult = engine.spendOracleCardForMovement(playerId, targetTile.q, targetTile.r, "blue", 0);
+    const moveResult = engine.spendOracleCardForMovement(player.id, targetTile.q, targetTile.r, "blue", 0);
     
     assert(moveResult.success, "Should be able to move using oracle card");
     
@@ -61,8 +63,7 @@ Deno.test("OracleCardSpending - spend for favor", () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const playerId = 1;
-  const player = engine.getPlayer(playerId);
+  const player = engine.getCurrentPlayer();
   assertExists(player);
 
   // Set up deterministic test conditions
@@ -71,7 +72,7 @@ Deno.test("OracleCardSpending - spend for favor", () => {
   player.usedOracleCardThisTurn = false;
 
   // Test that player can spend oracle card for favor
-  const success = engine.spendOracleCardForFavor(playerId, "blue");
+  const success = engine.spendOracleCardForFavor(player.id, "blue");
   
   assert(success, "Should be able to spend oracle card for favor");
   
@@ -89,18 +90,21 @@ Deno.test("OracleCardSpending - cannot use more than one oracle card per turn", 
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const playerId = 1;
-  const player = engine.getPlayer(playerId);
+  const player = engine.getCurrentPlayer();
   assertExists(player);
 
   // Set up deterministic test conditions
   player.oracleCards = ["blue", "red"];
   player.favor = 5;
-  player.shipPosition = { q: 0, r: 0 };
+  // Find a sea hex to start from instead of Zeus hex
+  const gameState = engine.getGameState();
+  const seaTiles = gameState.map.getCellsByTerrain("sea");
+  if (seaTiles.length > 0) {
+    player.shipPosition = { q: seaTiles[0].q, r: seaTiles[0].r };
+  }
   player.usedOracleCardThisTurn = false;
 
   // Find reachable sea tiles
-  const gameState = engine.getGameState();
   const blueSeaTiles = gameState.map.getCellsByTerrain("sea").filter(cell => cell.color === "blue");
   const redSeaTiles = gameState.map.getCellsByTerrain("sea").filter(cell => cell.color === "red");
   
@@ -109,11 +113,11 @@ Deno.test("OracleCardSpending - cannot use more than one oracle card per turn", 
     const secondTarget = redSeaTiles[0];
     
     // First oracle card usage should succeed
-    const firstMoveResult = engine.spendOracleCardForMovement(playerId, firstTarget.q, firstTarget.r, "blue", 0);
+    const firstMoveResult = engine.spendOracleCardForMovement(player.id, firstTarget.q, firstTarget.r, "blue", 0);
     assert(firstMoveResult.success, "First oracle card usage should succeed");
     
     // Second oracle card usage should fail
-    const secondMoveResult = engine.spendOracleCardForMovement(playerId, secondTarget.q, secondTarget.r, "red", 0);
+    const secondMoveResult = engine.spendOracleCardForMovement(player.id, secondTarget.q, secondTarget.r, "red", 0);
     assertEquals(secondMoveResult.success, false, "Second oracle card usage should fail");
     
     // Red oracle card should still be available
@@ -125,14 +129,18 @@ Deno.test("OracleCardSpending - movement with favor spending", () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const playerId = 1;
-  const player = engine.getPlayer(playerId);
+  const player = engine.getCurrentPlayer();
   assertExists(player);
 
   // Set up deterministic test conditions
   player.oracleCards = ["blue"];
   player.favor = 5;
-  player.shipPosition = { q: 0, r: 0 };
+  // Find a sea hex to start from instead of Zeus hex
+  const gameState = engine.getGameState();
+  const seaTiles = gameState.map.getCellsByTerrain("sea");
+  if (seaTiles.length > 0) {
+    player.shipPosition = { q: seaTiles[0].q, r: seaTiles[0].r };
+  }
   player.usedOracleCardThisTurn = false;
 
   // Find a blue sea tile that requires favor spending to reach
@@ -140,12 +148,11 @@ Deno.test("OracleCardSpending - movement with favor spending", () => {
   const initialFavor = player.favor;
   
   // Try to move with favor spending (even if not strictly needed)
-  const gameState = engine.getGameState();
   const blueSeaTiles = gameState.map.getCellsByTerrain("sea").filter(cell => cell.color === "blue");
   
   if (blueSeaTiles.length > 0) {
     const targetTile = blueSeaTiles[0];
-    const moveResult = engine.spendOracleCardForMovement(playerId, targetTile.q, targetTile.r, "blue", 1);
+    const moveResult = engine.spendOracleCardForMovement(player.id, targetTile.q, targetTile.r, "blue", 1);
     
     // This should succeed even with favor spending
     assert(moveResult.success, "Should be able to move using oracle card with favor spending");
@@ -162,8 +169,7 @@ Deno.test("OracleCardSpending - cannot use oracle card without having it", () =>
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const playerId = 1;
-  const player = engine.getPlayer(playerId);
+  const player = engine.getCurrentPlayer();
   assertExists(player);
 
   // Player has no oracle cards
@@ -171,7 +177,7 @@ Deno.test("OracleCardSpending - cannot use oracle card without having it", () =>
   player.usedOracleCardThisTurn = false;
 
   // Try to use an oracle card that player doesn't have
-  const moveResult = engine.spendOracleCardForMovement(playerId, 1, 1, "blue", 0);
+  const moveResult = engine.spendOracleCardForMovement(player.id, 1, 1, "blue", 0);
   
   assertEquals(moveResult.success, false, "Should not be able to use oracle card without having it");
 });
