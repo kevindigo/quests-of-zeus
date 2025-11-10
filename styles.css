@@ -234,6 +234,21 @@ footer {
   margin: 0 0.25rem;
 }
 
+/* Unified Resource Actions Panel */
+.resource-actions {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.resource-actions h4 {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
 @keyframes pulse-white {
   0%, 100% {
     stroke-opacity: 1;

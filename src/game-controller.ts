@@ -555,22 +555,13 @@ export class GameController {
                <li>Tan dashed highlights: Extended range (costs favor)</li>
              </ul>`;
 
-          // Spend die for favor action is always available during action phase with a selected die
-          actions +=
-            `<button id="spendResourceForFavor" class="action-btn">Spend for 2 Favor</button>`;
-
-          // Unified button to spend resource to draw an oracle card
-          actions +=
-            `<button id="drawOracleCard" class="action-btn">Draw Oracle Card</button>`;
-          actions += `<p style="font-size: 0.9rem; opacity: 0.8;">Spend a die or oracle card to draw an oracle card from the deck</p>`;
-
-          // Oracle card spending actions (only show if player has oracle cards and hasn't used one this turn)
-          if (currentPlayer.oracleCards.length > 0 && !currentPlayer.usedOracleCardThisTurn) {
-            actions += `<div class="oracle-card-actions" style="margin-top: 1rem;">
-              <h4>Spend Oracle Card (1 per turn)</h4>
-              <p style="font-size: 0.9rem; opacity: 0.8;">Select an oracle card above, then click highlighted hexes to move or use the "Spend for 2 Favor" button</p>
-            </div>`;
-          }
+          // Unified resource spending actions
+          actions += `<div class="resource-actions" style="margin-top: 1rem;">
+            <h4>Resource Actions</h4>
+            <button id="spendResourceForFavor" class="action-btn">Spend for 2 Favor</button>
+            <button id="drawOracleCard" class="action-btn">Draw Oracle Card</button>
+            <p style="font-size: 0.9rem; opacity: 0.8;">Spend selected resource for favor or to draw an oracle card</p>
+          </div>`;
 
           // Recolor die options are now displayed in the player info panel as radio buttons
           // The favor will be spent when the die is actually used for movement or other actions
@@ -626,13 +617,13 @@ export class GameController {
                <li>Orange dashed highlights: Extended range (costs favor)</li>
              </ul>`;
 
-          // Spend oracle card for favor action is available
-          actions += `<button id="spendResourceForFavor" class="action-btn">Spend for 2 Favor</button>`;
-
-          // Draw oracle card button is also available
-          actions +=
-            `<button id="drawOracleCard" class="action-btn">Draw Oracle Card</button>`;
-          actions += `<p style="font-size: 0.9rem; opacity: 0.8;">Spend a die or oracle card to draw an oracle card from the deck</p>`;
+          // Unified resource spending actions
+          actions += `<div class="resource-actions" style="margin-top: 1rem;">
+            <h4>Resource Actions</h4>
+            <button id="spendResourceForFavor" class="action-btn">Spend for 2 Favor</button>
+            <button id="drawOracleCard" class="action-btn">Draw Oracle Card</button>
+            <p style="font-size: 0.9rem; opacity: 0.8;">Spend selected resource for favor or to draw an oracle card</p>
+          </div>`;
         } else {
           // No resource selected - show selection instructions
           actions += `<p>Select a resource (die or oracle card) to perform actions</p>`;
