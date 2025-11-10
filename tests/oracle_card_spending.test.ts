@@ -148,13 +148,14 @@ Deno.test("OracleCardSpending - movement with favor spending", () => {
     const moveResult = engine.spendOracleCardForMovement(player.id, targetTile.q, targetTile.r, "blue", 1);
     
     // This should succeed even with favor spending
-    assert(moveResult.success, "Should be able to move using oracle card with favor spending");
+    assert(moveResult.success, `Should be able to move using oracle card with favor spending, but ${JSON.stringify(moveResult)}`);
     
     // Oracle card should be consumed
     assertEquals(player.oracleCards.includes("blue"), false, "Blue oracle card should be consumed");
     
     // Oracle card usage flag should be set
     assertEquals(player.usedOracleCardThisTurn, true, "Oracle card usage flag should be set");
+    assertEquals(player.favor, initialFavor-1, "Should have spent 1 favor");
   }
 });
 
