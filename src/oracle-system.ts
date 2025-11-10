@@ -285,12 +285,10 @@ export class OracleSystem {
 
     // Apply recoloring if there's an intention for this card
     const originalCardColor = cardColor;
-    let _effectiveCardColor = cardColor;
     if (player.recoloredCards && player.recoloredCards[cardColor]) {
       const recoloringApplied = this.applyRecoloringForCard(player, cardColor);
       if (recoloringApplied) {
-        effectiveCardColor =
-          player.recoloredCards[originalCardColor]?.newColor || cardColor;
+        // Card color is updated in the player's oracleCards array
       }
     }
 
@@ -334,12 +332,10 @@ export class OracleSystem {
 
     // Apply recoloring if there's an intention for this card
     const originalCardColor = cardColor;
-    let _effectiveCardColor = cardColor;
     if (player.recoloredCards && player.recoloredCards[cardColor]) {
       const recoloringApplied = this.applyRecoloringForCard(player, cardColor);
       if (recoloringApplied) {
-        effectiveCardColor =
-          player.recoloredCards[originalCardColor]?.newColor || cardColor;
+        // Card color is updated in the player's oracleCards array
       }
     }
 
@@ -391,12 +387,10 @@ export class OracleSystem {
 
     // Apply recoloring if there's an intention for this card
     const originalCardColor = cardColor;
-    let _effectiveCardColor = cardColor;
     if (player.recoloredCards && player.recoloredCards[cardColor]) {
       const recoloringApplied = this.applyRecoloringForCard(player, cardColor);
       if (recoloringApplied) {
-        effectiveCardColor =
-          player.recoloredCards[originalCardColor]?.newColor || cardColor;
+        // Card color is updated in the player's oracleCards array
       }
     }
 

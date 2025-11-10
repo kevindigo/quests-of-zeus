@@ -1,13 +1,19 @@
 // Game initialization and setup for Quests of Zeus
-import type { HexColor, Player, CubeHex, MonsterHex, GameState } from "./types.ts";
-import { ALL_COLORS, COLORS } from "./types.ts";
+import { HexCell } from "./game-engine.ts";
 import { HexMap } from "./hexmap.ts";
 import { createEmptyStorage } from "./storage-manager.ts";
-import { HexCell } from "./game-engine.ts";
+import type {
+  CubeHex,
+  GameState,
+  HexColor,
+  MonsterHex,
+  Player,
+} from "./types.ts";
+import { ALL_COLORS, COLORS } from "./types.ts";
 
 export function findZeus(map: HexMap): HexCell {
   const zeusCell = map.getCellsByTerrain("zeus")[0];
-  if(zeusCell) {
+  if (zeusCell) {
     return zeusCell;
   }
 
@@ -100,7 +106,14 @@ export class GameInitializer {
    */
   private initializeOracleCardDeck(): void {
     this.oracleCardDeck = [];
-    const cardColors: HexColor[] = [COLORS.BLACK, COLORS.PINK, COLORS.BLUE, COLORS.YELLOW, COLORS.GREEN, COLORS.RED];
+    const cardColors: HexColor[] = [
+      COLORS.BLACK,
+      COLORS.PINK,
+      COLORS.BLUE,
+      COLORS.YELLOW,
+      COLORS.GREEN,
+      COLORS.RED,
+    ];
     // The deck consists of 5 copies of each of the 6 colors (5 * 6 = 30 cards)
     for (const color of cardColors) {
       for (let i = 0; i < 5; i++) {
@@ -192,7 +205,6 @@ export class GameInitializer {
 
     // Calculate total monsters needed
     const totalMonstersPerColor = playerCount;
-    const _totalMonsters = totalMonstersPerColor * ALL_COLORS.length;
 
     // Create a shuffled list of all monster colors to place
     const monsterColors = [...ALL_COLORS];

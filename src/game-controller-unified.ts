@@ -2,27 +2,17 @@
 // Manages the game UI and user interactions
 
 import { QuestsZeusGameEngine } from "./game-engine.ts";
-import { HexMapSVG } from "./hexmap-svg.ts";
 import type { HexColor } from "./types.ts";
-import type { CubeHex, GameState, MonsterHex, Player, MoveShipResult } from "./types.ts";
 
 // Type declarations for DOM APIs (for Deno type checking)
 
 export class GameController {
   private gameEngine: QuestsZeusGameEngine;
-  private hexMapSVG: HexMapSVG;
-  private selectedResourceType: 'die' | 'card' | null = null;
+  private selectedResourceType: "die" | "card" | null = null;
   private selectedResourceColor: HexColor | null = null;
-  private selectedFavorSpent: number = 0;
 
   constructor() {
     this.gameEngine = new QuestsZeusGameEngine();
-    this.hexMapSVG = new HexMapSVG({
-      cellSize: 30,
-      showCoordinates: false,
-      showTerrainLabels: false,
-      interactive: true,
-    });
   }
 
   public initializeGameUI(): void {
@@ -156,7 +146,10 @@ export class GameController {
           <h4>Storage (2 slots)</h4>
           <div class="storage-slots">
             ${
-      _currentPlayer.storage.map((slot: { type: string; color: string }, index: number) =>
+      _currentPlayer.storage.map((
+        slot: { type: string; color: string },
+        index: number,
+      ) =>
         `<div class="storage-slot slot-${index} ${slot.type}">
                 <div class="slot-content">
                   ${
@@ -184,7 +177,8 @@ export class GameController {
       _currentPlayer.oracleDice.length === 0
         ? '<div class="no-resources">No dice rolled yet</div>'
         : _currentPlayer.oracleDice.map((color: string) => {
-          const isSelected = this.selectedResourceType === 'die' && this.selectedResourceColor === color;
+          const isSelected = this.selectedResourceType === "die" &&
+            this.selectedResourceColor === color;
           return `<div class="resource-item die color-${color} ${
             isSelected ? "selected-resource" : ""
           }" 
@@ -201,31 +195,43 @@ export class GameController {
             <div class="resource-type">
               <h5>Oracle Cards</h5>
               <div class="cards-container">
-                ${_currentPlayer.oracleCards.length === 0 ? '<div class="no-resources">No oracle cards</div>' : ''}
-                ${_currentPlayer.oracleCards.map((color: string, index: number) => {
-                  const isSelected = this.selectedResourceType === 'card' && this.selectedResourceColor === color;
-                  return `<div class="resource-item card color-${color} ${isSelected ? "selected-resource" : ""}" 
+                ${
+      _currentPlayer.oracleCards.length === 0
+        ? '<div class="no-resources">No oracle cards</div>'
+        : ""
+    }
+                ${
+      _currentPlayer.oracleCards.map((color: string, _index: number) => {
+        const isSelected = this.selectedResourceType === "card" &&
+          this.selectedResourceColor === color;
+        return `<div class="resource-item card color-${color} ${
+          isSelected ? "selected-resource" : ""
+        }" 
                            style="background-color: ${this.getColorHex(color)}" 
                            data-resource-type="card"
                            data-resource-color="${color}"
                            title="Oracle Card: ${color}">
                     ${color.charAt(0).toUpperCase()}
                   </div>`;
-                }).join('')}
+      }).join("")
+    }
               </div>
             </div>
           </div>
           ${
       this.selectedResourceType && this.selectedResourceColor
         ? `<div class="selected-resource-info">
-             Selected ${this.selectedResourceType}: <span class="color-swatch" style="background-color: ${this.getColorHex(this.selectedResourceColor)}"></span>
+             Selected ${this.selectedResourceType}: <span class="color-swatch" style="background-color: ${
+          this.getColorHex(this.selectedResourceColor)
+        }"></span>
              ${this.selectedResourceColor}
              <button id="clearResourceSelection" class="action-btn secondary">Clear</button>
            </div>`
         : ""
     }
           ${
-      this.selectedResourceType === 'die' && this.selectedResourceColor && _currentPlayer.favor > 0
+      this.selectedResourceType === "die" && this.selectedResourceColor &&
+        _currentPlayer.favor > 0
         ? this.renderRecolorOptions(_currentPlayer)
         : ""
     }
@@ -235,36 +241,6 @@ export class GameController {
   }
 
   // ... rest of the methods would be similar to the original but using the unified resource selection
-  
-  private selectResource(resourceType: string, resourceColor: HexColor): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
-
-    if (resourceType === "die") {
-      // Check if the player has this die
-      if (currentPlayer.oracleDice.includes(resourceColor)) {
-        this.selectedResourceType = 'die';
-        this.selectedResourceColor = resourceColor;
-        this.showMessage(`Selected ${resourceColor} die`);
-        this.renderGameState();
-      }
-    } else if (resourceType === "card") {
-      // Check if the player has this oracle card
-      if (currentPlayer.oracleCards.includes(resourceColor)) {
-        this.selectedResourceType = 'card';
-        this.selectedResourceColor = resourceColor;
-        this.showMessage(`Selected ${resourceColor} oracle card`);
-        this.renderGameState();
-      }
-    }
-  }
-
-  private clearResourceSelection(): void {
-    this.selectedResourceType = null;
-    this.selectedResourceColor = null;
-    this.selectedFavorSpent = 0;
-    this.showMessage("Resource selection cleared");
-    this.renderGameState();
-  }
 
   private getColorHex(color: string): string {
     const colors: Record<string, string> = {
@@ -278,7 +254,7 @@ export class GameController {
     return colors[color] || "#333333";
   }
 
-  // Note: The rest of the methods (renderMap, highlightAvailableMoves, etc.) 
+  // Note: The rest of the methods (renderMap, highlightAvailableMoves, etc.)
   // would need to be updated to use the unified resource selection system
   // This is a simplified example showing the core unified selection approach
 }
