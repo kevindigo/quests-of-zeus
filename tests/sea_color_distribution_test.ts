@@ -58,8 +58,8 @@ Deno.test("Sea color distribution - balanced distribution across multiple maps",
   for (const color of colors) {
     const stats = colorStats[color];
     const average = stats!.total / testCount;
-    const variance = stats!.counts.reduce((sum, count) =>
-      sum + Math.pow(count - average, 2), 0) / testCount;
+    // const variance = stats!.counts.reduce((sum, count) =>
+    // sum + Math.pow(count - average, 2), 0) / testCount;
     // Standard deviation calculation - variable intentionally unused for debugging
     // const stdDev = Math.sqrt(variance);
 
