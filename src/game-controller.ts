@@ -557,7 +557,7 @@ export class GameController {
 
           // Spend die for favor action is always available during action phase with a selected die
           actions +=
-            `<button id="spendDieForFavor" class="action-btn">Spend Die for 2 Favor</button>`;
+            `<button id="spendResourceForFavor" class="action-btn">Spend for 2 Favor</button>`;
 
           // New button to spend die to draw an oracle card
           actions +=
@@ -567,8 +567,7 @@ export class GameController {
           if (currentPlayer.oracleCards.length > 0 && !currentPlayer.usedOracleCardThisTurn) {
             actions += `<div class="oracle-card-actions" style="margin-top: 1rem;">
               <h4>Spend Oracle Card (1 per turn)</h4>
-              <button id="spendOracleCardForFavor" class="action-btn">Spend Oracle Card for 2 Favor</button>
-              <p style="font-size: 0.9rem; opacity: 0.8;">Select an oracle card above, then click highlighted hexes to move or click to spend it for favor</p>
+              <p style="font-size: 0.9rem; opacity: 0.8;">Select an oracle card above, then click highlighted hexes to move or use the "Spend for 2 Favor" button</p>
             </div>`;
           }
 
@@ -627,7 +626,7 @@ export class GameController {
              </ul>`;
 
           // Spend oracle card for favor action is available
-          actions += `<button id="spendOracleCardForFavor" class="action-btn">Spend Oracle Card for 2 Favor</button>`;
+          actions += `<button id="spendResourceForFavor" class="action-btn">Spend for 2 Favor</button>`;
         } else {
           // No resource selected - show selection instructions
           actions += `<p>Select a resource (die or oracle card) to perform actions</p>`;
@@ -920,10 +919,8 @@ export class GameController {
         this.completeCloudQuest();
       } else if (target.id === "placeStatue") {
         this.placeStatueOnCity();
-      } else if (target.id === "spendDieForFavor") {
-        this.spendDieForFavor();
-      } else if (target.id === "spendOracleCardForFavor") {
-        this.spendOracleCardForFavor();
+      } else if (target.id === "spendResourceForFavor") {
+        this.spendResourceForFavor();
       } else if (target.id === "drawOracleCard") {
         this.drawOracleCard();
       } else if (target.id === "endTurn") {
@@ -1078,47 +1075,40 @@ export class GameController {
     }
   }
 
-  private spendDieForFavor(): void {
+  private spendResourceForFavor(): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
 
-    if (!this.selectedDieColor) {
-      this.showMessage("Please select a die first!");
-      return;
+    // Check if a die is selected
+    if (this.selectedDieColor) {
+      const success = this.gameEngine.spendDieForFavor(
+        currentPlayer.id,
+        this.selectedDieColor,
+      );
+      if (success) {
+        this.showMessage(`Spent ${this.selectedDieColor} die to gain 2 favor!`);
+        // Don't clear selected die - player can continue using other dice
+        // The spent die will be automatically removed from the display
+        this.renderGameState();
+      } else {
+        this.showMessage("Cannot spend die for favor at this time");
+      }
     }
-
-    const success = this.gameEngine.spendDieForFavor(
-      currentPlayer.id,
-      this.selectedDieColor,
-    );
-    if (success) {
-      this.showMessage(`Spent ${this.selectedDieColor} die to gain 2 favor!`);
-      // Don't clear selected die - player can continue using other dice
-      // The spent die will be automatically removed from the display
-      this.renderGameState();
+    // Check if an oracle card is selected
+    else if (this.selectedOracleCardColor) {
+      const success = this.gameEngine.spendOracleCardForFavor(
+        currentPlayer.id,
+        this.selectedOracleCardColor,
+      );
+      if (success) {
+        this.showMessage(`Spent ${this.selectedOracleCardColor} oracle card to gain 2 favor!`);
+        // Clear selected oracle card after successful spending
+        this.selectedOracleCardColor = null;
+        this.renderGameState();
+      } else {
+        this.showMessage("Cannot spend oracle card for favor at this time");
+      }
     } else {
-      this.showMessage("Cannot spend die for favor at this time");
-    }
-  }
-
-  private spendOracleCardForFavor(): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
-
-    if (!this.selectedOracleCardColor) {
-      this.showMessage("Please select an oracle card first!");
-      return;
-    }
-
-    const success = this.gameEngine.spendOracleCardForFavor(
-      currentPlayer.id,
-      this.selectedOracleCardColor,
-    );
-    if (success) {
-      this.showMessage(`Spent ${this.selectedOracleCardColor} oracle card to gain 2 favor!`);
-      // Clear selected oracle card after successful spending
-      this.selectedOracleCardColor = null;
-      this.renderGameState();
-    } else {
-      this.showMessage("Cannot spend oracle card for favor at this time");
+      this.showMessage("Please select a resource (die or oracle card) first!");
     }
   }
 
@@ -1195,11 +1185,13 @@ export class GameController {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     console.log(`selectResource called: ${resourceType}, ${resourceColor}`);
 
+    // Always clear both selections first to ensure mutual exclusivity
+    this.selectedDieColor = null;
+    this.selectedOracleCardColor = null;
+
     if (resourceType === "die") {
       // Check if the player has this die
       if (currentPlayer.oracleDice.includes(resourceColor)) {
-        // Clear oracle card selection when selecting a die
-        this.selectedOracleCardColor = null;
         this.selectedDieColor = resourceColor;
         this.showMessage(`Selected ${resourceColor} die`);
         this.renderGameState();
@@ -1209,8 +1201,6 @@ export class GameController {
     } else if (resourceType === "card") {
       // Check if the player has this oracle card
       if (currentPlayer.oracleCards.includes(resourceColor)) {
-        // Clear die selection when selecting an oracle card
-        this.selectedDieColor = null;
         this.selectedOracleCardColor = resourceColor;
         this.showMessage(`Selected ${resourceColor} oracle card`);
         this.renderGameState();
