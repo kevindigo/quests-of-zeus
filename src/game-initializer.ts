@@ -3,6 +3,16 @@ import type { HexColor, Player, CubeHex, MonsterHex, GameState } from "./types.t
 import { ALL_COLORS, COLORS } from "./types.ts";
 import { HexMap } from "./hexmap.ts";
 import { createEmptyStorage } from "./storage-manager.ts";
+import { HexCell } from "./game-engine.ts";
+
+export function findZeus(map: HexMap): HexCell {
+  const zeusCell = map.getCellsByTerrain("zeus")[0];
+  if(zeusCell) {
+    return zeusCell;
+  }
+
+  throw new Error("Zeus not found in map!");
+}
 
 export class GameInitializer {
   private oracleCardDeck: HexColor[] = [];
@@ -14,7 +24,7 @@ export class GameInitializer {
     const map = new HexMap();
 
     // Find the Zeus hex coordinates
-    const zeusCell = map.getCellsByTerrain("zeus")[0];
+    const zeusCell = findZeus(map);
     const zeusPosition = zeusCell
       ? { q: zeusCell.q, r: zeusCell.r }
       : { q: 0, r: 0 };

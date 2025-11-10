@@ -161,6 +161,16 @@ export class HexMap implements HexMapService {
     return map;
   }
 
+
+  getNeighborsOfType(cell: HexCell, grid: HexCell[][], terrainType: TerrainType) : HexCell[] {
+    const neighbors = this.hexGridOperations.getNeighborsFromGrid(cell.q, cell.r, grid);
+    if(neighbors) {
+      return neighbors;
+    }
+
+    return [];
+  }
+
   /**
    * Check if a cell has a neighbor of a specific terrain type
    */

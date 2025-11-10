@@ -1,8 +1,8 @@
 // Tests for oracle card spending functionality
 
-import { assert, assertEquals } from "@std/assert";
+import { assert, assertEquals, assertFalse } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { HexColor } from "../src/types.ts";
+import { findZeus } from "../src/game-initializer.ts";
 
 Deno.test("OracleCardSpending - basic functionality", () => {
   const engine = new QuestsZeusGameEngine();
@@ -29,34 +29,27 @@ Deno.test("OracleCardSpending - spend for movement", () => {
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleCards = ["blue"];
-  player.favor = 5;
-  // Find a sea hex to start from instead of Zeus hex
   const gameState = engine.getGameState();
-  const seaTiles = gameState.map.getCellsByTerrain("sea");
-  if (seaTiles.length > 0) {
-    player.shipPosition = { q: seaTiles[0].q, r: seaTiles[0].r };
-  }
+  const zeus = findZeus(gameState.map);
+  const adjacentSeaHexes = gameState.map.getNeighborsOfType(zeus, gameState.map.getGrid(), "sea");
+  const destination = adjacentSeaHexes[0];
+
+  player.oracleCards = [destination.color];
+  player.favor = 0;
   player.usedOracleCardThisTurn = false;
 
-  // Find a reachable blue sea tile
-  const blueSeaTiles = gameState.map.getCellsByTerrain("sea").filter(cell => cell.color === "blue");
+  const moveResult = engine.spendOracleCardForMovement(player.id, destination.q, destination.r, destination.color, 0);
   
-  if (blueSeaTiles.length > 0) {
-    const targetTile = blueSeaTiles[0];
-    const moveResult = engine.spendOracleCardForMovement(player.id, targetTile.q, targetTile.r, "blue", 0);
-    
-    assert(moveResult.success, "Should be able to move using oracle card");
-    
-    // Oracle card should be consumed
-    assertEquals(player.oracleCards.includes("blue"), false, "Blue oracle card should be consumed");
-    
-    // Ship position should be updated
-    assertEquals(player.shipPosition, { q: targetTile.q, r: targetTile.r }, "Ship position should be updated");
-    
-    // Oracle card usage flag should be set
-    assertEquals(player.usedOracleCardThisTurn, true, "Oracle card usage flag should be set");
-  }
+  assert(moveResult.success, "Should be able to move using oracle card");
+  
+  // Oracle card should be consumed
+  assertFalse(player.oracleCards.includes(destination.color), "Blue oracle card should be consumed");
+  
+  // Ship position should be updated
+  assertEquals(player.shipPosition, { q: destination.q, r: destination.r }, "Ship position should be updated");
+  
+  // Oracle card usage flag should be set
+  assert(player.usedOracleCardThisTurn, "Oracle card usage flag should be set");
 });
 
 Deno.test("OracleCardSpending - spend for favor", () => {
