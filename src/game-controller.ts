@@ -610,12 +610,35 @@ export class GameController {
               }</p>`;
             }
           }
+        } else if (this.selectedOracleCardColor) {
+          // Oracle card is selected - show available actions
+          actions += `<p>Selected oracle card: <span class="color-swatch" style="background-color: ${
+            this.getColorHex(this.selectedOracleCardColor)
+          }"></span> ${this.selectedOracleCardColor}</p>`;
+
+          // Show favor status
+          actions += `<p>Available favor: ${currentPlayer.favor}</p>`;
+
+          // Movement is available during action phase with a selected oracle card
+          actions += `<p>Click on highlighted hexes to move your ship:</p>
+             <ul style="margin-left: 1rem;">
+               <li>Gold highlights: Normal range (3 hexes)</li>
+               <li>Orange dashed highlights: Extended range (costs favor)</li>
+             </ul>`;
+
+          // Spend oracle card for favor action is available
+          actions += `<button id="spendOracleCardForFavor" class="action-btn">Spend Oracle Card for 2 Favor</button>`;
         } else {
-          // No die selected - show selection instructions
-          actions += `<p>Select an oracle die to perform actions</p>`;
+          // No resource selected - show selection instructions
+          actions += `<p>Select a resource (die or oracle card) to perform actions</p>`;
           actions += `<p>Available dice: ${
             currentPlayer.oracleDice.join(", ")
           }</p>`;
+          if (currentPlayer.oracleCards.length > 0) {
+            actions += `<p>Available oracle cards: ${
+              currentPlayer.oracleCards.join(", ")
+            }</p>`;
+          }
         }
 
         if (!actions) {
@@ -633,6 +656,8 @@ export class GameController {
   }
 
   private setupEventListeners(): void {
+    console.log("Setting up event listeners...");
+    
     // Start game button
     document.addEventListener("click", (event) => {
       const target = event.target as HTMLElement;
@@ -871,7 +896,7 @@ export class GameController {
             );
           }
         } else {
-          this.showMessage("Please select a die or oracle card first!");
+          this.showMessage("Please select a resource (die or oracle card) first!");
         }
       }
     });
@@ -881,6 +906,7 @@ export class GameController {
       if (!this.gameEngine.isGameInitialized()) return;
 
       const target = event.target as HTMLElement;
+      console.log("Click event detected on:", target, "classList:", target.classList);
 
       if (target.id === "collectOffering") {
         this.collectOffering();
@@ -902,20 +928,30 @@ export class GameController {
         this.drawOracleCard();
       } else if (target.id === "endTurn") {
         this.endTurn();
+      } else if (target.id === "clearResourceSelection") {
+        this.clearResourceSelection();
       } else if (target.id === "clearDieSelection") {
-        this.clearDieSelection();
+        this.clearResourceSelection();
+      } else if (target.id === "clearOracleCardSelection") {
+        this.clearResourceSelection();
+      } else if (target.classList.contains("resource-item")) {
+        const resourceType = target.getAttribute("data-resource-type");
+        const resourceColor = target.getAttribute("data-resource-color") as HexColor;
+        if (resourceType && resourceColor) {
+          this.selectResource(resourceType, resourceColor);
+        }
       } else if (target.classList.contains("die")) {
         const dieColor = target.getAttribute("data-die-color") as HexColor;
         if (dieColor) {
-          this.selectDie(dieColor);
+          console.log(`Die clicked: ${dieColor}`);
+          this.selectResource("die", dieColor);
         }
       } else if (target.classList.contains("oracle-card")) {
         const cardColor = target.getAttribute("data-oracle-card-color") as HexColor;
         if (cardColor) {
-          this.selectOracleCard(cardColor);
+          console.log(`Oracle card clicked: ${cardColor}`);
+          this.selectResource("card", cardColor);
         }
-      } else if (target.id === "clearOracleCardSelection") {
-        this.clearOracleCardSelection();
       } else if (target instanceof HTMLInputElement && target.name === "recolorOption") {
         const favorCost = parseInt(target.value || "0");
         this.setRecolorIntention(favorCost);
@@ -1155,42 +1191,40 @@ export class GameController {
     }
   }
 
-  private selectDie(dieColor: HexColor): void {
+  private selectResource(resourceType: string, resourceColor: HexColor): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
+    console.log(`selectResource called: ${resourceType}, ${resourceColor}`);
 
-    // Check if the player has this die
-    if (currentPlayer.oracleDice.includes(dieColor)) {
-      // Clear oracle card selection when selecting a die
-      this.selectedOracleCardColor = null;
-      this.selectedDieColor = dieColor;
-      this.showMessage(`Selected ${dieColor} die`);
-      this.renderGameState();
+    if (resourceType === "die") {
+      // Check if the player has this die
+      if (currentPlayer.oracleDice.includes(resourceColor)) {
+        // Clear oracle card selection when selecting a die
+        this.selectedOracleCardColor = null;
+        this.selectedDieColor = resourceColor;
+        this.showMessage(`Selected ${resourceColor} die`);
+        this.renderGameState();
+      } else {
+        console.log(`Player doesn't have ${resourceColor} die. Available dice:`, currentPlayer.oracleDice);
+      }
+    } else if (resourceType === "card") {
+      // Check if the player has this oracle card
+      if (currentPlayer.oracleCards.includes(resourceColor)) {
+        // Clear die selection when selecting an oracle card
+        this.selectedDieColor = null;
+        this.selectedOracleCardColor = resourceColor;
+        this.showMessage(`Selected ${resourceColor} oracle card`);
+        this.renderGameState();
+      } else {
+        console.log(`Player doesn't have ${resourceColor} oracle card. Available cards:`, currentPlayer.oracleCards);
+      }
     }
   }
 
-  private selectOracleCard(cardColor: HexColor): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
-
-    // Check if the player has this oracle card
-    if (currentPlayer.oracleCards.includes(cardColor)) {
-      // Clear die selection when selecting an oracle card
-      this.selectedDieColor = null;
-      this.selectedOracleCardColor = cardColor;
-      this.showMessage(`Selected ${cardColor} oracle card`);
-      this.renderGameState();
-    }
-  }
-
-  private clearOracleCardSelection(): void {
-    this.selectedOracleCardColor = null;
-    this.showMessage("Oracle card selection cleared");
-    this.renderGameState();
-  }
-
-  private clearDieSelection(): void {
+  private clearResourceSelection(): void {
     this.selectedDieColor = null;
+    this.selectedOracleCardColor = null;
     this.selectedFavorSpent = 0;
-    this.showMessage("Die selection cleared");
+    this.showMessage("Resource selection cleared");
     this.renderGameState();
   }
 
