@@ -23,7 +23,7 @@ Deno.test("GameController - die selection", () => {
   // The first die should be available for selection
   const firstDieColor = player.oracleDice[0];
   assert(
-    player.oracleDice.includes(firstDieColor),
+    player.oracleDice.includes(firstDieColor!),
     "Player should have the die",
   );
 });
@@ -42,7 +42,7 @@ Deno.test("GameController - movement with selected die", () => {
 
   if (availableMoves.length > 0) {
     const firstMove = availableMoves[0];
-    const requiredDieColor = firstMove.dieColor;
+    const requiredDieColor = firstMove!.dieColor;
 
     // Verify that the player has the required die
     assert(
@@ -58,11 +58,15 @@ Deno.test("GameController - movement with selected die", () => {
     // Test moving with the correct die color
     const moveResult = engine.moveShip(
       1,
-      firstMove.q,
+      firstMove!.q,
       firstMove.r,
       requiredDieColor,
     );
-    assertEquals(moveResult.success, true, "Move should succeed with correct die color");
+    assertEquals(
+      moveResult.success,
+      true,
+      "Move should succeed with correct die color",
+    );
 
     // Verify exactly one die of this color was consumed
     const diceCountAfter = player.oracleDice.filter((color: string) =>

@@ -1,6 +1,6 @@
 // SeaColorManager - Handles sea hex coloring with constraint satisfaction
 
-import type { HexColor, HexCell } from "../types.ts";
+import type { HexCell, HexColor } from "../types.ts";
 import { ALL_COLORS } from "../types.ts";
 import type { HexGridOperations } from "./HexGridOperations.ts";
 import type { UtilityService } from "./UtilityService.ts";
@@ -11,7 +11,7 @@ export class SeaColorManager {
 
   constructor(
     hexGridOperations: HexGridOperations,
-    utilityService: UtilityService
+    utilityService: UtilityService,
   ) {
     this.hexGridOperations = hexGridOperations;
     this.utilityService = utilityService;
@@ -61,7 +61,11 @@ export class SeaColorManager {
     for (const cell of seaCells) {
       // Get colors used by adjacent sea cells
       const adjacentColors = new Set<HexColor>();
-      const neighbors = this.hexGridOperations.getNeighborsFromGrid(cell.q, cell.r, grid);
+      const neighbors = this.hexGridOperations.getNeighborsFromGrid(
+        cell.q,
+        cell.r,
+        grid,
+      );
 
       for (const neighbor of neighbors) {
         if (neighbor.terrain === "sea" && neighbor.color !== "none") {
@@ -78,7 +82,7 @@ export class SeaColorManager {
       if (availableColors.length > 0) {
         // Find the color with the minimum usage count among available colors
         let leastUsedColor = availableColors[0];
-        let minCount = colorCounts[leastUsedColor];
+        let minCount = colorCounts[leastUsedColor]!;
 
         for (const color of availableColors) {
           if (colorCounts[color] < minCount) {
@@ -96,9 +100,9 @@ export class SeaColorManager {
           const randomIndex = Math.floor(
             Math.random() * leastUsedColors.length,
           );
-          cell.color = leastUsedColors[randomIndex];
+          cell.color = leastUsedColors[randomIndex]!;
         } else {
-          cell.color = leastUsedColor;
+          cell.color = leastUsedColor!;
         }
 
         // Update the color count
@@ -112,7 +116,7 @@ export class SeaColorManager {
     }
 
     // Count adjacent same-color sea hexes for debugging
-    const conflicts = this.countAdjacentSameColorSeaHexes(grid);
+    const _conflicts = this.countAdjacentSameColorSeaHexes(grid);
     // Note: conflicts are expected in some cases due to map constraints
   }
 
@@ -121,7 +125,11 @@ export class SeaColorManager {
    * Used as fallback when no conflict-free color is available
    */
   private getLeastConflictingColor(cell: HexCell, grid: HexCell[][]): HexColor {
-    const neighbors = this.hexGridOperations.getNeighborsFromGrid(cell.q, cell.r, grid);
+    const neighbors = this.hexGridOperations.getNeighborsFromGrid(
+      cell.q,
+      cell.r,
+      grid,
+    );
 
     // Initialize conflict counts for all colors using a more TypeScript-friendly approach
     const colorConflicts = {} as Record<HexColor, number>;
@@ -140,7 +148,7 @@ export class SeaColorManager {
     }
 
     // Find the color with the fewest conflicts
-    let bestColor: HexColor = ALL_COLORS[0];
+    let bestColor: HexColor = ALL_COLORS[0]!;
     let minConflicts = colorConflicts[bestColor];
 
     for (const color of ALL_COLORS) {
@@ -167,7 +175,11 @@ export class SeaColorManager {
         for (let arrayR = 0; arrayR < row.length; arrayR++) {
           const cell = row[arrayR];
           if (cell && cell.terrain === "sea" && cell.color !== "none") {
-            const neighbors = this.hexGridOperations.getNeighborsFromGrid(cell.q, cell.r, grid);
+            const neighbors = this.hexGridOperations.getNeighborsFromGrid(
+              cell.q,
+              cell.r,
+              grid,
+            );
 
             for (const neighbor of neighbors) {
               if (neighbor.terrain === "sea" && neighbor.color !== "none") {

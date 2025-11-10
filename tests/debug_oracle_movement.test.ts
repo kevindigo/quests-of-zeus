@@ -1,5 +1,5 @@
 // Debug test for oracle card movement
-import { assert, assertEquals } from "@std/assert";
+import { assert } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 
 Deno.test("Debug oracle card movement", () => {
@@ -12,7 +12,7 @@ Deno.test("Debug oracle card movement", () => {
     oracleCards: player.oracleCards,
     favor: player.favor,
     shipPosition: player.shipPosition,
-    usedOracleCardThisTurn: player.usedOracleCardThisTurn
+    usedOracleCardThisTurn: player.usedOracleCardThisTurn,
   });
 
   // Set up deterministic test conditions
@@ -25,28 +25,36 @@ Deno.test("Debug oracle card movement", () => {
     oracleCards: player.oracleCards,
     favor: player.favor,
     shipPosition: player.shipPosition,
-    usedOracleCardThisTurn: player.usedOracleCardThisTurn
+    usedOracleCardThisTurn: player.usedOracleCardThisTurn,
   });
 
   // Find a reachable blue sea tile
   const gameState = engine.getGameState();
-  const blueSeaTiles = gameState.map.getCellsByTerrain("sea").filter(cell => cell.color === "blue");
+  const blueSeaTiles = gameState.map.getCellsByTerrain("sea").filter((cell) =>
+    cell.color === "blue"
+  );
   console.log("Blue sea tiles found:", blueSeaTiles.length);
-  
+
   if (blueSeaTiles.length > 0) {
     const targetTile = blueSeaTiles[0];
     console.log("Target tile:", targetTile);
-    
-    const moveResult = engine.spendOracleCardForMovement(player.id, targetTile.q, targetTile.r, "blue", 0);
+
+    const moveResult = engine.spendOracleCardForMovement(
+      player.id,
+      targetTile!.q,
+      targetTile!.r,
+      "blue",
+      0,
+    );
     console.log("Move result:", moveResult);
-    
+
     console.log("Player state after move attempt:", {
       oracleCards: player.oracleCards,
       favor: player.favor,
       shipPosition: player.shipPosition,
-      usedOracleCardThisTurn: player.usedOracleCardThisTurn
+      usedOracleCardThisTurn: player.usedOracleCardThisTurn,
     });
-    
+
     assert(moveResult.success, "Should be able to move using oracle card");
   } else {
     console.log("No blue sea tiles found - cannot test movement");

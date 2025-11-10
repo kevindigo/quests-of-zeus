@@ -1,6 +1,6 @@
 // TerrainPlacementManager - Handles all terrain generation and placement logic
 
-import type { TerrainType, HexColor, HexCell } from "../types.ts";
+import type { HexCell, HexColor, TerrainType } from "../types.ts";
 import { ALL_COLORS } from "../types.ts";
 import type { HexGridOperations } from "./HexGridOperations.ts";
 import type { PathfindingService } from "./PathfindingService.ts";
@@ -9,7 +9,7 @@ import type { UtilityService } from "./UtilityService.ts";
 
 export class TerrainPlacementManager {
   private hexGridOperations: HexGridOperations;
-  private pathfindingService: PathfindingService;
+  private _pathfindingService: PathfindingService;
   private seaColorManager: SeaColorManager;
   private utilityService: UtilityService;
 
@@ -17,7 +17,7 @@ export class TerrainPlacementManager {
     hexGridOperations: HexGridOperations,
     pathfindingService: PathfindingService,
     seaColorManager: SeaColorManager,
-    utilityService: UtilityService
+    utilityService: UtilityService,
   ) {
     this.hexGridOperations = hexGridOperations;
     this.pathfindingService = pathfindingService;
@@ -41,7 +41,12 @@ export class TerrainPlacementManager {
 
       for (let r = r1; r <= r2; r++) {
         // Calculate distance from center
-        const distanceFromCenter = this.hexGridOperations.hexDistance(q, r, 0, 0);
+        const distanceFromCenter = this.hexGridOperations.hexDistance(
+          q,
+          r,
+          0,
+          0,
+        );
 
         // For all hexes, default to shallows
         // The sea generation for Zeus neighbors will be handled after Zeus placement
@@ -168,7 +173,11 @@ export class TerrainPlacementManager {
       }
 
       // Place the city if the cell exists
-      const cell = this.hexGridOperations.getCellFromGrid(grid, placementQ, placementR);
+      const cell = this.hexGridOperations.getCellFromGrid(
+        grid,
+        placementQ,
+        placementR,
+      );
       if (cell && cell.terrain === "shallow") {
         cell.terrain = "city";
         // Assign a random color to the city
@@ -215,7 +224,11 @@ export class TerrainPlacementManager {
 
     // Check all 6 directions using getAdjacent
     for (let direction = 0; direction < 6; direction++) {
-      const adjacentCoords = this.hexGridOperations.getAdjacent(zeusQ, zeusR, direction);
+      const adjacentCoords = this.hexGridOperations.getAdjacent(
+        zeusQ,
+        zeusR,
+        direction,
+      );
       if (adjacentCoords) {
         const neighbor = this.hexGridOperations.getCellFromGrid(
           grid,
@@ -250,7 +263,11 @@ export class TerrainPlacementManager {
 
     // Check all 6 directions using getAdjacent
     for (let direction = 0; direction < 6; direction++) {
-      const adjacentCoords = this.hexGridOperations.getAdjacent(q, r, direction);
+      const adjacentCoords = this.hexGridOperations.getAdjacent(
+        q,
+        r,
+        direction,
+      );
       if (adjacentCoords) {
         const neighbor = this.hexGridOperations.getCellFromGrid(
           grid,
@@ -436,8 +453,12 @@ export class TerrainPlacementManager {
    * Check if a cell has at least one neighbor that is shallows or sea
    */
   private hasShallowsOrSeaNeighbor(cell: HexCell, grid: HexCell[][]): boolean {
-    const neighbors = this.hexGridOperations.getNeighborsFromGrid(cell.q, cell.r, grid);
-    return neighbors.some(neighbor => 
+    const neighbors = this.hexGridOperations.getNeighborsFromGrid(
+      cell.q,
+      cell.r,
+      grid,
+    );
+    return neighbors.some((neighbor) =>
       neighbor.terrain === "shallow" || neighbor.terrain === "sea"
     );
   }

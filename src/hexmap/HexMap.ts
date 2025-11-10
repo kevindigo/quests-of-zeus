@@ -1,11 +1,11 @@
 // Refactored HexMap class - Main container that coordinates between services
 
-import type { TerrainType, HexColor, HexCell } from "../types.ts";
-import { TerrainPlacementManager } from "./TerrainPlacementManager.ts";
-import { SeaColorManager } from "./SeaColorManager.ts";
+import type { HexCell, HexColor, TerrainType } from "../types.ts";
+import { CityManager } from "./CityManager.ts";
 import { HexGridOperations } from "./HexGridOperations.ts";
 import { PathfindingService } from "./PathfindingService.ts";
-import { CityManager } from "./CityManager.ts";
+import { SeaColorManager } from "./SeaColorManager.ts";
+import { TerrainPlacementManager } from "./TerrainPlacementManager.ts";
 import { UtilityService } from "./UtilityService.ts";
 
 export interface HexMapService {
@@ -20,9 +20,17 @@ export interface HexMapService {
   isCityComplete(q: number, r: number): boolean;
   getCompleteCities(): HexCell[];
   serialize(): HexCell[][];
-  hasNeighborOfType(cell: HexCell, grid: HexCell[][], terrainType: TerrainType): boolean;
+  hasNeighborOfType(
+    cell: HexCell,
+    grid: HexCell[][],
+    terrainType: TerrainType,
+  ): boolean;
   canReachZeus(cell: HexCell, grid: HexCell[][]): boolean;
-  canReachZeusFromSeaNeighbor(seaNeighbor: HexCell, candidateCell: HexCell, grid: HexCell[][]): boolean;
+  canReachZeusFromSeaNeighbor(
+    seaNeighbor: HexCell,
+    candidateCell: HexCell,
+    grid: HexCell[][],
+  ): boolean;
 }
 
 export class HexMap implements HexMapService {
@@ -42,16 +50,19 @@ export class HexMap implements HexMapService {
     this.hexGridOperations = new HexGridOperations();
     this.pathfindingService = new PathfindingService(this.hexGridOperations);
     this.cityManager = new CityManager();
-    this.seaColorManager = new SeaColorManager(this.hexGridOperations, this.utilityService);
+    this.seaColorManager = new SeaColorManager(
+      this.hexGridOperations,
+      this.utilityService,
+    );
     this.terrainPlacementManager = new TerrainPlacementManager(
       this.hexGridOperations,
       this.pathfindingService,
       this.seaColorManager,
-      this.utilityService
+      this.utilityService,
     );
-    
+
     this.grid = this.terrainPlacementManager.generateGrid();
-    
+
     // Convert some sea cells to shallows based on game constraints
     this.convertSeaToShallows();
   }
@@ -161,10 +172,17 @@ export class HexMap implements HexMapService {
     return map;
   }
 
-
-  getNeighborsOfType(cell: HexCell, grid: HexCell[][], terrainType: TerrainType) : HexCell[] {
-    const neighbors = this.hexGridOperations.getNeighborsFromGrid(cell.q, cell.r, grid);
-    if(neighbors) {
+  getNeighborsOfType(
+    cell: HexCell,
+    grid: HexCell[][],
+    _terrainType: TerrainType,
+  ): HexCell[] {
+    const neighbors = this.hexGridOperations.getNeighborsFromGrid(
+      cell.q,
+      cell.r,
+      grid,
+    );
+    if (neighbors) {
       return neighbors;
     }
 
@@ -174,9 +192,17 @@ export class HexMap implements HexMapService {
   /**
    * Check if a cell has a neighbor of a specific terrain type
    */
-  hasNeighborOfType(cell: HexCell, grid: HexCell[][], terrainType: TerrainType): boolean {
-    const neighbors = this.hexGridOperations.getNeighborsFromGrid(cell.q, cell.r, grid);
-    return neighbors.some(neighbor => neighbor.terrain === terrainType);
+  hasNeighborOfType(
+    cell: HexCell,
+    grid: HexCell[][],
+    terrainType: TerrainType,
+  ): boolean {
+    const neighbors = this.hexGridOperations.getNeighborsFromGrid(
+      cell.q,
+      cell.r,
+      grid,
+    );
+    return neighbors.some((neighbor) => neighbor.terrain === terrainType);
   }
 
   /**
@@ -195,7 +221,11 @@ export class HexMap implements HexMapService {
     candidateCell: HexCell,
     grid: HexCell[][],
   ): boolean {
-    return this.pathfindingService.canReachZeusFromSeaNeighbor(seaNeighbor, candidateCell, grid);
+    return this.pathfindingService.canReachZeusFromSeaNeighbor(
+      seaNeighbor,
+      candidateCell,
+      grid,
+    );
   }
 
   /**
@@ -255,11 +285,17 @@ export class HexMap implements HexMapService {
 
     // Constraint 3: Check all neighbors
     const neighbors = this.getNeighbors(cell.q, cell.r);
-    
+
     for (const neighbor of neighbors) {
       if (neighbor.terrain === "sea") {
         // For sea neighbors: check if they can reach zeus (excluding the candidate cell)
-        if (!this.pathfindingService.canReachZeusFromSeaNeighbor(neighbor, cell, this.grid)) {
+        if (
+          !this.pathfindingService.canReachZeusFromSeaNeighbor(
+            neighbor,
+            cell,
+            this.grid,
+          )
+        ) {
           return false;
         }
       } else if (neighbor.terrain !== "shallow") {

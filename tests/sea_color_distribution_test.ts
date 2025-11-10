@@ -45,10 +45,10 @@ Deno.test("Sea color distribution - balanced distribution across multiple maps",
     for (const color of colors) {
       const count =
         stats.seaColorCounts[color as keyof typeof stats.seaColorCounts] || 0;
-      colorStats[color].min = Math.min(colorStats[color].min, count);
-      colorStats[color].max = Math.max(colorStats[color].max, count);
-      colorStats[color].total += count;
-      colorStats[color].counts.push(count);
+      colorStats[color]!.min = Math.min(colorStats[color]!.min, count);
+      colorStats[color]!.max = Math.max(colorStats[color]!.max, count);
+      colorStats[color]!.total += count;
+      colorStats[color]!.counts.push(count);
     }
   }
 
@@ -57,13 +57,13 @@ Deno.test("Sea color distribution - balanced distribution across multiple maps",
 
   for (const color of colors) {
     const stats = colorStats[color];
-    const average = stats.total / testCount;
-    const variance = stats.counts.reduce((sum, count) =>
+    const average = stats!.total / testCount;
+    const variance = stats!.counts.reduce((sum, count) =>
       sum + Math.pow(count - average, 2), 0) / testCount;
     const _stdDev = Math.sqrt(variance);
 
     // Track maximum difference
-    const colorRange = stats.max - stats.min;
+    const colorRange = stats!.max - stats!.min;
     if (colorRange > maxDifference) {
       maxDifference = colorRange;
     }
@@ -88,7 +88,7 @@ Deno.test("Sea color distribution - balanced distribution across multiple maps",
   // Check that no color consistently appears too many or too few times
   for (const color of colors) {
     const stats = colorStats[color];
-    const average = stats.total / testCount;
+    const average = stats!.total / testCount;
 
     // Average should be reasonable (between 7 and 14 for a balanced distribution)
     // Based on actual game behavior, some colors may appear more frequently
