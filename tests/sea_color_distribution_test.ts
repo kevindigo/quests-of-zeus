@@ -71,8 +71,9 @@ Deno.test("Sea color distribution - balanced distribution across multiple maps",
 
   // Find the most uneven map
   for (let i = 0; i < testCount; i++) {
-    const counts = colors.map((color) => colorStats[color].counts[i]);
-    const mapDifference = Math.max(...counts) - Math.min(...counts);
+    const counts = colors.map((color) => colorStats[color]!.counts[i]);
+    const mapDifference = Math.max(...counts.map((c) => c!)) -
+      Math.min(...counts.map((c) => c!));
     if (mapDifference > mostUnevenDifference) {
       mostUnevenDifference = mapDifference;
     }
@@ -103,16 +104,16 @@ Deno.test("Sea color distribution - balanced distribution across multiple maps",
 
     // No color should ever be completely missing
     assert(
-      stats.min > 0,
+      stats!.min > 0,
       `Color ${color} should appear at least once in all maps`,
     );
   }
 
   // Check for extreme cases (adjust thresholds based on actual game behavior)
   const extremeCaseFound = colors.some((color) =>
-    colorStats[color].max >= 16 &&
+    colorStats[color]!.max >= 16 &&
     colors.some((otherColor) =>
-      colorStats[otherColor].min <= 5 && otherColor !== color
+      colorStats[otherColor]!.min <= 5 && otherColor !== color
     )
   );
 

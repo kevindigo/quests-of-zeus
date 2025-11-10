@@ -19,8 +19,12 @@ Deno.test("GameEngine - initialization", () => {
   assertEquals(state.phase, "action"); // Game starts in action phase since dice are already rolled
 
   // All players should start with dice already rolled
-  state.players.forEach(player => {
-    assertEquals(player.oracleDice.length, 3, "Each player should start with 3 dice");
+  state.players.forEach((player) => {
+    assertEquals(
+      player.oracleDice.length,
+      3,
+      "Each player should start with 3 dice",
+    );
   });
 
   // Now game should be initialized
@@ -192,22 +196,46 @@ Deno.test("GameEngine - shield resource", () => {
   assertExists(player2);
 
   // Test that shield property exists and is initialized to 0
-  assertEquals("shield" in player1, true, "Player 1 should have shield property");
-  assertEquals("shield" in player2, true, "Player 2 should have shield property");
+  assertEquals(
+    "shield" in player1,
+    true,
+    "Player 1 should have shield property",
+  );
+  assertEquals(
+    "shield" in player2,
+    true,
+    "Player 2 should have shield property",
+  );
   assertEquals(player1.shield, 0, "Player 1 shield should be 0");
   assertEquals(player2.shield, 0, "Player 2 shield should be 0");
-  assertEquals(typeof player1.shield, "number", "Player 1 shield should be a number");
-  assertEquals(typeof player2.shield, "number", "Player 2 shield should be a number");
+  assertEquals(
+    typeof player1.shield,
+    "number",
+    "Player 1 shield should be a number",
+  );
+  assertEquals(
+    typeof player2.shield,
+    "number",
+    "Player 2 shield should be a number",
+  );
 
   // Test that shield is properly serialized in game state
   const gameState = engine.getGameState();
-  const serializedPlayer1 = gameState.players.find(p => p.id === 1);
-  const serializedPlayer2 = gameState.players.find(p => p.id === 2);
+  const serializedPlayer1 = gameState.players.find((p) => p.id === 1);
+  const serializedPlayer2 = gameState.players.find((p) => p.id === 2);
 
   assertExists(serializedPlayer1);
   assertExists(serializedPlayer2);
-  assertEquals(serializedPlayer1.shield, 0, "Player 1 shield should be 0 in serialized state");
-  assertEquals(serializedPlayer2.shield, 0, "Player 2 shield should be 0 in serialized state");
+  assertEquals(
+    serializedPlayer1.shield,
+    0,
+    "Player 1 shield should be 0 in serialized state",
+  );
+  assertEquals(
+    serializedPlayer2.shield,
+    0,
+    "Player 2 shield should be 0 in serialized state",
+  );
 });
 
 Deno.test("GameEngine - storage system", () => {
@@ -239,7 +267,7 @@ Deno.test("GameEngine - all players start on Zeus hex", () => {
   const zeusCells = state.map.getCellsByTerrain("zeus");
   assertEquals(zeusCells.length, 1, "There should be exactly one Zeus hex");
 
-  const zeusCell = zeusCells[0];
+  const zeusCell = zeusCells[0]!;
   const zeusPosition = { q: zeusCell.q, r: zeusCell.r };
 
   // Verify all players start on the Zeus hex
@@ -295,7 +323,7 @@ Deno.test("GameEngine - draw oracle card by spending die", () => {
   // We'll verify the behavior through the draw operation itself
 
   // Use the first die color to draw an oracle card
-  const dieColor = player.oracleDice[0];
+  const dieColor = player.oracleDice[0]!;
   const success = engine.drawOracleCard(playerId, dieColor);
 
   assert(success, "Should successfully draw oracle card");
@@ -321,7 +349,7 @@ Deno.test("GameEngine - draw oracle card by spending die", () => {
   const invalidColor = "black";
   if (player.oracleDice.includes(invalidColor)) {
     // Remove the black die to simulate no black die available
-    player.oracleDice = player.oracleDice.filter(c => c !== invalidColor);
+    player.oracleDice = player.oracleDice.filter((c) => c !== invalidColor);
   }
   const fail = engine.drawOracleCard(playerId, invalidColor);
   assert(!fail, "Drawing with invalid die color should fail");

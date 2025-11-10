@@ -14,31 +14,31 @@ Deno.test("StatueSystem - HexMap statue operations", () => {
   const testCity = cities[0];
 
   // Test initial state
-  const initialStatues = map.getStatuesOnCity(testCity.q, testCity.r);
+  const initialStatues = map.getStatuesOnCity(testCity!.q, testCity!.r);
   assertEquals(initialStatues, 3, "Expected 3 statues initially");
 
   // Test removing statues (cities start with 3 statues)
   for (let i = 2; i >= 0; i--) {
     const success = map.removeStatueFromCity(testCity!.q, testCity!.r);
-    const currentStatues = map.getStatuesOnCity(testCity.q, testCity.r);
+    const currentStatues = map.getStatuesOnCity(testCity!.q, testCity!.r);
     assert(success, `Failed to remove statue at count ${i + 1}`);
     assertEquals(currentStatues, i, `Expected ${i} statues after removal`);
   }
 
   // Test removing beyond zero
-  const underflowSuccess = map.removeStatueFromCity(testCity.q, testCity.r);
+  const underflowSuccess = map.removeStatueFromCity(testCity!.q, testCity!.r);
   assert(!underflowSuccess, "Should not allow removing statue below zero");
 
   // Test adding statues back
   for (let i = 1; i <= 3; i++) {
-    const success = map.addStatueToCity(testCity.q, testCity.r);
-    const currentStatues = map.getStatuesOnCity(testCity.q, testCity.r);
+    const success = map.addStatueToCity(testCity!.q, testCity!.r);
+    const currentStatues = map.getStatuesOnCity(testCity!.q, testCity!.r);
     assert(success, `Failed to add statue ${i}`);
     assertEquals(currentStatues, i, `Expected ${i} statues after addition`);
   }
 
   // Test adding beyond limit
-  const overflowSuccess = map.addStatueToCity(testCity.q, testCity.r);
+  const overflowSuccess = map.addStatueToCity(testCity!.q, testCity!.r);
   assert(!overflowSuccess, "Should not allow adding statue beyond limit");
 
   // Test city completion
@@ -140,13 +140,13 @@ Deno.test("StatueSystem - Game Engine statue operations", () => {
   if (anotherEmptySlot !== -1) {
     player.storage[anotherEmptySlot] = {
       type: "statue",
-      color: gameCity.color,
+      color: gameCity!.color,
     };
   } else {
     // If no empty slot, replace the wrong color statue
     player.storage[emptySlotIndex] = {
       type: "statue",
-      color: gameCity.color,
+      color: gameCity!.color,
     };
   }
 
@@ -216,7 +216,7 @@ Deno.test("StatueSystem - City completion state", () => {
 
   // Add statues back one by one
   for (let i = 1; i <= 3; i++) {
-    const success = map.addStatueToCity(testCity.q, testCity.r);
+    const success = map.addStatueToCity(testCity!.q, testCity!.r);
     assert(success, `Failed to add statue ${i}`);
     isComplete = map.isCityComplete(testCity!.q, testCity!.r);
     if (i === 3) {
