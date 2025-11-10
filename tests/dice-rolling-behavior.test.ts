@@ -267,7 +267,7 @@ Deno.test("DiceRolling - next player always has dice ready", () => {
 
     // Next player should have dice ready
     assertEquals(
-      nextPlayer.oracleDice.length,
+      nextPlayer!.oracleDice.length,
       3,
       `Next player should have 3 dice ready at turn ${turn}`,
     );

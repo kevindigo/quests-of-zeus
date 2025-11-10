@@ -47,8 +47,8 @@ Deno.test("Favor System - favor progression pattern", () => {
     const previousPlayer = players[i - 1];
 
     assertEquals(
-      currentPlayer.favor,
-      previousPlayer.favor + 1,
+      currentPlayer!.favor,
+      previousPlayer!.favor + 1,
       `Player ${i + 1} should have 1 more favor than Player ${i}`,
     );
   }
@@ -73,7 +73,7 @@ Deno.test("Spend Die for Favor - basic functionality", () => {
   const initialColorCount =
     player1.oracleDice.filter((color: string) => color === dieColor).length;
 
-  const success = engine.spendDieForFavor(1, dieColor);
+  const success = engine.spendDieForFavor(1, dieColor!);
 
   assert(success, "Should successfully spend die for favor");
   assertEquals(player1.favor, initialFavor + 2, "Should gain 2 favor");
@@ -144,7 +144,7 @@ Deno.test("Spend Die for Favor - turn continues after spending", () => {
 
   // Spend one die for favor
   const dieColor = player1.oracleDice[0];
-  const success = engine.spendDieForFavor(1, dieColor);
+  const success = engine.spendDieForFavor(1, dieColor!);
 
   assert(success, "Should successfully spend die for favor");
 

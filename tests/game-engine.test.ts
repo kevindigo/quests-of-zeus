@@ -132,7 +132,7 @@ Deno.test("GameEngine - movement validation", () => {
   // Check that each move has the required properties
   if (availableMoves.length > 0) {
     const firstMove = availableMoves[0];
-    assert("q" in firstMove, "Move should have q coordinate");
+    assert("q" in firstMove!, "Move should have q coordinate");
     assert("r" in firstMove, "Move should have r coordinate");
     assert("dieColor" in firstMove, "Move should have dieColor property");
   }
