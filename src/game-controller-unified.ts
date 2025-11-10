@@ -148,7 +148,7 @@ export class GameController {
     // Check for win condition
     const winCondition = this.gameEngine.checkWinCondition();
     if (winCondition.gameOver) {
-      this.showGameOver(winCondition.winner!);
+      this.showGameOver(winCondition.winner!.name);
     }
   }
 
