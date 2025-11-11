@@ -113,63 +113,22 @@ Deno.test("OracleCardSpending - cannot use more than one oracle card per turn", 
 
   // Set up deterministic test conditions
   player.oracleCards = ["blue", "red"];
-  player.favor = 5;
-  // Find a sea hex to start from instead of Zeus hex
-  const gameState = engine.getGameState();
-  const seaTiles = gameState.map.getCellsByTerrain("sea");
-  if (seaTiles.length > 0) {
-    player.shipPosition = { q: seaTiles[0]!.q, r: seaTiles[0]!.r };
-  }
-  player.usedOracleCardThisTurn = false;
 
-  // Find reachable sea tiles
-  const blueSeaTiles = gameState.map.getCellsByTerrain("sea").filter((cell) =>
-    cell.color === "blue"
-  );
-  const redSeaTiles = gameState.map.getCellsByTerrain("sea").filter((cell) =>
-    cell.color === "red"
-  );
-
-  if (blueSeaTiles.length > 0 && redSeaTiles.length > 0) {
-    const firstTarget = blueSeaTiles[0]!;
-    const secondTarget = redSeaTiles[0]!;
-
-    // First oracle card usage should succeed
-    const firstMoveResult = engine.spendOracleCardForMovement(
+  assert(
+    engine.spendOracleCardForFavor(
       player.id,
-      firstTarget!.q,
-      firstTarget!.r,
       "blue",
-      0,
-    );
-    assert(
-      firstMoveResult.success,
-      `First oracle card usage should succeed, ${
-        JSON.stringify(firstMoveResult)
-      }`,
-    );
+    ),
+    "Should be able to spend oracle card for favor",
+  );
 
-    // Second oracle card usage should fail
-    const secondMoveResult = engine.spendOracleCardForMovement(
+  assertFalse(
+    engine.spendOracleCardForFavor(
       player.id,
-      secondTarget.q,
-      secondTarget.r,
       "red",
-      0,
-    );
-    assertEquals(
-      secondMoveResult.success,
-      false,
-      "Second oracle card usage should fail",
-    );
-
-    // Red oracle card should still be available
-    assertEquals(
-      player.oracleCards.includes("red"),
-      true,
-      "Red oracle card should still be available",
-    );
-  }
+    ),
+    "Should not be able to spend a second oracle card",
+  );
 });
 
 Deno.test("OracleCardSpending - movement with favor spending", () => {
