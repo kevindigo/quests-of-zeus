@@ -15,6 +15,3 @@ export type {
   StorageSlot,
   TerrainType,
 } from "./types.ts";
-
-// Re-export constants
-export { ALL_COLORS, COLORS } from "./types.ts";
