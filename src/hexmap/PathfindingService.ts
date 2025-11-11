@@ -113,11 +113,8 @@ export class PathfindingService {
         }
 
         // If we haven't visited this cell and it's sea (valid path)
-        // Also allow shallow cells as valid paths since they were originally sea
-        if (
-          !visited.has(cellKey) &&
-          (adjacentCell.terrain === "sea" || adjacentCell.terrain === "shallow")
-        ) {
+        // NOTE: Do NOT allow shallow cells - ships cannot navigate through shallows
+        if (!visited.has(cellKey) && adjacentCell.terrain === "sea") {
           visited.add(cellKey);
           queue.push(adjacentCell);
         }
