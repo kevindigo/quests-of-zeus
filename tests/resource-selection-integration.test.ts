@@ -6,88 +6,10 @@ import {
   assertArrayIncludes,
   assertEquals,
   assertFalse,
+  assertGreater,
 } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import type { CoreColor } from "../src/types.ts";
-
-Deno.test("ResourceSelectionIntegration - die and oracle card can be used in same turn", () => {
-  const engine = new QuestsZeusGameEngine();
-  engine.initializeGame();
-
-  const player = engine.getCurrentPlayer();
-  assertExists(player);
-
-  // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
-  player.oracleCards = ["pink"];
-  player.favor = 5;
-  // Find a sea hex to start from instead of Zeus hex
-  const gameState = engine.getGameState();
-  const seaTiles = gameState.map.getCellsByTerrain("sea");
-  if (seaTiles.length > 0) {
-    player.shipPosition = { q: seaTiles[0]!.q, r: seaTiles[0]!.r };
-  }
-  player.usedOracleCardThisTurn = false;
-
-  // First use an oracle card for movement
-  const pinkSeaTiles = gameState.map.getCellsByTerrain("sea").filter((cell) =>
-    cell.color === "pink"
-  );
-
-  if (pinkSeaTiles.length > 0) {
-    const targetTile = pinkSeaTiles[0];
-    if (!targetTile) {
-      throw new Error("Target tile not found");
-    }
-    const oracleMoveResult = engine.spendOracleCardForMovement(
-      player.id,
-      targetTile.q,
-      targetTile.r,
-      "pink",
-      0,
-    );
-
-    assert(
-      oracleMoveResult.success,
-      `Should be able to move using oracle card, but ${
-        JSON.stringify(oracleMoveResult)
-      }`,
-    );
-
-    // Oracle card should be consumed
-    assertEquals(
-      player.oracleCards.includes("pink"),
-      false,
-      "Pink oracle card should be consumed",
-    );
-
-    // Oracle card usage flag should be set
-    assertEquals(
-      player.usedOracleCardThisTurn,
-      true,
-      "Oracle card usage flag should be set",
-    );
-
-    // Now try to use a die for favor - should still work
-    const initialFavor = player.favor;
-    const dieFavorResult = engine.spendDieForFavor(player.id, "blue");
-
-    assert(
-      dieFavorResult,
-      "Should be able to spend die for favor after using oracle card",
-    );
-
-    // Die should be consumed
-    assertEquals(
-      player.oracleDice.includes("blue"),
-      false,
-      "Blue die should be consumed",
-    );
-
-    // Favor should increase
-    assertEquals(player.favor, initialFavor + 2, "Favor should increase by 2");
-  }
-});
 
 Deno.test("ResourceSelectionIntegration - cannot use multiple oracle cards in same turn", () => {
   const engine = new QuestsZeusGameEngine();
@@ -264,15 +186,18 @@ Deno.test("ResourceSelectionIntegration - combined resource actions in sequence"
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
-  player.oracleCards = ["pink"];
-  player.favor = 5;
-  // Find a sea hex to start from instead of Zeus hex
   const gameState = engine.getGameState();
-  const seaTiles = gameState.map.getCellsByTerrain("sea");
-  if (seaTiles.length > 0) {
-    player.shipPosition = { q: seaTiles[0]!.q, r: seaTiles[0]!.r };
-  }
+  const map = gameState.map;
+  const zeuses = map.getCellsByTerrain("zeus");
+  assertEquals(zeuses.length, 1);
+  const zeus = zeuses[0]!;
+  const seaNeighbors = map.getNeighborsOfType(zeus, map.getGrid(), "sea");
+  assertGreater(seaNeighbors.length, 0);
+  const destination = seaNeighbors[0]!;
+  const color = destination.color as CoreColor;
+
+  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
+  player.oracleCards = [color];
   player.usedOracleCardThisTurn = false;
 
   const initialFavor = player.favor;
@@ -285,63 +210,53 @@ Deno.test("ResourceSelectionIntegration - combined resource actions in sequence"
   assert(dieFavorSuccess, "Should be able to spend die for favor");
 
   // 2. Use oracle card for movement
-  const pinkSeaTiles = gameState.map.getCellsByTerrain("sea").filter((cell) =>
-    cell.color === "pink"
+  const oracleMoveResult = engine.spendOracleCardForMovement(
+    player.id,
+    destination.q,
+    destination.r,
+    color,
+    0,
+  );
+  assert(
+    oracleMoveResult.success,
+    `Should be able to move using oracle card, but ${
+      JSON.stringify(oracleMoveResult)
+    }`,
   );
 
-  if (pinkSeaTiles.length > 0) {
-    const targetTile = pinkSeaTiles[0];
-    if (!targetTile) {
-      throw new Error("Target tile not found");
-    }
-    const oracleMoveResult = engine.spendOracleCardForMovement(
-      player.id,
-      targetTile.q,
-      targetTile.r,
-      "pink",
-      0,
-    );
-    assert(
-      oracleMoveResult.success,
-      `Should be able to move using oracle card, but ${
-        JSON.stringify(oracleMoveResult)
-      }`,
-    );
+  // 3. Spend another die for favor
+  const secondDieFavorSuccess = engine.spendDieForFavor(player.id, "red");
+  assert(
+    secondDieFavorSuccess,
+    "Should be able to spend another die for favor",
+  );
 
-    // 3. Spend another die for favor
-    const secondDieFavorSuccess = engine.spendDieForFavor(player.id, "red");
-    assert(
-      secondDieFavorSuccess,
-      "Should be able to spend another die for favor",
-    );
-
-    // Verify final state
-    assertEquals(
-      player.favor,
-      initialFavor + 4,
-      "Favor should increase by 4 total (2 from each die)",
-    );
-    assertEquals(
-      player.oracleDice.length,
-      initialDieCount - 2,
-      "Two dice should be consumed",
-    );
-    assertEquals(
-      player.oracleCards.length,
-      initialCardCount - 1,
-      "One oracle card should be consumed",
-    );
-    assertEquals(
-      player.usedOracleCardThisTurn,
-      true,
-      "Oracle card usage flag should be set",
-    );
-    assertEquals(
-      player.shipPosition,
-      { q: targetTile.q, r: targetTile.r },
-      "Ship position should be updated",
-    );
-  }
+  // Verify final state
+  assertEquals(
+    player.favor,
+    initialFavor + 4,
+    "Favor should increase by 4 total (2 from each die)",
+  );
+  assertEquals(
+    player.oracleDice.length,
+    initialDieCount - 2,
+    "Two dice should be consumed",
+  );
+  assertEquals(
+    player.oracleCards.length,
+    initialCardCount - 1,
+    "One oracle card should be consumed",
+  );
+  assertEquals(
+    player.usedOracleCardThisTurn,
+    true,
+    "Oracle card usage flag should be set",
+  );
+  assertEquals(
+    player.shipPosition,
+    { q: destination.q, r: destination.r },
+    "Ship position should be updated",
+  );
 });
 
 // Helper function for type safety
