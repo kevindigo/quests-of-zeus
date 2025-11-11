@@ -2,7 +2,7 @@
 // Verifies that users can select either resource type and use it for movement, favor gain, or oracle card drawing
 
 import { assert, assertEquals } from "@std/assert";
-import { GameState, QuestsZeusGameEngine } from "../src/game-engine.ts";
+import { type GameState, QuestsZeusGameEngine } from "../src/game-engine.ts";
 import type { HexCell, HexColor, Player } from "../src/types.ts";
 
 Deno.test("CombinedResourceSpending - select die for movement", () => {
@@ -29,6 +29,7 @@ Deno.test("CombinedResourceSpending - select die for movement", () => {
 
   if (availableMoves.length > 0) {
     const targetMove = availableMoves[0];
+    assert(targetMove);
     const moveResult = engine.moveShip(
       player.id,
       targetMove.q,
@@ -128,6 +129,7 @@ function findAdjacentSeaHex(gameState: GameState, player: Player): HexCell {
     return (candidateCell.terrain == "sea");
   });
   const destination = seaNeighbors[0];
+  assert(destination);
 
   return destination;
 }
@@ -324,6 +326,7 @@ Deno.test("CombinedResourceSpending - resource selection clears when switching t
 
   if (pinkSeaTiles.length > 0) {
     const targetTile = pinkSeaTiles[0];
+    assert(targetTile);
     const oracleMoveResult = engine.spendOracleCardForMovement(
       player.id,
       targetTile.q,

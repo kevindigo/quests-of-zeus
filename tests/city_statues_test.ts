@@ -79,6 +79,7 @@ Deno.test("City Statue Functionality - Complete Cities", () => {
   // Remove statues from one city and verify it's no longer complete
   if (allCities.length > 0) {
     const testCity = allCities[0];
+    assert(testCity);
 
     // Remove one statue
     const removeSuccess = map.removeStatueFromCity(testCity!.q, testCity!.r);

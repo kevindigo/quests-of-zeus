@@ -189,6 +189,7 @@ Deno.test("Movement Rules - Invalid movement attempts", () => {
   const seaCells = gameState.map.getCellsByTerrain("sea");
   if (seaCells.length > 0) {
     const seaCell = seaCells[0];
+    assert(seaCell);
     // Use a color that doesn't match the sea hex
     const wrongColor = seaCell.color === "red" ? "blue" : "red";
     const moveResult = engine.moveShip(
@@ -209,6 +210,7 @@ Deno.test("Movement Rules - Invalid movement attempts", () => {
 
   if (unreachableSeaCells.length > 0) {
     const unreachableCell = unreachableSeaCells[0];
+    assert(unreachableCell);
     const moveResult = engine.moveShip(
       player.id,
       unreachableCell.q,
