@@ -142,7 +142,7 @@ export interface GameState {
   players: Player[];
   currentPlayerIndex: number;
   round: number;
-  phase: "setup" | "oracle" | "action" | "end";
+  phase: "setup" | "action" | "end";
   monsterStrength: number;
   cubeHexes: CubeHex[];
   monsterHexes: MonsterHex[];
