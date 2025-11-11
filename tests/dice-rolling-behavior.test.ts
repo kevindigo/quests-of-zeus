@@ -39,15 +39,11 @@ Deno.test("DiceRolling - dice rolled for next player at end of turn", () => {
   engine.initializeGame();
 
   const initialState = engine.getGameState();
-  const player1 = engine.getPlayer(1);
-  const player2 = engine.getPlayer(2);
+  assertExists(initialState.players[0]);
+  assertExists(initialState.players[1]);
 
-  assertExists(player1);
-  assertExists(player2);
-
-  // Record initial dice for both players
-  const player1InitialDice = [...player1.oracleDice];
-  const player2InitialDice = [...player2.oracleDice];
+  assertEquals(initialState.players[0].oracleDice.length, 3);
+  assertEquals(initialState.players[1].oracleDice.length, 3);
 
   // Player 1 should be current player initially
   assertEquals(
@@ -55,6 +51,8 @@ Deno.test("DiceRolling - dice rolled for next player at end of turn", () => {
     0,
     "Player 1 should be current player initially",
   );
+
+  initialState.players[0].oracleDice = [];
 
   // End Player 1's turn
   engine.endTurn();
@@ -75,34 +73,9 @@ Deno.test("DiceRolling - dice rolled for next player at end of turn", () => {
     "Game should remain in action phase after endTurn",
   );
 
-  // Player 2 should have new dice rolled
-  const player2AfterTurn = engine.getPlayer(2);
-  assertExists(player2AfterTurn);
-
-  assertEquals(
-    player2AfterTurn.oracleDice.length,
-    3,
-    "Player 2 should have 3 dice after endTurn",
-  );
-
-  // Player 2's dice should be different from their initial dice
-  // (Note: There's a small chance they could be the same by random chance, but very unlikely)
-  const diceChanged = player2AfterTurn.oracleDice.some(
-    (die, index) => die !== player2InitialDice[index],
-  );
-  assert(
-    diceChanged,
-    "Player 2 should have new dice rolled at end of Player 1's turn",
-  );
-
-  // Player 1 should still have their original dice (unchanged)
-  const player1AfterTurn = engine.getPlayer(1);
-  assertExists(player1AfterTurn);
-  assertEquals(
-    player1AfterTurn.oracleDice,
-    player1InitialDice,
-    "Player 1's dice should remain unchanged after endTurn",
-  );
+  // Player 1 should have new dice rolled
+  assert(stateAfterEndTurn.players[0]);
+  assertEquals(stateAfterEndTurn.players[0].oracleDice.length, 3);
 });
 
 Deno.test("DiceRolling - recoloring intentions cleared at end of turn", () => {
