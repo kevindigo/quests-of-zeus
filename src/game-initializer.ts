@@ -82,7 +82,7 @@ export class GameInitializer {
       players.push({
         id: i + 1,
         name: `Player ${i + 1}`,
-        color: PLAYER_COLORS[i] as HexColor,
+        color: PLAYER_COLORS[i]!,
         shipPosition: startPosition, // All players start on Zeus hex
         storage: createEmptyStorage(),
         completedQuests: 0,

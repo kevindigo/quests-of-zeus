@@ -32,11 +32,6 @@ export const CORE_COLORS = {
   RED: "red" as CoreColor,
 } as const;
 
-// Color types for hex cells
-export type HexColor =
-  | "none"
-  | CoreColor;
-
 export const ALL_COLORS: CoreColor[] = [
   CORE_COLORS.BLACK,
   CORE_COLORS.PINK,
@@ -46,12 +41,10 @@ export const ALL_COLORS: CoreColor[] = [
   CORE_COLORS.RED,
 ];
 
-export const PLAYER_COLORS = [
-  CORE_COLORS.GREEN,
-  CORE_COLORS.BLUE,
-  CORE_COLORS.YELLOW,
-  CORE_COLORS.RED,
-];
+// Color types for hex cells
+export type HexColor =
+  | "none"
+  | CoreColor;
 
 export interface HexCell {
   // Coordinates using axial coordinate system for hex grids
@@ -68,6 +61,28 @@ export interface HexCell {
 
 import type { HexMap } from "./hexmap.ts";
 
+export type PlayerColorName =
+  | "blue"
+  | "yellow"
+  | "green"
+  | "red";
+
+export const PLAYER_COLOR_NAMES = {
+  BLACK: "black" as PlayerColorName,
+  PINK: "pink" as PlayerColorName,
+  BLUE: "blue" as PlayerColorName,
+  YELLOW: "yellow" as PlayerColorName,
+  GREEN: "green" as PlayerColorName,
+  RED: "red" as PlayerColorName,
+} as const;
+
+export const PLAYER_COLORS = [
+  PLAYER_COLOR_NAMES.GREEN,
+  PLAYER_COLOR_NAMES.BLUE,
+  PLAYER_COLOR_NAMES.YELLOW,
+  PLAYER_COLOR_NAMES.RED,
+];
+
 export interface StorageSlot {
   type: "cube" | "statue" | "empty";
   color: HexColor;
@@ -76,7 +91,7 @@ export interface StorageSlot {
 export interface Player {
   id: number;
   name: string;
-  color: HexColor;
+  color: PlayerColorName;
   shipPosition: { q: number; r: number };
   storage: [StorageSlot, StorageSlot]; // 2 storage slots, each can hold 1 cube or 1 statue
   completedQuests: number;
