@@ -238,16 +238,9 @@ Deno.test("CombinedResourceSpending - cannot use both die and oracle card in sam
   // Set up deterministic test conditions
   const gameState = engine.getGameState();
 
-  // Find a sea hex to start from instead of Zeus hex
-  const seaTiles = gameState.map.getCellsByTerrain("sea");
-  if (seaTiles.length > 0) {
-    player.shipPosition = { q: seaTiles[0]!.q, r: seaTiles[0]!.r };
-  }
-  const originCell = gameState.map.getCell(
-    player.shipPosition.q,
-    player.shipPosition.r,
-  );
-  assert(originCell, "Ship should have been placed on a valid sea hex");
+  const shipAt = player.shipPosition;
+  const originCell = gameState.map.getCell(shipAt.q, shipAt.r);
+  assert(originCell);
   const destination = findAdjacentSeaHex(gameState, player);
 
   player.oracleDice = [originCell.color] as CoreColor[];
