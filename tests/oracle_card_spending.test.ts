@@ -140,6 +140,7 @@ Deno.test("OracleCardSpending - movement with favor spending", () => {
   assertExists(player);
 
   // Set up deterministic test conditions
+  player.oracleCards = ["black", "pink", "blue", "yellow", "green", "red"];
   player.favor = 1;
 
   player.usedOracleCardThisTurn = false;
@@ -155,11 +156,13 @@ Deno.test("OracleCardSpending - movement with favor spending", () => {
     const favorCandidates = candidates.filter((candidate) => {
       return candidate.favorCost > 0;
     });
-    if (favorCandidates.length > 0) {
+    console.log(
+      `DEBUG: ${color} found ${candidates.length} total, ${favorCandidates.length} needing favor`,
+    );
+    if (!foundMove && favorCandidates.length > 0) {
       foundMove = true;
       const move = favorCandidates[0]!;
       const initialFavor = player.favor;
-      player.oracleCards = [color];
 
       const moveResult = engine.spendOracleCardForMovement(
         player.id,
@@ -179,9 +182,9 @@ Deno.test("OracleCardSpending - movement with favor spending", () => {
 
       // Oracle card should be consumed
       assertEquals(
-        player.oracleCards.includes("blue"),
+        player.oracleCards.includes(color),
         false,
-        "Blue oracle card should be consumed",
+        "${color} oracle card should have been consumed",
       );
 
       // Oracle card usage flag should be set
@@ -194,7 +197,7 @@ Deno.test("OracleCardSpending - movement with favor spending", () => {
     }
   });
 
-  assert(foundMove, "Must have found at least one legal favor move");
+  assert(foundMove, "There should be at least one legal favor move");
 });
 
 Deno.test("OracleCardSpending - cannot use oracle card without having it", () => {
