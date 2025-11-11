@@ -129,7 +129,12 @@ function findAdjacentSeaHex(gameState: GameState, player: Player): HexCell {
     return (candidateCell.terrain == "sea");
   });
   const destination = seaNeighbors[0];
-  assert(destination);
+  assert(
+    destination,
+    `No sea neighbors found from ${JSON.stringify(player.shipPosition)} among ${
+      JSON.stringify(neighbors)
+    }`,
+  );
 
   return destination;
 }
