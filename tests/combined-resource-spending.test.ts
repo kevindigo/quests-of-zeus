@@ -299,6 +299,42 @@ Deno.test("CombinedResourceSpending - resource selection clears when switching t
   controller.clearResourceSelection();
   assertEquals(controller.getSelectedDieColor(), null);
   assertEquals(controller.getSelectedCardColor(), null);
+
+  assert(controller.selectDieColor("red"));
+  assertEquals(
+    controller.getSelectedDieColor(),
+    "red",
+    "Expected die to be selected",
+  );
+  assertEquals(
+    controller.getSelectedCardColor(),
+    null,
+    "Expected card to be cleared",
+  );
+
+  assert(controller.selectCardColor("blue"));
+  assertEquals(
+    controller.getSelectedDieColor(),
+    null,
+    "Expected die to be cleared",
+  );
+  assertEquals(
+    controller.getSelectedCardColor(),
+    "blue",
+    "Expected card to be selected",
+  );
+
+  assert(controller.selectDieColor("red"));
+  assertEquals(
+    controller.getSelectedDieColor(),
+    "red",
+    "Expected die to be selected again",
+  );
+  assertEquals(
+    controller.getSelectedCardColor(),
+    null,
+    "Expected card to be cleared again",
+  );
 });
 
 Deno.test("CombinedResourceSpending - favor spending with both resource types", () => {

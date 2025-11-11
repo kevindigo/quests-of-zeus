@@ -57,6 +57,28 @@ export class GameController {
     return this.selectedOracleCardColor;
   }
 
+  public selectDieColor(color: CoreColor): boolean {
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    if (!currentPlayer.oracleDice.includes(color)) {
+      return false;
+    }
+
+    this.selectedDieColor = color;
+    this.selectedOracleCardColor = null;
+    return true;
+  }
+
+  public selectCardColor(color: CoreColor): boolean {
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    if (!currentPlayer.oracleCards.includes(color)) {
+      return false;
+    }
+
+    this.selectedOracleCardColor = color;
+    this.selectedDieColor = null;
+    return true;
+  }
+
   private clearResourceSelectionAndUpdateDisplay(): void {
     this.clearResourceSelection();
     this.showMessage("Resource selection cleared");
@@ -67,14 +89,8 @@ export class GameController {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     console.log(`selectResource called: ${resourceType}, ${resourceColor}`);
 
-    // Always clear both selections first to ensure mutual exclusivity
-    this.selectedDieColor = null;
-    this.selectedOracleCardColor = null;
-
     if (resourceType === "die") {
-      // Check if the player has this die
-      if (currentPlayer.oracleDice.includes(resourceColor)) {
-        this.selectedDieColor = resourceColor;
+      if (this.selectDieColor(resourceColor)) {
         this.showMessage(`Selected ${resourceColor} die`);
         this.renderGameState();
       } else {
@@ -84,9 +100,7 @@ export class GameController {
         );
       }
     } else if (resourceType === "card") {
-      // Check if the player has this oracle card
-      if (currentPlayer.oracleCards.includes(resourceColor)) {
-        this.selectedOracleCardColor = resourceColor;
+      if (this.selectCardColor(resourceColor)) {
         this.showMessage(`Selected ${resourceColor} oracle card`);
         this.renderGameState();
       } else {
