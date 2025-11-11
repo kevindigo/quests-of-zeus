@@ -194,7 +194,7 @@ Deno.test("OracleCardSpending - movement with favor spending", () => {
     }
   });
 
-  assert(foundMove);
+  assert(foundMove, "Must have found at least one legal favor move");
 });
 
 Deno.test("OracleCardSpending - cannot use oracle card without having it", () => {
