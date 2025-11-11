@@ -181,8 +181,6 @@ export class TerrainPlacementManager {
         // Assign a random color to the city
         const color = shuffledColors[cornerDirection] || "none";
         cell.color = color;
-        // Initialize statues counter for this city to 3 (all statues start on cities)
-        cell.statues = 3;
 
         // After placing city, set 2 random neighboring hexes to sea
         this.setRandomNeighborsToSea(grid, placementQ, placementR);
@@ -198,8 +196,6 @@ export class TerrainPlacementManager {
           // Assign a random color to the city
           const color = shuffledColors[cornerDirection] || "none";
           cornerCell.color = color;
-          // Initialize statues counter for this city to 3 (all statues start on cities)
-          cornerCell.statues = 3;
 
           // After placing city, set 2 random neighboring hexes to sea
           this.setRandomNeighborsToSea(grid, cornerCoords.q, cornerCoords.r);

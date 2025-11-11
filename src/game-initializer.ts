@@ -3,6 +3,7 @@ import type { HexCell } from "./game-engine.ts";
 import { HexMap } from "./hexmap.ts";
 import { Player } from "./Player.ts";
 import {
+  type CityHex,
   COLOR_WHEEL,
   type CoreColor,
   type CubeHex,
@@ -48,6 +49,8 @@ export class GameInitializer {
     // Initialize monster hexes with monster distribution
     const monsterHexes = this.initializeMonsters(map, players.length);
 
+    const cityHexes = this.initializeCities(map);
+
     return {
       map,
       players,
@@ -57,6 +60,7 @@ export class GameInitializer {
       monsterStrength: 3,
       cubeHexes,
       monsterHexes,
+      cityHexes,
     };
   }
 
@@ -230,6 +234,20 @@ export class GameInitializer {
     }
 
     return monsterHexes;
+  }
+
+  private initializeCities(map: HexMap): CityHex[] {
+    const cityHexes: CityHex[] = [];
+
+    // Get all monster hexes from the map
+    const cityCells = map.getCellsByTerrain("city");
+
+    // Check if we have exactly 6 monster hexes as expected
+    if (cityCells.length !== 6) {
+      console.warn(`Expected 6 city hexes but found ${cityCells.length}`);
+    }
+
+    return cityHexes;
   }
 
   /**

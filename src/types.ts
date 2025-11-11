@@ -56,9 +56,6 @@ export interface HexCell {
   // Cell characteristics
   terrain: TerrainType;
   color: HexColor;
-
-  // City-specific properties
-  statues?: number; // Number of statues placed on this city (0-3)
 }
 
 export type PlayerColorName =
@@ -98,6 +95,12 @@ export interface MonsterHex {
   q: number;
   r: number;
   monsterColors: HexColor[]; // Array of monster colors on this hex (no duplicates, max 2 per hex)
+}
+
+export interface CityHex {
+  q: number;
+  r: number;
+  statues: number;
 }
 
 export interface MoveShipResult {
@@ -146,4 +149,5 @@ export interface GameState {
   monsterStrength: number;
   cubeHexes: CubeHex[];
   monsterHexes: MonsterHex[];
+  cityHexes: CityHex[];
 }

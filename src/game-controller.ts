@@ -3,10 +3,10 @@
 
 import { QuestsZeusGameEngine } from "./game-engine.ts";
 import { HexMapSVG } from "./hexmap-svg.ts";
-import type { HexColor } from "./types.ts";
 import type {
   CubeHex,
   GameState,
+  HexColor,
   MonsterHex,
   MoveShipResult,
   Player,
@@ -638,19 +638,7 @@ export class GameController {
               `<button id="completeCloudQuest" class="action-btn">Complete Cloud Quest</button>`;
           }
           if (currentCell?.terrain === "city") {
-            const canPlaceStatue = this.gameEngine.canPlaceStatueOnCity(
-              currentPlayer.id,
-            );
-            if (canPlaceStatue) {
-              actions +=
-                `<button id="placeStatue" class="action-btn">Place Statue on City</button>`;
-            } else {
-              actions += `<p>Cannot place statue: ${
-                currentCell.statues === 3
-                  ? "City already has all 3 statues"
-                  : "No statue of city's color in storage"
-              }</p>`;
-            }
+            // not implemented yet
           }
         } else if (this.selectedOracleCardColor) {
           // Oracle card is selected - show available actions
@@ -1162,29 +1150,6 @@ export class GameController {
       this.showMessage(
         "Cannot complete cloud quest here or missing required statue",
       );
-    }
-  }
-
-  private placeStatueOnCity(): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
-    const success = this.gameEngine.placeStatueOnCity(currentPlayer.id);
-    if (success) {
-      const currentCell = this.gameEngine.getGameState().map.getCell(
-        currentPlayer.shipPosition.q,
-        currentPlayer.shipPosition.r,
-      );
-      if (currentCell) {
-        this.showMessage(
-          `Statue placed on city! (${currentCell.statues}/3 statues)`,
-        );
-      } else {
-        this.showMessage("Statue placed on city!");
-      }
-      // Clear selected die after successful action
-      this.selectedDieColor = null;
-      this.renderGameState();
-    } else {
-      this.showMessage("Cannot place statue on this city");
     }
   }
 

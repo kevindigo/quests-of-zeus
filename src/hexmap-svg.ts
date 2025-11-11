@@ -1,18 +1,22 @@
 // SVG Hex Map Generator for Quests of Zeus
 // Generates an SVG representation of the hex map
 
-import type { HexCell, HexColor, TerrainType } from "./types.ts";
-import type { CubeHex, MonsterHex } from "./types.ts";
 import {
   generateCityIcon,
   generateCloudsIcon,
   generateCubesIcon,
   generateFoundationsIcon,
   generateMonsterIcon,
-  generateStatueIcons,
   generateTempleIcon,
   generateZeusIcon,
 } from "./icons-svg.ts";
+import type {
+  CubeHex,
+  HexCell,
+  HexColor,
+  MonsterHex,
+  TerrainType,
+} from "./types.ts";
 
 export interface HexMapSVGOptions {
   cellSize?: number;
@@ -174,21 +178,22 @@ export class HexMapSVG {
       });
 
       // Add statue icons if there are statues on this city
-      // Debug: Log statue information for troubleshooting
-      console.log(
-        `City at (${cell.q}, ${cell.r}): statues = ${cell.statues}, color = ${cell.color}`,
-      );
-      if (cell.statues !== undefined && cell.statues > 0) {
-        console.log(
-          `  Generating ${cell.statues} statue(s) for city at (${cell.q}, ${cell.r})`,
-        );
-        cellContent += generateStatueIcons({
-          centerX,
-          centerY,
-          cellSize,
-          hexColor: this.getStrokeColor(cell.color),
-        }, cell.statues);
-      }
+
+      // Not implemented yet
+      // console.log(
+      //   `City at (${cell.q}, ${cell.r}): statues = ${cell.statues}, color = ${cell.color}`,
+      // );
+      // if (cell.statues !== undefined && cell.statues > 0) {
+      //   console.log(
+      //     `  Generating ${cell.statues} statue(s) for city at (${cell.q}, ${cell.r})`,
+      //   );
+      //   cellContent += generateStatueIcons({
+      //     centerX,
+      //     centerY,
+      //     cellSize,
+      //     hexColor: this.getStrokeColor(cell.color),
+      //   }, cell.statues);
+      // }
     }
 
     // Add monster icon for monster hexes

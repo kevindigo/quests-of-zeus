@@ -128,14 +128,6 @@ export class QuestsZeusGameEngine {
     return success;
   }
 
-  public placeStatueOnCity(playerId: number): boolean {
-    this.ensureInitialized();
-    const player = this.getValidPlayer(playerId);
-    const success = this.playerActions!.placeStatueOnCity(player);
-    if (success) this.endTurn();
-    return success;
-  }
-
   public spendDieForFavor(playerId: number, dieColor: CoreColor): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
@@ -343,10 +335,9 @@ export class QuestsZeusGameEngine {
     return this.oracleSystem!.clearRecolorIntentionForCard(player, cardColor);
   }
 
-  public canPlaceStatueOnCity(playerId: number): boolean {
+  public canPlaceStatueOnCity(_playerId: number): boolean {
     this.ensureInitialized();
-    const player = this.getValidPlayer(playerId);
-    return this.playerActions!.canPlaceStatueOnCity(player);
+    return false;
   }
 
   private completeQuestType(

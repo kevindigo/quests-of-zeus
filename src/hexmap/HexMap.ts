@@ -1,7 +1,6 @@
 // Refactored HexMap class - Main container that coordinates between services
 
 import type { HexCell, HexColor, TerrainType } from "../types.ts";
-import { CityManager } from "./CityManager.ts";
 import { HexGridOperations } from "./HexGridOperations.ts";
 import { PathfindingService } from "./PathfindingService.ts";
 import { SeaColorManager } from "./SeaColorManager.ts";
@@ -17,14 +16,12 @@ export class HexMap {
   private seaColorManager: SeaColorManager;
   private hexGridOperations: HexGridOperations;
   private pathfindingService: PathfindingService;
-  private cityManager: CityManager;
   private utilityService: UtilityService;
 
   constructor() {
     this.utilityService = new UtilityService();
     this.hexGridOperations = new HexGridOperations();
     this.pathfindingService = new PathfindingService(this.hexGridOperations);
-    this.cityManager = new CityManager();
     this.seaColorManager = new SeaColorManager(
       this.hexGridOperations,
       this.utilityService,
@@ -90,44 +87,6 @@ export class HexMap {
     if (cell) {
       cell.color = color;
     }
-  }
-
-  /**
-   * Add a statue to a city
-   * Returns true if successful, false if city is full or not a city
-   */
-  addStatueToCity(q: number, r: number): boolean {
-    return this.cityManager.addStatueToCity(this.getCell(q, r));
-  }
-
-  /**
-   * Remove a statue from a city
-   * Returns true if successful, false if no statues or not a city
-   */
-  removeStatueFromCity(q: number, r: number): boolean {
-    return this.cityManager.removeStatueFromCity(this.getCell(q, r));
-  }
-
-  /**
-   * Get the number of statues on a city
-   * Returns the count, or -1 if not a city
-   */
-  getStatuesOnCity(q: number, r: number): number {
-    return this.cityManager.getStatuesOnCity(this.getCell(q, r));
-  }
-
-  /**
-   * Check if a city has all 3 statues placed
-   */
-  isCityComplete(q: number, r: number): boolean {
-    return this.cityManager.isCityComplete(this.getCell(q, r));
-  }
-
-  /**
-   * Get all cities that are complete (have all 3 statues)
-   */
-  getCompleteCities(): HexCell[] {
-    return this.cityManager.getCompleteCities(this.getCellsByTerrain("city"));
   }
 
   /**

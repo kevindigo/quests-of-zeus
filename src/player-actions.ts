@@ -376,51 +376,6 @@ export class PlayerActions {
   }
 
   /**
-   * Place a statue on a city
-   */
-  public placeStatueOnCity(player: Player): boolean {
-    if (this.state.phase !== "action") {
-      return false;
-    }
-
-    // Check if player is on a city hex
-    const currentCell = this.state.map.getCell(
-      player.shipPosition.q,
-      player.shipPosition.r,
-    );
-    if (!currentCell || currentCell.terrain !== "city") {
-      return false;
-    }
-
-    // Check if city already has all 3 statues
-    if (currentCell.statues === 3) {
-      return false;
-    }
-
-    // TEMPORARY: Skip statue color check to make tests pass while statue functionality is being implemented
-    // TODO: Remove this temporary fix once statue placement is fully implemented
-    const requiredColor = currentCell.color;
-
-    // TEMPORARY: Always succeed and add statue to city
-    const success = this.state.map.addStatueToCity(
-      currentCell.q,
-      currentCell.r,
-    );
-    if (success) {
-      // TEMPORARY: Simulate statue consumption from storage for testing
-      // Find and remove a statue of the city's color from storage
-      const statueSlotIndex = player.storage.findIndex((slot) =>
-        slot.type === "statue" && slot.color === requiredColor
-      );
-      if (statueSlotIndex !== -1) {
-        player.storage[statueSlotIndex] = { type: "empty", color: "none" };
-      }
-    }
-
-    return success;
-  }
-
-  /**
    * Spend any die to gain 2 favor during the action phase
    */
   public spendDieForFavor(player: Player, dieColor: CoreColor): boolean {
@@ -464,37 +419,5 @@ export class PlayerActions {
     player.favor += 2;
 
     return true;
-  }
-
-  /**
-   * Check if a player can place a statue on the current city
-   */
-  public canPlaceStatueOnCity(player: Player): boolean {
-    if (this.state.phase !== "action") {
-      return false;
-    }
-
-    // Check if player is on a city hex
-    const currentCell = this.state.map.getCell(
-      player.shipPosition.q,
-      player.shipPosition.r,
-    );
-    if (!currentCell || currentCell.terrain !== "city") {
-      return false;
-    }
-
-    // Check if city already has all 3 statues
-    if (currentCell.statues === 3) {
-      return false;
-    }
-
-    // TEMPORARY: Always return true to make tests pass while statue functionality is being implemented
-    // TODO: Remove this temporary fix once statue placement is fully implemented
-    return true;
-
-    // Original logic (commented out for now):
-    // Check if player has a statue of the city's color
-    // const requiredColor = currentCell.color;
-    // return hasStatueOfColor(player, requiredColor);
   }
 }
