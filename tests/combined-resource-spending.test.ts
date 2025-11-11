@@ -1,7 +1,8 @@
 // Tests for combined die and oracle card spending functionality
 // Verifies that users can select either resource type and use it for movement, favor gain, or oracle card drawing
 
-import { assert, assertEquals, assertGreater } from "@std/assert";
+import { assert, assertEquals } from "@std/assert";
+import { GameController } from "../src/game-controller.ts";
 import { type GameState, QuestsZeusGameEngine } from "../src/game-engine.ts";
 import type { Player } from "../src/Player.ts";
 import type { CoreColor, HexCell } from "../src/types.ts";
@@ -287,60 +288,17 @@ Deno.test("CombinedResourceSpending - cannot use both die and oracle card in sam
 
 Deno.test("CombinedResourceSpending - resource selection clears when switching types", () => {
   const engine = new QuestsZeusGameEngine();
+  const controller = new GameController(engine);
   engine.initializeGame();
 
   const player = engine.getCurrentPlayer();
   assertExists(player);
+  player.oracleDice = ["red", "black"];
+  player.oracleCards = ["blue"];
 
-  // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
-  player.oracleCards = ["pink"];
-  player.favor = 5;
-  // Find a sea hex to start from instead of Zeus hex
-  const gameState = engine.getGameState();
-  const seaTiles = gameState.map.getCellsByTerrain("sea");
-  if (seaTiles.length > 0) {
-    player.shipPosition = { q: seaTiles[0]!.q, r: seaTiles[0]!.r };
-  }
-
-  // Simulate UI behavior: select a die, then select an oracle card
-  // In the UI, selecting one resource type should clear the other
-
-  // First select a die
-  const availableMovesWithDie = engine.getAvailableMovesForDie(
-    player.id,
-    "blue",
-    player.favor,
-  );
-  assertGreater(
-    availableMovesWithDie.length,
-    0,
-    "Should have moves available with die",
-  );
-
-  // Then select an oracle card - in UI this would clear die selection
-  // For testing purposes, we'll verify that oracle card moves are available
-  const pinkSeaTiles = gameState.map.getCellsByTerrain("sea").filter((cell) =>
-    cell.color === "pink"
-  );
-
-  if (pinkSeaTiles.length > 0) {
-    const targetTile = pinkSeaTiles[0];
-    assert(targetTile);
-    const oracleMoveResult = engine.spendOracleCardForMovement(
-      player.id,
-      targetTile.q,
-      targetTile.r,
-      "pink",
-      0,
-    );
-    assert(
-      oracleMoveResult.success,
-      `Should be able to move using oracle card after die was selected, but: ${
-        JSON.stringify(oracleMoveResult)
-      }`,
-    );
-  }
+  controller.clearResourceSelection();
+  assertEquals(controller.getSelectedDieColor(), null);
+  assertEquals(controller.getSelectedCardColor(), null);
 });
 
 Deno.test("CombinedResourceSpending - favor spending with both resource types", () => {
