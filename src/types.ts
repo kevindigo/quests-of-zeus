@@ -144,7 +144,6 @@ export interface GameState {
   round: number;
   phase: "setup" | "oracle" | "action" | "end";
   monsterStrength: number;
-  weatherDice: HexColor[];
   cubeHexes: CubeHex[];
   monsterHexes: MonsterHex[];
 }

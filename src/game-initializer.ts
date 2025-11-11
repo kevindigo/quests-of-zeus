@@ -55,7 +55,6 @@ export class GameInitializer {
       round: 1,
       phase: "action", // Start directly in action phase since dice are already rolled
       monsterStrength: 3,
-      weatherDice: [],
       cubeHexes,
       monsterHexes,
     };
