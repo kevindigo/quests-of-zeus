@@ -4,16 +4,16 @@
 export { QuestsZeusGameEngine } from "./game-engine-core.ts";
 
 // Re-export all the types for backward compatibility
-export type { 
-  HexColor, 
-  Player, 
-  CubeHex, 
-  MonsterHex, 
-  MoveShipResult, 
+export type {
+  CubeHex,
   GameState,
-  StorageSlot,
   HexCell,
-  TerrainType
+  HexColor,
+  MonsterHex,
+  MoveShipResult,
+  Player,
+  StorageSlot,
+  TerrainType,
 } from "./types.ts";
 
 // Re-export constants

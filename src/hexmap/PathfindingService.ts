@@ -1,6 +1,6 @@
 // PathfindingService - Pathfinding and connectivity analysis
 
-import type { TerrainType, HexCell } from "../types.ts";
+import type { HexCell, TerrainType } from "../types.ts";
 import type { HexGridOperations } from "./HexGridOperations.ts";
 
 export class PathfindingService {
@@ -114,7 +114,10 @@ export class PathfindingService {
 
         // If we haven't visited this cell and it's sea (valid path)
         // Also allow shallow cells as valid paths since they were originally sea
-        if (!visited.has(cellKey) && (adjacentCell.terrain === "sea" || adjacentCell.terrain === "shallow")) {
+        if (
+          !visited.has(cellKey) &&
+          (adjacentCell.terrain === "sea" || adjacentCell.terrain === "shallow")
+        ) {
           visited.add(cellKey);
           queue.push(adjacentCell);
         }
@@ -133,7 +136,11 @@ export class PathfindingService {
     grid: HexCell[][],
     terrainType: TerrainType,
   ): boolean {
-    const neighbors = this.hexGridOperations.getNeighborsFromGrid(cell.q, cell.r, grid);
+    const neighbors = this.hexGridOperations.getNeighborsFromGrid(
+      cell.q,
+      cell.r,
+      grid,
+    );
     return neighbors.some((neighbor) =>
       neighbor && neighbor.terrain === terrainType
     );
@@ -147,7 +154,11 @@ export class PathfindingService {
     grid: HexCell[][],
     terrainType: TerrainType,
   ): HexCell[] {
-    const neighbors = this.hexGridOperations.getNeighborsFromGrid(cell.q, cell.r, grid);
+    const neighbors = this.hexGridOperations.getNeighborsFromGrid(
+      cell.q,
+      cell.r,
+      grid,
+    );
     return neighbors.filter((neighbor) =>
       neighbor && neighbor.terrain === terrainType
     );

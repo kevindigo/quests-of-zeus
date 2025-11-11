@@ -1,6 +1,7 @@
 # Instructions for AI
 
 ## Rules - always follow these!
+
 - Never consider a task done until `deno test` passes
 - Unit tests should not use console.log
 - Manually-run tests and debug scripts should not be in the tests/ folder

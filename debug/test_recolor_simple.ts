@@ -9,15 +9,17 @@ function testRecolorSimple() {
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
-  const player = gameEngine.getCurrentPlayer() as Player & { recoloredDice?: any };
-  
+  const player = gameEngine.getCurrentPlayer() as Player & {
+    recoloredDice?: any;
+  };
+
   // Set up specific test conditions
   player.oracleDice = ["black", "pink", "blue"];
   player.favor = 5;
-  
+
   console.log(`Initial dice: ${player.oracleDice.join(", ")}`);
   console.log(`Initial favor: ${player.favor}\n`);
-  
+
   // Test 1: Set recoloring intention for black die with 1 favor (should become pink when used)
   console.log("Test 1: Set recoloring intention black → pink (1 favor)");
   const result1 = gameEngine.setRecolorIntention(player.id, "black", 1);

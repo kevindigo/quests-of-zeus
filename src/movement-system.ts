@@ -1,5 +1,5 @@
 // Movement and reachability logic for Quests of Zeus
-import type { HexColor, HexCell } from "./types.ts";
+import type { HexCell, HexColor } from "./types.ts";
 import type { HexMap } from "./hexmap.ts";
 
 export class MovementSystem {
@@ -77,7 +77,7 @@ export class MovementSystem {
     targetR: number,
     dieColor: HexColor,
     movementRange: number,
-    targetCell: HexCell | null
+    targetCell: HexCell | null,
   ): { isValid: boolean; error?: string } {
     if (!targetCell) {
       return { isValid: false, error: "Target cell does not exist" };
@@ -85,12 +85,18 @@ export class MovementSystem {
 
     // Rule 1: You can only move to sea spaces
     if (targetCell.terrain !== "sea") {
-      return { isValid: false, error: `Cannot move to ${targetCell.terrain} terrain` };
+      return {
+        isValid: false,
+        error: `Cannot move to ${targetCell.terrain} terrain`,
+      };
     }
 
     // Rule 3: Can only land on sea hexes of the color of the die they used
     if (targetCell.color !== dieColor) {
-      return { isValid: false, error: `Target hex is ${targetCell.color}, but die is ${dieColor}` };
+      return {
+        isValid: false,
+        error: `Target hex is ${targetCell.color}, but die is ${dieColor}`,
+      };
     }
 
     // Check if the target is reachable within the movement range on sea tiles
@@ -105,7 +111,10 @@ export class MovementSystem {
     );
 
     if (!isReachable) {
-      return { isValid: false, error: `Target is not reachable within ${movementRange} movement range` };
+      return {
+        isValid: false,
+        error: `Target is not reachable within ${movementRange} movement range`,
+      };
     }
 
     return { isValid: true };

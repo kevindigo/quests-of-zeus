@@ -16,7 +16,9 @@ if (!targetCell) {
   Deno.exit(1);
 }
 
-console.log(`Target cell: (${targetCell.q}, ${targetCell.r}) - terrain: ${targetCell.terrain}`);
+console.log(
+  `Target cell: (${targetCell.q}, ${targetCell.r}) - terrain: ${targetCell.terrain}`,
+);
 
 // Check if it's actually a shallow cell
 if (targetCell.terrain !== "shallow") {
@@ -40,12 +42,16 @@ const allNeighbors = hexMap.getNeighbors(targetCell.q, targetCell.r);
 let allConstraintsSatisfied = true;
 
 for (const neighbor of allNeighbors) {
-  console.log(`   Neighbor (${neighbor.q}, ${neighbor.r}): terrain = ${neighbor.terrain}, color = ${neighbor.color}`);
-  
+  console.log(
+    `   Neighbor (${neighbor.q}, ${neighbor.r}): terrain = ${neighbor.terrain}, color = ${neighbor.color}`,
+  );
+
   if (neighbor.terrain === "sea") {
     // For sea neighbors: check if they can reach zeus
     const canReachZeus = hexMap.canReachZeus(neighbor, grid);
-    console.log(`     - Sea neighbor can reach zeus: ${canReachZeus} (should be true)`);
+    console.log(
+      `     - Sea neighbor can reach zeus: ${canReachZeus} (should be true)`,
+    );
     if (!canReachZeus) {
       allConstraintsSatisfied = false;
       console.log(`     - FAIL: Sea neighbor cannot reach zeus!`);
@@ -53,7 +59,9 @@ for (const neighbor of allNeighbors) {
   } else if (neighbor.terrain !== "shallow") {
     // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
     const hasSeaNeighbor = hexMap.hasNeighborOfType(neighbor, grid, "sea");
-    console.log(`     - Land neighbor has sea neighbor: ${hasSeaNeighbor} (should be true)`);
+    console.log(
+      `     - Land neighbor has sea neighbor: ${hasSeaNeighbor} (should be true)`,
+    );
     if (!hasSeaNeighbor) {
       allConstraintsSatisfied = false;
       console.log(`     - FAIL: Land neighbor has no sea neighbors!`);
@@ -70,17 +78,25 @@ console.log("\n--- Detailed Pathfinding Analysis ---");
 for (const neighbor of allNeighbors) {
   if (neighbor.terrain === "sea") {
     console.log(`\nSea neighbor at (${neighbor.q}, ${neighbor.r}):`);
-    
+
     // Check if it can reach zeus normally
     const normalReach = hexMap.canReachZeus(neighbor, grid);
     console.log(`   Normal canReachZeus: ${normalReach}`);
-    
+
     // Check if it can reach zeus when (3, 0) is excluded
-    const reachWithoutCandidate = hexMap.canReachZeusFromSeaNeighbor(neighbor, targetCell, grid);
-    console.log(`   canReachZeusFromSeaNeighbor (excluding (3,0)): ${reachWithoutCandidate}`);
-    
+    const reachWithoutCandidate = hexMap.canReachZeusFromSeaNeighbor(
+      neighbor,
+      targetCell,
+      grid,
+    );
+    console.log(
+      `   canReachZeusFromSeaNeighbor (excluding (3,0)): ${reachWithoutCandidate}`,
+    );
+
     if (!reachWithoutCandidate) {
-      console.log(`   FAIL: This sea neighbor cannot reach zeus if (3,0) becomes shallow!`);
+      console.log(
+        `   FAIL: This sea neighbor cannot reach zeus if (3,0) becomes shallow!`,
+      );
     }
   }
 }

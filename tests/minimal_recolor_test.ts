@@ -1,4 +1,7 @@
-import { assert, assertEquals } from "https://deno.land/std@0.178.0/testing/asserts.ts";
+import {
+  assert,
+  assertEquals,
+} from "https://deno.land/std@0.178.0/testing/asserts.ts";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import type { HexColor } from "../src/types.ts";
 
@@ -22,13 +25,21 @@ Deno.test("Minimal recolor test", () => {
 
   // Set a high recoloring cost that would make some moves unaffordable
   player.favor = 3; // Reduce favor
-  const highRecolorSuccess = gameEngine.setRecolorIntention(player.id, "black", 2); // 2 favor recoloring cost
+  const highRecolorSuccess = gameEngine.setRecolorIntention(
+    player.id,
+    "black",
+    2,
+  ); // 2 favor recoloring cost
 
   // Check recolor intention was set successfully
   assert(highRecolorSuccess);
   assertEquals(player.favor, 3);
 
-  const movesWithHighRecolor = gameEngine.getAvailableMovesForDie(player.id, "black", player.favor);
+  const movesWithHighRecolor = gameEngine.getAvailableMovesForDie(
+    player.id,
+    "black",
+    player.favor,
+  );
 
   // Check moves validity
   for (const move of movesWithHighRecolor) {
@@ -37,9 +48,7 @@ Deno.test("Minimal recolor test", () => {
 
     assert(
       canAfford,
-      `Move to (${move.q}, ${move.r}) with total cost ${totalCost} is not affordable with player favor ${player.favor}`
+      `Move to (${move.q}, ${move.r}) with total cost ${totalCost} is not affordable with player favor ${player.favor}`,
     );
   }
-
-
 });

@@ -33,7 +33,11 @@ console.log("\nAvailable moves with favor spending by die color:");
 
 for (const dieColor of player1.oracleDice) {
   console.log(`\n  Moves for ${dieColor} die:`);
-  const movesWithFavor = engine.getAvailableMovesForDie(1, dieColor, player1.favor);
+  const movesWithFavor = engine.getAvailableMovesForDie(
+    1,
+    dieColor,
+    player1.favor,
+  );
   console.log("    Count:", movesWithFavor.length);
 
   // Group moves by favor cost
@@ -46,7 +50,9 @@ for (const dieColor of player1.oracleDice) {
   });
 
   movesByFavorCost.forEach((moves, favorCost) => {
-    console.log(`\n    Moves costing ${favorCost} favor (${moves.length} total):`);
+    console.log(
+      `\n    Moves costing ${favorCost} favor (${moves.length} total):`,
+    );
     moves.slice(0, 3).forEach((move, index) => {
       console.log(
         `      ${index + 1}. (${move.q}, ${move.r})`,
@@ -60,9 +66,13 @@ for (const dieColor of player1.oracleDice) {
 
 // Test moving with favor spending
 for (const dieColor of player1.oracleDice) {
-  const movesWithFavor = engine.getAvailableMovesForDie(1, dieColor, player1.favor);
+  const movesWithFavor = engine.getAvailableMovesForDie(
+    1,
+    dieColor,
+    player1.favor,
+  );
   const moveWithFavor = movesWithFavor.find((move) => move.favorCost > 0);
-  
+
   if (moveWithFavor) {
     console.log("\nTesting movement with favor spending:");
     console.log(

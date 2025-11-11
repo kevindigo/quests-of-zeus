@@ -18,9 +18,13 @@ function testMovementSystem() {
   console.log(`Zeus at (${zeusCell.q}, ${zeusCell.r})`);
 
   // Get reachable sea tiles from Zeus
-  const reachableTiles = movementSystem.getReachableSeaTiles(zeusCell.q, zeusCell.r, 3);
+  const reachableTiles = movementSystem.getReachableSeaTiles(
+    zeusCell.q,
+    zeusCell.r,
+    3,
+  );
   console.log(`Found ${reachableTiles.length} reachable sea tiles from Zeus:`);
-  
+
   for (const tile of reachableTiles) {
     console.log(`  Tile at (${tile.q}, ${tile.r}): color ${tile.color}`);
   }
@@ -30,15 +34,17 @@ function testMovementSystem() {
   console.log(`Total sea cells in map: ${seaCells.length}`);
 
   // Check sea cells with colors
-  const seaCellsWithColor = seaCells.filter(cell => cell.color !== "none");
+  const seaCellsWithColor = seaCells.filter((cell) => cell.color !== "none");
   console.log(`Sea cells with color: ${seaCellsWithColor.length}`);
 
   // Check Zeus neighbors
   const neighbors = map.getNeighbors(zeusCell.q, zeusCell.r);
   console.log(`Zeus neighbors: ${neighbors.length}`);
-  
+
   for (const neighbor of neighbors) {
-    console.log(`  Neighbor at (${neighbor.q}, ${neighbor.r}): ${neighbor.terrain}, color: ${neighbor.color}`);
+    console.log(
+      `  Neighbor at (${neighbor.q}, ${neighbor.r}): ${neighbor.terrain}, color: ${neighbor.color}`,
+    );
   }
 }
 

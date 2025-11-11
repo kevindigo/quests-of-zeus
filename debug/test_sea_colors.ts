@@ -9,7 +9,7 @@ function testSeaColors() {
   // Count sea cells with colors
   let seaCellsWithColor = 0;
   let seaCellsWithoutColor = 0;
-  
+
   for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
     const row = grid[arrayQ];
     if (row) {
@@ -35,12 +35,14 @@ function testSeaColors() {
   if (zeusCells.length > 0) {
     const zeusCell = zeusCells[0];
     console.log(`Zeus at (${zeusCell.q}, ${zeusCell.r})`);
-    
+
     const neighbors = map.getNeighbors(zeusCell.q, zeusCell.r);
     console.log(`Zeus has ${neighbors.length} neighbors:`);
-    
+
     for (const neighbor of neighbors) {
-      console.log(`  Neighbor at (${neighbor.q}, ${neighbor.r}): ${neighbor.terrain}, color: ${neighbor.color}`);
+      console.log(
+        `  Neighbor at (${neighbor.q}, ${neighbor.r}): ${neighbor.terrain}, color: ${neighbor.color}`,
+      );
     }
   }
 }

@@ -10,11 +10,11 @@ function testRecolorDie() {
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();
-  
+
   // Set up test conditions
   player.oracleDice = ["black", "pink", "blue"] as HexColor[];
   player.favor = 5;
-  
+
   // Test 1: Recolor black die with 1 favor (should become pink)
   console.log("Test 1: Recolor black → pink (1 favor)");
   const result1 = gameEngine.recolorDie(player.id, "black", 1);

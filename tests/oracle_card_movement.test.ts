@@ -32,34 +32,44 @@ Deno.test("OracleCardMovement - spend oracle card for movement", () => {
   // Give player an oracle card and position them on a sea hex
   player.oracleCards = ["blue"];
   player.usedOracleCardThisTurn = false;
-  
+
   // Find a blue sea hex to move to
   const gameState = engine.getGameState();
-  const blueSeaHexes = gameState.map.getCellsByTerrain("sea").filter(cell => cell.color === "blue");
-  
+  const blueSeaHexes = gameState.map.getCellsByTerrain("sea").filter((cell) =>
+    cell.color === "blue"
+  );
+
   if (blueSeaHexes.length > 0) {
     const targetHex = blueSeaHexes[0];
-    
+
     // Position player on a sea hex adjacent to the target
     const adjacentHexes = gameState.map.getNeighbors(targetHex.q, targetHex.r);
-    const adjacentSeaHex = adjacentHexes.find(hex => hex.terrain === "sea");
-    
+    const adjacentSeaHex = adjacentHexes.find((hex) => hex.terrain === "sea");
+
     if (adjacentSeaHex) {
       player.shipPosition = { q: adjacentSeaHex.q, r: adjacentSeaHex.r };
-      
+
       // Test spending oracle card for movement
       const moveResult = engine.spendOracleCardForMovement(
         playerId,
         targetHex.q,
         targetHex.r,
-        "blue"
+        "blue",
       );
-      
+
       assert(moveResult.success, "Oracle card movement should succeed");
       assertEquals(player.shipPosition.q, targetHex.q);
       assertEquals(player.shipPosition.r, targetHex.r);
-      assertEquals(player.oracleCards.length, 0, "Oracle card should be consumed");
-      assertEquals(player.usedOracleCardThisTurn, true, "Player should have used oracle card this turn");
+      assertEquals(
+        player.oracleCards.length,
+        0,
+        "Oracle card should be consumed",
+      );
+      assertEquals(
+        player.usedOracleCardThisTurn,
+        true,
+        "Player should have used oracle card this turn",
+      );
     }
   }
 });
@@ -78,38 +88,50 @@ Deno.test("OracleCardMovement - cannot use oracle card twice per turn", () => {
 
   // Find a blue sea hex to move to
   const gameState = engine.getGameState();
-  const blueSeaHexes = gameState.map.getCellsByTerrain("sea").filter(cell => cell.color === "blue");
-  
+  const blueSeaHexes = gameState.map.getCellsByTerrain("sea").filter((cell) =>
+    cell.color === "blue"
+  );
+
   if (blueSeaHexes.length > 0) {
     const targetHex = blueSeaHexes[0];
-    
+
     // Position player on a sea hex adjacent to the target
     const adjacentHexes = gameState.map.getNeighbors(targetHex.q, targetHex.r);
-    const adjacentSeaHex = adjacentHexes.find(hex => hex.terrain === "sea");
-    
+    const adjacentSeaHex = adjacentHexes.find((hex) => hex.terrain === "sea");
+
     if (adjacentSeaHex) {
       player.shipPosition = { q: adjacentSeaHex.q, r: adjacentSeaHex.r };
-      
+
       // First oracle card movement should succeed
       const firstMoveResult = engine.spendOracleCardForMovement(
         playerId,
         targetHex.q,
         targetHex.r,
-        "blue"
+        "blue",
       );
-      
-      assert(firstMoveResult.success, "First oracle card movement should succeed");
-      
+
+      assert(
+        firstMoveResult.success,
+        "First oracle card movement should succeed",
+      );
+
       // Try to use second oracle card in same turn
       const secondMoveResult = engine.spendOracleCardForMovement(
         playerId,
         targetHex.q,
         targetHex.r,
-        "red"
+        "red",
       );
-      
-      assert(!secondMoveResult.success, "Second oracle card movement should fail");
-      assertEquals(player.oracleCards.length, 1, "Only first oracle card should be consumed");
+
+      assert(
+        !secondMoveResult.success,
+        "Second oracle card movement should fail",
+      );
+      assertEquals(
+        player.oracleCards.length,
+        1,
+        "Only first oracle card should be consumed",
+      );
     }
   }
 });
@@ -128,20 +150,25 @@ Deno.test("OracleCardMovement - cannot use oracle card without having it", () =>
 
   // Find a blue sea hex to move to
   const gameState = engine.getGameState();
-  const blueSeaHexes = gameState.map.getCellsByTerrain("sea").filter(cell => cell.color === "blue");
-  
+  const blueSeaHexes = gameState.map.getCellsByTerrain("sea").filter((cell) =>
+    cell.color === "blue"
+  );
+
   if (blueSeaHexes.length > 0) {
     const targetHex = blueSeaHexes[0];
-    
+
     // Try to use oracle card without having it
     const moveResult = engine.spendOracleCardForMovement(
       playerId,
       targetHex.q,
       targetHex.r,
-      "blue"
+      "blue",
     );
-    
-    assert(!moveResult.success, "Oracle card movement should fail without having the card");
+
+    assert(
+      !moveResult.success,
+      "Oracle card movement should fail without having the card",
+    );
   }
 });
 
@@ -161,7 +188,11 @@ Deno.test("OracleCardMovement - oracle card usage resets on end turn", () => {
   engine.endTurn();
 
   // Oracle card usage should be reset
-  assertEquals(player.usedOracleCardThisTurn, false, "Oracle card usage should reset on end turn");
+  assertEquals(
+    player.usedOracleCardThisTurn,
+    false,
+    "Oracle card usage should reset on end turn",
+  );
 });
 
 // Helper function for type safety

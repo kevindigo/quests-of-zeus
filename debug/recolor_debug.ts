@@ -24,14 +24,22 @@ console.log("  Recolored dice:", player.recoloredDice);
 
 // Set a high recoloring cost that would make some moves unaffordable
 player.favor = 3; // Reduce favor
-const highRecolorSuccess = gameEngine.setRecolorIntention(player.id, "black", 2); // 2 favor recoloring cost
+const highRecolorSuccess = gameEngine.setRecolorIntention(
+  player.id,
+  "black",
+  2,
+); // 2 favor recoloring cost
 
 console.log("\nAfter setting high recoloring intention:");
 console.log("  Player favor:", player.favor);
 console.log("  Recolored dice:", player.recoloredDice);
 console.log("  Recoloring success:", highRecolorSuccess);
 
-const movesWithHighRecolor = gameEngine.getAvailableMovesForDie(player.id, "black", player.favor);
+const movesWithHighRecolor = gameEngine.getAvailableMovesForDie(
+  player.id,
+  "black",
+  player.favor,
+);
 
 console.log("\nAvailable moves for black die with high recoloring:");
 console.log("  Total moves:", movesWithHighRecolor.length);
@@ -46,7 +54,7 @@ for (const move of movesWithHighRecolor) {
   console.log(`    Total cost: ${totalCost}`);
   console.log(`    Player favor: ${player.favor}`);
   console.log(`    Can afford: ${canAfford}`);
-  
+
   if (!canAfford) {
     console.log(`    ⚠️  PROBLEM: This move should not be available!`);
   }
@@ -57,5 +65,7 @@ console.log("\n=== Checking sea tile colors ===");
 const gameState = gameEngine.getGameState();
 for (const move of movesWithHighRecolor) {
   const cell = gameState.map.getCell(move.q, move.r);
-  console.log(`Move to (${move.q}, ${move.r}) goes to sea tile color: ${cell?.color}`);
+  console.log(
+    `Move to (${move.q}, ${move.r}) goes to sea tile color: ${cell?.color}`,
+  );
 }

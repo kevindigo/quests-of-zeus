@@ -36,7 +36,10 @@ export function addCubeToStorage(player: Player, color: HexColor): boolean {
 }
 
 // Helper function to remove a cube of specific color from storage (returns true if successful)
-export function removeCubeFromStorage(player: Player, color: HexColor): boolean {
+export function removeCubeFromStorage(
+  player: Player,
+  color: HexColor,
+): boolean {
   const cubeSlotIndex = player.storage.findIndex((slot) =>
     slot.type === "cube" && slot.color === color
   );
@@ -48,7 +51,10 @@ export function removeCubeFromStorage(player: Player, color: HexColor): boolean 
 }
 
 // Helper function to remove a statue of specific color from storage (returns true if successful)
-export function removeStatueFromStorage(player: Player, color: HexColor): boolean {
+export function removeStatueFromStorage(
+  player: Player,
+  color: HexColor,
+): boolean {
   const statueSlotIndex = player.storage.findIndex((slot) =>
     slot.type === "statue" && slot.color === color
   );

@@ -1,44 +1,61 @@
 # HexMap Module
 
-This module provides a refactored, modular implementation of the hexagonal map system for the Quests of Zeus game.
+This module provides a refactored, modular implementation of the hexagonal map
+system for the Quests of Zeus game.
 
 ## Overview
 
-The original large `HexMap` class has been refactored into several focused service classes, each with a single responsibility:
+The original large `HexMap` class has been refactored into several focused
+service classes, each with a single responsibility:
 
 ## Classes
 
 ### HexMap (Main Class)
+
 - **Purpose**: Main container that coordinates between services
-- **Responsibilities**: Grid storage, service coordination, public API, serialization
-- **Key Methods**: `getGrid()`, `getCell()`, `getNeighbors()`, `serialize()`, `deserialize()`
+- **Responsibilities**: Grid storage, service coordination, public API,
+  serialization
+- **Key Methods**: `getGrid()`, `getCell()`, `getNeighbors()`, `serialize()`,
+  `deserialize()`
 
 ### TerrainPlacementManager
+
 - **Purpose**: Handle all terrain generation and placement logic
-- **Responsibilities**: Grid generation, Zeus placement, city placement, special terrain placement
-- **Key Methods**: `generateGrid()`, `placeZeus()`, `placeCities()`, `placeSpecialTerrain()`
+- **Responsibilities**: Grid generation, Zeus placement, city placement, special
+  terrain placement
+- **Key Methods**: `generateGrid()`, `placeZeus()`, `placeCities()`,
+  `placeSpecialTerrain()`
 
 ### SeaColorManager
+
 - **Purpose**: Handle sea hex coloring with constraint satisfaction
 - **Responsibilities**: Color assignment to sea hexes, conflict resolution
 - **Key Methods**: `assignColorsToSeaHexes()`, `getLeastConflictingColor()`
 
 ### HexGridOperations
+
 - **Purpose**: Core hex grid coordinate calculations and operations
-- **Responsibilities**: Hex adjacency, coordinate calculations, distance calculations
-- **Key Methods**: `getAdjacent()`, `getNeighborsFromGrid()`, `hexDistance()`, `getCorner()`
+- **Responsibilities**: Hex adjacency, coordinate calculations, distance
+  calculations
+- **Key Methods**: `getAdjacent()`, `getNeighborsFromGrid()`, `hexDistance()`,
+  `getCorner()`
 
 ### PathfindingService
+
 - **Purpose**: Pathfinding and connectivity analysis
 - **Responsibilities**: Pathfinding algorithms, connectivity checks
-- **Key Methods**: `canReachZeus()`, `hasNeighborOfType()`, `getNeighborsOfType()`
+- **Key Methods**: `canReachZeus()`, `hasNeighborOfType()`,
+  `getNeighborsOfType()`
 
 ### CityManager
+
 - **Purpose**: City-specific operations and state management
 - **Responsibilities**: Statue management, city completion checks
-- **Key Methods**: `addStatueToCity()`, `removeStatueFromCity()`, `isCityComplete()`
+- **Key Methods**: `addStatueToCity()`, `removeStatueFromCity()`,
+  `isCityComplete()`
 
 ### UtilityService
+
 - **Purpose**: General utility functions
 - **Responsibilities**: Array shuffling and other utilities
 - **Key Methods**: `shuffleArray()`
@@ -79,8 +96,10 @@ const restoredMap = HexMap.deserialize(serialized);
 
 The `HexMap` class uses dependency injection to coordinate between services:
 
-- `HexMap` → `TerrainPlacementManager` → `HexGridOperations` + `PathfindingService` + `SeaColorManager` + `UtilityService`
+- `HexMap` → `TerrainPlacementManager` → `HexGridOperations` +
+  `PathfindingService` + `SeaColorManager` + `UtilityService`
 - `HexMap` → `CityManager` for city-specific operations
 - `HexMap` → `HexGridOperations` for grid operations
 
-This architecture allows for easy testing and modification of individual components without affecting the entire system.
+This architecture allows for easy testing and modification of individual
+components without affecting the entire system.

@@ -1,11 +1,15 @@
 # Quests of Zeus PWA
 
-A Progressive Web App implementation of the Quests of Zeus boardgame, built with Deno 2.5.
+A Progressive Web App implementation of the Quests of Zeus boardgame, built with
+Deno 2.5.
 
-The rules and gameplay concepts in this project were heavily inspired by the board game The Oracle of Delphi, designed by Stefan Feld and copyright 2016 by Hall Games.
-No copyrighted materials, trademarks, or proprietary assets from that game are used. This project is entirely independent and not endorsed by or associated with its creators or publishers.
+The rules and gameplay concepts in this project were heavily inspired by the
+board game The Oracle of Delphi, designed by Stefan Feld and copyright 2016 by
+Hall Games. No copyrighted materials, trademarks, or proprietary assets from
+that game are used. This project is entirely independent and not endorsed by or
+associated with its creators or publishers.
 
-Note: This app was developed with a lot of assistance from AI. 
+Note: This app was developed with a lot of assistance from AI.
 
 ## Features
 
@@ -51,9 +55,9 @@ deno task dev
 
 ## How to Play
 
-Quests of Zeus is a pick-up-and-deliver board game set in the era of Greek mythology.
-Players sail their ships around the Greek islands to complete quests and gain
-favor with the gods.
+Quests of Zeus is a pick-up-and-deliver board game set in the era of Greek
+mythology. Players sail their ships around the Greek islands to complete quests
+and gain favor with the gods.
 
 ### Game Flow
 
@@ -141,8 +145,7 @@ Each of the 6 cities on the map has a unique color and can hold up to 3 statues:
 
 ### Core Components
 
-1. **HexMap** - Procedural map generation 
-   terrain
+1. **HexMap** - Procedural map generation terrain
 2. **GameEngine** - Core game mechanics, state management, and rules enforcement
 3. **GameController** - UI management, user interactions, and game flow
 4. **HexMapSVG** - Interactive SVG visualization with player markers
@@ -189,7 +192,8 @@ Each of the 6 cities on the map has a unique color and can hold up to 3 statues:
 
 ## Game Rules Implementation
 
-The game closely aligns with the official Oracle of Delphi rules by Stefan Feld, but has variations:
+The game closely aligns with the official Oracle of Delphi rules by Stefan Feld,
+but has variations:
 
 - **Map**: Hexagonal grid with radius 6
 - **Players**: 2-4 players (currently 2 implemented)
