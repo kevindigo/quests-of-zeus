@@ -58,7 +58,12 @@ Deno.test("Debug oracle card movement", () => {
       usedOracleCardThisTurn: player.usedOracleCardThisTurn,
     });
 
-    assert(moveResult.success, "Should be able to move using oracle card");
+    assert(
+      moveResult.success,
+      `Should be able to move using oracle card, but ${
+        JSON.stringify(moveResult)
+      }`,
+    );
   } else {
     console.log("No blue sea tiles found - cannot test movement");
   }

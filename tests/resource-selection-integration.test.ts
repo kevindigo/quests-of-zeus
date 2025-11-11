@@ -49,7 +49,9 @@ Deno.test("ResourceSelectionIntegration - die and oracle card can be used in sam
 
     assert(
       oracleMoveResult.success,
-      "Should be able to move using oracle card",
+      `Should be able to move using oracle card, but ${
+        JSON.stringify(oracleMoveResult)
+      }`,
     );
 
     // Oracle card should be consumed
@@ -301,7 +303,9 @@ Deno.test("ResourceSelectionIntegration - combined resource actions in sequence"
     );
     assert(
       oracleMoveResult.success,
-      "Should be able to move using oracle card",
+      `Should be able to move using oracle card, but ${
+        JSON.stringify(oracleMoveResult)
+      }`,
     );
 
     // 3. Spend another die for favor

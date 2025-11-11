@@ -142,7 +142,12 @@ Deno.test("OracleCardSpending - cannot use more than one oracle card per turn", 
       "blue",
       0,
     );
-    assert(firstMoveResult.success, "First oracle card usage should succeed");
+    assert(
+      firstMoveResult.success,
+      `First oracle card usage should succeed, ${
+        JSON.stringify(firstMoveResult)
+      }`,
+    );
 
     // Second oracle card usage should fail
     const secondMoveResult = engine.spendOracleCardForMovement(
