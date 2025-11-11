@@ -1,8 +1,7 @@
 // Game initialization and setup for Quests of Zeus
 import type { HexCell } from "./game-engine.ts";
 import { HexMap } from "./hexmap.ts";
-import type { Player } from "./Player.ts";
-import { createEmptyStorage } from "./storage-manager.ts";
+import { Player } from "./Player.ts";
 import {
   COLOR_WHEEL,
   type CoreColor,
@@ -73,32 +72,21 @@ export class GameInitializer {
       const initialDice: CoreColor[] = [];
       for (let j = 0; j < 3; j++) {
         const randomColor =
-          PLAYER_COLORS[Math.floor(Math.random() * PLAYER_COLORS.length)];
+          COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
         if (randomColor) {
           initialDice.push(randomColor);
         }
       }
 
-      players.push({
-        id: i + 1,
-        name: `Player ${i + 1}`,
-        color: PLAYER_COLORS[i]!,
-        shipPosition: startPosition, // All players start on Zeus hex
-        storage: createEmptyStorage(),
-        completedQuests: 0,
-        completedQuestTypes: {
-          temple_offering: 0,
-          monster: 0,
-          foundation: 0,
-          cloud: 0,
-        },
-        oracleDice: initialDice, // All players start with dice already rolled
-        favor: 3 + i, // First player gets 3 favor, each subsequent gets 1 more
-        shield: 0, // Players start with 0 shield
-        recoloredDice: {}, // Track recoloring intentions
-        oracleCards: [], // Initialize oracle cards as empty array
-        usedOracleCardThisTurn: false, // No oracle cards used at start of turn
-      });
+      const player = new Player(
+        i + 1,
+        `Player ${i + 1}`,
+        PLAYER_COLORS[i]!,
+        startPosition,
+      );
+      player.oracleDice = initialDice, // All players start with dice already rolled
+        player.favor = 3 + i, // First player gets 3 favor, each subsequent gets 1 more
+        players.push(player);
     }
 
     return players;

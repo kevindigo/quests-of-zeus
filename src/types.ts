@@ -85,7 +85,7 @@ export const PLAYER_COLORS = [
 
 export interface StorageSlot {
   type: "cube" | "statue" | "empty";
-  color: HexColor;
+  color?: HexColor;
 }
 
 export interface CubeHex {
