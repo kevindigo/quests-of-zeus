@@ -3,7 +3,7 @@
 import { assert, assertEquals, assertFalse } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import { findZeus } from "../src/game-initializer.ts";
-import { CoreColor } from "../src/types.ts";
+import { COLOR_WHEEL, type CoreColor } from "../src/types.ts";
 
 Deno.test("OracleCardSpending - basic functionality", () => {
   const engine = new QuestsZeusGameEngine();
@@ -140,58 +140,61 @@ Deno.test("OracleCardSpending - movement with favor spending", () => {
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleCards = ["blue"];
-  player.favor = 5;
-  // Find a sea hex to start from instead of Zeus hex
-  const gameState = engine.getGameState();
-  const seaTiles = gameState.map.getCellsByTerrain("sea");
-  if (seaTiles.length > 0) {
-    player.shipPosition = { q: seaTiles[0]!.q, r: seaTiles[0]!.r };
-  }
+  player.favor = 1;
+
   player.usedOracleCardThisTurn = false;
 
-  // Find a blue sea tile that requires favor spending to reach
-  // This test verifies that oracle cards can be used with favor spending for extended range
-  const initialFavor = player.favor;
-
-  // Try to move with favor spending (even if not strictly needed)
-  const blueSeaTiles = gameState.map.getCellsByTerrain("sea").filter((cell) =>
-    cell.color === "blue"
-  );
-
-  if (blueSeaTiles.length > 0) {
-    const targetTile = blueSeaTiles[0]!;
-    const moveResult = engine.spendOracleCardForMovement(
+  // Find a sea tile that requires favor spending to reach
+  let foundMove = false;
+  COLOR_WHEEL.forEach((color) => {
+    const candidates = engine.getAvailableMovesForDie(
       player.id,
-      targetTile.q,
-      targetTile.r,
-      "blue",
-      1,
+      color,
+      player.favor,
     );
+    const favorCandidates = candidates.filter((candidate) => {
+      return candidate.favorCost > 0;
+    });
+    if (favorCandidates.length > 0) {
+      foundMove = true;
+      const move = favorCandidates[0]!;
+      const initialFavor = player.favor;
+      player.oracleCards = [color];
 
-    // This should succeed even with favor spending
-    assert(
-      moveResult.success,
-      `Should be able to move using oracle card with favor spending, but ${
-        JSON.stringify(moveResult)
-      }`,
-    );
+      const moveResult = engine.spendOracleCardForMovement(
+        player.id,
+        move.q,
+        move.r,
+        color,
+        move?.favorCost,
+      );
 
-    // Oracle card should be consumed
-    assertEquals(
-      player.oracleCards.includes("blue"),
-      false,
-      "Blue oracle card should be consumed",
-    );
+      // This should succeed even with favor spending
+      assert(
+        moveResult.success,
+        `Should be able to move using oracle card with favor spending, but ${
+          JSON.stringify(moveResult)
+        }`,
+      );
 
-    // Oracle card usage flag should be set
-    assertEquals(
-      player.usedOracleCardThisTurn,
-      true,
-      "Oracle card usage flag should be set",
-    );
-    assertEquals(player.favor, initialFavor - 1, "Should have spent 1 favor");
-  }
+      // Oracle card should be consumed
+      assertEquals(
+        player.oracleCards.includes("blue"),
+        false,
+        "Blue oracle card should be consumed",
+      );
+
+      // Oracle card usage flag should be set
+      assertEquals(
+        player.usedOracleCardThisTurn,
+        true,
+        "Oracle card usage flag should be set",
+      );
+      assertEquals(player.favor, initialFavor - 1, "Should have spent 1 favor");
+    }
+  });
+
+  assert(foundMove);
 });
 
 Deno.test("OracleCardSpending - cannot use oracle card without having it", () => {
