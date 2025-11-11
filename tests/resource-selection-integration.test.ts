@@ -184,6 +184,7 @@ Deno.test("ResourceSelectionIntegration - resource availability after actions", 
 
   if (availableMoves.length > 0) {
     const targetMove = availableMoves[0];
+    assert(targetMove);
     const moveResult = engine.moveShip(
       player.id,
       targetMove.q,

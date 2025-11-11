@@ -41,6 +41,7 @@ Deno.test("OracleCardMovement - spend oracle card for movement", () => {
 
   if (blueSeaHexes.length > 0) {
     const targetHex = blueSeaHexes[0];
+    assert(targetHex);
 
     // Position player on a sea hex adjacent to the target
     const adjacentHexes = gameState.map.getNeighbors(targetHex.q, targetHex.r);
@@ -94,6 +95,7 @@ Deno.test("OracleCardMovement - cannot use oracle card twice per turn", () => {
 
   if (blueSeaHexes.length > 0) {
     const targetHex = blueSeaHexes[0];
+    assert(targetHex);
 
     // Position player on a sea hex adjacent to the target
     const adjacentHexes = gameState.map.getNeighbors(targetHex.q, targetHex.r);
@@ -156,6 +158,7 @@ Deno.test("OracleCardMovement - cannot use oracle card without having it", () =>
 
   if (blueSeaHexes.length > 0) {
     const targetHex = blueSeaHexes[0];
+    assert(targetHex);
 
     // Try to use oracle card without having it
     const moveResult = engine.spendOracleCardForMovement(

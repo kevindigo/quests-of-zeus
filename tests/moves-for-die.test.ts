@@ -1,6 +1,6 @@
 // Tests for the new getAvailableMovesForDie method
 
-import { assert, assertEquals } from "@std/assert";
+import { assert, assertEquals, assertGreater } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import type { HexColor } from "../src/types.ts";
 
@@ -42,6 +42,7 @@ Deno.test("getAvailableMovesForDie - basic functionality", () => {
   // Check that each move has the required properties
   if (movesForBlack.length > 0) {
     const firstMove = movesForBlack[0];
+    assert(firstMove);
     assert("q" in firstMove, "Move should have q coordinate");
     assert("r" in firstMove, "Move should have r coordinate");
     assert("favorCost" in firstMove, "Move should have favorCost property");
@@ -134,6 +135,7 @@ Deno.test("getAvailableMovesForDie - recoloring intention", () => {
   const pinkSeaTiles = gameState.map.getCellsByTerrain("sea").filter((cell) =>
     cell.color === "pink"
   );
+  assertGreater(pinkSeaTiles.length, 0);
 
   // Check that we have moves to pink sea tiles
   const movesToPinkTiles = movesWithRecolor.filter((move) => {
