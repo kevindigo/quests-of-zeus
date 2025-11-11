@@ -8,32 +8,7 @@ import { SeaColorManager } from "./SeaColorManager.ts";
 import { TerrainPlacementManager } from "./TerrainPlacementManager.ts";
 import { UtilityService } from "./UtilityService.ts";
 
-export interface HexMapService {
-  getGrid(): HexCell[][];
-  getCell(q: number, r: number): HexCell | null;
-  getNeighbors(q: number, r: number): HexCell[];
-  getCellsByTerrain(terrain: TerrainType): HexCell[];
-  setCellColor(q: number, r: number, color: HexColor): void;
-  addStatueToCity(q: number, r: number): boolean;
-  removeStatueFromCity(q: number, r: number): boolean;
-  getStatuesOnCity(q: number, r: number): number;
-  isCityComplete(q: number, r: number): boolean;
-  getCompleteCities(): HexCell[];
-  serialize(): HexCell[][];
-  hasNeighborOfType(
-    cell: HexCell,
-    grid: HexCell[][],
-    terrainType: TerrainType,
-  ): boolean;
-  canReachZeus(cell: HexCell, grid: HexCell[][]): boolean;
-  canReachZeusFromSeaNeighbor(
-    seaNeighbor: HexCell,
-    candidateCell: HexCell,
-    grid: HexCell[][],
-  ): boolean;
-}
-
-export class HexMap implements HexMapService {
+export class HexMap {
   private grid: HexCell[][];
   readonly width: number = 13; // -6 to +6 inclusive
   readonly height: number = 13; // -6 to +6 inclusive
