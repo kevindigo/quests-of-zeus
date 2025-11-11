@@ -1,12 +1,13 @@
 // Test for city statue functionality
 
 import { assert, assertEquals } from "@std/assert";
-import { HexMap } from "../src/hexmap.ts";
+import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import { COLOR_WHEEL } from "../src/types.ts";
 
 Deno.test("City Statue Functionality - Basic Operations", () => {
-  const map = new HexMap();
-  const cities = map.getCellsByTerrain("city");
+  const engine = new QuestsZeusGameEngine();
+  engine.initializeGame();
+  const cities = engine.getCityHexes();
 
   assertEquals(
     cities.length,

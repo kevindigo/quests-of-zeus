@@ -7,6 +7,7 @@ import { OracleSystem } from "./oracle-system.ts";
 import { PlayerActions } from "./player-actions.ts";
 import type { Player } from "./Player.ts";
 import type {
+  CityHex,
   CoreColor,
   CubeHex,
   GameState,
@@ -450,6 +451,11 @@ export class QuestsZeusGameEngine {
         r: seaTile.r,
         dieColor: seaTile.color,
       }));
+  }
+
+  public getCityHexes(): CityHex[] {
+    this.ensureInitialized();
+    return this.state!.cityHexes;
   }
 
   public getCubeHexes(): CubeHex[] {

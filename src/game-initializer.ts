@@ -237,15 +237,19 @@ export class GameInitializer {
   }
 
   private initializeCities(map: HexMap): CityHex[] {
-    const cityHexes: CityHex[] = [];
-
-    // Get all monster hexes from the map
     const cityCells = map.getCellsByTerrain("city");
 
-    // Check if we have exactly 6 monster hexes as expected
     if (cityCells.length !== 6) {
       console.warn(`Expected 6 city hexes but found ${cityCells.length}`);
     }
+
+    const cityHexes = cityCells.map((cityCell) => {
+      return {
+        q: cityCell.q,
+        r: cityCell.r,
+        statues: 3,
+      };
+    });
 
     return cityHexes;
   }

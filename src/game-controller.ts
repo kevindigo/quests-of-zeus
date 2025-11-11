@@ -5,6 +5,7 @@ import { QuestsZeusGameEngine } from "./game-engine.ts";
 import { HexMapSVG } from "./hexmap-svg.ts";
 import type { Player } from "./Player.ts";
 import {
+  type CityHex,
   COLOR_WHEEL,
   type CoreColor,
   type CubeHex,
@@ -330,6 +331,15 @@ export class GameController {
 
     try {
       // Update the hex map SVG with cube hex data
+      const cityHexes = gameState.cityHexes || [];
+      // Debug: Log city hex details
+      cityHexes.forEach((cityHex: CityHex, index: number) => {
+        console.log(
+          `City hex ${index}: (${cityHex.q}, ${cityHex.r}) with statues:`,
+          cityHex.statues,
+        );
+      });
+
       const cubeHexes: CubeHex[] = gameState.cubeHexes || [];
       console.log("Cube hexes for rendering:", cubeHexes);
 
@@ -366,6 +376,7 @@ export class GameController {
       );
 
       this.hexMapSVG.setOptions({
+        cityHexes: cityHexes,
         cubeHexes: cubeHexes,
         monsterHexes: monsterHexes,
       });

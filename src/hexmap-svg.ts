@@ -7,10 +7,12 @@ import {
   generateCubesIcon,
   generateFoundationsIcon,
   generateMonsterIcon,
+  generateStatueIcons,
   generateTempleIcon,
   generateZeusIcon,
 } from "./icons-svg.ts";
 import type {
+  CityHex,
   CubeHex,
   HexCell,
   HexColor,
@@ -24,6 +26,7 @@ export interface HexMapSVGOptions {
   showCoordinates?: boolean;
   showTerrainLabels?: boolean;
   interactive?: boolean;
+  cityHexes?: CityHex[];
   cubeHexes?: CubeHex[];
   monsterHexes?: MonsterHex[];
 }
@@ -45,6 +48,7 @@ export class HexMapSVG {
       showCoordinates: options.showCoordinates ?? false,
       showTerrainLabels: options.showTerrainLabels ?? false,
       interactive: options.interactive ?? true,
+      cityHexes: options.cityHexes || [],
       cubeHexes: options.cubeHexes || [],
       monsterHexes: options.monsterHexes || [],
     };
@@ -170,6 +174,10 @@ export class HexMapSVG {
 
     // Add city icon for city hexes
     if (cell.terrain === "city") {
+      const cityHex = this.options.cityHexes?.find((ch) =>
+        ch.q === cell.q && ch.r === cell.r
+      );
+
       cellContent += generateCityIcon({
         centerX,
         centerY,
@@ -178,22 +186,17 @@ export class HexMapSVG {
       });
 
       // Add statue icons if there are statues on this city
-
-      // Not implemented yet
-      // console.log(
-      //   `City at (${cell.q}, ${cell.r}): statues = ${cell.statues}, color = ${cell.color}`,
-      // );
-      // if (cell.statues !== undefined && cell.statues > 0) {
-      //   console.log(
-      //     `  Generating ${cell.statues} statue(s) for city at (${cell.q}, ${cell.r})`,
-      //   );
-      //   cellContent += generateStatueIcons({
-      //     centerX,
-      //     centerY,
-      //     cellSize,
-      //     hexColor: this.getStrokeColor(cell.color),
-      //   }, cell.statues);
-      // }
+      if (cityHex && cityHex.statues && cityHex.statues > 0) {
+        console.log(
+          `City at (${cell.q}, ${cell.r}): statues = ${cityHex.statues}, color = ${cell.color}`,
+        );
+        cellContent += generateStatueIcons({
+          centerX,
+          centerY,
+          cellSize,
+          hexColor: this.getStrokeColor(cell.color),
+        }, cityHex.statues);
+      }
     }
 
     // Add monster icon for monster hexes
