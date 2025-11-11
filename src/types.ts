@@ -13,33 +13,37 @@ export type TerrainType =
   | "foundations"; // Foundation locations
 
 // Color types for hex cells
-export type HexColor =
-  | "none"
-  | "red"
+export type CoreColor =
   | "black"
   | "pink"
   | "blue"
   | "yellow"
-  | "green";
+  | "green"
+  | "red";
 
 // Color constants for the 6 fundamental colors
 // These colors are used to power actions in the game
 export const CORE_COLORS = {
-  BLACK: "black" as HexColor,
-  BLUE: "blue" as HexColor,
-  RED: "red" as HexColor,
-  YELLOW: "yellow" as HexColor,
-  GREEN: "green" as HexColor,
-  PINK: "pink" as HexColor,
+  BLACK: "black" as CoreColor,
+  PINK: "pink" as CoreColor,
+  BLUE: "blue" as CoreColor,
+  YELLOW: "yellow" as CoreColor,
+  GREEN: "green" as CoreColor,
+  RED: "red" as CoreColor,
 } as const;
 
-export const ALL_COLORS: HexColor[] = [
+// Color types for hex cells
+export type HexColor =
+  | "none"
+  | CoreColor;
+
+export const ALL_COLORS: CoreColor[] = [
   CORE_COLORS.BLACK,
+  CORE_COLORS.PINK,
   CORE_COLORS.BLUE,
-  CORE_COLORS.RED,
   CORE_COLORS.YELLOW,
   CORE_COLORS.GREEN,
-  CORE_COLORS.PINK,
+  CORE_COLORS.RED,
 ];
 
 export const PLAYER_COLORS = [

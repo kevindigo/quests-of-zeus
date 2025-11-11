@@ -81,7 +81,7 @@ export class SeaColorManager {
       // If there are available colors, choose the one that has been used least so far
       if (availableColors.length > 0) {
         // Find the color with the minimum usage count among available colors
-        let leastUsedColor = availableColors[0] || "none";
+        let leastUsedColor: HexColor = availableColors[0] || "none";
         let minCount = colorCounts[leastUsedColor]!;
 
         for (const color of availableColors) {
