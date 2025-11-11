@@ -1,5 +1,5 @@
 // Game initialization and setup for Quests of Zeus
-import { HexCell } from "./game-engine.ts";
+import type { HexCell } from "./game-engine.ts";
 import { HexMap } from "./hexmap.ts";
 import { createEmptyStorage } from "./storage-manager.ts";
 import type {
@@ -159,7 +159,8 @@ export class GameInitializer {
 
     // For subsequent hexes, rotate the pattern to ensure no duplicates in columns
     for (let i = 1; i < 6; i++) {
-      const rotated = [...basePattern[i - 1]];
+      const previousPattern = basePattern[i - 1] || [];
+      const rotated = [...previousPattern];
       // Rotate the array to create a Latin square
       const first = rotated.shift();
       if (first) rotated.push(first);
@@ -171,7 +172,11 @@ export class GameInitializer {
     // For playerCount = 3, each hex gets the first 3 colors, etc.
     for (let i = 0; i < cubeCells.length && i < 6; i++) {
       const cell = cubeCells[i];
-      const hexColors = basePattern[i].slice(0, playerCount);
+      if (!cell) {
+        throw new Error("Missing some cube cells?");
+      }
+      const thisPattern = basePattern[i] || [];
+      const hexColors = thisPattern.slice(0, playerCount);
 
       cubeHexes.push({
         q: cell.q,
@@ -205,9 +210,6 @@ export class GameInitializer {
     const shuffledMonsterHexes = [...monsterCells];
     this.shuffleArray(shuffledMonsterHexes);
 
-    // Calculate total monsters needed
-    const totalMonstersPerColor = playerCount;
-
     // Create a shuffled list of all monster colors to place
     const monsterColors = [...ALL_COLORS];
     this.shuffleArray(monsterColors);
@@ -235,6 +237,9 @@ export class GameInitializer {
 
     while (colorIndex < totalColors) {
       const currentHex = monsterHexes[hexIndex];
+      if (!currentHex) {
+        throw new Error("Missing monster hex?");
+      }
       const currentColor = monsterColorsToPlace[colorIndex];
       if (currentColor) {
         currentHex.monsterColors.push(currentColor);
@@ -252,8 +257,17 @@ export class GameInitializer {
   private shuffleArray<T>(array: T[]): void {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
+      if (!array[i]) {
+        throw new Error("Unable to shuffle missing elements");
+      }
       const temp = array[i];
+      if (!array[j]) {
+        throw new Error("Unable to shuffle missing elements");
+      }
       array[i] = array[j];
+      if (!temp) {
+        throw new Error("Unable to shuffle missing elements");
+      }
       array[j] = temp;
     }
   }
