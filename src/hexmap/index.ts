@@ -1,7 +1,6 @@
 // HexMap module exports
 // This file exports all the refactored HexMap components
 
-export { CityManager } from "./CityManager.ts";
 export { HexGridOperations } from "./HexGridOperations.ts";
 export { HexMap } from "./HexMap.ts";
 export { PathfindingService } from "./PathfindingService.ts";

@@ -47,13 +47,6 @@ service classes, each with a single responsibility:
 - **Key Methods**: `canReachZeus()`, `hasNeighborOfType()`,
   `getNeighborsOfType()`
 
-### CityManager
-
-- **Purpose**: City-specific operations and state management
-- **Responsibilities**: Statue management, city completion checks
-- **Key Methods**: `addStatueToCity()`, `removeStatueFromCity()`,
-  `isCityComplete()`
-
 ### UtilityService
 
 - **Purpose**: General utility functions
@@ -98,7 +91,6 @@ The `HexMap` class uses dependency injection to coordinate between services:
 
 - `HexMap` → `TerrainPlacementManager` → `HexGridOperations` +
   `PathfindingService` + `SeaColorManager` + `UtilityService`
-- `HexMap` → `CityManager` for city-specific operations
 - `HexMap` → `HexGridOperations` for grid operations
 
 This architecture allows for easy testing and modification of individual
