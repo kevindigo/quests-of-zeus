@@ -2,14 +2,16 @@
 import type { HexCell } from "./game-engine.ts";
 import { HexMap } from "./hexmap.ts";
 import { createEmptyStorage } from "./storage-manager.ts";
-import type {
-  CubeHex,
-  GameState,
-  HexColor,
-  MonsterHex,
-  Player,
+import {
+  ALL_COLORS,
+  CORE_COLORS,
+  type CubeHex,
+  type GameState,
+  type HexColor,
+  type MonsterHex,
+  type Player,
+  PLAYER_COLORS,
 } from "./types.ts";
-import { ALL_COLORS, COLORS } from "./types.ts";
 
 export function findZeus(map: HexMap): HexCell {
   const zeusCell = map.getCellsByTerrain("zeus")[0];
@@ -64,7 +66,6 @@ export class GameInitializer {
    * Initialize players with starting positions and resources
    */
   private initializePlayers(startPosition: { q: number; r: number }): Player[] {
-    const playerColors = [COLORS.RED, COLORS.BLUE, COLORS.GREEN, COLORS.YELLOW];
     const players: Player[] = [];
 
     for (let i = 0; i < 2; i++) { // Start with 2 players for now
@@ -72,7 +73,7 @@ export class GameInitializer {
       const initialDice: HexColor[] = [];
       for (let j = 0; j < 3; j++) {
         const randomColor =
-          ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)];
+          PLAYER_COLORS[Math.floor(Math.random() * PLAYER_COLORS.length)];
         if (randomColor) {
           initialDice.push(randomColor);
         }
@@ -81,7 +82,7 @@ export class GameInitializer {
       players.push({
         id: i + 1,
         name: `Player ${i + 1}`,
-        color: playerColors[i] as HexColor,
+        color: PLAYER_COLORS[i] as HexColor,
         shipPosition: startPosition, // All players start on Zeus hex
         storage: createEmptyStorage(),
         completedQuests: 0,
@@ -109,12 +110,12 @@ export class GameInitializer {
   private initializeOracleCardDeck(): void {
     this.oracleCardDeck = [];
     const cardColors: HexColor[] = [
-      COLORS.BLACK,
-      COLORS.PINK,
-      COLORS.BLUE,
-      COLORS.YELLOW,
-      COLORS.GREEN,
-      COLORS.RED,
+      CORE_COLORS.BLACK,
+      CORE_COLORS.PINK,
+      CORE_COLORS.BLUE,
+      CORE_COLORS.YELLOW,
+      CORE_COLORS.GREEN,
+      CORE_COLORS.RED,
     ];
     // The deck consists of 5 copies of each of the 6 colors (5 * 6 = 30 cards)
     for (const color of cardColors) {

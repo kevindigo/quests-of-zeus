@@ -24,7 +24,7 @@ export type HexColor =
 
 // Color constants for the 6 fundamental colors
 // These colors are used to power actions in the game
-export const COLORS = {
+export const CORE_COLORS = {
   BLACK: "black" as HexColor,
   BLUE: "blue" as HexColor,
   RED: "red" as HexColor,
@@ -34,12 +34,19 @@ export const COLORS = {
 } as const;
 
 export const ALL_COLORS: HexColor[] = [
-  COLORS.BLACK,
-  COLORS.BLUE,
-  COLORS.RED,
-  COLORS.YELLOW,
-  COLORS.GREEN,
-  COLORS.PINK,
+  CORE_COLORS.BLACK,
+  CORE_COLORS.BLUE,
+  CORE_COLORS.RED,
+  CORE_COLORS.YELLOW,
+  CORE_COLORS.GREEN,
+  CORE_COLORS.PINK,
+];
+
+export const PLAYER_COLORS = [
+  CORE_COLORS.GREEN,
+  CORE_COLORS.BLUE,
+  CORE_COLORS.YELLOW,
+  CORE_COLORS.RED,
 ];
 
 export interface HexCell {
