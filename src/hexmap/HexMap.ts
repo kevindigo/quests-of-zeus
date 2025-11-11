@@ -108,7 +108,7 @@ export class HexMap {
   getNeighborsOfType(
     cell: HexCell,
     grid: HexCell[][],
-    _terrainType: TerrainType,
+    terrainType: TerrainType,
   ): HexCell[] {
     const neighbors = this.hexGridOperations.getNeighborsFromGrid(
       cell.q,
@@ -116,7 +116,9 @@ export class HexMap {
       grid,
     );
     if (neighbors) {
-      return neighbors;
+      return neighbors.filter((neighborCell) => {
+        return neighborCell.terrain === terrainType;
+      });
     }
 
     return [];
@@ -130,12 +132,8 @@ export class HexMap {
     grid: HexCell[][],
     terrainType: TerrainType,
   ): boolean {
-    const neighbors = this.hexGridOperations.getNeighborsFromGrid(
-      cell.q,
-      cell.r,
-      grid,
-    );
-    return neighbors.some((neighbor) => neighbor.terrain === terrainType);
+    const relevantNeighbors = this.getNeighborsOfType(cell, grid, terrainType);
+    return relevantNeighbors.length > 0;
   }
 
   /**
