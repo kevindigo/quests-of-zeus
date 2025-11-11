@@ -8,7 +8,7 @@ import {
   assertFalse,
 } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { HexColor } from "../src/types.ts";
+import type { CoreColor } from "../src/types.ts";
 
 Deno.test("ResourceSelectionIntegration - die and oracle card can be used in same turn", () => {
   const engine = new QuestsZeusGameEngine();
@@ -18,7 +18,7 @@ Deno.test("ResourceSelectionIntegration - die and oracle card can be used in sam
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as HexColor[];
+  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
   player.oracleCards = ["pink"];
   player.favor = 5;
   // Find a sea hex to start from instead of Zeus hex
@@ -124,7 +124,7 @@ Deno.test("ResourceSelectionIntegration - favor spending works with both resourc
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as HexColor[];
+  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
   player.oracleCards = ["pink"];
   const initialFavor = player.favor;
   player.usedOracleCardThisTurn = false;
@@ -163,7 +163,7 @@ Deno.test("ResourceSelectionIntegration - resource availability after actions", 
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as HexColor[];
+  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
   player.oracleCards = ["pink", "yellow"];
   player.favor = 5;
   // Find a sea hex to start from instead of Zeus hex
@@ -264,7 +264,7 @@ Deno.test("ResourceSelectionIntegration - combined resource actions in sequence"
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as HexColor[];
+  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
   player.oracleCards = ["pink"];
   player.favor = 5;
   // Find a sea hex to start from instead of Zeus hex

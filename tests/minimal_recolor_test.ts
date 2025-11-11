@@ -1,9 +1,7 @@
-import {
-  assert,
-  assertEquals,
-} from "https://deno.land/std@0.178.0/testing/asserts.ts";
+import { assert } from "@std/assert/assert";
+import { assertEquals } from "@std/assert/equals";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { HexColor } from "../src/types.ts";
+import type { CoreColor } from "../src/types.ts";
 
 Deno.test("Minimal recolor test", () => {
   const gameEngine = new QuestsZeusGameEngine();
@@ -12,7 +10,7 @@ Deno.test("Minimal recolor test", () => {
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions matching the failing test
-  player.oracleDice = ["black", "pink", "blue"] as HexColor[];
+  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization

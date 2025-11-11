@@ -2,7 +2,7 @@
 
 import { assert, assertEquals } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { HexColor } from "../src/types.ts";
+import type { CoreColor } from "../src/types.ts";
 
 Deno.test("Favor System - player initialization", () => {
   const engine = new QuestsZeusGameEngine();
@@ -103,7 +103,7 @@ Deno.test("Spend Die for Favor - invalid scenarios", () => {
   // Game now starts in action phase with dice already rolled
   // Try to spend a die the player doesn't have (should fail)
   // Use a color that's definitely not in the player's dice by checking all possible colors
-  const allColors: HexColor[] = [
+  const allColors: CoreColor[] = [
     "red",
     "pink",
     "blue",
@@ -111,7 +111,7 @@ Deno.test("Spend Die for Favor - invalid scenarios", () => {
     "green",
     "yellow",
   ];
-  let unavailableColor: HexColor = "red"; // Default fallback
+  let unavailableColor: CoreColor = "red"; // Default fallback
   for (const color of allColors) {
     if (!player1.oracleDice.includes(color)) {
       unavailableColor = color;

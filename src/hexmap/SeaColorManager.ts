@@ -1,7 +1,7 @@
 // SeaColorManager - Handles sea hex coloring with constraint satisfaction
 
 import type { HexCell, HexColor } from "../types.ts";
-import { ALL_COLORS } from "../types.ts";
+import { COLOR_WHEEL } from "../types.ts";
 import type { HexGridOperations } from "./HexGridOperations.ts";
 import type { UtilityService } from "./UtilityService.ts";
 
@@ -74,7 +74,7 @@ export class SeaColorManager {
       }
 
       // Find available colors (all colors except those used by adjacent sea cells)
-      const availableColors = ALL_COLORS.filter((color) =>
+      const availableColors = COLOR_WHEEL.filter((color) =>
         !adjacentColors.has(color)
       );
 
@@ -135,7 +135,7 @@ export class SeaColorManager {
     const colorConflicts = {} as Record<HexColor, number>;
 
     // Initialize all colors to 0 conflicts
-    for (const color of ALL_COLORS) {
+    for (const color of COLOR_WHEEL) {
       colorConflicts[color] = 0;
     }
     colorConflicts.none = 0; // Also initialize 'none'
@@ -148,10 +148,10 @@ export class SeaColorManager {
     }
 
     // Find the color with the fewest conflicts
-    let bestColor: HexColor = ALL_COLORS[0]!;
+    let bestColor: HexColor = COLOR_WHEEL[0]!;
     let minConflicts = colorConflicts[bestColor];
 
-    for (const color of ALL_COLORS) {
+    for (const color of COLOR_WHEEL) {
       if (colorConflicts[color] < minConflicts) {
         bestColor = color;
         minConflicts = colorConflicts[color];

@@ -2,7 +2,7 @@
 
 import { assert, assertEquals, assertGreater } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { HexColor } from "../src/types.ts";
+import type { CoreColor } from "../src/types.ts";
 
 Deno.test("getAvailableMovesForDie - basic functionality", () => {
   const gameEngine = new QuestsZeusGameEngine();
@@ -11,7 +11,7 @@ Deno.test("getAvailableMovesForDie - basic functionality", () => {
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as HexColor[];
+  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
@@ -56,7 +56,7 @@ Deno.test("getAvailableMovesForDie - invalid die color", () => {
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as HexColor[];
+  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
   player.favor = 5;
 
   // Test getting moves for a die color the player doesn't have
@@ -77,7 +77,7 @@ Deno.test("getAvailableMovesForDie - favor spending", () => {
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as HexColor[];
+  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
   player.favor = 5;
 
   // Get moves with different favor amounts
@@ -109,7 +109,7 @@ Deno.test("getAvailableMovesForDie - recoloring intention", () => {
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as HexColor[];
+  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
@@ -156,7 +156,7 @@ Deno.test("getAvailableMovesForDie - insufficient favor for recoloring", () => {
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as HexColor[];
+  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
   player.favor = 1; // Low favor
 
   // Clear any recoloring intentions that might exist from initialization
@@ -195,7 +195,7 @@ Deno.test("getAvailableMovesForDie - clear recoloring intention", () => {
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as HexColor[];
+  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization

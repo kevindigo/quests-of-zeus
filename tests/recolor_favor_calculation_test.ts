@@ -2,7 +2,7 @@
 
 import { assert, assertEquals } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { HexColor } from "../src/types.ts";
+import type { CoreColor } from "../src/types.ts";
 
 Deno.test("RecolorFavorCalculation - basic recoloring intention", () => {
   const gameEngine = new QuestsZeusGameEngine();
@@ -11,7 +11,7 @@ Deno.test("RecolorFavorCalculation - basic recoloring intention", () => {
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as HexColor[];
+  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
@@ -39,7 +39,7 @@ Deno.test("RecolorFavorCalculation - moves account for recoloring cost", () => {
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as HexColor[];
+  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
@@ -90,7 +90,7 @@ Deno.test("RecolorFavorCalculation - high recoloring cost limits moves", () => {
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as HexColor[];
+  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
   player.favor = 3; // Low favor
 
   // Clear any recoloring intentions that might exist from initialization
@@ -135,7 +135,7 @@ Deno.test("RecolorFavorCalculation - moves without recoloring unaffected", () =>
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as HexColor[];
+  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization

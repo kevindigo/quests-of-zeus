@@ -3,6 +3,7 @@
 import { assert, assertEquals, assertFalse } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
 import { findZeus } from "../src/game-initializer.ts";
+import { CoreColor } from "../src/types.ts";
 
 Deno.test("OracleCardSpending - basic functionality", () => {
   const engine = new QuestsZeusGameEngine();
@@ -38,7 +39,7 @@ Deno.test("OracleCardSpending - spend for movement", () => {
   );
   const destination = adjacentSeaHexes[0]!;
 
-  player.oracleCards = [destination.color];
+  player.oracleCards = [destination.color as CoreColor];
   player.favor = 0;
   player.usedOracleCardThisTurn = false;
 
@@ -46,7 +47,7 @@ Deno.test("OracleCardSpending - spend for movement", () => {
     player.id,
     destination!.q,
     destination!.r,
-    destination!.color,
+    destination!.color as CoreColor,
     0,
   );
 
@@ -54,7 +55,7 @@ Deno.test("OracleCardSpending - spend for movement", () => {
 
   // Oracle card should be consumed
   assertFalse(
-    player.oracleCards.includes(destination!.color),
+    player.oracleCards.includes(destination!.color as CoreColor),
     "Blue oracle card should be consumed",
   );
 

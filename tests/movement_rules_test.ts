@@ -2,6 +2,7 @@
 
 import { assert, assertEquals } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
+import { CoreColor } from "../src/types.ts";
 
 Deno.test("Movement Rules - Only move to sea spaces", () => {
   const engine = new QuestsZeusGameEngine();
@@ -215,7 +216,7 @@ Deno.test("Movement Rules - Invalid movement attempts", () => {
       player.id,
       unreachableCell.q,
       unreachableCell.r,
-      unreachableCell.color,
+      unreachableCell.color as CoreColor,
     );
     assert(!moveResult.success, "Movement to unreachable sea hex should fail");
   }

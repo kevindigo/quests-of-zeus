@@ -1,15 +1,15 @@
 // Game initialization and setup for Quests of Zeus
 import type { HexCell } from "./game-engine.ts";
 import { HexMap } from "./hexmap.ts";
+import type { Player } from "./Player.ts";
 import { createEmptyStorage } from "./storage-manager.ts";
 import {
-  ALL_COLORS,
-  CORE_COLORS,
+  COLOR_WHEEL,
+  type CoreColor,
   type CubeHex,
   type GameState,
   type HexColor,
   type MonsterHex,
-  type Player,
   PLAYER_COLORS,
 } from "./types.ts";
 
@@ -23,7 +23,7 @@ export function findZeus(map: HexMap): HexCell {
 }
 
 export class GameInitializer {
-  private oracleCardDeck: HexColor[] = [];
+  private oracleCardDeck: CoreColor[] = [];
 
   /**
    * Initialize a new game state
@@ -70,7 +70,7 @@ export class GameInitializer {
 
     for (let i = 0; i < 2; i++) { // Start with 2 players for now
       // Roll initial oracle dice for all players during setup
-      const initialDice: HexColor[] = [];
+      const initialDice: CoreColor[] = [];
       for (let j = 0; j < 3; j++) {
         const randomColor =
           PLAYER_COLORS[Math.floor(Math.random() * PLAYER_COLORS.length)];
@@ -109,14 +109,7 @@ export class GameInitializer {
    */
   private initializeOracleCardDeck(): void {
     this.oracleCardDeck = [];
-    const cardColors: HexColor[] = [
-      CORE_COLORS.BLACK,
-      CORE_COLORS.PINK,
-      CORE_COLORS.BLUE,
-      CORE_COLORS.YELLOW,
-      CORE_COLORS.GREEN,
-      CORE_COLORS.RED,
-    ];
+    const cardColors = [...COLOR_WHEEL];
     // The deck consists of 5 copies of each of the 6 colors (5 * 6 = 30 cards)
     for (const color of cardColors) {
       for (let i = 0; i < 5; i++) {
@@ -152,7 +145,7 @@ export class GameInitializer {
     const basePattern: HexColor[][] = [];
 
     // Create a shuffled copy of colors for the first hex
-    const shuffledColors = [...ALL_COLORS];
+    const shuffledColors = [...COLOR_WHEEL];
     this.shuffleArray(shuffledColors);
 
     // For the first hex, use the shuffled colors
@@ -212,7 +205,7 @@ export class GameInitializer {
     this.shuffleArray(shuffledMonsterHexes);
 
     // Create a shuffled list of all monster colors to place
-    const monsterColors = [...ALL_COLORS];
+    const monsterColors = [...COLOR_WHEEL];
     this.shuffleArray(monsterColors);
 
     // We need playerCount copies of each color
@@ -276,7 +269,7 @@ export class GameInitializer {
   /**
    * Get the oracle card deck (for use by the main engine)
    */
-  public getOracleCardDeck(): HexColor[] {
+  public getOracleCardDeck(): CoreColor[] {
     return this.oracleCardDeck;
   }
 }

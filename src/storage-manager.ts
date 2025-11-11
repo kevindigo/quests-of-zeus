@@ -1,5 +1,6 @@
 // Storage slot management for Quests of Zeus
-import type { HexColor, Player, StorageSlot } from "./types.ts";
+import type { Player } from "./Player.ts";
+import type { HexColor, StorageSlot } from "./types.ts";
 
 // Helper function to create empty storage slots
 export function createEmptyStorage(): [StorageSlot, StorageSlot] {

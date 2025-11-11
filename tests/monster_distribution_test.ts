@@ -6,7 +6,7 @@
 
 import { assert, assertEquals } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import { ALL_COLORS } from "../src/types.ts";
+import { COLOR_WHEEL } from "../src/types.ts";
 
 // Helper function to run distribution tests
 function runDistributionTests(
@@ -29,7 +29,7 @@ function runDistributionTests(
       sum + hex.monsterColors.length,
     0,
   );
-  const expectedTotalMonsters = 2 * ALL_COLORS.length;
+  const expectedTotalMonsters = 2 * COLOR_WHEEL.length;
   assertEquals(
     totalMonsters,
     expectedTotalMonsters,
@@ -44,7 +44,7 @@ function runDistributionTests(
     }
   }
 
-  for (const color of ALL_COLORS) {
+  for (const color of COLOR_WHEEL) {
     assertEquals(
       colorCounts[color],
       2,
@@ -163,7 +163,7 @@ Deno.test("MonsterDistribution - color distribution consistency", () => {
     }
 
     // Each color should appear exactly 2 times (for 2 players)
-    for (const color of ALL_COLORS) {
+    for (const color of COLOR_WHEEL) {
       assertEquals(
         colorCounts[color],
         2,

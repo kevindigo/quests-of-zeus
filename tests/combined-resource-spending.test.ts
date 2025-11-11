@@ -3,7 +3,8 @@
 
 import { assert, assertEquals, assertGreater } from "@std/assert";
 import { type GameState, QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { HexCell, HexColor, Player } from "../src/types.ts";
+import type { Player } from "../src/Player.ts";
+import type { CoreColor, HexCell } from "../src/types.ts";
 
 Deno.test("CombinedResourceSpending - select die for movement", () => {
   const engine = new QuestsZeusGameEngine();
@@ -13,7 +14,7 @@ Deno.test("CombinedResourceSpending - select die for movement", () => {
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as HexColor[];
+  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
   player.favor = 5;
   player.shipPosition = { q: 0, r: 0 };
 
@@ -64,7 +65,7 @@ Deno.test("CombinedResourceSpending - select die for favor gain", () => {
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as HexColor[];
+  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
   const initialFavor = player.favor;
 
   // Test that player can select a die and spend it for favor
@@ -91,7 +92,7 @@ Deno.test("CombinedResourceSpending - select die to draw oracle card", () => {
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as HexColor[];
+  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
   const initialCardCount = player.oracleCards.length;
 
   // Test that player can select a die and spend it to draw an oracle card
@@ -151,7 +152,7 @@ Deno.test("CombinedResourceSpending - select oracle card for movement", () => {
   const destination = findAdjacentSeaHex(gameState, player);
 
   // Set up deterministic test conditions
-  player.oracleCards = [destination.color];
+  player.oracleCards = [destination.color as CoreColor];
   player.favor = 0;
   player.usedOracleCardThisTurn = false;
 
@@ -165,7 +166,7 @@ Deno.test("CombinedResourceSpending - select oracle card for movement", () => {
     player.id,
     destination.q,
     destination.r,
-    destination.color,
+    destination.color as CoreColor,
     0,
   );
   assert(
@@ -254,8 +255,8 @@ Deno.test("CombinedResourceSpending - cannot use both die and oracle card in sam
   assert(originCell, "Ship should have been placed on a valid sea hex");
   const destination = findAdjacentSeaHex(gameState, player);
 
-  player.oracleDice = [originCell.color] as HexColor[];
-  player.oracleCards = [destination.color];
+  player.oracleDice = [originCell.color] as CoreColor[];
+  player.oracleCards = [destination.color as CoreColor];
   player.favor = 5;
   player.usedOracleCardThisTurn = false;
 
@@ -264,7 +265,7 @@ Deno.test("CombinedResourceSpending - cannot use both die and oracle card in sam
     player.id,
     destination.q,
     destination.r,
-    destination.color,
+    destination.color as CoreColor,
     0,
   );
   assert(
@@ -279,7 +280,7 @@ Deno.test("CombinedResourceSpending - cannot use both die and oracle card in sam
     player.id,
     originCell.q,
     originCell.r,
-    originCell.color,
+    originCell.color as CoreColor,
     0,
   );
   assert(
@@ -298,7 +299,7 @@ Deno.test("CombinedResourceSpending - resource selection clears when switching t
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as HexColor[];
+  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
   player.oracleCards = ["pink"];
   player.favor = 5;
   // Find a sea hex to start from instead of Zeus hex
@@ -356,7 +357,7 @@ Deno.test("CombinedResourceSpending - favor spending with both resource types", 
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as HexColor[];
+  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
   player.oracleCards = ["pink"];
   const initialFavor = player.favor;
   player.usedOracleCardThisTurn = false;

@@ -5,7 +5,7 @@
 
 import { assert, assertEquals } from "@std/assert";
 import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import { ALL_COLORS } from "../src/types.ts";
+import { COLOR_WHEEL } from "../src/types.ts";
 
 // Test algorithm performance and timing
 Deno.test("MonsterDistribution - algorithm performance", () => {
@@ -25,7 +25,7 @@ Deno.test("MonsterDistribution - algorithm performance", () => {
         sum + hex.monsterColors.length,
       0,
     );
-    assertEquals(totalMonsters, 2 * ALL_COLORS.length);
+    assertEquals(totalMonsters, 2 * COLOR_WHEEL.length);
   }
 
   const endTime = performance.now();
@@ -57,7 +57,7 @@ Deno.test("MonsterDistribution - always valid results", () => {
           sum + hex.monsterColors.length,
         0,
       );
-      assertEquals(totalMonsters, 2 * ALL_COLORS.length);
+      assertEquals(totalMonsters, 2 * COLOR_WHEEL.length);
 
       // Check color distribution
       const colorCounts: Record<string, number> = {};
@@ -67,7 +67,7 @@ Deno.test("MonsterDistribution - always valid results", () => {
         }
       }
 
-      for (const color of ALL_COLORS) {
+      for (const color of COLOR_WHEEL) {
         assertEquals(colorCounts[color], 2);
       }
 

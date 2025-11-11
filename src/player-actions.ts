@@ -1,6 +1,7 @@
 // Player action implementations for Quests of Zeus
-import { MovementSystem } from "./movement-system.ts";
-import { OracleSystem } from "./oracle-system.ts";
+import type { MovementSystem } from "./movement-system.ts";
+import type { OracleSystem } from "./oracle-system.ts";
+import type { Player } from "./Player.ts";
 import {
   addCubeToStorage,
   hasCubeOfColor,
@@ -8,8 +9,13 @@ import {
   removeCubeFromStorage,
   removeStatueFromStorage,
 } from "./storage-manager.ts";
-import type { GameState, HexColor, MoveShipResult, Player } from "./types.ts";
-import { ALL_COLORS } from "./types.ts";
+import type {
+  CoreColor,
+  GameState,
+  HexColor,
+  MoveShipResult,
+} from "./types.ts";
+import { COLOR_WHEEL } from "./types.ts";
 
 export class PlayerActions {
   constructor(
@@ -21,12 +27,12 @@ export class PlayerActions {
   /**
    * Roll oracle dice for a player
    */
-  public rollOracleDice(player: Player): HexColor[] {
+  public rollOracleDice(player: Player): CoreColor[] {
     // Roll 3 oracle dice (random colors)
-    const dice: HexColor[] = [];
+    const dice: CoreColor[] = [];
     for (let i = 0; i < 3; i++) {
       const randomColor =
-        ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)];
+        COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
       dice.push(randomColor!);
     }
 
@@ -41,7 +47,7 @@ export class PlayerActions {
     player: Player,
     targetQ: number,
     targetR: number,
-    dieColor?: HexColor,
+    dieColor?: CoreColor,
     favorSpent?: number,
   ): MoveShipResult {
     if (this.state.phase !== "action") {
@@ -417,7 +423,7 @@ export class PlayerActions {
   /**
    * Spend any die to gain 2 favor during the action phase
    */
-  public spendDieForFavor(player: Player, dieColor: HexColor): boolean {
+  public spendDieForFavor(player: Player, dieColor: CoreColor): boolean {
     if (this.state.phase !== "action") {
       return false;
     }

@@ -1,6 +1,6 @@
 // Movement and reachability logic for Quests of Zeus
-import type { HexCell, HexColor } from "./types.ts";
 import type { HexMap } from "./hexmap.ts";
+import type { CoreColor, HexCell, HexColor } from "./types.ts";
 
 export class MovementSystem {
   constructor(private map: HexMap) {}
@@ -15,8 +15,8 @@ export class MovementSystem {
     startQ: number,
     startR: number,
     range: number,
-  ): { q: number; r: number; color: HexColor }[] {
-    const reachableTiles: { q: number; r: number; color: HexColor }[] = [];
+  ): { q: number; r: number; color: CoreColor }[] {
+    const reachableTiles: { q: number; r: number; color: CoreColor }[] = [];
     const visited = new Set<string>();
     const queue: { q: number; r: number; steps: number }[] = [];
 
@@ -49,7 +49,7 @@ export class MovementSystem {
             reachableTiles.push({
               q: neighbor.q,
               r: neighbor.r,
-              color: neighbor.color,
+              color: neighbor.color as CoreColor,
             });
           }
         }

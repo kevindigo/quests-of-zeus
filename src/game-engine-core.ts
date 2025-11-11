@@ -5,15 +5,16 @@ import { GameInitializer } from "./game-initializer.ts";
 import { MovementSystem } from "./movement-system.ts";
 import { OracleSystem } from "./oracle-system.ts";
 import { PlayerActions } from "./player-actions.ts";
+import type { Player } from "./Player.ts";
 import type {
+  CoreColor,
   CubeHex,
   GameState,
   HexColor,
   MonsterHex,
   MoveShipResult,
-  Player,
 } from "./types.ts";
-import { ALL_COLORS } from "./types.ts";
+import { COLOR_WHEEL } from "./types.ts";
 
 export class QuestsZeusGameEngine {
   private state: GameState | null = null;
@@ -51,7 +52,7 @@ export class QuestsZeusGameEngine {
     playerId: number,
     targetQ: number,
     targetR: number,
-    dieColor?: HexColor,
+    dieColor?: CoreColor,
     favorSpent?: number,
   ): MoveShipResult {
     this.ensureInitialized();
@@ -135,7 +136,7 @@ export class QuestsZeusGameEngine {
     return success;
   }
 
-  public spendDieForFavor(playerId: number, dieColor: HexColor): boolean {
+  public spendDieForFavor(playerId: number, dieColor: CoreColor): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
     return this.playerActions!.spendDieForFavor(player, dieColor);
@@ -145,7 +146,7 @@ export class QuestsZeusGameEngine {
     playerId: number,
     targetQ: number,
     targetR: number,
-    cardColor: HexColor,
+    cardColor: CoreColor,
     favorSpent?: number,
   ): MoveShipResult {
     this.ensureInitialized();
@@ -281,7 +282,7 @@ export class QuestsZeusGameEngine {
 
   public spendOracleCardForFavor(
     playerId: number,
-    cardColor: HexColor,
+    cardColor: CoreColor,
   ): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
@@ -290,14 +291,14 @@ export class QuestsZeusGameEngine {
 
   public spendOracleCardToDrawCard(
     playerId: number,
-    cardColor: HexColor,
+    cardColor: CoreColor,
   ): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
     return this.oracleSystem!.spendOracleCardToDrawCard(player, cardColor);
   }
 
-  public drawOracleCard(playerId: number, dieColor: HexColor): boolean {
+  public drawOracleCard(playerId: number, dieColor: CoreColor): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
     return this.oracleSystem!.drawOracleCard(player, dieColor);
@@ -305,7 +306,7 @@ export class QuestsZeusGameEngine {
 
   public setRecolorIntention(
     playerId: number,
-    dieColor: HexColor,
+    dieColor: CoreColor,
     favorSpent: number,
   ): boolean {
     this.ensureInitialized();
@@ -315,7 +316,7 @@ export class QuestsZeusGameEngine {
 
   public setRecolorIntentionForCard(
     playerId: number,
-    cardColor: HexColor,
+    cardColor: CoreColor,
     favorSpent: number,
   ): boolean {
     this.ensureInitialized();
@@ -335,7 +336,7 @@ export class QuestsZeusGameEngine {
 
   public clearRecolorIntentionForCard(
     playerId: number,
-    cardColor: HexColor,
+    cardColor: CoreColor,
   ): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
@@ -371,10 +372,10 @@ export class QuestsZeusGameEngine {
       this.state!.players.length;
     const nextPlayer = this.state!.players[nextPlayerIndex];
 
-    const dice: HexColor[] = [];
+    const dice: CoreColor[] = [];
     for (let i = 0; i < 3; i++) {
       const randomColor =
-        ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)];
+        COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
       if (randomColor) {
         dice.push(randomColor);
       }
@@ -441,7 +442,7 @@ export class QuestsZeusGameEngine {
   public getAvailableMoves(
     playerId: number,
     favorSpent?: number,
-  ): { q: number; r: number; dieColor: HexColor }[] {
+  ): { q: number; r: number; dieColor: CoreColor }[] {
     this.ensureInitialized();
     const player = this.state!.players.find((p) => p.id === playerId);
     if (!player || this.state!.phase !== "action") return [];
@@ -456,7 +457,6 @@ export class QuestsZeusGameEngine {
 
     return reachableSeaTiles
       .filter((seaTile) =>
-        seaTile.color !== "none" &&
         player.oracleDice.includes(seaTile.color) &&
         !(seaTile.q === currentPos.q && seaTile.r === currentPos.r)
       )
@@ -487,7 +487,7 @@ export class QuestsZeusGameEngine {
 
   public getAvailableMovesForDie(
     playerId: number,
-    dieColor: HexColor,
+    dieColor: CoreColor,
     availableFavor: number,
   ): { q: number; r: number; favorCost: number }[] {
     this.ensureInitialized();
@@ -519,7 +519,6 @@ export class QuestsZeusGameEngine {
 
       for (const seaTile of reachableSeaTiles) {
         if (
-          seaTile.color !== "none" &&
           seaTile.color === effectiveDieColor &&
           !(seaTile.q === player.shipPosition.q &&
             seaTile.r === player.shipPosition.r)

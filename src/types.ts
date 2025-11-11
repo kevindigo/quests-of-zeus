@@ -1,4 +1,6 @@
 // Game type definitions for Quests of Zeus
+import type { HexMap } from "./hexmap.ts";
+import type { Player } from "./Player.ts";
 
 // Terrain types for the hexagonal map
 export type TerrainType =
@@ -32,7 +34,7 @@ export const CORE_COLORS = {
   RED: "red" as CoreColor,
 } as const;
 
-export const ALL_COLORS: CoreColor[] = [
+export const COLOR_WHEEL: CoreColor[] = [
   CORE_COLORS.BLACK,
   CORE_COLORS.PINK,
   CORE_COLORS.BLUE,
@@ -59,8 +61,6 @@ export interface HexCell {
   statues?: number; // Number of statues placed on this city (0-3)
 }
 
-import type { HexMap } from "./hexmap.ts";
-
 export type PlayerColorName =
   | "blue"
   | "yellow"
@@ -86,32 +86,6 @@ export const PLAYER_COLORS = [
 export interface StorageSlot {
   type: "cube" | "statue" | "empty";
   color: HexColor;
-}
-
-export interface Player {
-  id: number;
-  name: string;
-  color: PlayerColorName;
-  shipPosition: { q: number; r: number };
-  storage: [StorageSlot, StorageSlot]; // 2 storage slots, each can hold 1 cube or 1 statue
-  completedQuests: number;
-  completedQuestTypes: {
-    temple_offering: number;
-    monster: number;
-    foundation: number;
-    cloud: number;
-  };
-  oracleDice: HexColor[]; // Current oracle dice values
-  favor: number; // Player's favor resource
-  shield: number; // Player's shield resource
-  recoloredDice: {
-    [dieColor: string]: { newColor: HexColor; favorCost: number };
-  }; // Track recoloring intentions for dice
-  recoloredCards?: {
-    [cardColor: string]: { newColor: HexColor; favorCost: number };
-  }; // Track recoloring intentions for oracle cards
-  oracleCards: HexColor[]; // Oracle cards held by player
-  usedOracleCardThisTurn: boolean; // Track if player has used an oracle card this turn
 }
 
 export interface CubeHex {

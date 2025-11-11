@@ -1,7 +1,7 @@
 // TerrainPlacementManager - Handles all terrain generation and placement logic
 
 import type { HexCell, HexColor, TerrainType } from "../types.ts";
-import { ALL_COLORS } from "../types.ts";
+import { COLOR_WHEEL } from "../types.ts";
 import type { HexGridOperations } from "./HexGridOperations.ts";
 import type { SeaColorManager } from "./SeaColorManager.ts";
 import type { UtilityService } from "./UtilityService.ts";
@@ -136,7 +136,7 @@ export class TerrainPlacementManager {
    */
   private placeCities(grid: HexCell[][]): void {
     // Create a shuffled copy of the colors to assign randomly to cities
-    const shuffledColors = [...ALL_COLORS];
+    const shuffledColors = [...COLOR_WHEEL];
     this.utilityService.shuffleArray(shuffledColors);
 
     for (let cornerDirection = 0; cornerDirection < 6; cornerDirection++) {
@@ -356,13 +356,13 @@ export class TerrainPlacementManager {
       let templeColors: HexColor[] = [];
       let cloudColors: HexColor[] = [];
       if (terrainType === "temple") {
-        templeColors = [...ALL_COLORS];
+        templeColors = [...COLOR_WHEEL];
         this.utilityService.shuffleArray(templeColors);
       } else if (terrainType === "clouds") {
         // For clouds, we need 12 hexes with 6 colors, so each color appears twice
         // Create an array with each color repeated twice
         cloudColors = [];
-        for (const color of ALL_COLORS) {
+        for (const color of COLOR_WHEEL) {
           cloudColors.push(color);
           cloudColors.push(color);
         }

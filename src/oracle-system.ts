@@ -1,10 +1,11 @@
 // Oracle card and recoloring logic for Quests of Zeus
-import type { HexColor, Player } from "./types.ts";
+import type { Player } from "./Player.ts";
+import { COLOR_WHEEL, type CoreColor, type HexColor } from "./types.ts";
 
 export class OracleSystem {
-  private oracleCardDeck: HexColor[] = [];
+  private oracleCardDeck: CoreColor[] = [];
 
-  constructor(oracleCardDeck: HexColor[]) {
+  constructor(oracleCardDeck: CoreColor[]) {
     this.oracleCardDeck = oracleCardDeck;
   }
 
@@ -16,7 +17,7 @@ export class OracleSystem {
    */
   public setRecolorIntention(
     player: Player,
-    dieColor: HexColor,
+    dieColor: CoreColor,
     favorSpent: number,
   ): boolean {
     // Check if player has the specified die
@@ -29,25 +30,15 @@ export class OracleSystem {
       return false;
     }
 
-    // Define the color wheel order
-    const colorWheel: HexColor[] = [
-      "black",
-      "pink",
-      "blue",
-      "yellow",
-      "green",
-      "red",
-    ];
-
     // Find current color position
-    const currentIndex = colorWheel.indexOf(dieColor);
+    const currentIndex = COLOR_WHEEL.indexOf(dieColor);
     if (currentIndex === -1) {
       return false; // Invalid color
     }
 
     // Calculate new color position (wrapping around)
-    const newIndex = (currentIndex + favorSpent) % colorWheel.length;
-    const newColor = colorWheel[newIndex]!;
+    const newIndex = (currentIndex + favorSpent) % COLOR_WHEEL.length;
+    const newColor = COLOR_WHEEL[newIndex]!;
 
     // Store recoloring intention (favor is not spent yet)
     player.recoloredDice[dieColor] = {
@@ -66,7 +57,7 @@ export class OracleSystem {
    */
   public setRecolorIntentionForCard(
     player: Player,
-    cardColor: HexColor,
+    cardColor: CoreColor,
     favorSpent: number,
   ): boolean {
     // Check if player has the specified oracle card
@@ -79,25 +70,15 @@ export class OracleSystem {
       return false;
     }
 
-    // Define the color wheel order
-    const colorWheel: HexColor[] = [
-      "black",
-      "pink",
-      "blue",
-      "yellow",
-      "green",
-      "red",
-    ];
-
     // Find current color position
-    const currentIndex = colorWheel.indexOf(cardColor);
+    const currentIndex = COLOR_WHEEL.indexOf(cardColor);
     if (currentIndex === -1) {
       return false; // Invalid color
     }
 
     // Calculate new color position (wrapping around)
-    const newIndex = (currentIndex + favorSpent) % colorWheel.length;
-    const newColor = colorWheel[newIndex]!;
+    const newIndex = (currentIndex + favorSpent) % COLOR_WHEEL.length;
+    const newColor = COLOR_WHEEL[newIndex]!;
 
     // Store recoloring intention (favor is not spent yet)
     player.recoloredCards = player.recoloredCards || {};
@@ -122,7 +103,7 @@ export class OracleSystem {
    */
   public clearRecolorIntentionForCard(
     player: Player,
-    cardColor: HexColor,
+    cardColor: CoreColor,
   ): boolean {
     if (player.recoloredCards) {
       delete player.recoloredCards[cardColor];
@@ -134,7 +115,7 @@ export class OracleSystem {
    * Apply recoloring when a die is used (e.g., for movement)
    * This is where the favor is actually spent
    */
-  public applyRecoloring(player: Player, dieColor: HexColor): boolean {
+  public applyRecoloring(player: Player, dieColor: CoreColor): boolean {
     const recoloring = player.recoloredDice[dieColor];
     if (!recoloring) {
       return false; // No recoloring intention for this die
@@ -172,7 +153,7 @@ export class OracleSystem {
    * Apply recoloring when an oracle card is used (e.g., for movement)
    * This is where the favor is actually spent
    */
-  public applyRecoloringForCard(player: Player, cardColor: HexColor): boolean {
+  public applyRecoloringForCard(player: Player, cardColor: CoreColor): boolean {
     if (!player.recoloredCards || !player.recoloredCards[cardColor]) {
       return false; // No recoloring intention for this card
     }
@@ -211,7 +192,7 @@ export class OracleSystem {
    * Draw an oracle card by spending any die during the action phase
    * The oracle card is drawn from the deck and added to the player's hand
    */
-  public drawOracleCard(player: Player, dieColor: HexColor): boolean {
+  public drawOracleCard(player: Player, dieColor: CoreColor): boolean {
     if (!this.oracleCardDeck || this.oracleCardDeck.length === 0) {
       return false;
     }
@@ -264,7 +245,7 @@ export class OracleSystem {
     player: Player,
     _targetQ: number,
     _targetR: number,
-    cardColor: HexColor,
+    cardColor: CoreColor,
     _favorSpent?: number,
   ): { success: boolean; error?: string } {
     // Check if player has already used an oracle card this turn
@@ -319,7 +300,10 @@ export class OracleSystem {
    * Spend an oracle card to gain 2 favor during the action phase
    * Players can only use 1 oracle card per turn
    */
-  public spendOracleCardForFavor(player: Player, cardColor: HexColor): boolean {
+  public spendOracleCardForFavor(
+    player: Player,
+    cardColor: CoreColor,
+  ): boolean {
     // Check if player has already used an oracle card this turn
     if (player.usedOracleCardThisTurn) {
       return false;
@@ -368,7 +352,7 @@ export class OracleSystem {
    */
   public spendOracleCardToDrawCard(
     player: Player,
-    cardColor: HexColor,
+    cardColor: CoreColor,
   ): boolean {
     // Check if player has already used an oracle card this turn
     if (player.usedOracleCardThisTurn) {

@@ -11,7 +11,6 @@ export type {
   HexColor,
   MonsterHex,
   MoveShipResult,
-  Player,
   StorageSlot,
   TerrainType,
 } from "./types.ts";
