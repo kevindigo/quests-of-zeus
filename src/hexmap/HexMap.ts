@@ -38,6 +38,14 @@ export class HexMap {
     this.convertSeaToShallows();
   }
 
+  public getZeus(): HexCell {
+    const zeuses = this.getCellsByTerrain("zeus");
+    if (zeuses.length < 1) {
+      throw new Error("Zeus not found!");
+    }
+    return zeuses[0]!;
+  }
+
   /**
    * Get the grid for external access
    */
