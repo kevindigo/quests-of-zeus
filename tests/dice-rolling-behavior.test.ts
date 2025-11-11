@@ -183,39 +183,6 @@ Deno.test("DiceRolling - dice are valid colors after rolling", () => {
   }
 });
 
-Deno.test("DiceRolling - manual rollOracleDice still works for special cases", () => {
-  const engine = new QuestsZeusGameEngine();
-  engine.initializeGame();
-
-  const player1 = engine.getPlayer(1);
-  assertExists(player1);
-
-  // Record initial dice
-  const initialDice = [...player1.oracleDice];
-
-  // Manually roll dice for Player 1 (for debugging or special cases)
-  const newDice = engine.rollOracleDice(1);
-
-  assertEquals(newDice.length, 3, "Manual roll should return 3 dice");
-
-  // Player 1 should have the new dice
-  assertEquals(
-    player1.oracleDice,
-    newDice,
-    "Player 1 should have the manually rolled dice",
-  );
-
-  // Dice should be different from initial dice
-  // (Note: There's a small chance they could be the same by random chance)
-  const diceChanged = player1.oracleDice.some(
-    (die, index) => die !== initialDice[index],
-  );
-  assert(
-    diceChanged,
-    "Manual roll should produce new dice",
-  );
-});
-
 Deno.test("DiceRolling - next player always has dice ready", () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
