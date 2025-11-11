@@ -212,6 +212,7 @@ Deno.test("StatueSystem - City completion state", () => {
   }
 
   // Should not be complete with 0 statues
+  assert(testCity);
   isComplete = map.isCityComplete(testCity.q, testCity.r);
   assert(!isComplete, "City should not be complete with 0 statues");
 

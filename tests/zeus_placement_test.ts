@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { assertEquals } from "@std/assert";
+import { assert, assertEquals } from "@std/assert";
 import { HexMap } from "../src/hexmap.ts";
 
 // Test the new Zeus placement logic
@@ -16,6 +16,7 @@ Deno.test("Zeus placement - randomly in neighbor hexes", () => {
   const zeusCell = zeusCells[0];
 
   // Zeus should not be at the center (0, 0)
+  assert(zeusCell);
   assertEquals(
     zeusCell.q !== 0 || zeusCell.r !== 0,
     true,
@@ -71,6 +72,7 @@ Deno.test("Zeus placement - multiple generations", () => {
     assertEquals(zeusCells.length, 1, "Should have exactly 1 Zeus cell");
 
     const zeusCell = zeusCells[0];
+    assert(zeusCell);
     const positionKey = `${zeusCell.q},${zeusCell.r}`;
     positions.add(positionKey);
 
