@@ -1,7 +1,7 @@
 // Tests for combined die and oracle card spending functionality
 // Verifies that users can select either resource type and use it for movement, favor gain, or oracle card drawing
 
-import { assert, assertEquals } from "@std/assert";
+import { assert, assertEquals, assertGreater } from "@std/assert";
 import { type GameState, QuestsZeusGameEngine } from "../src/game-engine.ts";
 import type { HexCell, HexColor, Player } from "../src/types.ts";
 
@@ -312,9 +312,9 @@ Deno.test("CombinedResourceSpending - resource selection clears when switching t
     "blue",
     player.favor,
   );
-  assertEquals(
-    availableMovesWithDie.length > 0,
-    true,
+  assertGreater(
+    availableMovesWithDie.length,
+    0,
     "Should have moves available with die",
   );
 
