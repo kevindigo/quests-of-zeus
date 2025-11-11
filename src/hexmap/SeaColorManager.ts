@@ -81,7 +81,7 @@ export class SeaColorManager {
       // If there are available colors, choose the one that has been used least so far
       if (availableColors.length > 0) {
         // Find the color with the minimum usage count among available colors
-        let leastUsedColor = availableColors[0];
+        let leastUsedColor = availableColors[0] || "none";
         let minCount = colorCounts[leastUsedColor]!;
 
         for (const color of availableColors) {
@@ -159,61 +159,5 @@ export class SeaColorManager {
     }
 
     return bestColor;
-  }
-
-  /**
-   * Count the number of adjacent sea hexes that have the same color
-   * Used for debugging and validation
-   */
-  private countAdjacentSameColorSeaHexes(grid: HexCell[][]): number {
-    let conflicts = 0;
-    const processedPairs = new Set<string>();
-
-    for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-      const row = grid[arrayQ];
-      if (row) {
-        for (let arrayR = 0; arrayR < row.length; arrayR++) {
-          const cell = row[arrayR];
-          if (cell && cell.terrain === "sea" && cell.color !== "none") {
-            const neighbors = this.hexGridOperations.getNeighborsFromGrid(
-              cell.q,
-              cell.r,
-              grid,
-            );
-
-            for (const neighbor of neighbors) {
-              if (neighbor.terrain === "sea" && neighbor.color !== "none") {
-                // Create a unique key for this pair to avoid double counting
-                const pairKey = this.getPairKey(cell, neighbor);
-
-                if (
-                  !processedPairs.has(pairKey) && cell.color === neighbor.color
-                ) {
-                  conflicts++;
-                  processedPairs.add(pairKey);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    return conflicts;
-  }
-
-  /**
-   * Generate a unique key for a pair of cells to avoid double counting conflicts
-   */
-  private getPairKey(cell1: HexCell, cell2: HexCell): string {
-    const [minQ, maxQ] = [
-      Math.min(cell1.q, cell2.q),
-      Math.max(cell1.q, cell2.q),
-    ];
-    const [minR, maxR] = [
-      Math.min(cell1.r, cell2.r),
-      Math.max(cell1.r, cell2.r),
-    ];
-    return `${minQ},${minR}-${maxQ},${maxR}`;
   }
 }

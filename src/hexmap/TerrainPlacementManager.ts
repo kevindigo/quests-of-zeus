@@ -3,24 +3,20 @@
 import type { HexCell, HexColor, TerrainType } from "../types.ts";
 import { ALL_COLORS } from "../types.ts";
 import type { HexGridOperations } from "./HexGridOperations.ts";
-import type { PathfindingService } from "./PathfindingService.ts";
 import type { SeaColorManager } from "./SeaColorManager.ts";
 import type { UtilityService } from "./UtilityService.ts";
 
 export class TerrainPlacementManager {
   private hexGridOperations: HexGridOperations;
-  private _pathfindingService: PathfindingService;
   private seaColorManager: SeaColorManager;
   private utilityService: UtilityService;
 
   constructor(
     hexGridOperations: HexGridOperations,
-    pathfindingService: PathfindingService,
     seaColorManager: SeaColorManager,
     utilityService: UtilityService,
   ) {
     this.hexGridOperations = hexGridOperations;
-    this.pathfindingService = pathfindingService;
     this.seaColorManager = seaColorManager;
     this.utilityService = utilityService;
   }
@@ -113,7 +109,9 @@ export class TerrainPlacementManager {
 
     // Randomly select one of the neighbor hexes
     const randomIndex = Math.floor(Math.random() * neighborHexes.length);
-    const [zeusQ, zeusR] = neighborHexes[randomIndex];
+    const zeusDelta = neighborHexes[randomIndex] || [];
+    const zeusQ = zeusDelta[0] || 0;
+    const zeusR = zeusDelta[1] || 0;
 
     // Find the cell for Zeus placement
     const zeusCell = this.hexGridOperations.getCellFromGrid(grid, zeusQ, zeusR);
@@ -181,7 +179,8 @@ export class TerrainPlacementManager {
       if (cell && cell.terrain === "shallow") {
         cell.terrain = "city";
         // Assign a random color to the city
-        cell.color = shuffledColors[cornerDirection];
+        const color = shuffledColors[cornerDirection] || "none";
+        cell.color = color;
         // Initialize statues counter for this city to 3 (all statues start on cities)
         cell.statues = 3;
 
@@ -197,7 +196,8 @@ export class TerrainPlacementManager {
         if (cornerCell && cornerCell.terrain === "shallow") {
           cornerCell.terrain = "city";
           // Assign a random color to the city
-          cornerCell.color = shuffledColors[cornerDirection];
+          const color = shuffledColors[cornerDirection] || "none";
+          cornerCell.color = color;
           // Initialize statues counter for this city to 3 (all statues start on cities)
           cornerCell.statues = 3;
 

@@ -40,8 +40,8 @@ export class HexGridOperations {
     }
     const [dq, dr] = directionVector;
     return {
-      q: q + dq,
-      r: r + dr,
+      q: q + (dq || 0),
+      r: r + (dr || 0),
     };
   }
 

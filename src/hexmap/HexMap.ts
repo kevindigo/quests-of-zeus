@@ -56,7 +56,6 @@ export class HexMap implements HexMapService {
     );
     this.terrainPlacementManager = new TerrainPlacementManager(
       this.hexGridOperations,
-      this.pathfindingService,
       this.seaColorManager,
       this.utilityService,
     );
