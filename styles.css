@@ -142,10 +142,11 @@ footer {
 
 .hex-highlight.available-move-favor {
   stroke: tan !important;
-  stroke-width: 4px !important; /* Reduced from 8px to prevent covering interior */
+  stroke-width: 4px
+    !important; /* Reduced from 8px to prevent covering interior */
   animation: pulse-silver 1.5s infinite !important;
   z-index: 10 !important;
-  filter: drop-shadow(0 0 8px tan
+  filter: drop-shadow(0 0 8px tan);
   stroke-dasharray: 8, 4; /* Dashed pattern to make it stand out */
   paint-order: stroke; /* Ensure stroke is painted on top, not covering fill */
 }
