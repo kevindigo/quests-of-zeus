@@ -64,12 +64,6 @@ export class QuestsZeusGameEngine {
       dieColor,
       favorSpent,
     );
-    // Don't automatically end turn after movement - let players perform multiple actions
-    if (result.success) {
-      console.log(`Move successful for player ${playerId}, turn continues`);
-    } else {
-      console.log(`Move failed for player ${playerId}:`, result.error);
-    }
     return result;
   }
 

@@ -156,12 +156,6 @@ Deno.test("CombinedResourceSpending - select oracle card for movement", () => {
   player.favor = 0;
   player.usedOracleCardThisTurn = false;
 
-  console.log(
-    `Moving to ${JSON.stringify(destination)} from ${
-      JSON.stringify(player.shipPosition)
-    }`,
-  );
-
   const moveResult = engine.spendOracleCardForMovement(
     player.id,
     destination.q,
