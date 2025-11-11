@@ -104,10 +104,13 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
 
   if (availableMoves.length > 0) {
     const firstMove = availableMoves[0];
+    if (!firstMove) {
+      throw new Error("First move not found");
+    }
 
     // Count occurrences of the used die color before movement
     const initialCountOfUsedColor = initialDiceColors.filter((color) =>
-      color === firstMove!.dieColor
+      color === firstMove.dieColor
     ).length;
 
     // Move to the target hex
@@ -128,7 +131,7 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
 
     // Count occurrences of the used die color after movement
     const finalCountOfUsedColor = samePlayer.oracleDice.filter((color) =>
-      color === firstMove!.dieColor
+      color === firstMove.dieColor
     ).length;
 
     // Check that exactly one die was consumed
@@ -144,15 +147,13 @@ Deno.test("Movement Rules - Successful movement consumes die", () => {
     assertEquals(
       finalCountOfUsedColor,
       initialCountOfUsedColor - 1,
-      `Exactly one ${
-        firstMove!.dieColor
-      } die should be removed. Had ${initialCountOfUsedColor}, now have ${finalCountOfUsedColor}`,
+      `Exactly one ${firstMove.dieColor} die should be removed. Had ${initialCountOfUsedColor}, now have ${finalCountOfUsedColor}`,
     );
 
     // Check that ship position was updated
     assertEquals(
       samePlayer.shipPosition,
-      { q: firstMove!.q, r: firstMove!.r },
+      { q: firstMove.q, r: firstMove.r },
       "Ship position should be updated",
     );
   }
@@ -172,6 +173,9 @@ Deno.test("Movement Rules - Invalid movement attempts", () => {
   const landCells = gameState.map.getCellsByTerrain("city");
   if (landCells.length > 0) {
     const landCell = landCells[0];
+    if (!landCell) {
+      throw new Error("Land cell not found");
+    }
     const moveResult = engine.moveShip(
       player.id,
       landCell.q,

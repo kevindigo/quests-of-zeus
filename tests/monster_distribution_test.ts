@@ -113,7 +113,7 @@ Deno.test("MonsterDistribution - edge cases", () => {
 
 // Test algorithm completeness and robustness
 Deno.test("MonsterDistribution - algorithm completeness", () => {
-  const _playerCount = 2;
+  // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 10; run++) {
     const engine = new QuestsZeusGameEngine();
@@ -124,7 +124,7 @@ Deno.test("MonsterDistribution - algorithm completeness", () => {
 
 // Test that distribution is always even across many runs
 Deno.test("MonsterDistribution - even distribution across runs", () => {
-  const _playerCount = 2;
+  // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 20; run++) {
     const engine = new QuestsZeusGameEngine();
@@ -147,7 +147,7 @@ Deno.test("MonsterDistribution - even distribution across runs", () => {
 
 // Test color distribution is correct across multiple runs
 Deno.test("MonsterDistribution - color distribution consistency", () => {
-  const _playerCount = 2;
+  // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 5; run++) {
     const engine = new QuestsZeusGameEngine();
@@ -177,7 +177,7 @@ Deno.test("MonsterDistribution - color distribution consistency", () => {
 
 // Test that no hex has more than 2 monsters across multiple runs
 Deno.test("MonsterDistribution - max monsters per hex", () => {
-  const _playerCount = 2;
+  // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 10; run++) {
     const engine = new QuestsZeusGameEngine();
@@ -200,7 +200,7 @@ Deno.test("MonsterDistribution - max monsters per hex", () => {
 
 // Test the algorithm with the actual player count (2 players)
 Deno.test("MonsterDistribution - actual player count (2 players)", () => {
-  const _playerCount = 2;
+  // const _playerCount = 2; // Unused variable removed
 
   // 2 players * 6 colors = 12 monsters total
   // With 9 hexes, the only possible even distribution is:

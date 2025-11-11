@@ -39,10 +39,13 @@ Deno.test("Debug oracle card movement", () => {
     const targetTile = blueSeaTiles[0];
     console.log("Target tile:", targetTile);
 
+    if (!targetTile) {
+      throw new Error("Target tile not found");
+    }
     const moveResult = engine.spendOracleCardForMovement(
       player.id,
-      targetTile!.q,
-      targetTile!.r,
+      targetTile.q,
+      targetTile.r,
       "blue",
       0,
     );

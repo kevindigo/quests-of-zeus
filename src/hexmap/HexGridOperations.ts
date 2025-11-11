@@ -34,7 +34,11 @@ export class HexGridOperations {
       [0, -1], // 5: Northwest
     ];
 
-    const [dq, dr] = directionVectors[direction];
+    const directionVector = directionVectors[direction];
+    if (!directionVector) {
+      return null;
+    }
+    const [dq, dr] = directionVector;
     return {
       q: q + dq,
       r: r + dr,

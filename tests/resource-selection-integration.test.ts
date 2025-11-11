@@ -36,10 +36,13 @@ Deno.test("ResourceSelectionIntegration - die and oracle card can be used in sam
 
   if (pinkSeaTiles.length > 0) {
     const targetTile = pinkSeaTiles[0];
+    if (!targetTile) {
+      throw new Error("Target tile not found");
+    }
     const oracleMoveResult = engine.spendOracleCardForMovement(
       player.id,
-      targetTile!.q,
-      targetTile!.r,
+      targetTile.q,
+      targetTile.r,
       "pink",
       0,
     );
@@ -285,10 +288,13 @@ Deno.test("ResourceSelectionIntegration - combined resource actions in sequence"
 
   if (pinkSeaTiles.length > 0) {
     const targetTile = pinkSeaTiles[0];
+    if (!targetTile) {
+      throw new Error("Target tile not found");
+    }
     const oracleMoveResult = engine.spendOracleCardForMovement(
       player.id,
-      targetTile!.q,
-      targetTile!.r,
+      targetTile.q,
+      targetTile.r,
       "pink",
       0,
     );
@@ -327,7 +333,7 @@ Deno.test("ResourceSelectionIntegration - combined resource actions in sequence"
     );
     assertEquals(
       player.shipPosition,
-      { q: targetTile!.q, r: targetTile!.r },
+      { q: targetTile.q, r: targetTile.r },
       "Ship position should be updated",
     );
   }

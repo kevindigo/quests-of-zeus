@@ -1,8 +1,8 @@
 // Hexagonal map representation for Quests of Zeus
 // The game uses a hexagon-shaped grid with radius 6 and various terrain types
 
-import type { TerrainType, HexColor, HexCell } from "./types.ts";
 import { HexMap } from "./hexmap/HexMap.ts";
+import type { HexColor } from "./types.ts";
 
 // Game state
 let gameMap: HexMap = new HexMap();

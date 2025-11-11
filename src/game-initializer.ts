@@ -73,13 +73,15 @@ export class GameInitializer {
       for (let j = 0; j < 3; j++) {
         const randomColor =
           ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)];
-        initialDice.push(randomColor);
+        if (randomColor) {
+          initialDice.push(randomColor);
+        }
       }
 
       players.push({
         id: i + 1,
         name: `Player ${i + 1}`,
-        color: playerColors[i],
+        color: playerColors[i] as HexColor,
         shipPosition: startPosition, // All players start on Zeus hex
         storage: createEmptyStorage(),
         completedQuests: 0,
@@ -234,7 +236,9 @@ export class GameInitializer {
     while (colorIndex < totalColors) {
       const currentHex = monsterHexes[hexIndex];
       const currentColor = monsterColorsToPlace[colorIndex];
-      currentHex.monsterColors.push(currentColor);
+      if (currentColor) {
+        currentHex.monsterColors.push(currentColor);
+      }
       hexIndex = (hexIndex + 1) % monsterHexes.length;
       colorIndex++;
     }
@@ -248,7 +252,9 @@ export class GameInitializer {
   private shuffleArray<T>(array: T[]): void {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+      const temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
     }
   }
 

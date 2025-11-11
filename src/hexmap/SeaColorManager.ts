@@ -116,7 +116,7 @@ export class SeaColorManager {
     }
 
     // Count adjacent same-color sea hexes for debugging
-    const _conflicts = this.countAdjacentSameColorSeaHexes(grid);
+    // const _conflicts = this.countAdjacentSameColorSeaHexes(grid); // Unused variable removed
     // Note: conflicts are expected in some cases due to map constraints
   }
 
