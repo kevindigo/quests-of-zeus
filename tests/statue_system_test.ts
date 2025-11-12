@@ -1,17 +1,17 @@
 // Comprehensive test for the statue system
 
-import { assert, assertEquals } from "@std/assert";
-import { HexMap } from "../src/hexmap.ts";
-import { COLOR_WHEEL } from "../src/types.ts";
+import { assert, assertEquals } from '@std/assert';
+import { HexMap } from '../src/hexmap.ts';
+import { COLOR_WHEEL } from '../src/types.ts';
 
-Deno.test("StatueSystem - HexMap statue operations", () => {
+Deno.test('StatueSystem - HexMap statue operations', () => {
   const map = new HexMap();
-  const cities = map.getCellsByTerrain("city");
+  const cities = map.getCellsByTerrain('city');
 
   assertEquals(
     cities.length,
     COLOR_WHEEL.length,
-    "Should be one city for each color",
+    'Should be one city for each color',
   );
 
   const testCity = cities[0];

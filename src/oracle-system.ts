@@ -1,6 +1,6 @@
 // Oracle card and recoloring logic for Quests of Zeus
-import type { Player } from "./Player.ts";
-import { COLOR_WHEEL, type CoreColor, type HexColor } from "./types.ts";
+import type { Player } from './Player.ts';
+import { COLOR_WHEEL, type CoreColor, type HexColor } from './types.ts';
 
 export class OracleSystem {
   private oracleCardDeck: CoreColor[] = [];
@@ -134,7 +134,7 @@ export class OracleSystem {
       // This should not happen since we checked above, but log for debugging
       console.warn(
         `Attempted to apply recoloring to die ${dieColor} but it was not found in player's oracle dice: [${
-          player.oracleDice.join(", ")
+          player.oracleDice.join(', ')
         }]`,
       );
       return false;
@@ -173,7 +173,7 @@ export class OracleSystem {
       // This should not happen since we checked above, but log for debugging
       console.warn(
         `Attempted to apply recoloring to oracle card ${cardColor} but it was not found in player's oracle cards: [${
-          player.oracleCards.join(", ")
+          player.oracleCards.join(', ')
         }]`,
       );
       return false;
@@ -218,7 +218,7 @@ export class OracleSystem {
     } else {
       console.warn(
         `Attempted to consume die ${dieColor} but it was not found in player's oracle dice: [${
-          player.oracleDice.join(", ")
+          player.oracleDice.join(', ')
         }]`,
       );
       return false;
@@ -227,7 +227,7 @@ export class OracleSystem {
     // Draw top oracle card from deck
     const card = this.oracleCardDeck.pop();
     if (!card) {
-      console.warn("Oracle card deck is empty when trying to draw card.");
+      console.warn('Oracle card deck is empty when trying to draw card.');
       return false;
     }
 
@@ -252,7 +252,7 @@ export class OracleSystem {
     if (player.usedOracleCardThisTurn) {
       return {
         success: false,
-        error: "You can only use 1 oracle card per turn",
+        error: 'You can only use 1 oracle card per turn',
       };
     }
 
@@ -281,12 +281,12 @@ export class OracleSystem {
       // This should not happen since we checked above, but log for debugging
       console.warn(
         `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${
-          player.oracleCards.join(", ")
+          player.oracleCards.join(', ')
         }]`,
       );
       return {
         success: false,
-        error: "Unexpected error: oracle card not found after validation",
+        error: 'Unexpected error: oracle card not found after validation',
       };
     }
 
@@ -331,7 +331,7 @@ export class OracleSystem {
       // This should not happen since we checked above, but log for debugging
       console.warn(
         `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${
-          player.oracleCards.join(", ")
+          player.oracleCards.join(', ')
         }]`,
       );
       return false;
@@ -386,7 +386,7 @@ export class OracleSystem {
       // This should not happen since we checked above, but log for debugging
       console.warn(
         `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${
-          player.oracleCards.join(", ")
+          player.oracleCards.join(', ')
         }]`,
       );
       return false;
@@ -395,7 +395,7 @@ export class OracleSystem {
     // Draw top oracle card from deck
     const newCard = this.oracleCardDeck.pop();
     if (!newCard) {
-      console.warn("Oracle card deck is empty when trying to draw card.");
+      console.warn('Oracle card deck is empty when trying to draw card.');
       return false;
     }
 

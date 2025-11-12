@@ -1,4 +1,4 @@
-import type { HexCell } from "../types.ts";
+import type { HexCell } from '../types.ts';
 
 export class HexGrid {
   public constructor(radius: number) {
@@ -14,8 +14,8 @@ export class HexGrid {
       const r2 = Math.min(radius, -q + radius);
 
       for (let r = r1; r <= r2; r++) {
-        const terrain: TerrainType = "none";
-        const color = "none";
+        const terrain: TerrainType = 'none';
+        const color = 'none';
         const cell: HexCell = { q, r, terrain, color };
 
         row.push(cell);

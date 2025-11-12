@@ -1,11 +1,11 @@
 // Tests for oracle card spending functionality
 
-import { assert, assertEquals, assertFalse } from "@std/assert";
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import { findZeus } from "../src/game-initializer.ts";
-import { COLOR_WHEEL, type CoreColor } from "../src/types.ts";
+import { assert, assertEquals, assertFalse } from '@std/assert';
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { findZeus } from '../src/game-initializer.ts';
+import { COLOR_WHEEL, type CoreColor } from '../src/types.ts';
 
-Deno.test("OracleCardSpending - basic functionality", () => {
+Deno.test('OracleCardSpending - basic functionality', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -13,16 +13,16 @@ Deno.test("OracleCardSpending - basic functionality", () => {
   assertExists(player);
 
   // Give player an oracle card
-  player.oracleCards = ["blue"];
+  player.oracleCards = ['blue'];
   player.usedOracleCardThisTurn = false;
 
   // Test that player has the oracle card
   assertEquals(player.oracleCards.length, 1);
-  assertEquals(player.oracleCards[0], "blue");
+  assertEquals(player.oracleCards[0], 'blue');
   assertEquals(player.usedOracleCardThisTurn, false);
 });
 
-Deno.test("OracleCardSpending - spend for movement", () => {
+Deno.test('OracleCardSpending - spend for movement', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -35,7 +35,7 @@ Deno.test("OracleCardSpending - spend for movement", () => {
   const adjacentSeaHexes = gameState.map.getNeighborsOfType(
     zeus,
     gameState.map.getGrid(),
-    "sea",
+    'sea',
   );
   const destination = adjacentSeaHexes[0]!;
 
@@ -51,26 +51,26 @@ Deno.test("OracleCardSpending - spend for movement", () => {
     0,
   );
 
-  assert(moveResult.success, "Should be able to move using oracle card");
+  assert(moveResult.success, 'Should be able to move using oracle card');
 
   // Oracle card should be consumed
   assertFalse(
     player.oracleCards.includes(destination!.color as CoreColor),
-    "Blue oracle card should be consumed",
+    'Blue oracle card should be consumed',
   );
 
   // Ship position should be updated
   assertEquals(
     player.shipPosition,
     { q: destination!.q, r: destination!.r },
-    "Ship position should be updated",
+    'Ship position should be updated',
   );
 
   // Oracle card usage flag should be set
-  assert(player.usedOracleCardThisTurn, "Oracle card usage flag should be set");
+  assert(player.usedOracleCardThisTurn, 'Oracle card usage flag should be set');
 });
 
-Deno.test("OracleCardSpending - spend for favor", () => {
+Deno.test('OracleCardSpending - spend for favor', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -78,34 +78,34 @@ Deno.test("OracleCardSpending - spend for favor", () => {
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleCards = ["blue"];
+  player.oracleCards = ['blue'];
   const initialFavor = player.favor;
   player.usedOracleCardThisTurn = false;
 
   // Test that player can spend oracle card for favor
-  const success = engine.spendOracleCardForFavor(player.id, "blue");
+  const success = engine.spendOracleCardForFavor(player.id, 'blue');
 
-  assert(success, "Should be able to spend oracle card for favor");
+  assert(success, 'Should be able to spend oracle card for favor');
 
   // Oracle card should be consumed
   assertEquals(
-    player.oracleCards.includes("blue"),
+    player.oracleCards.includes('blue'),
     false,
-    "Blue oracle card should be consumed",
+    'Blue oracle card should be consumed',
   );
 
   // Favor should increase by 2
-  assertEquals(player.favor, initialFavor + 2, "Favor should increase by 2");
+  assertEquals(player.favor, initialFavor + 2, 'Favor should increase by 2');
 
   // Oracle card usage flag should be set
   assertEquals(
     player.usedOracleCardThisTurn,
     true,
-    "Oracle card usage flag should be set",
+    'Oracle card usage flag should be set',
   );
 });
 
-Deno.test("OracleCardSpending - cannot use more than one oracle card per turn", () => {
+Deno.test('OracleCardSpending - cannot use more than one oracle card per turn', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -113,26 +113,26 @@ Deno.test("OracleCardSpending - cannot use more than one oracle card per turn", 
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleCards = ["blue", "red"];
+  player.oracleCards = ['blue', 'red'];
 
   assert(
     engine.spendOracleCardForFavor(
       player.id,
-      "blue",
+      'blue',
     ),
-    "Should be able to spend oracle card for favor",
+    'Should be able to spend oracle card for favor',
   );
 
   assertFalse(
     engine.spendOracleCardForFavor(
       player.id,
-      "red",
+      'red',
     ),
-    "Should not be able to spend a second oracle card",
+    'Should not be able to spend a second oracle card',
   );
 });
 
-Deno.test("OracleCardSpending - movement with favor spending", () => {
+Deno.test('OracleCardSpending - movement with favor spending', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -140,7 +140,7 @@ Deno.test("OracleCardSpending - movement with favor spending", () => {
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleCards = ["black", "pink", "blue", "yellow", "green", "red"];
+  player.oracleCards = ['black', 'pink', 'blue', 'yellow', 'green', 'red'];
   player.favor = 1;
 
   player.usedOracleCardThisTurn = false;
@@ -184,23 +184,23 @@ Deno.test("OracleCardSpending - movement with favor spending", () => {
       assertEquals(
         player.oracleCards.includes(color),
         false,
-        "${color} oracle card should have been consumed",
+        '${color} oracle card should have been consumed',
       );
 
       // Oracle card usage flag should be set
       assertEquals(
         player.usedOracleCardThisTurn,
         true,
-        "Oracle card usage flag should be set",
+        'Oracle card usage flag should be set',
       );
-      assertEquals(player.favor, initialFavor - 1, "Should have spent 1 favor");
+      assertEquals(player.favor, initialFavor - 1, 'Should have spent 1 favor');
     }
   });
 
-  assert(foundMove, "There should be at least one legal favor move");
+  assert(foundMove, 'There should be at least one legal favor move');
 });
 
-Deno.test("OracleCardSpending - cannot use oracle card without having it", () => {
+Deno.test('OracleCardSpending - cannot use oracle card without having it', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -216,14 +216,14 @@ Deno.test("OracleCardSpending - cannot use oracle card without having it", () =>
     player.id,
     1,
     1,
-    "blue",
+    'blue',
     0,
   );
 
   assertEquals(
     moveResult.success,
     false,
-    "Should not be able to use oracle card without having it",
+    'Should not be able to use oracle card without having it',
   );
 });
 

@@ -1,16 +1,16 @@
-import { assert } from "@std/assert/assert";
-import { assertEquals } from "@std/assert/equals";
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { CoreColor } from "../src/types.ts";
+import { assert } from '@std/assert/assert';
+import { assertEquals } from '@std/assert/equals';
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import type { CoreColor } from '../src/types.ts';
 
-Deno.test("Minimal recolor test", () => {
+Deno.test('Minimal recolor test', () => {
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions matching the failing test
-  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
+  player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
@@ -18,14 +18,14 @@ Deno.test("Minimal recolor test", () => {
 
   // Initial conditions
   assertEquals(player.favor, 5);
-  assertEquals(player.oracleDice, ["black", "pink", "blue"]);
+  assertEquals(player.oracleDice, ['black', 'pink', 'blue']);
   assertEquals(Object.keys(player.recoloredDice).length, 0);
 
   // Set a high recoloring cost that would make some moves unaffordable
   player.favor = 3; // Reduce favor
   const highRecolorSuccess = gameEngine.setRecolorIntention(
     player.id,
-    "black",
+    'black',
     2,
   ); // 2 favor recoloring cost
 
@@ -35,7 +35,7 @@ Deno.test("Minimal recolor test", () => {
 
   const movesWithHighRecolor = gameEngine.getAvailableMovesForDie(
     player.id,
-    "black",
+    'black',
     player.favor,
   );
 

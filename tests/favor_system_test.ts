@@ -1,10 +1,10 @@
 // Test for the favor system in Quests of Zeus
 
-import { assert, assertEquals } from "@std/assert";
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { CoreColor } from "../src/types.ts";
+import { assert, assertEquals } from '@std/assert';
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import type { CoreColor } from '../src/types.ts';
 
-Deno.test("Favor System - player initialization", () => {
+Deno.test('Favor System - player initialization', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -16,13 +16,13 @@ Deno.test("Favor System - player initialization", () => {
   assertExists(player2);
 
   // First player should have 3 favor
-  assertEquals(player1.favor, 3, "Player 1 should start with 3 favor");
+  assertEquals(player1.favor, 3, 'Player 1 should start with 3 favor');
 
   // Second player should have 4 favor (1 more than previous)
-  assertEquals(player2.favor, 4, "Player 2 should start with 4 favor");
+  assertEquals(player2.favor, 4, 'Player 2 should start with 4 favor');
 });
 
-Deno.test("Favor System - favor property exists", () => {
+Deno.test('Favor System - favor property exists', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -30,11 +30,11 @@ Deno.test("Favor System - favor property exists", () => {
   assertExists(player1);
 
   // Verify that favor property exists on player
-  assert("favor" in player1, "Player should have favor property");
-  assertEquals(typeof player1.favor, "number", "Favor should be a number");
+  assert('favor' in player1, 'Player should have favor property');
+  assertEquals(typeof player1.favor, 'number', 'Favor should be a number');
 });
 
-Deno.test("Favor System - favor progression pattern", () => {
+Deno.test('Favor System - favor progression pattern', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -54,7 +54,7 @@ Deno.test("Favor System - favor progression pattern", () => {
   }
 });
 
-Deno.test("Spend Die for Favor - basic functionality", () => {
+Deno.test('Spend Die for Favor - basic functionality', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -75,12 +75,12 @@ Deno.test("Spend Die for Favor - basic functionality", () => {
 
   const success = engine.spendDieForFavor(1, dieColor!);
 
-  assert(success, "Should successfully spend die for favor");
-  assertEquals(player1.favor, initialFavor + 2, "Should gain 2 favor");
+  assert(success, 'Should successfully spend die for favor');
+  assertEquals(player1.favor, initialFavor + 2, 'Should gain 2 favor');
   assertEquals(
     player1.oracleDice.length,
     initialDiceCount - 1,
-    "Should consume one die",
+    'Should consume one die',
   );
 
   // Check that the number of dice of the spent color decreased by 1
@@ -89,11 +89,11 @@ Deno.test("Spend Die for Favor - basic functionality", () => {
   assertEquals(
     finalColorCount,
     initialColorCount - 1,
-    "Should have one less die of the spent color",
+    'Should have one less die of the spent color',
   );
 });
 
-Deno.test("Spend Die for Favor - invalid scenarios", () => {
+Deno.test('Spend Die for Favor - invalid scenarios', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -104,14 +104,14 @@ Deno.test("Spend Die for Favor - invalid scenarios", () => {
   // Try to spend a die the player doesn't have (should fail)
   // Use a color that's definitely not in the player's dice by checking all possible colors
   const allColors: CoreColor[] = [
-    "red",
-    "pink",
-    "blue",
-    "black",
-    "green",
-    "yellow",
+    'red',
+    'pink',
+    'blue',
+    'black',
+    'green',
+    'yellow',
   ];
-  let unavailableColor: CoreColor = "red"; // Default fallback
+  let unavailableColor: CoreColor = 'red'; // Default fallback
   for (const color of allColors) {
     if (!player1.oracleDice.includes(color)) {
       unavailableColor = color;
@@ -123,15 +123,15 @@ Deno.test("Spend Die for Favor - invalid scenarios", () => {
   assert(!fail2, "Should not be able to spend die player doesn't have");
 
   // Verify favor and dice count didn't change
-  assertEquals(player1.favor, 3, "Favor should not change on failed spend");
+  assertEquals(player1.favor, 3, 'Favor should not change on failed spend');
   assertEquals(
     player1.oracleDice.length,
     3,
-    "Dice count should not change on failed spend",
+    'Dice count should not change on failed spend',
   );
 });
 
-Deno.test("Spend Die for Favor - turn continues after spending", () => {
+Deno.test('Spend Die for Favor - turn continues after spending', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -146,21 +146,21 @@ Deno.test("Spend Die for Favor - turn continues after spending", () => {
   const dieColor = player1.oracleDice[0];
   const success = engine.spendDieForFavor(1, dieColor!);
 
-  assert(success, "Should successfully spend die for favor");
+  assert(success, 'Should successfully spend die for favor');
 
   // Verify turn is still in action phase and player can use remaining dice
   const gameState = engine.getGameState();
   assertEquals(
     gameState.phase,
-    "action",
-    "Should still be in action phase after spending die",
+    'action',
+    'Should still be in action phase after spending die',
   );
   assertEquals(
     player1.oracleDice.length,
     initialDiceCount - 1,
-    "Should have remaining dice",
+    'Should have remaining dice',
   );
-  assert(player1.oracleDice.length > 0, "Should have dice remaining to use");
+  assert(player1.oracleDice.length > 0, 'Should have dice remaining to use');
 });
 
 // Helper function for assertions
@@ -169,6 +169,6 @@ function assertExists<T>(
   message?: string,
 ): asserts value is T {
   if (value === null || value === undefined) {
-    throw new Error(message || "Value should exist");
+    throw new Error(message || 'Value should exist');
   }
 }

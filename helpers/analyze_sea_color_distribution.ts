@@ -1,10 +1,10 @@
-import { getMapStatistics, HexMap } from "./src/hexmap.ts";
+import { getMapStatistics, HexMap } from './src/hexmap.ts';
 
 /**
  * Analyze the distribution of colors across sea tiles
  */
 function analyzeSeaColorDistribution(): void {
-  console.log("=== Analyzing Sea Color Distribution ===\n");
+  console.log('=== Analyzing Sea Color Distribution ===\n');
 
   const testCount = 20;
   const colorStats: Record<
@@ -13,7 +13,7 @@ function analyzeSeaColorDistribution(): void {
   > = {};
 
   // Initialize stats for each color
-  const colors = ["red", "pink", "blue", "black", "green", "yellow"];
+  const colors = ['red', 'pink', 'blue', 'black', 'green', 'yellow'];
   for (const color of colors) {
     colorStats[color] = {
       min: Infinity,
@@ -39,7 +39,7 @@ function analyzeSeaColorDistribution(): void {
     }
   }
 
-  console.log("\n=== Color Distribution Results ===");
+  console.log('\n=== Color Distribution Results ===');
   console.log(`Based on ${testCount} randomly generated maps\n`);
 
   for (const color of colors) {
@@ -53,7 +53,7 @@ function analyzeSeaColorDistribution(): void {
     console.log(`  Average: ${average.toFixed(2)} tiles`);
     console.log(`  Range: ${stats.min} - ${stats.max} tiles`);
     console.log(`  Standard Deviation: ${stdDev.toFixed(2)} tiles`);
-    console.log(`  Distribution: ${stats.counts.join(", ")}`);
+    console.log(`  Distribution: ${stats.counts.join(', ')}`);
     console.log();
   }
 
@@ -71,7 +71,7 @@ function analyzeSeaColorDistribution(): void {
   ) / allCounts.length;
   const overallStdDev = Math.sqrt(overallVariance);
 
-  console.log("=== Overall Statistics ===");
+  console.log('=== Overall Statistics ===');
   console.log(
     `Total sea tiles across all colors: ${
       allCounts.reduce((sum, count) => sum + count, 0)
@@ -89,9 +89,9 @@ function analyzeSeaColorDistribution(): void {
   );
 
   if (maxDifference > 8) {
-    console.log("⚠️  WARNING: Significant color imbalance detected!");
+    console.log('⚠️  WARNING: Significant color imbalance detected!');
   } else if (maxDifference > 5) {
-    console.log("ℹ️  NOTE: Moderate color imbalance present.");
+    console.log('ℹ️  NOTE: Moderate color imbalance present.');
   } else {
     // console.log("✅ Color distribution appears reasonably balanced.");
   }

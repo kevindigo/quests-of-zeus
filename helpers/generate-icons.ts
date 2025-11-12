@@ -116,11 +116,11 @@ async function createAbsoluteMinimalPNG(filename: string) {
 }
 
 async function main() {
-  console.log("Generating PWA icons with multiple fallback approaches...");
+  console.log('Generating PWA icons with multiple fallback approaches...');
 
   // Ensure assets directory exists
   try {
-    await Deno.mkdir("assets", { recursive: true });
+    await Deno.mkdir('assets', { recursive: true });
   } catch {
     // Directory already exists
   }
@@ -129,13 +129,13 @@ async function main() {
   let success512 = false;
 
   // Try approach 1: Colored PNGs from reliable services
-  console.log("\nApproach 1: Using reliable placeholder services...");
-  success192 = await createColoredPNG(192, 192, "assets/icon-192.png");
-  success512 = await createColoredPNG(512, 512, "assets/icon-512.png");
+  console.log('\nApproach 1: Using reliable placeholder services...');
+  success192 = await createColoredPNG(192, 192, 'assets/icon-192.png');
+  success512 = await createColoredPNG(512, 512, 'assets/icon-512.png');
 
   // If first approach fails, try alternative services
   if (!success192 || !success512) {
-    console.log("\nApproach 2: Trying alternative services...");
+    console.log('\nApproach 2: Trying alternative services...');
 
     const alternativeServices = [
       `https://via.placeholder.com/192x192/667eea/ffffff?text=Zeus+192`,
@@ -145,36 +145,36 @@ async function main() {
     if (!success192) {
       success192 = await downloadFromService(
         alternativeServices[0],
-        "assets/icon-192.png",
+        'assets/icon-192.png',
       );
     }
     if (!success512) {
       success512 = await downloadFromService(
         alternativeServices[1],
-        "assets/icon-512.png",
+        'assets/icon-512.png',
       );
     }
   }
 
   // Final fallback: minimal PNGs
   if (!success192) {
-    console.log("\nFinal fallback for icon-192.png...");
-    await createAbsoluteMinimalPNG("assets/icon-192.png");
+    console.log('\nFinal fallback for icon-192.png...');
+    await createAbsoluteMinimalPNG('assets/icon-192.png');
   }
 
   if (!success512) {
-    console.log("\nFinal fallback for icon-512.png...");
-    await createAbsoluteMinimalPNG("assets/icon-512.png");
+    console.log('\nFinal fallback for icon-512.png...');
+    await createAbsoluteMinimalPNG('assets/icon-512.png');
   }
 
-  console.log("\nIcon generation completed!");
+  console.log('\nIcon generation completed!');
 
   if (success192 && success512) {
-    console.log("✓ Both icons generated successfully from online services");
-    console.log("✓ The PWA manifest should now work properly");
+    console.log('✓ Both icons generated successfully from online services');
+    console.log('✓ The PWA manifest should now work properly');
   } else {
-    console.log("⚠ Some icons were created as minimal fallbacks");
-    console.log("⚠ For production, replace with properly designed icons");
+    console.log('⚠ Some icons were created as minimal fallbacks');
+    console.log('⚠ For production, replace with properly designed icons');
   }
 }
 

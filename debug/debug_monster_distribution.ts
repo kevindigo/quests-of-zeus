@@ -2,10 +2,10 @@
  * Debug script to visualize monster distribution
  */
 
-import { QuestsZeusGameEngine } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from './src/game-engine.ts';
 
 function debugMonsterDistribution(): void {
-  console.log("=== Monster Distribution Debug ===\n");
+  console.log('=== Monster Distribution Debug ===\n');
 
   // Create game engine and initialize
   const engine = new QuestsZeusGameEngine();
@@ -14,7 +14,7 @@ function debugMonsterDistribution(): void {
   // Get monster hexes
   const monsterHexes = engine.getMonsterHexes();
 
-  console.log("Monster Distribution Summary:");
+  console.log('Monster Distribution Summary:');
   console.log(`Total monster hexes: ${monsterHexes.length}`);
 
   // Group by number of monsters
@@ -28,7 +28,7 @@ function debugMonsterDistribution(): void {
   }
 
   console.log(`Total monsters: ${totalMonsters}`);
-  console.log("Hexes by monster count:", byMonsterCount);
+  console.log('Hexes by monster count:', byMonsterCount);
 
   // Count monsters by color
   const colorCounts: Record<string, number> = {};
@@ -39,26 +39,26 @@ function debugMonsterDistribution(): void {
     }
   }
 
-  console.log("\nMonsters per color:");
+  console.log('\nMonsters per color:');
   for (const [color, count] of Object.entries(colorCounts)) {
     console.log(`  ${color}: ${count}`);
   }
 
   // Detailed hex information
-  console.log("\nDetailed Monster Hex Information:");
-  console.log("================================");
+  console.log('\nDetailed Monster Hex Information:');
+  console.log('================================');
 
   for (const hex of monsterHexes) {
     const monsterCount = hex.monsterColors.length;
-    const marker = monsterCount === 2 ? "[2 MONSTERS]" : "[1 MONSTER]";
+    const marker = monsterCount === 2 ? '[2 MONSTERS]' : '[1 MONSTER]';
     console.log(
-      `Hex (${hex.q}, ${hex.r}) ${marker}: ${hex.monsterColors.join(", ")}`,
+      `Hex (${hex.q}, ${hex.r}) ${marker}: ${hex.monsterColors.join(', ')}`,
     );
   }
 
   // Verify rules
-  console.log("\nRule Verification:");
-  console.log("==================");
+  console.log('\nRule Verification:');
+  console.log('==================');
 
   // Rule 1: Even distribution (difference between min and max monsters per hex ≤ 1)
   const monstersPerHex = monsterHexes.map((hex) => hex.monsterColors.length);
@@ -68,7 +68,7 @@ function debugMonsterDistribution(): void {
 
   console.log(
     `✅ Monster distribution: ${minMonsters}-${maxMonsters} per hex ${
-      distributionEven ? "✓" : "✗"
+      distributionEven ? '✓' : '✗'
     }`,
   );
 
@@ -82,7 +82,7 @@ function debugMonsterDistribution(): void {
     }
   }
   if (noDuplicates) {
-    console.log("✅ No duplicate colors on any hex ✓");
+    console.log('✅ No duplicate colors on any hex ✓');
   }
 
   // Rule 3: Total monsters per color = number of players
@@ -98,7 +98,7 @@ function debugMonsterDistribution(): void {
     console.log(`✅ Correct distribution (${playerCount} per color) ✓`);
   }
 
-  console.log("\n=== Debug Complete ===");
+  console.log('\n=== Debug Complete ===');
 }
 
 // Run if this file is executed directly

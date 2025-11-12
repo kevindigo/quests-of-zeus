@@ -1,7 +1,7 @@
-import { assertEquals } from "@std/assert";
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
+import { assertEquals } from '@std/assert';
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
 
-Deno.test("offering cubes configuration", () => {
+Deno.test('offering cubes configuration', () => {
   const gameEngine = new QuestsZeusGameEngine();
   const gameState = gameEngine.initializeGame();
 

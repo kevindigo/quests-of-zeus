@@ -1,11 +1,11 @@
 // Quests of Zeus Game Engine - Core Orchestration
 // High-level game management and orchestration
 
-import { GameInitializer } from "./game-initializer.ts";
-import { MovementSystem } from "./movement-system.ts";
-import { OracleSystem } from "./oracle-system.ts";
-import { PlayerActions } from "./player-actions.ts";
-import type { Player } from "./Player.ts";
+import { GameInitializer } from './game-initializer.ts';
+import { MovementSystem } from './movement-system.ts';
+import { OracleSystem } from './oracle-system.ts';
+import { PlayerActions } from './player-actions.ts';
+import type { Player } from './Player.ts';
 import type {
   CityHex,
   CoreColor,
@@ -14,8 +14,8 @@ import type {
   HexColor,
   MonsterHex,
   MoveShipResult,
-} from "./types.ts";
-import { COLOR_WHEEL } from "./types.ts";
+} from './types.ts';
+import { COLOR_WHEEL } from './types.ts';
 
 export class QuestsZeusGameEngine {
   private state: GameState | null = null;
@@ -73,7 +73,7 @@ export class QuestsZeusGameEngine {
     const player = this.getValidPlayer(playerId);
     const success = this.playerActions!.collectOffering(player, color);
     if (success) {
-      this.completeQuestType(playerId, "temple_offering");
+      this.completeQuestType(playerId, 'temple_offering');
       this.endTurn();
     }
     return success;
@@ -84,7 +84,7 @@ export class QuestsZeusGameEngine {
     const player = this.getValidPlayer(playerId);
     const success = this.playerActions!.fightMonster(player);
     if (success) {
-      this.completeQuestType(playerId, "monster");
+      this.completeQuestType(playerId, 'monster');
       this.endTurn();
     }
     return success;
@@ -95,7 +95,7 @@ export class QuestsZeusGameEngine {
     const player = this.getValidPlayer(playerId);
     const success = this.playerActions!.buildTemple(player);
     if (success) {
-      this.completeQuestType(playerId, "temple_offering");
+      this.completeQuestType(playerId, 'temple_offering');
       this.endTurn();
     }
     return success;
@@ -106,7 +106,7 @@ export class QuestsZeusGameEngine {
     const player = this.getValidPlayer(playerId);
     const success = this.playerActions!.buildFoundation(player);
     if (success) {
-      this.completeQuestType(playerId, "foundation");
+      this.completeQuestType(playerId, 'foundation');
       this.endTurn();
     }
     return success;
@@ -117,7 +117,7 @@ export class QuestsZeusGameEngine {
     const player = this.getValidPlayer(playerId);
     const success = this.playerActions!.completeCloudQuest(player);
     if (success) {
-      this.completeQuestType(playerId, "cloud");
+      this.completeQuestType(playerId, 'cloud');
       this.endTurn();
     }
     return success;
@@ -147,18 +147,18 @@ export class QuestsZeusGameEngine {
       return {
         success: false,
         error: {
-          type: "invalid_target",
-          message: "Target cell does not exist",
+          type: 'invalid_target',
+          message: 'Target cell does not exist',
           details: { targetQ, targetR },
         },
       };
     }
 
-    if (targetCell.terrain !== "sea") {
+    if (targetCell.terrain !== 'sea') {
       return {
         success: false,
         error: {
-          type: "not_sea",
+          type: 'not_sea',
           message:
             `Cannot move to ${targetCell.terrain} terrain! Ships can only move to sea hexes.`,
           details: { targetTerrain: targetCell.terrain },
@@ -179,7 +179,7 @@ export class QuestsZeusGameEngine {
       return {
         success: false,
         error: {
-          type: "wrong_color",
+          type: 'wrong_color',
           message:
             `Target hex is ${targetCell.color}, but oracle card is ${effectiveCardColor}!`,
           details: {
@@ -208,7 +208,7 @@ export class QuestsZeusGameEngine {
       return {
         success: false,
         error: {
-          type: "not_reachable",
+          type: 'not_reachable',
           message:
             `Target is not reachable within ${movementRange} movement range!`,
           details: {
@@ -226,7 +226,7 @@ export class QuestsZeusGameEngine {
       return {
         success: false,
         error: {
-          type: "not_enough_favor",
+          type: 'not_enough_favor',
           message:
             `Not enough favor! Need ${totalFavorCost} but only have ${player.favor}.`,
           details: {
@@ -250,8 +250,8 @@ export class QuestsZeusGameEngine {
       return {
         success: false,
         error: {
-          type: "unknown",
-          message: oracleResult.error || "Oracle card usage failed",
+          type: 'unknown',
+          message: oracleResult.error || 'Oracle card usage failed',
           details: { playerId },
         },
       };
@@ -337,7 +337,7 @@ export class QuestsZeusGameEngine {
 
   private completeQuestType(
     playerId: number,
-    questType: "temple_offering" | "monster" | "foundation" | "cloud",
+    questType: 'temple_offering' | 'monster' | 'foundation' | 'cloud',
   ): void {
     const player = this.state!.players.find((p) => p.id === playerId);
     if (!player) return;
@@ -374,7 +374,7 @@ export class QuestsZeusGameEngine {
     if (this.state!.currentPlayerIndex === 0) {
       this.state!.round++;
     }
-    this.state!.phase = "action";
+    this.state!.phase = 'action';
   }
 
   private getPlayerIndex(playerId: number): number {
@@ -383,7 +383,7 @@ export class QuestsZeusGameEngine {
 
   private ensureInitialized(): void {
     if (!this.state) {
-      throw new Error("Game not initialized. Call initializeGame() first.");
+      throw new Error('Game not initialized. Call initializeGame() first.');
     }
   }
 
@@ -393,7 +393,7 @@ export class QuestsZeusGameEngine {
       !player ||
       this.state!.currentPlayerIndex !== this.getPlayerIndex(playerId)
     ) {
-      throw new Error("Invalid player or not your turn");
+      throw new Error('Invalid player or not your turn');
     }
     return player;
   }
@@ -415,7 +415,7 @@ export class QuestsZeusGameEngine {
     this.ensureInitialized();
     const player = this.state!.players[this.state!.currentPlayerIndex];
     if (!player) {
-      throw new Error("Current player not found");
+      throw new Error('Current player not found');
     }
     return player;
   }
@@ -431,7 +431,7 @@ export class QuestsZeusGameEngine {
   ): { q: number; r: number; dieColor: CoreColor }[] {
     this.ensureInitialized();
     const player = this.state!.players.find((p) => p.id === playerId);
-    if (!player || this.state!.phase !== "action") return [];
+    if (!player || this.state!.phase !== 'action') return [];
 
     const currentPos = player.shipPosition;
     const movementRange = 3 + (favorSpent || 0);
@@ -484,7 +484,7 @@ export class QuestsZeusGameEngine {
     this.ensureInitialized();
     const player = this.state!.players.find((p) => p.id === playerId);
     if (
-      !player || this.state!.phase !== "action" ||
+      !player || this.state!.phase !== 'action' ||
       !player.oracleDice.includes(dieColor)
     ) {
       return [];

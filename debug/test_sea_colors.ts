@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { HexMap } from "./src/hexmap.ts";
+import { HexMap } from './src/hexmap.ts';
 
 function testSeaColors() {
   const map = new HexMap();
@@ -15,8 +15,8 @@ function testSeaColors() {
     if (row) {
       for (let arrayR = 0; arrayR < row.length; arrayR++) {
         const cell = row[arrayR];
-        if (cell && cell.terrain === "sea") {
-          if (cell.color !== "none") {
+        if (cell && cell.terrain === 'sea') {
+          if (cell.color !== 'none') {
             seaCellsWithColor++;
           } else {
             seaCellsWithoutColor++;
@@ -31,7 +31,7 @@ function testSeaColors() {
   console.log(`Total sea cells: ${seaCellsWithColor + seaCellsWithoutColor}`);
 
   // Check if Zeus has sea neighbors
-  const zeusCells = map.getCellsByTerrain("zeus");
+  const zeusCells = map.getCellsByTerrain('zeus');
   if (zeusCells.length > 0) {
     const zeusCell = zeusCells[0];
     console.log(`Zeus at (${zeusCell.q}, ${zeusCell.r})`);

@@ -2,11 +2,11 @@
  * Test script to verify monster display functionality
  */
 
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import { HexMapSVG } from "../src/hexmap-svg.ts";
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { HexMapSVG } from '../src/hexmap-svg.ts';
 
 function testMonsterDisplay(): void {
-  console.log("=== Monster Display Test ===\n");
+  console.log('=== Monster Display Test ===\n');
 
   // Create game engine and initialize
   const engine = new QuestsZeusGameEngine();
@@ -15,9 +15,9 @@ function testMonsterDisplay(): void {
   // Get monster hexes
   const monsterHexes = engine.getMonsterHexes();
 
-  console.log("Monster Distribution:");
+  console.log('Monster Distribution:');
   for (const hex of monsterHexes) {
-    console.log(`Hex (${hex.q}, ${hex.r}): ${hex.monsterColors.join(", ")}`);
+    console.log(`Hex (${hex.q}, ${hex.r}): ${hex.monsterColors.join(', ')}`);
   }
 
   // Create HexMapSVG with monster hex data
@@ -35,13 +35,13 @@ function testMonsterDisplay(): void {
   const svg = hexMapSVG.generateSVG(grid);
 
   // Check if SVG contains monster elements
-  const hasMonsterElements = svg.includes("colored-monster") ||
-    svg.includes("monster-count");
+  const hasMonsterElements = svg.includes('colored-monster') ||
+    svg.includes('monster-count');
 
-  console.log("\nSVG Generation Test:");
-  console.log(`✅ SVG generated successfully: ${svg.length > 0 ? "✓" : "✗"}`);
+  console.log('\nSVG Generation Test:');
+  console.log(`✅ SVG generated successfully: ${svg.length > 0 ? '✓' : '✗'}`);
   console.log(
-    `✅ Monster elements found in SVG: ${hasMonsterElements ? "✓" : "✗"}`,
+    `✅ Monster elements found in SVG: ${hasMonsterElements ? '✓' : '✗'}`,
   );
 
   // Count colored monsters in SVG
@@ -60,7 +60,7 @@ function testMonsterDisplay(): void {
       );
       console.log(
         `✅ Hex (${hex.q}, ${hex.r}) monster count displayed: ${
-          hasMonsterCount ? "✓" : "✗"
+          hasMonsterCount ? '✓' : '✗'
         }`,
       );
     }

@@ -1,9 +1,9 @@
 // Test script to verify favor-based move highlighting
 // Run this script to check if favor-based moves are being properly calculated and highlighted
 
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
 
-console.log("=== Testing Favor-Based Move Highlighting ===\n");
+console.log('=== Testing Favor-Based Move Highlighting ===\n');
 
 // Initialize the game
 const gameEngine = new QuestsZeusGameEngine();
@@ -16,7 +16,7 @@ console.log(
   `Player position: (${player.shipPosition.q}, ${player.shipPosition.r})`,
 );
 console.log(`Player favor: ${player.favor}`);
-console.log(`Player dice: ${player.oracleDice.join(", ")}`);
+console.log(`Player dice: ${player.oracleDice.join(', ')}`);
 
 // Test each die color
 for (const dieColor of player.oracleDice) {
@@ -38,14 +38,14 @@ for (const dieColor of player.oracleDice) {
       1;
   });
 
-  console.log("Moves by favor cost:");
+  console.log('Moves by favor cost:');
   Object.entries(movesByFavorCost).forEach(([cost, count]) => {
     console.log(`  ${cost} favor: ${count} moves`);
   });
 
   // Show some example moves
   if (availableMoves.length > 0) {
-    console.log("Example moves:");
+    console.log('Example moves:');
     availableMoves.slice(0, 5).forEach((move) => {
       console.log(`  (${move.q}, ${move.r}) - cost: ${move.favorCost} favor`);
     });
@@ -54,12 +54,12 @@ for (const dieColor of player.oracleDice) {
       console.log(`  ... and ${availableMoves.length - 5} more moves`);
     }
   } else {
-    console.log("  No moves available for this die color");
+    console.log('  No moves available for this die color');
   }
 }
 
 // Test with different favor amounts
-console.log("\n--- Testing with different favor amounts ---");
+console.log('\n--- Testing with different favor amounts ---');
 const testDieColor = player.oracleDice[0]; // Use first die for testing
 
 for (let favor = 0; favor <= 5; favor++) {
@@ -75,4 +75,4 @@ for (let favor = 0; favor <= 5; favor++) {
   );
 }
 
-console.log("\n=== Favor Highlighting Test Complete ===");
+console.log('\n=== Favor Highlighting Test Complete ===');

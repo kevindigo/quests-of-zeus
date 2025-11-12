@@ -33,8 +33,8 @@ async function generateColoredPNG(
   height: number,
 ): Promise<Uint8Array> {
   // Use a reliable online service to generate the icon
-  const color = width === 192 ? "667eea" : "764ba2";
-  const text = width === 192 ? "Zeus" : "Zeus";
+  const color = width === 192 ? '667eea' : '764ba2';
+  const text = width === 192 ? 'Zeus' : 'Zeus';
 
   const url =
     `https://dummyimage.com/${width}x${height}/${color}/ffffff&text=${text}`;
@@ -140,25 +140,25 @@ function createMinimalColoredPNG(width: number, height: number): Uint8Array {
 }
 
 async function main() {
-  console.log("Creating simple PWA icons...");
+  console.log('Creating simple PWA icons...');
 
   // Ensure assets directory exists
   try {
-    await Deno.mkdir("assets", { recursive: true });
+    await Deno.mkdir('assets', { recursive: true });
   } catch {
     // Directory already exists
   }
 
   // Create icons
-  const success192 = await createSimpleIcon(192, 192, "assets/icon-192.png");
-  const success512 = await createSimpleIcon(512, 512, "assets/icon-512.png");
+  const success192 = await createSimpleIcon(192, 192, 'assets/icon-192.png');
+  const success512 = await createSimpleIcon(512, 512, 'assets/icon-512.png');
 
   if (success192 && success512) {
-    console.log("✓ Icon creation completed!");
-    console.log("✓ Icons should now work properly in the PWA manifest");
+    console.log('✓ Icon creation completed!');
+    console.log('✓ Icons should now work properly in the PWA manifest');
   } else {
-    console.log("⚠ Some icons may not have been created properly");
-    console.log("⚠ The PWA may still show icon warnings");
+    console.log('⚠ Some icons may not have been created properly');
+    console.log('⚠ The PWA may still show icon warnings');
   }
 }
 

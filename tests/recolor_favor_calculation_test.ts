@@ -1,17 +1,17 @@
 // Unit test for recoloring favor calculation in extra range moves
 
-import { assert, assertEquals } from "@std/assert";
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { CoreColor } from "../src/types.ts";
+import { assert, assertEquals } from '@std/assert';
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import type { CoreColor } from '../src/types.ts';
 
-Deno.test("RecolorFavorCalculation - basic recoloring intention", () => {
+Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
+  player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
@@ -20,26 +20,26 @@ Deno.test("RecolorFavorCalculation - basic recoloring intention", () => {
   // Test: Set recoloring intention for black die → pink (1 favor cost)
   const recoloringSuccess = gameEngine.setRecolorIntention(
     player.id,
-    "black",
+    'black',
     1,
   );
-  assert(recoloringSuccess, "Recoloring intention should be set successfully");
+  assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   assertEquals(
     player.favor,
     5,
-    "Player favor should not be spent when setting intention",
+    'Player favor should not be spent when setting intention',
   );
 });
 
-Deno.test("RecolorFavorCalculation - moves account for recoloring cost", () => {
+Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
+  player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
@@ -48,15 +48,15 @@ Deno.test("RecolorFavorCalculation - moves account for recoloring cost", () => {
   // Set recoloring intention for black die → pink (1 favor cost)
   const recoloringSuccess = gameEngine.setRecolorIntention(
     player.id,
-    "black",
+    'black',
     1,
   );
-  assert(recoloringSuccess, "Recoloring intention should be set successfully");
+  assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Get available moves for black die with recoloring intention
   const availableMoves = gameEngine.getAvailableMovesForDie(
     player.id,
-    "black",
+    'black',
     player.favor,
   );
 
@@ -64,12 +64,12 @@ Deno.test("RecolorFavorCalculation - moves account for recoloring cost", () => {
   const gameState = gameEngine.getGameState();
   const movesToPinkTiles = availableMoves.filter((move) => {
     const cell = gameState.map.getCell(move.q, move.r);
-    return cell && cell.color === "pink";
+    return cell && cell.color === 'pink';
   });
 
   assert(
     movesToPinkTiles.length > 0,
-    "Should have moves to pink sea tiles with recolored black die",
+    'Should have moves to pink sea tiles with recolored black die',
   );
 
   // For each pink move, verify that the total cost (movement favor + recoloring cost) <= player favor
@@ -83,14 +83,14 @@ Deno.test("RecolorFavorCalculation - moves account for recoloring cost", () => {
   }
 });
 
-Deno.test("RecolorFavorCalculation - high recoloring cost limits moves", () => {
+Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
+  player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 3; // Low favor
 
   // Clear any recoloring intentions that might exist from initialization
@@ -101,18 +101,18 @@ Deno.test("RecolorFavorCalculation - high recoloring cost limits moves", () => {
   // This means any blue move that requires additional favor for movement would be unaffordable
   const highRecolorSuccess = gameEngine.setRecolorIntention(
     player.id,
-    "black",
+    'black',
     2,
   ); // black → blue (2 favor recoloring cost)
 
   assert(
     highRecolorSuccess,
-    "High recoloring intention should be set successfully",
+    'High recoloring intention should be set successfully',
   );
 
   const movesWithHighRecolor = gameEngine.getAvailableMovesForDie(
     player.id,
-    "black",
+    'black',
     player.favor,
   );
 
@@ -128,25 +128,25 @@ Deno.test("RecolorFavorCalculation - high recoloring cost limits moves", () => {
   }
 });
 
-Deno.test("RecolorFavorCalculation - moves without recoloring unaffected", () => {
+Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () => {
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
-  player.oracleDice = ["black", "pink", "blue"] as CoreColor[];
+  player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
   player.recoloredDice = {};
 
   // Clear any recoloring that might exist
-  gameEngine.clearRecolorIntention(player.id, "black");
+  gameEngine.clearRecolorIntention(player.id, 'black');
 
   const movesWithoutRecolor = gameEngine.getAvailableMovesForDie(
     player.id,
-    "black",
+    'black',
     player.favor,
   );
 
@@ -154,13 +154,13 @@ Deno.test("RecolorFavorCalculation - moves without recoloring unaffected", () =>
   const gameState = gameEngine.getGameState();
   const movesToBlackTiles = movesWithoutRecolor.filter((move) => {
     const cell = gameState.map.getCell(move.q, move.r);
-    return cell && cell.color === "black";
+    return cell && cell.color === 'black';
   });
 
   assertEquals(
     movesWithoutRecolor.length,
     movesToBlackTiles.length,
-    "All moves should be to black sea tiles without recoloring",
+    'All moves should be to black sea tiles without recoloring',
   );
 
   for (const move of movesWithoutRecolor) {

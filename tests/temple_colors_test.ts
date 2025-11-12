@@ -2,11 +2,11 @@ import {
   assertEquals,
   assertGreaterOrEqual,
   assertNotEquals,
-} from "@std/assert";
-import { type HexCell } from "../src/types.ts";
-import { HexMap } from "../src/hexmap.ts";
+} from '@std/assert';
+import { type HexCell } from '../src/types.ts';
+import { HexMap } from '../src/hexmap.ts';
 
-Deno.test("Temple color assignment - should have exactly 6 temples", () => {
+Deno.test('Temple color assignment - should have exactly 6 temples', () => {
   const hexMap = new HexMap();
   const grid = hexMap.getGrid();
 
@@ -18,7 +18,7 @@ Deno.test("Temple color assignment - should have exactly 6 temples", () => {
     if (row) {
       for (let arrayR = 0; arrayR < row.length; arrayR++) {
         const cell = row[arrayR];
-        if (cell && cell.terrain === "temple") {
+        if (cell && cell.terrain === 'temple') {
           templeCells.push(cell);
         }
       }
@@ -26,10 +26,10 @@ Deno.test("Temple color assignment - should have exactly 6 temples", () => {
   }
 
   // Check if we have the expected number of temples
-  assertEquals(templeCells.length, 6, "Should have exactly 6 temples");
+  assertEquals(templeCells.length, 6, 'Should have exactly 6 temples');
 });
 
-Deno.test("Temple color assignment - all temples should have colors", () => {
+Deno.test('Temple color assignment - all temples should have colors', () => {
   const hexMap = new HexMap();
   const grid = hexMap.getGrid();
 
@@ -41,7 +41,7 @@ Deno.test("Temple color assignment - all temples should have colors", () => {
     if (row) {
       for (let arrayR = 0; arrayR < row.length; arrayR++) {
         const cell = row[arrayR];
-        if (cell && cell.terrain === "temple") {
+        if (cell && cell.terrain === 'temple') {
           templeCells.push(cell);
         }
       }
@@ -49,11 +49,11 @@ Deno.test("Temple color assignment - all temples should have colors", () => {
   }
 
   // Check that all temples have colors assigned
-  const coloredTemples = templeCells.filter((cell) => cell.color !== "none");
+  const coloredTemples = templeCells.filter((cell) => cell.color !== 'none');
   assertEquals(
     coloredTemples.length,
     6,
-    "All temples should have colors assigned",
+    'All temples should have colors assigned',
   );
 
   // Additional assertions for temple properties
@@ -70,13 +70,13 @@ Deno.test("Temple color assignment - all temples should have colors", () => {
     );
     assertNotEquals(
       cell.color,
-      "none",
+      'none',
       `Temple ${index + 1} should have a color assigned`,
     );
   });
 });
 
-Deno.test("Temple color assignment - temples should have colored outlines", () => {
+Deno.test('Temple color assignment - temples should have colored outlines', () => {
   const hexMap = new HexMap();
   const grid = hexMap.getGrid();
 
@@ -88,7 +88,7 @@ Deno.test("Temple color assignment - temples should have colored outlines", () =
     if (row) {
       for (let arrayR = 0; arrayR < row.length; arrayR++) {
         const cell = row[arrayR];
-        if (cell && cell.terrain === "temple" && cell.color !== "none") {
+        if (cell && cell.terrain === 'temple' && cell.color !== 'none') {
           templeColors.add(cell.color);
         }
       }
@@ -99,11 +99,11 @@ Deno.test("Temple color assignment - temples should have colored outlines", () =
   assertGreaterOrEqual(
     templeColors.size,
     1,
-    "Temples should have at least one unique color for outlines",
+    'Temples should have at least one unique color for outlines',
   );
 });
 
-Deno.test("Temple color assignment - all temples should have unique coordinates", () => {
+Deno.test('Temple color assignment - all temples should have unique coordinates', () => {
   const hexMap = new HexMap();
   const grid = hexMap.getGrid();
 
@@ -115,7 +115,7 @@ Deno.test("Temple color assignment - all temples should have unique coordinates"
     if (row) {
       for (let arrayR = 0; arrayR < row.length; arrayR++) {
         const cell = row[arrayR];
-        if (cell && cell.terrain === "temple") {
+        if (cell && cell.terrain === 'temple') {
           templeCells.push(cell);
         }
       }
@@ -137,16 +137,16 @@ Deno.test("Temple color assignment - all temples should have unique coordinates"
   assertEquals(
     duplicateCoordinates.size,
     0,
-    "All temples should have unique coordinates",
+    'All temples should have unique coordinates',
   );
 });
 
-Deno.test("HexMap grid structure - should have valid grid", () => {
+Deno.test('HexMap grid structure - should have valid grid', () => {
   const hexMap = new HexMap();
   const grid = hexMap.getGrid();
 
   // Basic grid structure checks
-  assertGreaterOrEqual(grid.length, 1, "Grid should have at least one row");
+  assertGreaterOrEqual(grid.length, 1, 'Grid should have at least one row');
 
   // Check that grid is properly structured
   grid.forEach((row, rowIndex) => {

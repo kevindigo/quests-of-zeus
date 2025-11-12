@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { HexMap } from "../src/hexmap.ts";
+import { HexMap } from '../src/hexmap.ts';
 
 // Simple verification that Zeus neighbors are sea
 function verifyZeusNeighborsSea() {
@@ -8,7 +8,7 @@ function verifyZeusNeighborsSea() {
   const _grid = hexMap.getGrid();
 
   // Get the Zeus cell
-  const zeusCells = hexMap.getCellsByTerrain("zeus");
+  const zeusCells = hexMap.getCellsByTerrain('zeus');
 
   if (zeusCells.length !== 1) {
     console.error(`Expected 1 Zeus cell, found ${zeusCells.length}`);
@@ -22,11 +22,11 @@ function verifyZeusNeighborsSea() {
 
   const _allNeighborsSea = true;
   for (const neighbor of zeusNeighbors) {
-    const isSea = neighbor.terrain === "sea";
+    const isSea = neighbor.terrain === 'sea';
 
     console.log(
       `  (${neighbor.q}, ${neighbor.r}): ${neighbor.terrain} ${
-        isSea ? "✅" : "❌"
+        isSea ? '✅' : '❌'
       }`,
     );
 

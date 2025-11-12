@@ -1,9 +1,9 @@
 // Game Controller for Quests of Zeus
 // Manages the game UI and user interactions
 
-import { QuestsZeusGameEngine } from "./game-engine.ts";
-import { HexMapSVG } from "./hexmap-svg.ts";
-import type { Player } from "./Player.ts";
+import { QuestsZeusGameEngine } from './game-engine.ts';
+import { HexMapSVG } from './hexmap-svg.ts';
+import type { Player } from './Player.ts';
 import {
   type CityHex,
   COLOR_WHEEL,
@@ -13,7 +13,7 @@ import {
   type HexColor,
   type MonsterHex,
   type MoveShipResult,
-} from "./types.ts";
+} from './types.ts';
 
 // Type declarations for DOM APIs (for Deno type checking)
 
@@ -82,7 +82,7 @@ export class GameController {
 
   private clearResourceSelectionAndUpdateDisplay(): void {
     this.clearResourceSelection();
-    this.showMessage("Resource selection cleared");
+    this.showMessage('Resource selection cleared');
     this.renderGameState();
   }
 
@@ -90,7 +90,7 @@ export class GameController {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     console.log(`selectResource called: ${resourceType}, ${resourceColor}`);
 
-    if (resourceType === "die") {
+    if (resourceType === 'die') {
       if (this.selectDieColor(resourceColor)) {
         this.showMessage(`Selected ${resourceColor} die`);
         this.renderGameState();
@@ -100,7 +100,7 @@ export class GameController {
           currentPlayer.oracleDice,
         );
       }
-    } else if (resourceType === "card") {
+    } else if (resourceType === 'card') {
       if (this.selectCardColor(resourceColor)) {
         this.showMessage(`Selected ${resourceColor} oracle card`);
         this.renderGameState();
@@ -114,10 +114,10 @@ export class GameController {
   }
 
   private showWelcomeScreen(): void {
-    const playerInfoContainer = document.getElementById("playerInfo");
-    const questInfoContainer = document.getElementById("questInfo");
-    const phaseDisplay = document.getElementById("phaseDisplay");
-    const hexMapContainer = document.getElementById("hexMapSVG");
+    const playerInfoContainer = document.getElementById('playerInfo');
+    const questInfoContainer = document.getElementById('questInfo');
+    const phaseDisplay = document.getElementById('phaseDisplay');
+    const hexMapContainer = document.getElementById('hexMapSVG');
 
     if (playerInfoContainer) {
       playerInfoContainer.innerHTML = `
@@ -203,7 +203,7 @@ export class GameController {
   }
 
   private updatePlayerInfo(_gameState: unknown): void {
-    const playerInfoContainer = document.getElementById("playerInfo");
+    const playerInfoContainer = document.getElementById('playerInfo');
     if (!playerInfoContainer) return;
 
     // Get current player for display
@@ -246,20 +246,20 @@ export class GameController {
             ${
       _currentPlayer.oracleCards.length === 0
         ? '<div class="no-cards">No oracle cards</div>'
-        : ""
+        : ''
     }
             ${
       _currentPlayer.oracleCards.map((color: string) => {
         const isSelected = this.selectedOracleCardColor === color;
         return `<div class="oracle-card color-${color} ${
-          isSelected ? "selected-oracle-card" : ""
+          isSelected ? 'selected-oracle-card' : ''
         }" 
                        style="background-color: ${this.getColorHex(color)}" 
                        title="Oracle Card: ${color}"
                        data-oracle-card-color="${color}">
                 ${color.charAt(0).toUpperCase()}
               </div>`;
-      }).join("")
+      }).join('')
     }
           </div>
           ${
@@ -271,7 +271,7 @@ export class GameController {
              ${this.selectedOracleCardColor}
              <button id="clearOracleCardSelection" class="action-btn secondary">Clear</button>
            </div>`
-        : ""
+        : ''
     }
         </div>
         <div class="oracle-dice">
@@ -281,18 +281,18 @@ export class GameController {
       _currentPlayer.oracleDice.map((color: string) => {
         const isSelected = this.selectedDieColor === color;
         return `<div class="die color-${color} ${
-          isSelected ? "selected-die" : ""
+          isSelected ? 'selected-die' : ''
         }" 
                      style="background-color: ${this.getColorHex(color)}"
                      data-die-color="${color}">
                 ${color.charAt(0).toUpperCase()}
               </div>`;
-      }).join("")
+      }).join('')
     }
             ${
       _currentPlayer.oracleDice.length === 0
         ? '<div class="no-dice">No dice rolled yet</div>'
-        : ""
+        : ''
     }
           </div>
           ${
@@ -304,29 +304,29 @@ export class GameController {
              ${this.selectedDieColor}
              <button id="clearDieSelection" class="action-btn secondary">Clear</button>
            </div>`
-        : ""
+        : ''
     }
         </div>
         ${
       (this.selectedDieColor || this.selectedOracleCardColor) &&
         _currentPlayer.favor > 0
         ? this.renderRecolorOptions(_currentPlayer)
-        : ""
+        : ''
     }
       </div>
     `;
   }
 
   private renderMap(gameState: GameState): void {
-    const hexMapContainer = document.getElementById("hexMapSVG");
+    const hexMapContainer = document.getElementById('hexMapSVG');
     if (!hexMapContainer) return;
 
     const grid = gameState.map.serialize();
-    console.log("Grid structure:", grid);
-    console.log("Grid length:", grid.length);
+    console.log('Grid structure:', grid);
+    console.log('Grid length:', grid.length);
 
     if (grid && grid.length > 0) {
-      console.log("First row length:", grid[0]?.length);
+      console.log('First row length:', grid[0]?.length);
     }
 
     try {
@@ -341,7 +341,7 @@ export class GameController {
       });
 
       const cubeHexes: CubeHex[] = gameState.cubeHexes || [];
-      console.log("Cube hexes for rendering:", cubeHexes);
+      console.log('Cube hexes for rendering:', cubeHexes);
 
       // Debug: Log cube hex details
       cubeHexes.forEach((cubeHex: CubeHex, index: number) => {
@@ -353,7 +353,7 @@ export class GameController {
 
       // Update the hex map SVG with monster hex data
       const monsterHexes: MonsterHex[] = gameState.monsterHexes || [];
-      console.log("Monster hexes for rendering:", monsterHexes);
+      console.log('Monster hexes for rendering:', monsterHexes);
 
       // Debug: Log monster hex details
       monsterHexes.forEach((monsterHex: MonsterHex, index: number) => {
@@ -365,14 +365,14 @@ export class GameController {
 
       // Debug: Check if cube hexes and monster hexes are being passed to SVG renderer
       console.log(
-        "Setting cubeHexes in SVG options:",
+        'Setting cubeHexes in SVG options:',
         cubeHexes.length,
-        "hexes",
+        'hexes',
       );
       console.log(
-        "Setting monsterHexes in SVG options:",
+        'Setting monsterHexes in SVG options:',
         monsterHexes.length,
-        "hexes",
+        'hexes',
       );
 
       this.hexMapSVG.setOptions({
@@ -391,18 +391,18 @@ export class GameController {
         const executeScript = new Function(script);
         executeScript();
       } catch (error) {
-        console.error("Error executing hex map script:", error);
+        console.error('Error executing hex map script:', error);
       }
 
       // Add player markers to the map
       this.addPlayerMarkers(gameState.players);
 
       // Highlight available moves
-      if (gameState.phase === "action") {
+      if (gameState.phase === 'action') {
         this.highlightAvailableMoves();
       }
     } catch (error) {
-      console.error("Error generating SVG:", error);
+      console.error('Error generating SVG:', error);
       const errorMessage = error instanceof Error
         ? error.message
         : String(error);
@@ -424,11 +424,11 @@ export class GameController {
 
     // Add markers for each position group
     playersByPosition.forEach((playersAtPosition: Player[], positionKey) => {
-      const [q, r] = positionKey.split(",").map(Number);
+      const [q, r] = positionKey.split(',').map(Number);
       const cell = document.querySelector(`[data-q="${q}"][data-r="${r}"]`);
       if (cell) {
         const rect = cell.getBoundingClientRect();
-        const svg = cell.closest("svg");
+        const svg = cell.closest('svg');
         if (svg) {
           const point = svg.createSVGPoint();
 
@@ -468,17 +468,17 @@ export class GameController {
             );
 
             const marker = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "circle",
+              'http://www.w3.org/2000/svg',
+              'circle',
             );
-            marker.setAttribute("cx", svgPoint.x.toString());
-            marker.setAttribute("cy", svgPoint.y.toString());
-            marker.setAttribute("r", "8");
-            marker.setAttribute("fill", this.getColorHex(player.color));
-            marker.setAttribute("stroke", "#fff");
-            marker.setAttribute("stroke-width", "2");
-            marker.setAttribute("class", "player-marker");
-            marker.setAttribute("data-player-id", player.id.toString());
+            marker.setAttribute('cx', svgPoint.x.toString());
+            marker.setAttribute('cy', svgPoint.y.toString());
+            marker.setAttribute('r', '8');
+            marker.setAttribute('fill', this.getColorHex(player.color));
+            marker.setAttribute('stroke', '#fff');
+            marker.setAttribute('stroke-width', '2');
+            marker.setAttribute('class', 'player-marker');
+            marker.setAttribute('data-player-id', player.id.toString());
 
             svg.appendChild(marker);
           });
@@ -497,12 +497,12 @@ export class GameController {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
 
     // Clear previous highlights
-    document.querySelectorAll(".available-move").forEach((cell) => {
-      cell.classList.remove("available-move");
-      cell.classList.remove("available-move-favor");
-      cell.classList.remove("available-move-oracle-card");
-      cell.classList.remove("available-move-oracle-card-favor");
-      cell.removeAttribute("title");
+    document.querySelectorAll('.available-move').forEach((cell) => {
+      cell.classList.remove('available-move');
+      cell.classList.remove('available-move-favor');
+      cell.classList.remove('available-move-oracle-card');
+      cell.classList.remove('available-move-oracle-card-favor');
+      cell.removeAttribute('title');
     });
 
     // Highlight moves for selected die
@@ -550,20 +550,20 @@ export class GameController {
 
           if (highlightCell) {
             if (move.favorCost > 0) {
-              highlightCell.classList.add("available-move-favor");
+              highlightCell.classList.add('available-move-favor');
               // Add tooltip to show required die color and favor cost
               highlightCell.setAttribute(
-                "title",
+                'title',
                 `Move using ${effectiveDieColor} die (costs ${move.favorCost} favor)`,
               );
               console.log(
                 `Added favor highlight to (${move.q}, ${move.r}) with cost ${move.favorCost}`,
               );
             } else {
-              highlightCell.classList.add("available-move");
+              highlightCell.classList.add('available-move');
               // Add tooltip to show required die color
               highlightCell.setAttribute(
-                "title",
+                'title',
                 `Move using ${effectiveDieColor} die`,
               );
             }
@@ -605,17 +605,17 @@ export class GameController {
 
           if (highlightCell) {
             if (move.favorCost > 0) {
-              highlightCell.classList.add("available-move-oracle-card-favor");
+              highlightCell.classList.add('available-move-oracle-card-favor');
               // Add tooltip to show required oracle card color and favor cost
               highlightCell.setAttribute(
-                "title",
+                'title',
                 `Move using ${effectiveCardColor} oracle card (costs ${move.favorCost} favor)`,
               );
             } else {
-              highlightCell.classList.add("available-move-oracle-card");
+              highlightCell.classList.add('available-move-oracle-card');
               // Add tooltip to show required oracle card color
               highlightCell.setAttribute(
-                "title",
+                'title',
                 `Move using ${effectiveCardColor} oracle card`,
               );
             }
@@ -626,7 +626,7 @@ export class GameController {
   }
 
   private updatePhaseDisplay(phase: string): void {
-    const phaseDisplay = document.getElementById("phaseDisplay");
+    const phaseDisplay = document.getElementById('phaseDisplay');
     if (!phaseDisplay) return;
 
     phaseDisplay.innerHTML = `
@@ -643,13 +643,13 @@ export class GameController {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
 
     switch (phase) {
-      case "action": {
+      case 'action': {
         const currentCell = this.gameEngine.getGameState().map.getCell(
           currentPlayer.shipPosition.q,
           currentPlayer.shipPosition.r,
         );
 
-        let actions = "";
+        let actions = '';
 
         if (this.selectedDieColor) {
           // Die is selected - show available actions
@@ -680,27 +680,27 @@ export class GameController {
           // Note: Recolor options are now displayed in the player info panel as radio buttons
           // The favor will be spent when the resource is actually used for movement or other actions
 
-          if (currentCell?.terrain === "cubes") {
+          if (currentCell?.terrain === 'cubes') {
             actions +=
               `<button id="collectOffering" class="action-btn">Collect Offering</button>`;
           }
-          if (currentCell?.terrain === "monsters") {
+          if (currentCell?.terrain === 'monsters') {
             actions +=
               `<button id="fightMonster" class="action-btn">Fight Monster</button>`;
           }
-          if (currentCell?.terrain === "temple") {
+          if (currentCell?.terrain === 'temple') {
             actions +=
               `<button id="buildTemple" class="action-btn">Build Temple</button>`;
           }
-          if (currentCell?.terrain === "foundations") {
+          if (currentCell?.terrain === 'foundations') {
             actions +=
               `<button id="buildFoundation" class="action-btn">Build Foundation</button>`;
           }
-          if (currentCell?.terrain === "clouds") {
+          if (currentCell?.terrain === 'clouds') {
             actions +=
               `<button id="completeCloudQuest" class="action-btn">Complete Cloud Quest</button>`;
           }
-          if (currentCell?.terrain === "city") {
+          if (currentCell?.terrain === 'city') {
             // not implemented yet
           }
         } else if (this.selectedOracleCardColor) {
@@ -734,17 +734,17 @@ export class GameController {
           actions +=
             `<p>Select a resource (die or oracle card) to perform actions</p>`;
           actions += `<p>Available dice: ${
-            currentPlayer.oracleDice.join(", ")
+            currentPlayer.oracleDice.join(', ')
           }</p>`;
           if (currentPlayer.oracleCards.length > 0) {
             actions += `<p>Available oracle cards: ${
-              currentPlayer.oracleCards.join(", ")
+              currentPlayer.oracleCards.join(', ')
             }</p>`;
           }
         }
 
         if (!actions) {
-          actions = "<p>No actions available at this location</p>";
+          actions = '<p>No actions available at this location</p>';
         }
 
         actions +=
@@ -752,32 +752,32 @@ export class GameController {
         return actions;
       }
       default: {
-        return "<p>Game phase not recognized</p>";
+        return '<p>Game phase not recognized</p>';
       }
     }
   }
 
   private setupEventListeners(): void {
-    console.log("Setting up event listeners...");
+    console.log('Setting up event listeners...');
 
     // Start game button
-    document.addEventListener("click", (event) => {
+    document.addEventListener('click', (event) => {
       const target = event.target as HTMLElement;
 
-      if (target.id === "startGame") {
+      if (target.id === 'startGame') {
         this.startNewGame();
       }
     });
 
     // Hex cell click for movement
-    document.addEventListener("hexCellClick", (event: Event) => {
+    document.addEventListener('hexCellClick', (event: Event) => {
       if (!this.gameEngine.isGameInitialized()) return;
 
       const customEvent = event as CustomEvent<{ q: number; r: number }>;
       const { q, r } = customEvent.detail;
       const gameState = this.gameEngine.getGameState();
 
-      if (gameState.phase === "action") {
+      if (gameState.phase === 'action') {
         const currentPlayer = this.gameEngine.getCurrentPlayer();
 
         // Check if moving with oracle card
@@ -966,7 +966,7 @@ export class GameController {
                   this.showMessage(errorMessage);
 
                   // Debug: Log the failure details
-                  console.log("Move failed with details:", {
+                  console.log('Move failed with details:', {
                     playerId: currentPlayer.id,
                     targetQ: q,
                     targetR: r,
@@ -1030,7 +1030,7 @@ export class GameController {
               this.showMessage(errorMessage);
 
               // Debug: Log the failure details
-              console.log("Move failed with details:", {
+              console.log('Move failed with details:', {
                 playerId: currentPlayer.id,
                 targetQ: q,
                 targetR: r,
@@ -1050,74 +1050,74 @@ export class GameController {
           }
         } else {
           this.showMessage(
-            "Please select a resource (die or oracle card) first!",
+            'Please select a resource (die or oracle card) first!',
           );
         }
       }
     });
 
     // Delegate phase action buttons
-    document.addEventListener("click", (event) => {
+    document.addEventListener('click', (event) => {
       if (!this.gameEngine.isGameInitialized()) return;
 
       const target = event.target as HTMLElement;
       console.log(
-        "Click event detected on:",
+        'Click event detected on:',
         target,
-        "classList:",
+        'classList:',
         target.classList,
       );
 
-      if (target.id === "collectOffering") {
+      if (target.id === 'collectOffering') {
         this.collectOffering();
-      } else if (target.id === "fightMonster") {
+      } else if (target.id === 'fightMonster') {
         this.fightMonster();
-      } else if (target.id === "buildTemple") {
+      } else if (target.id === 'buildTemple') {
         this.buildTemple();
-      } else if (target.id === "buildFoundation") {
+      } else if (target.id === 'buildFoundation') {
         this.buildFoundation();
-      } else if (target.id === "completeCloudQuest") {
+      } else if (target.id === 'completeCloudQuest') {
         this.completeCloudQuest();
-      } else if (target.id === "placeStatue") {
+      } else if (target.id === 'placeStatue') {
         // this.placeStatueOnCity();
-      } else if (target.id === "spendResourceForFavor") {
+      } else if (target.id === 'spendResourceForFavor') {
         this.spendResourceForFavor();
-      } else if (target.id === "drawOracleCard") {
+      } else if (target.id === 'drawOracleCard') {
         this.drawOracleCard();
-      } else if (target.id === "endTurn") {
+      } else if (target.id === 'endTurn') {
         this.endTurn();
-      } else if (target.id === "clearResourceSelection") {
+      } else if (target.id === 'clearResourceSelection') {
         this.clearResourceSelectionAndUpdateDisplay();
-      } else if (target.id === "clearDieSelection") {
+      } else if (target.id === 'clearDieSelection') {
         this.clearResourceSelectionAndUpdateDisplay();
-      } else if (target.id === "clearOracleCardSelection") {
+      } else if (target.id === 'clearOracleCardSelection') {
         this.clearResourceSelectionAndUpdateDisplay();
-      } else if (target.classList.contains("resource-item")) {
-        const resourceType = target.getAttribute("data-resource-type");
+      } else if (target.classList.contains('resource-item')) {
+        const resourceType = target.getAttribute('data-resource-type');
         const resourceColor = target.getAttribute(
-          "data-resource-color",
+          'data-resource-color',
         ) as CoreColor;
         if (resourceType && resourceColor) {
           this.selectResource(resourceType, resourceColor);
         }
-      } else if (target.classList.contains("die")) {
-        const dieColor = target.getAttribute("data-die-color") as CoreColor;
+      } else if (target.classList.contains('die')) {
+        const dieColor = target.getAttribute('data-die-color') as CoreColor;
         if (dieColor) {
           console.log(`Die clicked: ${dieColor}`);
-          this.selectResource("die", dieColor);
+          this.selectResource('die', dieColor);
         }
-      } else if (target.classList.contains("oracle-card")) {
+      } else if (target.classList.contains('oracle-card')) {
         const cardColor = target.getAttribute(
-          "data-oracle-card-color",
+          'data-oracle-card-color',
         ) as CoreColor;
         if (cardColor) {
           console.log(`Oracle card clicked: ${cardColor}`);
-          this.selectResource("card", cardColor);
+          this.selectResource('card', cardColor);
         }
       } else if (
-        target instanceof HTMLInputElement && target.name === "recolorOption"
+        target instanceof HTMLInputElement && target.name === 'recolorOption'
       ) {
-        const favorCost = parseInt(target.value || "0");
+        const favorCost = parseInt(target.value || '0');
         this.setRecolorIntention(favorCost);
       }
     });
@@ -1138,7 +1138,7 @@ export class GameController {
       currentPlayer.shipPosition.r,
     );
 
-    if (currentCell?.terrain === "cubes" && currentCell.color !== "none") {
+    if (currentCell?.terrain === 'cubes' && currentCell.color !== 'none') {
       const success = this.gameEngine.collectOffering(
         currentPlayer.id,
         currentCell.color,
@@ -1149,7 +1149,7 @@ export class GameController {
         this.selectedDieColor = null;
         this.renderGameState();
       } else {
-        this.showMessage("No storage space available for cube!");
+        this.showMessage('No storage space available for cube!');
       }
     }
   }
@@ -1158,12 +1158,12 @@ export class GameController {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     const success = this.gameEngine.fightMonster(currentPlayer.id);
     if (success) {
-      this.showMessage("Monster defeated! Quest completed!");
+      this.showMessage('Monster defeated! Quest completed!');
       // Clear selected die after successful action
       this.selectedDieColor = null;
       this.renderGameState();
     } else {
-      this.showMessage("Not enough oracle dice to fight this monster");
+      this.showMessage('Not enough oracle dice to fight this monster');
     }
   }
 
@@ -1171,12 +1171,12 @@ export class GameController {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     const success = this.gameEngine.buildTemple(currentPlayer.id);
     if (success) {
-      this.showMessage("Temple built! Quest completed!");
+      this.showMessage('Temple built! Quest completed!');
       // Clear selected die after successful action
       this.selectedDieColor = null;
       this.renderGameState();
     } else {
-      this.showMessage("Cannot build temple here or missing required cube");
+      this.showMessage('Cannot build temple here or missing required cube');
     }
   }
 
@@ -1184,12 +1184,12 @@ export class GameController {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     const success = this.gameEngine.buildFoundation(currentPlayer.id);
     if (success) {
-      this.showMessage("Foundation built! Quest completed!");
+      this.showMessage('Foundation built! Quest completed!');
       // Clear selected die after successful action
       this.selectedDieColor = null;
       this.renderGameState();
     } else {
-      this.showMessage("Cannot build foundation here");
+      this.showMessage('Cannot build foundation here');
     }
   }
 
@@ -1197,13 +1197,13 @@ export class GameController {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     const success = this.gameEngine.completeCloudQuest(currentPlayer.id);
     if (success) {
-      this.showMessage("Cloud quest completed!");
+      this.showMessage('Cloud quest completed!');
       // Clear selected die after successful action
       this.selectedDieColor = null;
       this.renderGameState();
     } else {
       this.showMessage(
-        "Cannot complete cloud quest here or missing required statue",
+        'Cannot complete cloud quest here or missing required statue',
       );
     }
   }
@@ -1223,7 +1223,7 @@ export class GameController {
         // The spent die will be automatically removed from the display
         this.renderGameState();
       } else {
-        this.showMessage("Cannot spend die for favor at this time");
+        this.showMessage('Cannot spend die for favor at this time');
       }
     } // Check if an oracle card is selected
     else if (this.selectedOracleCardColor) {
@@ -1239,10 +1239,10 @@ export class GameController {
         this.selectedOracleCardColor = null;
         this.renderGameState();
       } else {
-        this.showMessage("Cannot spend oracle card for favor at this time");
+        this.showMessage('Cannot spend oracle card for favor at this time');
       }
     } else {
-      this.showMessage("Please select a resource (die or oracle card) first!");
+      this.showMessage('Please select a resource (die or oracle card) first!');
     }
   }
 
@@ -1263,7 +1263,7 @@ export class GameController {
         // The spent die will be automatically removed from the display
         this.renderGameState();
       } else {
-        this.showMessage("Cannot draw oracle card at this time");
+        this.showMessage('Cannot draw oracle card at this time');
       }
     } // Check if an oracle card is selected
     else if (this.selectedOracleCardColor) {
@@ -1280,11 +1280,11 @@ export class GameController {
         this.renderGameState();
       } else {
         this.showMessage(
-          "Cannot spend oracle card to draw another oracle card at this time",
+          'Cannot spend oracle card to draw another oracle card at this time',
         );
       }
     } else {
-      this.showMessage("Please select a resource (die or oracle card) first!");
+      this.showMessage('Please select a resource (die or oracle card) first!');
     }
   }
 
@@ -1293,7 +1293,7 @@ export class GameController {
 
     const selectedColor = this.selectedDieColor || this.selectedOracleCardColor;
     if (!selectedColor) {
-      this.showMessage("Please select a resource (die or oracle card) first!");
+      this.showMessage('Please select a resource (die or oracle card) first!');
       return;
     }
 
@@ -1313,23 +1313,23 @@ export class GameController {
       }
 
       if (success) {
-        this.showMessage("Recoloring intention cleared");
+        this.showMessage('Recoloring intention cleared');
         this.renderGameState();
         // Update available moves since color intention changed
         this.highlightAvailableMoves();
       } else {
-        this.showMessage("Cannot clear recoloring intention");
+        this.showMessage('Cannot clear recoloring intention');
       }
     } else {
       // Set recoloring intention
       let success = false;
       const colorWheel: HexColor[] = [
-        "black",
-        "pink",
-        "blue",
-        "yellow",
-        "green",
-        "red",
+        'black',
+        'pink',
+        'blue',
+        'yellow',
+        'green',
+        'red',
       ];
       const currentIndex = colorWheel.indexOf(selectedColor);
       const newIndex = (currentIndex + favorCost) % colorWheel.length;
@@ -1350,7 +1350,7 @@ export class GameController {
       }
 
       if (success) {
-        const resourceType = this.selectedDieColor ? "die" : "oracle card";
+        const resourceType = this.selectedDieColor ? 'die' : 'oracle card';
         this.showMessage(
           `${
             resourceType.charAt(0).toUpperCase() + resourceType.slice(1)
@@ -1360,7 +1360,7 @@ export class GameController {
         // Update available moves since color intention changed
         this.highlightAvailableMoves();
       } else {
-        this.showMessage("Cannot set recoloring intention");
+        this.showMessage('Cannot set recoloring intention');
       }
     }
   }
@@ -1375,7 +1375,7 @@ export class GameController {
     this.gameEngine.endTurn();
 
     this.showMessage(
-      "Turn ended. Dice rolled for next player.",
+      'Turn ended. Dice rolled for next player.',
     );
 
     this.renderGameState();
@@ -1386,26 +1386,26 @@ export class GameController {
       console.log(`GameMessage: ${message}`);
       return;
     }
-    const messageContainer = document.getElementById("gameMessage");
+    const messageContainer = document.getElementById('gameMessage');
     if (messageContainer) {
       messageContainer.textContent = message;
-      messageContainer.style.display = "block";
+      messageContainer.style.display = 'block';
 
       setTimeout(() => {
-        messageContainer.style.display = "none";
+        messageContainer.style.display = 'none';
       }, 3000);
     }
   }
 
   private renderRecolorOptions(player: Player): string {
     const selectedColor = this.selectedDieColor || this.selectedOracleCardColor;
-    if (!selectedColor) return "";
+    if (!selectedColor) return '';
 
     const currentIndex = COLOR_WHEEL.indexOf(selectedColor);
 
-    if (currentIndex === -1) return "";
+    if (currentIndex === -1) return '';
 
-    const resourceType = this.selectedDieColor ? "die" : "oracle card";
+    const resourceType = this.selectedDieColor ? 'die' : 'oracle card';
     let options = `
       <div class="recolor-section" style="margin-top: 1rem;">
         <h4>Recolor ${
@@ -1433,7 +1433,7 @@ export class GameController {
       <div class="recolor-option" style="margin-bottom: 0.5rem;">
         <label style="display: flex; align-items: center; gap: 0.5rem;">
           <input type="radio" name="recolorOption" value="0" ${
-      !hasRecolorIntention ? "checked" : ""
+      !hasRecolorIntention ? 'checked' : ''
     } data-recolor-favor="0">
           <span class="color-swatch" style="background-color: ${
       this.getColorHex(selectedColor)
@@ -1471,7 +1471,7 @@ export class GameController {
         <div class="recolor-option" style="margin-bottom: 0.5rem;">
           <label style="display: flex; align-items: center; gap: 0.5rem;">
             <input type="radio" name="recolorOption" value="${favorCost}" ${
-        isSelected ? "checked" : ""
+        isSelected ? 'checked' : ''
       } data-recolor-favor="${favorCost}">
             <span class="color-swatch" style="background-color: ${
         this.getColorHex(newColor)
@@ -1499,7 +1499,7 @@ export class GameController {
     this.showMessage(message);
 
     // Disable further actions
-    const actionButtons = document.querySelectorAll(".action-btn");
+    const actionButtons = document.querySelectorAll('.action-btn');
     actionButtons.forEach((button: Element) => {
       (button as HTMLButtonElement).disabled = true;
     });
@@ -1507,14 +1507,14 @@ export class GameController {
 
   private getColorHex(color: string): string {
     const colors: Record<string, string> = {
-      red: "#DC143C",
-      pink: "#ff69b4",
-      blue: "#0000ff",
-      black: "#000000",
-      green: "#008000",
-      yellow: "#ffff00",
+      red: '#DC143C',
+      pink: '#ff69b4',
+      blue: '#0000ff',
+      black: '#000000',
+      green: '#008000',
+      yellow: '#ffff00',
     };
-    return colors[color] || "#333333";
+    return colors[color] || '#333333';
   }
 
   /**
@@ -1534,7 +1534,7 @@ export class GameController {
       return [];
     }
     const player = this.gameEngine.getPlayer(playerId);
-    if (!player || this.gameEngine.getGameState().phase !== "action") {
+    if (!player || this.gameEngine.getGameState().phase !== 'action') {
       return [];
     }
 
@@ -1571,7 +1571,7 @@ export class GameController {
       // Filter by the effective oracle card color and exclude current position
       for (const seaTile of reachableSeaTiles) {
         if (
-          seaTile.color !== "none" &&
+          seaTile.color !== 'none' &&
           seaTile.color === effectiveCardColor &&
           !(seaTile.q === currentPos.q && seaTile.r === currentPos.r)
         ) {
@@ -1636,7 +1636,7 @@ export class GameController {
       );
 
       for (const neighbor of neighbors) {
-        if (neighbor.terrain === "sea") {
+        if (neighbor.terrain === 'sea') {
           const key = `${neighbor.q},${neighbor.r}`;
           if (!visited.has(key)) {
             visited.add(key);
@@ -1661,47 +1661,47 @@ export class GameController {
   /**
    * Format a detailed error message from move ship result
    */
-  private formatMoveErrorMessage(error?: MoveShipResult["error"]): string {
+  private formatMoveErrorMessage(error?: MoveShipResult['error']): string {
     if (!error) {
-      return "Invalid move! Unknown error occurred.";
+      return 'Invalid move! Unknown error occurred.';
     }
 
     switch (error.type) {
-      case "invalid_player":
-        return "Invalid player or not your turn!";
+      case 'invalid_player':
+        return 'Invalid player or not your turn!';
 
-      case "wrong_phase":
+      case 'wrong_phase':
         return `Cannot move during ${error.details?.phase} phase!`;
 
-      case "invalid_target":
+      case 'invalid_target':
         return `Target cell (${error.details?.targetQ}, ${error.details?.targetR}) does not exist!`;
 
-      case "not_sea":
+      case 'not_sea':
         return `Cannot move to ${error.details?.targetTerrain} terrain! Ships can only move to sea hexes.`;
 
-      case "no_die":
-        return "No die color specified for movement! Please select a die first.";
+      case 'no_die':
+        return 'No die color specified for movement! Please select a die first.';
 
-      case "die_not_available":
+      case 'die_not_available':
         return `You don't have a ${error.details?.dieColor} die! Available dice: ${
-          error.details?.availableDice?.join(", ") || "none"
+          error.details?.availableDice?.join(', ') || 'none'
         }.`;
 
-      case "wrong_color":
+      case 'wrong_color':
         return `Target hex is ${error.details?.targetColor}, but die is ${error.details?.requiredColor}!`;
 
-      case "not_reachable":
+      case 'not_reachable':
         return `Target is not reachable within ${error.details?.movementRange} movement range!`;
 
-      case "not_enough_favor":
+      case 'not_enough_favor':
         return `Not enough favor! Need ${error.details?.favorSpent} but only have ${error.details?.availableFavor}.`;
 
-      case "recoloring_failed":
+      case 'recoloring_failed':
         return `Recoloring failed! Not enough favor for recoloring cost of ${error.details?.recoloringCost}.`;
 
-      case "unknown":
+      case 'unknown':
       default:
-        return "Invalid move! Please check your die selection, favor, and target hex.";
+        return 'Invalid move! Please check your die selection, favor, and target hex.';
     }
   }
 }

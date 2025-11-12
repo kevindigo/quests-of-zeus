@@ -1,17 +1,17 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { assert, assertEquals } from "@std/assert";
-import { HexMap } from "../src/hexmap.ts";
+import { assert, assertEquals } from '@std/assert';
+import { HexMap } from '../src/hexmap.ts';
 
 // Test the new Zeus placement logic
-Deno.test("Zeus placement - randomly in neighbor hexes", () => {
+Deno.test('Zeus placement - randomly in neighbor hexes', () => {
   const hexMap = new HexMap();
 
   // Get all Zeus cells
-  const zeusCells = hexMap.getCellsByTerrain("zeus");
+  const zeusCells = hexMap.getCellsByTerrain('zeus');
 
   // Should have exactly 1 Zeus cell
-  assertEquals(zeusCells.length, 1, "Should have exactly 1 Zeus cell");
+  assertEquals(zeusCells.length, 1, 'Should have exactly 1 Zeus cell');
 
   const zeusCell = zeusCells[0];
 
@@ -20,7 +20,7 @@ Deno.test("Zeus placement - randomly in neighbor hexes", () => {
   assertEquals(
     zeusCell.q !== 0 || zeusCell.r !== 0,
     true,
-    "Zeus should not be at the center (0, 0)",
+    'Zeus should not be at the center (0, 0)',
   );
 
   // Zeus should be in one of the 6 neighbor positions around the center
@@ -48,28 +48,28 @@ Deno.test("Zeus placement - randomly in neighbor hexes", () => {
   assertEquals(
     centerCell !== null,
     true,
-    "Center cell should exist",
+    'Center cell should exist',
   );
 });
 
 // Test multiple map generations to ensure random placement
-Deno.test("Zeus placement - multiple generations", () => {
+Deno.test('Zeus placement - multiple generations', () => {
   const positions = new Set<string>();
   const validPositions = [
-    "1,0",
-    "1,-1",
-    "0,-1",
-    "-1,0",
-    "-1,1",
-    "0,1",
+    '1,0',
+    '1,-1',
+    '0,-1',
+    '-1,0',
+    '-1,1',
+    '0,1',
   ];
 
   // Generate multiple maps to test randomness
   for (let i = 0; i < 20; i++) {
     const hexMap = new HexMap();
-    const zeusCells = hexMap.getCellsByTerrain("zeus");
+    const zeusCells = hexMap.getCellsByTerrain('zeus');
 
-    assertEquals(zeusCells.length, 1, "Should have exactly 1 Zeus cell");
+    assertEquals(zeusCells.length, 1, 'Should have exactly 1 Zeus cell');
 
     const zeusCell = zeusCells[0];
     assert(zeusCell);
@@ -89,6 +89,6 @@ Deno.test("Zeus placement - multiple generations", () => {
   assertEquals(
     positions.size >= 2,
     true,
-    "With 20 generations, Zeus should appear in at least 2 different positions",
+    'With 20 generations, Zeus should appear in at least 2 different positions',
   );
 });

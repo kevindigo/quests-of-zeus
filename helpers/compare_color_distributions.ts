@@ -1,29 +1,29 @@
-import { getMapStatistics, HexMap } from "./src/hexmap.ts";
+import { getMapStatistics, HexMap } from './src/hexmap.ts';
 
 /**
  * Compare color distributions between the old random assignment and new least-used preference
  */
 function compareColorDistributions(): void {
-  console.log("=== Comparing Color Distribution Methods ===\n");
+  console.log('=== Comparing Color Distribution Methods ===\n');
 
   const testCount = 30;
-  const _colors = ["red", "pink", "blue", "black", "green", "yellow"];
+  const _colors = ['red', 'pink', 'blue', 'black', 'green', 'yellow'];
 
   // Test with current implementation (least-used preference)
-  console.log("Testing with LEAST-USED COLOR PREFERENCE:");
+  console.log('Testing with LEAST-USED COLOR PREFERENCE:');
   const newStats = runColorDistributionTest(testCount);
 
-  console.log("\n" + "=".repeat(50) + "\n");
+  console.log('\n' + '='.repeat(50) + '\n');
 
   // Test with old implementation (random assignment)
-  console.log("Testing with RANDOM COLOR ASSIGNMENT:");
+  console.log('Testing with RANDOM COLOR ASSIGNMENT:');
   const oldStats = runColorDistributionTest(testCount, true);
 
-  console.log("\n" + "=".repeat(50) + "\n");
-  console.log("=== COMPARISON SUMMARY ===\n");
+  console.log('\n' + '='.repeat(50) + '\n');
+  console.log('=== COMPARISON SUMMARY ===\n');
 
   // Compare key metrics
-  console.log("Key Metrics Comparison:");
+  console.log('Key Metrics Comparison:');
   console.log(`- Average conflicts per map:`);
   console.log(`  Least-used: ${newStats.avgConflicts.toFixed(2)}`);
   console.log(`  Random:     ${oldStats.avgConflicts.toFixed(2)}`);
@@ -56,11 +56,11 @@ function compareColorDistributions(): void {
     parseFloat(conflictImprovement) > 0 && parseFloat(balanceImprovement) > 0
   ) {
     console.log(
-      "\n✅ SUCCESS: Least-used color preference provides better balance!",
+      '\n✅ SUCCESS: Least-used color preference provides better balance!',
     );
   } else {
     console.log(
-      "\n⚠️  Mixed results: Some metrics may need further optimization",
+      '\n⚠️  Mixed results: Some metrics may need further optimization',
     );
   }
 }
@@ -84,7 +84,7 @@ function runColorDistributionTest(
   > = {};
 
   // Initialize stats for each color
-  const _colors = ["red", "pink", "blue", "black", "green", "yellow"];
+  const _colors = ['red', 'pink', 'blue', 'black', 'green', 'yellow'];
   for (const color of colors) {
     colorStats[color] = {
       min: Infinity,
@@ -153,7 +153,7 @@ function runColorDistributionTest(
   );
   console.log(`- Maximum color difference: ${maxMapDifference} tiles`);
 
-  console.log("\nColor Distribution:");
+  console.log('\nColor Distribution:');
   for (const color of colors) {
     const stats = colorStats[color];
     const average = stats.total / testCount;
@@ -185,7 +185,7 @@ function simulateOldRandomAssignment(map: HexMap): void {
     if (row) {
       for (let arrayR = 0; arrayR < row.length; arrayR++) {
         const cell = row[arrayR];
-        if (cell && cell.terrain === "sea") {
+        if (cell && cell.terrain === 'sea') {
           seaCells.push(cell);
         }
       }
@@ -202,13 +202,13 @@ function simulateOldRandomAssignment(map: HexMap): void {
     const neighbors = map.getNeighbors(cell.q, cell.r);
 
     for (const neighbor of neighbors) {
-      if (neighbor.terrain === "sea" && neighbor.color !== "none") {
+      if (neighbor.terrain === 'sea' && neighbor.color !== 'none') {
         adjacentColors.add(neighbor.color);
       }
     }
 
     // Find available colors
-    const availableColors = ["red", "pink", "blue", "black", "green", "yellow"]
+    const availableColors = ['red', 'pink', 'blue', 'black', 'green', 'yellow']
       .filter(
         (color) => !adjacentColors.has(color),
       );
@@ -221,7 +221,7 @@ function simulateOldRandomAssignment(map: HexMap): void {
       // Fallback: choose randomly from all colors
       const randomIndex = Math.floor(Math.random() * 6);
       cell.color =
-        ["red", "pink", "blue", "black", "green", "yellow"][randomIndex];
+        ['red', 'pink', 'blue', 'black', 'green', 'yellow'][randomIndex];
     }
   }
 }
@@ -241,11 +241,11 @@ function countAdjacentSameColorSeaHexes(
     if (row) {
       for (let arrayR = 0; arrayR < row.length; arrayR++) {
         const cell = row[arrayR];
-        if (cell && cell.terrain === "sea" && cell.color !== "none") {
+        if (cell && cell.terrain === 'sea' && cell.color !== 'none') {
           const neighbors = map.getNeighbors(cell.q, cell.r);
 
           for (const neighbor of neighbors) {
-            if (neighbor.terrain === "sea" && neighbor.color !== "none") {
+            if (neighbor.terrain === 'sea' && neighbor.color !== 'none') {
               // Create a unique key for this pair to avoid double counting
               const pairKey = getPairKey(cell, neighbor);
 

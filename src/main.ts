@@ -3,18 +3,18 @@
 // Quests of Zeus Game Server
 // Serves the playable game interface
 
-import { Application, Router } from "@oak/oak";
+import { Application, Router } from '@oak/oak';
 
 const app = new Application();
 const router = new Router();
 
 // Game routes
 router
-  .get("/", (context) => {
-    context.response.redirect("/index.html");
+  .get('/', (context) => {
+    context.response.redirect('/index.html');
   })
-  .get("/game", (context) => {
-    context.response.redirect("/index.html");
+  .get('/game', (context) => {
+    context.response.redirect('/index.html');
   });
 
 app.use(router.routes());
@@ -25,7 +25,7 @@ app.use(async (context, next) => {
   try {
     await context.send({
       root: Deno.cwd(),
-      index: "index.html",
+      index: 'index.html',
     });
   } catch {
     await next();

@@ -1,16 +1,16 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { HexMap } from "./src/hexmap.ts";
-import { MovementSystem } from "./src/movement-system.ts";
+import { HexMap } from './src/hexmap.ts';
+import { MovementSystem } from './src/movement-system.ts';
 
 function testMovementSystem() {
   const map = new HexMap();
   const movementSystem = new MovementSystem(map);
 
   // Find Zeus position
-  const zeusCells = map.getCellsByTerrain("zeus");
+  const zeusCells = map.getCellsByTerrain('zeus');
   if (zeusCells.length === 0) {
-    console.log("ERROR: No Zeus cell found!");
+    console.log('ERROR: No Zeus cell found!');
     return;
   }
 
@@ -30,11 +30,11 @@ function testMovementSystem() {
   }
 
   // Check if there are any sea tiles at all
-  const seaCells = map.getCellsByTerrain("sea");
+  const seaCells = map.getCellsByTerrain('sea');
   console.log(`Total sea cells in map: ${seaCells.length}`);
 
   // Check sea cells with colors
-  const seaCellsWithColor = seaCells.filter((cell) => cell.color !== "none");
+  const seaCellsWithColor = seaCells.filter((cell) => cell.color !== 'none');
   console.log(`Sea cells with color: ${seaCellsWithColor.length}`);
 
   // Check Zeus neighbors

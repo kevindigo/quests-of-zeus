@@ -1,9 +1,9 @@
 // Debug test for oracle card movement
-import { assert, assertGreater } from "@std/assert";
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { CoreColor } from "../src/types.ts";
+import { assert, assertGreater } from '@std/assert';
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import type { CoreColor } from '../src/types.ts';
 
-Deno.test("Debug oracle card movement", () => {
+Deno.test('Debug oracle card movement', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -13,7 +13,7 @@ Deno.test("Debug oracle card movement", () => {
   const gameState = engine.getGameState();
   const map = gameState.map;
   const zeus = map.getZeus();
-  const neighbors = map.getNeighborsOfType(zeus, map.getGrid(), "sea");
+  const neighbors = map.getNeighborsOfType(zeus, map.getGrid(), 'sea');
   assertGreater(neighbors.length, 0);
   const destination = neighbors[0]!;
   const destinationColor = destination.color as CoreColor;

@@ -1,9 +1,9 @@
 // Tests for oracle card movement functionality
 
-import { assert, assertEquals } from "@std/assert";
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
+import { assert, assertEquals } from '@std/assert';
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
 
-Deno.test("OracleCardMovement - basic functionality", () => {
+Deno.test('OracleCardMovement - basic functionality', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -12,16 +12,16 @@ Deno.test("OracleCardMovement - basic functionality", () => {
   assertExists(player);
 
   // Give player an oracle card
-  player.oracleCards = ["blue"];
+  player.oracleCards = ['blue'];
   player.usedOracleCardThisTurn = false;
 
   // Test that player has the oracle card
   assertEquals(player.oracleCards.length, 1);
-  assertEquals(player.oracleCards[0], "blue");
+  assertEquals(player.oracleCards[0], 'blue');
   assertEquals(player.usedOracleCardThisTurn, false);
 });
 
-Deno.test("OracleCardMovement - spend oracle card for movement", () => {
+Deno.test('OracleCardMovement - spend oracle card for movement', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -30,13 +30,13 @@ Deno.test("OracleCardMovement - spend oracle card for movement", () => {
   assertExists(player);
 
   // Give player an oracle card and position them on a sea hex
-  player.oracleCards = ["blue"];
+  player.oracleCards = ['blue'];
   player.usedOracleCardThisTurn = false;
 
   // Find a blue sea hex to move to
   const gameState = engine.getGameState();
-  const blueSeaHexes = gameState.map.getCellsByTerrain("sea").filter((cell) =>
-    cell.color === "blue"
+  const blueSeaHexes = gameState.map.getCellsByTerrain('sea').filter((cell) =>
+    cell.color === 'blue'
   );
 
   if (blueSeaHexes.length > 0) {
@@ -45,7 +45,7 @@ Deno.test("OracleCardMovement - spend oracle card for movement", () => {
 
     // Position player on a sea hex adjacent to the target
     const adjacentHexes = gameState.map.getNeighbors(targetHex.q, targetHex.r);
-    const adjacentSeaHex = adjacentHexes.find((hex) => hex.terrain === "sea");
+    const adjacentSeaHex = adjacentHexes.find((hex) => hex.terrain === 'sea');
 
     if (adjacentSeaHex) {
       player.shipPosition = { q: adjacentSeaHex.q, r: adjacentSeaHex.r };
@@ -55,27 +55,27 @@ Deno.test("OracleCardMovement - spend oracle card for movement", () => {
         playerId,
         targetHex.q,
         targetHex.r,
-        "blue",
+        'blue',
       );
 
-      assert(moveResult.success, "Oracle card movement should succeed");
+      assert(moveResult.success, 'Oracle card movement should succeed');
       assertEquals(player.shipPosition.q, targetHex.q);
       assertEquals(player.shipPosition.r, targetHex.r);
       assertEquals(
         player.oracleCards.length,
         0,
-        "Oracle card should be consumed",
+        'Oracle card should be consumed',
       );
       assertEquals(
         player.usedOracleCardThisTurn,
         true,
-        "Player should have used oracle card this turn",
+        'Player should have used oracle card this turn',
       );
     }
   }
 });
 
-Deno.test("OracleCardMovement - cannot use oracle card twice per turn", () => {
+Deno.test('OracleCardMovement - cannot use oracle card twice per turn', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -84,13 +84,13 @@ Deno.test("OracleCardMovement - cannot use oracle card twice per turn", () => {
   assertExists(player);
 
   // Give player multiple oracle cards
-  player.oracleCards = ["blue", "red"];
+  player.oracleCards = ['blue', 'red'];
   player.usedOracleCardThisTurn = false;
 
   // Find a blue sea hex to move to
   const gameState = engine.getGameState();
-  const blueSeaHexes = gameState.map.getCellsByTerrain("sea").filter((cell) =>
-    cell.color === "blue"
+  const blueSeaHexes = gameState.map.getCellsByTerrain('sea').filter((cell) =>
+    cell.color === 'blue'
   );
 
   if (blueSeaHexes.length > 0) {
@@ -99,7 +99,7 @@ Deno.test("OracleCardMovement - cannot use oracle card twice per turn", () => {
 
     // Position player on a sea hex adjacent to the target
     const adjacentHexes = gameState.map.getNeighbors(targetHex.q, targetHex.r);
-    const adjacentSeaHex = adjacentHexes.find((hex) => hex.terrain === "sea");
+    const adjacentSeaHex = adjacentHexes.find((hex) => hex.terrain === 'sea');
 
     if (adjacentSeaHex) {
       player.shipPosition = { q: adjacentSeaHex.q, r: adjacentSeaHex.r };
@@ -109,12 +109,12 @@ Deno.test("OracleCardMovement - cannot use oracle card twice per turn", () => {
         playerId,
         targetHex.q,
         targetHex.r,
-        "blue",
+        'blue',
       );
 
       assert(
         firstMoveResult.success,
-        "First oracle card movement should succeed",
+        'First oracle card movement should succeed',
       );
 
       // Try to use second oracle card in same turn
@@ -122,23 +122,23 @@ Deno.test("OracleCardMovement - cannot use oracle card twice per turn", () => {
         playerId,
         targetHex.q,
         targetHex.r,
-        "red",
+        'red',
       );
 
       assert(
         !secondMoveResult.success,
-        "Second oracle card movement should fail",
+        'Second oracle card movement should fail',
       );
       assertEquals(
         player.oracleCards.length,
         1,
-        "Only first oracle card should be consumed",
+        'Only first oracle card should be consumed',
       );
     }
   }
 });
 
-Deno.test("OracleCardMovement - cannot use oracle card without having it", () => {
+Deno.test('OracleCardMovement - cannot use oracle card without having it', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -152,8 +152,8 @@ Deno.test("OracleCardMovement - cannot use oracle card without having it", () =>
 
   // Find a blue sea hex to move to
   const gameState = engine.getGameState();
-  const blueSeaHexes = gameState.map.getCellsByTerrain("sea").filter((cell) =>
-    cell.color === "blue"
+  const blueSeaHexes = gameState.map.getCellsByTerrain('sea').filter((cell) =>
+    cell.color === 'blue'
   );
 
   if (blueSeaHexes.length > 0) {
@@ -165,17 +165,17 @@ Deno.test("OracleCardMovement - cannot use oracle card without having it", () =>
       playerId,
       targetHex.q,
       targetHex.r,
-      "blue",
+      'blue',
     );
 
     assert(
       !moveResult.success,
-      "Oracle card movement should fail without having the card",
+      'Oracle card movement should fail without having the card',
     );
   }
 });
 
-Deno.test("OracleCardMovement - oracle card usage resets on end turn", () => {
+Deno.test('OracleCardMovement - oracle card usage resets on end turn', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -184,7 +184,7 @@ Deno.test("OracleCardMovement - oracle card usage resets on end turn", () => {
   assertExists(player);
 
   // Give player an oracle card and use it
-  player.oracleCards = ["blue"];
+  player.oracleCards = ['blue'];
   player.usedOracleCardThisTurn = true;
 
   // End turn
@@ -194,7 +194,7 @@ Deno.test("OracleCardMovement - oracle card usage resets on end turn", () => {
   assertEquals(
     player.usedOracleCardThisTurn,
     false,
-    "Oracle card usage should reset on end turn",
+    'Oracle card usage should reset on end turn',
   );
 });
 

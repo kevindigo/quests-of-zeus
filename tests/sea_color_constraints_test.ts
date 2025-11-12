@@ -1,12 +1,12 @@
-import { assert } from "@std/assert";
-import { type HexCell } from "../src/types.ts";
-import { HexMap } from "../src/hexmap.ts";
+import { assert } from '@std/assert';
+import { type HexCell } from '../src/types.ts';
+import { HexMap } from '../src/hexmap.ts';
 
 /**
  * Test to verify that sea hex colors follow constraint-based placement
  * This test ensures no adjacent sea hexes have the same color
  */
-Deno.test("Sea color constraints - adjacent sea hexes should not have same color", () => {
+Deno.test('Sea color constraints - adjacent sea hexes should not have same color', () => {
   // Test multiple maps to ensure consistency
   const testCount = 10;
   let totalConflicts = 0;
@@ -58,11 +58,11 @@ function countAdjacentSameColorSeaHexes(
     if (row && Array.isArray(row)) {
       for (let arrayR = 0; arrayR < row.length; arrayR++) {
         const cell = row[arrayR];
-        if (cell && cell.terrain === "sea" && cell.color !== "none") {
+        if (cell && cell.terrain === 'sea' && cell.color !== 'none') {
           const neighbors = map.getNeighbors(cell.q, cell.r);
 
           for (const neighbor of neighbors) {
-            if (neighbor.terrain === "sea" && neighbor.color !== "none") {
+            if (neighbor.terrain === 'sea' && neighbor.color !== 'none') {
               // Create a unique key for this pair to avoid double counting
               const pairKey = getPairKey(cell, neighbor);
 

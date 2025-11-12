@@ -1,6 +1,6 @@
 // Movement and reachability logic for Quests of Zeus
-import type { HexMap } from "./hexmap.ts";
-import type { CoreColor, HexCell, HexColor } from "./types.ts";
+import type { HexMap } from './hexmap.ts';
+import type { CoreColor, HexCell, HexColor } from './types.ts';
 
 export class MovementSystem {
   constructor(private map: HexMap) {}
@@ -37,7 +37,7 @@ export class MovementSystem {
       const neighbors = this.map.getNeighbors(current.q, current.r);
 
       for (const neighbor of neighbors) {
-        if (neighbor.terrain === "sea") {
+        if (neighbor.terrain === 'sea') {
           const key = `${neighbor.q},${neighbor.r}`;
           if (!visited.has(key)) {
             visited.add(key);
@@ -80,11 +80,11 @@ export class MovementSystem {
     targetCell: HexCell | null,
   ): { isValid: boolean; error?: string } {
     if (!targetCell) {
-      return { isValid: false, error: "Target cell does not exist" };
+      return { isValid: false, error: 'Target cell does not exist' };
     }
 
     // Rule 1: You can only move to sea spaces
-    if (targetCell.terrain !== "sea") {
+    if (targetCell.terrain !== 'sea') {
       return {
         isValid: false,
         error: `Cannot move to ${targetCell.terrain} terrain`,

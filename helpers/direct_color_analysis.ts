@@ -1,4 +1,4 @@
-import { getMapStatistics, HexMap } from "../src/hexmap.ts";
+import { getMapStatistics, HexMap } from '../src/hexmap.ts';
 
 /**
  * Test to analyze the distribution of colors across sea tiles
@@ -12,7 +12,7 @@ function testSeaColorDistribution(): void {
   > = {};
 
   // Initialize stats for each color
-  const colors = ["red", "pink", "blue", "black", "green", "yellow"];
+  const colors = ['red', 'pink', 'blue', 'black', 'green', 'yellow'];
   for (const color of colors) {
     colorStats[color] = {
       min: Infinity,
@@ -76,14 +76,14 @@ function testSeaColorDistribution(): void {
 
   // Evaluate the distribution
   if (maxDifference > 10) {
-    console.log("❌ CRITICAL: Significant color imbalance detected!");
-    console.log("   Some colors appear 10+ times more than others.");
+    console.log('❌ CRITICAL: Significant color imbalance detected!');
+    console.log('   Some colors appear 10+ times more than others.');
   } else if (maxDifference > 7) {
-    console.log("⚠️  WARNING: Moderate color imbalance detected!");
-    console.log("   Some colors appear 7+ times more than others.");
+    console.log('⚠️  WARNING: Moderate color imbalance detected!');
+    console.log('   Some colors appear 7+ times more than others.');
   } else if (maxDifference > 5) {
-    console.log("ℹ️  NOTE: Some color imbalance present.");
-    console.log("   Some colors appear 5+ times more than others.");
+    console.log('ℹ️  NOTE: Some color imbalance present.');
+    console.log('   Some colors appear 5+ times more than others.');
   } else {
     // console.log("✅ Color distribution appears reasonably balanced.");
   }
@@ -98,7 +98,7 @@ function testSeaColorDistribution(): void {
 
   if (extremeCaseFound) {
     console.log(
-      "\n⚠️  EXTREME CASE DETECTED: Found maps with 17+ of one color and 6- of another!",
+      '\n⚠️  EXTREME CASE DETECTED: Found maps with 17+ of one color and 6- of another!',
     );
   } else {
     // console.log("\n✅ No extreme cases (17 vs 6) detected in this sample.");
@@ -120,11 +120,11 @@ function countAdjacentSameColorSeaHexes(
     if (row) {
       for (let arrayR = 0; arrayR < row.length; arrayR++) {
         const cell = row[arrayR];
-        if (cell && cell.terrain === "sea" && cell.color !== "none") {
+        if (cell && cell.terrain === 'sea' && cell.color !== 'none') {
           const neighbors = map.getNeighbors(cell.q, cell.r);
 
           for (const neighbor of neighbors) {
-            if (neighbor.terrain === "sea" && neighbor.color !== "none") {
+            if (neighbor.terrain === 'sea' && neighbor.color !== 'none') {
               // Create a unique key for this pair to avoid double counting
               const pairKey = getPairKey(cell, neighbor);
 

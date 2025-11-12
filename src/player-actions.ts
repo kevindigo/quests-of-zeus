@@ -1,21 +1,21 @@
 // Player action implementations for Quests of Zeus
-import type { MovementSystem } from "./movement-system.ts";
-import type { OracleSystem } from "./oracle-system.ts";
-import type { Player } from "./Player.ts";
+import type { MovementSystem } from './movement-system.ts';
+import type { OracleSystem } from './oracle-system.ts';
+import type { Player } from './Player.ts';
 import {
   addCubeToStorage,
   hasCubeOfColor,
   hasStatueOfColor,
   removeCubeFromStorage,
   removeStatueFromStorage,
-} from "./storage-manager.ts";
+} from './storage-manager.ts';
 import type {
   CoreColor,
   GameState,
   HexColor,
   MoveShipResult,
-} from "./types.ts";
-import { COLOR_WHEEL } from "./types.ts";
+} from './types.ts';
+import { COLOR_WHEEL } from './types.ts';
 
 export class PlayerActions {
   constructor(
@@ -50,11 +50,11 @@ export class PlayerActions {
     dieColor?: CoreColor,
     favorSpent?: number,
   ): MoveShipResult {
-    if (this.state.phase !== "action") {
+    if (this.state.phase !== 'action') {
       return {
         success: false,
         error: {
-          type: "wrong_phase",
+          type: 'wrong_phase',
           message: `Cannot move during ${this.state.phase} phase`,
           details: { phase: this.state.phase },
         },
@@ -68,8 +68,8 @@ export class PlayerActions {
       return {
         success: false,
         error: {
-          type: "invalid_target",
-          message: "Target cell does not exist",
+          type: 'invalid_target',
+          message: 'Target cell does not exist',
           details: { targetQ, targetR },
         },
       };
@@ -80,8 +80,8 @@ export class PlayerActions {
       return {
         success: false,
         error: {
-          type: "no_die",
-          message: "No die color specified",
+          type: 'no_die',
+          message: 'No die color specified',
           details: { availableDice: player.oracleDice },
         },
       };
@@ -91,7 +91,7 @@ export class PlayerActions {
       return {
         success: false,
         error: {
-          type: "die_not_available",
+          type: 'die_not_available',
           message: `You don't have a ${dieColor} die available`,
           details: {
             dieColor,
@@ -119,8 +119,8 @@ export class PlayerActions {
         return {
           success: false,
           error: {
-            type: "recoloring_failed",
-            message: "Recoloring failed - not enough favor or die not found",
+            type: 'recoloring_failed',
+            message: 'Recoloring failed - not enough favor or die not found',
             details: {
               originalDieColor,
               recoloringCost:
@@ -149,8 +149,8 @@ export class PlayerActions {
       return {
         success: false,
         error: {
-          type: "not_reachable",
-          message: validation.error || "Move validation failed",
+          type: 'not_reachable',
+          message: validation.error || 'Move validation failed',
           details: {
             targetQ,
             targetR,
@@ -169,7 +169,7 @@ export class PlayerActions {
         return {
           success: false,
           error: {
-            type: "not_enough_favor",
+            type: 'not_enough_favor',
             message:
               `Not enough favor to spend ${favorSpent} (only have ${player.favor})`,
             details: {
@@ -191,14 +191,14 @@ export class PlayerActions {
       // This should not happen since we checked above, but log for debugging
       console.warn(
         `Attempted to consume die ${dieColor} but it was not found in player's oracle dice: [${
-          player.oracleDice.join(", ")
+          player.oracleDice.join(', ')
         }]`,
       );
       return {
         success: false,
         error: {
-          type: "unknown",
-          message: "Unexpected error: die not found after validation",
+          type: 'unknown',
+          message: 'Unexpected error: die not found after validation',
           details: { dieColor, availableDice: player.oracleDice },
         },
       };
@@ -216,7 +216,7 @@ export class PlayerActions {
    * Collect an offering cube
    */
   public collectOffering(player: Player, color: HexColor): boolean {
-    if (this.state.phase !== "action") {
+    if (this.state.phase !== 'action') {
       return false;
     }
 
@@ -225,7 +225,7 @@ export class PlayerActions {
       player.shipPosition.q,
       player.shipPosition.r,
     );
-    if (!currentCell || currentCell.terrain !== "cubes") {
+    if (!currentCell || currentCell.terrain !== 'cubes') {
       return false;
     }
 
@@ -258,7 +258,7 @@ export class PlayerActions {
    * Fight a monster
    */
   public fightMonster(player: Player): boolean {
-    if (this.state.phase !== "action") {
+    if (this.state.phase !== 'action') {
       return false;
     }
 
@@ -267,7 +267,7 @@ export class PlayerActions {
       player.shipPosition.q,
       player.shipPosition.r,
     );
-    if (!currentCell || currentCell.terrain !== "monsters") {
+    if (!currentCell || currentCell.terrain !== 'monsters') {
       return false;
     }
 
@@ -299,7 +299,7 @@ export class PlayerActions {
    * Build a temple
    */
   public buildTemple(player: Player): boolean {
-    if (this.state.phase !== "action") {
+    if (this.state.phase !== 'action') {
       return false;
     }
 
@@ -308,7 +308,7 @@ export class PlayerActions {
       player.shipPosition.q,
       player.shipPosition.r,
     );
-    if (!currentCell || currentCell.terrain !== "temple") {
+    if (!currentCell || currentCell.terrain !== 'temple') {
       return false;
     }
 
@@ -327,7 +327,7 @@ export class PlayerActions {
    * Build a foundation
    */
   public buildFoundation(player: Player): boolean {
-    if (this.state.phase !== "action") {
+    if (this.state.phase !== 'action') {
       return false;
     }
 
@@ -336,7 +336,7 @@ export class PlayerActions {
       player.shipPosition.q,
       player.shipPosition.r,
     );
-    if (!currentCell || currentCell.terrain !== "foundations") {
+    if (!currentCell || currentCell.terrain !== 'foundations') {
       return false;
     }
 
@@ -347,7 +347,7 @@ export class PlayerActions {
    * Complete a cloud quest
    */
   public completeCloudQuest(player: Player): boolean {
-    if (this.state.phase !== "action") {
+    if (this.state.phase !== 'action') {
       return false;
     }
 
@@ -356,7 +356,7 @@ export class PlayerActions {
       player.shipPosition.q,
       player.shipPosition.r,
     );
-    if (!currentCell || currentCell.terrain !== "clouds") {
+    if (!currentCell || currentCell.terrain !== 'clouds') {
       return false;
     }
 
@@ -375,7 +375,7 @@ export class PlayerActions {
    * Spend any die to gain 2 favor during the action phase
    */
   public spendDieForFavor(player: Player, dieColor: CoreColor): boolean {
-    if (this.state.phase !== "action") {
+    if (this.state.phase !== 'action') {
       return false;
     }
 
@@ -405,7 +405,7 @@ export class PlayerActions {
       // This should not happen since we checked above, but log for debugging
       console.warn(
         `Attempted to consume die ${dieColor} but it was not found in player's oracle dice: [${
-          player.oracleDice.join(", ")
+          player.oracleDice.join(', ')
         }]`,
       );
       return false;

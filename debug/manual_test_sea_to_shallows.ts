@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { HexMap } from "../src/hexmap.ts";
+import { HexMap } from '../src/hexmap.ts';
 
 // Manual test to verify sea-to-shallows conversion
 function manualTest() {
@@ -27,8 +27,8 @@ function manualTest() {
       }
     }
 
-    const shallowCount = terrainCounts["shallow"] || 0;
-    const seaCount = terrainCounts["sea"] || 0;
+    const shallowCount = terrainCounts['shallow'] || 0;
+    const seaCount = terrainCounts['sea'] || 0;
 
     if (shallowCount > 0) {
       mapsWithShallows++;
@@ -39,28 +39,28 @@ function manualTest() {
         if (row) {
           for (let arrayR = 0; arrayR < row.length; arrayR++) {
             const cell = row[arrayR];
-            if (cell && cell.terrain === "shallow") {
+            if (cell && cell.terrain === 'shallow') {
               // Verify constraints
-              const hasZeusNeighbor = hexMap["hasNeighborOfType"](
+              const hasZeusNeighbor = hexMap['hasNeighborOfType'](
                 cell,
                 grid,
-                "zeus",
+                'zeus',
               );
 
-              const hasCityNeighbor = hexMap["hasNeighborOfType"](
+              const hasCityNeighbor = hexMap['hasNeighborOfType'](
                 cell,
                 grid,
-                "city",
+                'city',
               );
 
               // Check all neighbors with combined logic
-              const allNeighbors = hexMap["getNeighbors"](cell.q, cell.r);
+              const allNeighbors = hexMap['getNeighbors'](cell.q, cell.r);
               let allConstraintsSatisfied = true;
 
               for (const neighbor of allNeighbors) {
-                if (neighbor.terrain === "sea") {
+                if (neighbor.terrain === 'sea') {
                   // For sea neighbors: check if they can trace a path back to zeus
-                  const canReach = hexMap["canReachZeusFromSeaNeighbor"](
+                  const canReach = hexMap['canReachZeusFromSeaNeighbor'](
                     neighbor,
                     cell,
                     grid,
@@ -68,12 +68,12 @@ function manualTest() {
                   if (!canReach) {
                     allConstraintsSatisfied = false;
                   }
-                } else if (neighbor.terrain !== "shallow") {
+                } else if (neighbor.terrain !== 'shallow') {
                   // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
-                  const hasSeaNeighbor = hexMap["hasNeighborOfType"](
+                  const hasSeaNeighbor = hexMap['hasNeighborOfType'](
                     neighbor,
                     grid,
-                    "sea",
+                    'sea',
                   );
                   if (!hasSeaNeighbor) {
                     allConstraintsSatisfied = false;
@@ -99,33 +99,33 @@ function manualTest() {
       if (row) {
         for (let arrayR = 0; arrayR < row.length && testedCells < 5; arrayR++) {
           const cell = row[arrayR];
-          if (cell && cell.terrain === "sea") {
+          if (cell && cell.terrain === 'sea') {
             testedCells++;
 
             // Test constraint 1: zeus neighbor
-            const hasZeusNeighbor = hexMap["hasNeighborOfType"](
+            const hasZeusNeighbor = hexMap['hasNeighborOfType'](
               cell,
               grid,
-              "zeus",
+              'zeus',
             );
 
             // Test constraint 2: city neighbor
-            const hasCityNeighbor = hexMap["hasNeighborOfType"](
+            const hasCityNeighbor = hexMap['hasNeighborOfType'](
               cell,
               grid,
-              "city",
+              'city',
             );
 
             // Test constraint 3: at least one sea neighbor can reach zeus
-            const seaNeighbors = hexMap["getNeighborsOfType"](
+            const seaNeighbors = hexMap['getNeighborsOfType'](
               cell,
               grid,
-              "sea",
+              'sea',
             );
 
             let atLeastOneCanReachZeus = false;
             for (const seaNeighbor of seaNeighbors) {
-              const canReach = hexMap["canReachZeusFromSeaNeighbor"](
+              const canReach = hexMap['canReachZeusFromSeaNeighbor'](
                 seaNeighbor,
                 cell,
                 grid,
@@ -137,15 +137,15 @@ function manualTest() {
 
             // Check all neighbors with combined logic (simulate conversion)
             const originalTerrain = cell.terrain;
-            cell.terrain = "shallow"; // Temporarily convert to test
+            cell.terrain = 'shallow'; // Temporarily convert to test
 
-            const allNeighbors = hexMap["getNeighbors"](cell.q, cell.r);
+            const allNeighbors = hexMap['getNeighbors'](cell.q, cell.r);
             let allConstraintsSatisfied = true;
 
             for (const neighbor of allNeighbors) {
-              if (neighbor.terrain === "sea") {
+              if (neighbor.terrain === 'sea') {
                 // For sea neighbors: check if they can trace a path back to zeus
-                const canReach = hexMap["canReachZeusFromSeaNeighbor"](
+                const canReach = hexMap['canReachZeusFromSeaNeighbor'](
                   neighbor,
                   cell,
                   grid,
@@ -153,12 +153,12 @@ function manualTest() {
                 if (!canReach) {
                   allConstraintsSatisfied = false;
                 }
-              } else if (neighbor.terrain !== "shallow") {
+              } else if (neighbor.terrain !== 'shallow') {
                 // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
-                const hasSeaNeighbor = hexMap["hasNeighborOfType"](
+                const hasSeaNeighbor = hexMap['hasNeighborOfType'](
                   neighbor,
                   grid,
-                  "sea",
+                  'sea',
                 );
                 if (!hasSeaNeighbor) {
                   allConstraintsSatisfied = false;

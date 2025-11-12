@@ -2,10 +2,10 @@
 // This tests that ships cannot move to hexes that are within 3 hexes straight-line distance
 // but require more than 3 sea steps due to land obstacles
 
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { HexColor } from "../src/hexmap.ts";
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import type { HexColor } from '../src/hexmap.ts';
 
-console.log("=== Testing Movement Fix for Land Obstacles ===\n");
+console.log('=== Testing Movement Fix for Land Obstacles ===\n');
 
 const engine = new QuestsZeusGameEngine();
 engine.initializeGame();
@@ -13,25 +13,25 @@ engine.initializeGame();
 const gameState = engine.getGameState();
 const player = engine.getCurrentPlayer();
 
-console.log("Initial ship position:", player.shipPosition);
+console.log('Initial ship position:', player.shipPosition);
 
 // Check what terrain the ship starts on
 const startCell = gameState.map.getCell(
   player.shipPosition.q,
   player.shipPosition.r,
 );
-console.log("Starting terrain:", startCell?.terrain);
+console.log('Starting terrain:', startCell?.terrain);
 
 // Roll dice to enter action phase
 const dice = engine.rollOracleDice(player.id);
-console.log("\nRolled dice:", dice);
+console.log('\nRolled dice:', dice);
 
 // Get available moves
 const availableMoves = engine.getAvailableMoves(player.id);
-console.log("\nAvailable moves:", availableMoves.length);
+console.log('\nAvailable moves:', availableMoves.length);
 
 // Test reachability logic directly
-console.log("\n=== Testing Reachability Logic ===");
+console.log('\n=== Testing Reachability Logic ===');
 const reachableTiles = (engine as QuestsZeusGameEngine & {
   getReachableSeaTiles: (
     q: number,
@@ -43,15 +43,15 @@ const reachableTiles = (engine as QuestsZeusGameEngine & {
   player.shipPosition.r,
   3,
 );
-console.log("Reachable sea tiles:", reachableTiles.length);
+console.log('Reachable sea tiles:', reachableTiles.length);
 
 // Test a specific scenario: try to find hexes that are within 3 hexes straight-line distance
 // but not reachable due to land obstacles
-console.log("\n=== Testing Land Obstacle Detection ===");
+console.log('\n=== Testing Land Obstacle Detection ===');
 
 // Get all sea tiles on the map
-const allSeaTiles = gameState.map.getCellsByTerrain("sea");
-console.log("Total sea tiles on map:", allSeaTiles.length);
+const allSeaTiles = gameState.map.getCellsByTerrain('sea');
+console.log('Total sea tiles on map:', allSeaTiles.length);
 
 // Find sea tiles that are within 3 hexes straight-line distance but not reachable
 const unreachableWithinRange: {
@@ -88,12 +88,12 @@ for (const seaTile of allSeaTiles) {
 }
 
 console.log(
-  "\nSea tiles within 3 hexes straight-line distance but NOT reachable due to land obstacles:",
+  '\nSea tiles within 3 hexes straight-line distance but NOT reachable due to land obstacles:',
   unreachableWithinRange.length,
 );
 
 if (unreachableWithinRange.length > 0) {
-  console.log("\nExamples of unreachable tiles within range:");
+  console.log('\nExamples of unreachable tiles within range:');
   unreachableWithinRange.slice(0, 5).forEach((tile, index) => {
     console.log(
       `  Tile ${
@@ -117,22 +117,22 @@ if (unreachableWithinRange.length > 0) {
       testTile.r,
       testTile.color,
     );
-    console.log("Move successful:", moveResult.success);
-    console.log("Expected: false (should be blocked by land obstacles)");
+    console.log('Move successful:', moveResult.success);
+    console.log('Expected: false (should be blocked by land obstacles)');
 
     if (!moveResult.success) {
-      console.log("✓ SUCCESS: Movement correctly blocked by land obstacles!");
+      console.log('✓ SUCCESS: Movement correctly blocked by land obstacles!');
       if (moveResult.error) {
-        console.log("Error details:", moveResult.error);
+        console.log('Error details:', moveResult.error);
       }
     } else {
-      console.log("✗ FAILURE: Movement allowed despite land obstacles!");
+      console.log('✗ FAILURE: Movement allowed despite land obstacles!');
     }
   } else {
     console.log(`Cannot test - player doesn't have ${testTile.color} die`);
   }
 } else {
   console.log(
-    "\nNo unreachable tiles found within range - this map might not have land obstacles blocking sea paths",
+    '\nNo unreachable tiles found within range - this map might not have land obstacles blocking sea paths',
   );
 }

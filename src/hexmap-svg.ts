@@ -10,7 +10,7 @@ import {
   generateStatueIcons,
   generateTempleIcon,
   generateZeusIcon,
-} from "./icons-svg.ts";
+} from './icons-svg.ts';
 import type {
   CityHex,
   CubeHex,
@@ -18,7 +18,7 @@ import type {
   HexColor,
   MonsterHex,
   TerrainType,
-} from "./types.ts";
+} from './types.ts';
 
 export interface HexMapSVGOptions {
   cellSize?: number;
@@ -86,7 +86,7 @@ export class HexMapSVG {
       />`;
 
     // For colored hexes, add an inner polygon with thick colored outline
-    if (cell.color !== "none") {
+    if (cell.color !== 'none') {
       const effectiveStrokeWidth = strokeWidth * 3;
       // Inset the polygon to make room for the thick border inside the basic outline
       const insetAmount = (effectiveStrokeWidth / 2) + 1;
@@ -168,12 +168,12 @@ export class HexMapSVG {
     }
 
     // Add Greek god head icon for Zeus hex
-    if (cell.terrain === "zeus") {
+    if (cell.terrain === 'zeus') {
       cellContent += generateZeusIcon({ centerX, centerY, cellSize });
     }
 
     // Add city icon for city hexes
-    if (cell.terrain === "city") {
+    if (cell.terrain === 'city') {
       const cityHex = this.options.cityHexes?.find((ch) =>
         ch.q === cell.q && ch.r === cell.r
       );
@@ -200,7 +200,7 @@ export class HexMapSVG {
     }
 
     // Add monster icon for monster hexes
-    if (cell.terrain === "monsters") {
+    if (cell.terrain === 'monsters') {
       try {
         const monsterHex = this.options.monsterHexes?.find((mh) =>
           mh.q === cell.q && mh.r === cell.r
@@ -237,7 +237,7 @@ export class HexMapSVG {
     }
 
     // Add temple icon for temple hexes
-    if (cell.terrain === "temple") {
+    if (cell.terrain === 'temple') {
       cellContent += generateTempleIcon({
         centerX,
         centerY,
@@ -247,7 +247,7 @@ export class HexMapSVG {
     }
 
     // Add cubes icon for cubes hexes
-    if (cell.terrain === "cubes") {
+    if (cell.terrain === 'cubes') {
       try {
         const cubeHex = this.options.cubeHexes.find((ch) =>
           ch.q === cell.q && ch.r === cell.r
@@ -281,12 +281,12 @@ export class HexMapSVG {
     }
 
     // Add clouds icon for clouds hexes
-    if (cell.terrain === "clouds") {
+    if (cell.terrain === 'clouds') {
       cellContent += generateCloudsIcon({ centerX, centerY, cellSize });
     }
 
     // Add foundations icon for foundations hexes
-    if (cell.terrain === "foundations") {
+    if (cell.terrain === 'foundations') {
       cellContent += generateFoundationsIcon({ centerX, centerY, cellSize });
     }
 
@@ -334,7 +334,7 @@ export class HexMapSVG {
       points.push(`${px},${py}`);
     }
 
-    return points.join(" ");
+    return points.join(' ');
   }
 
   /**
@@ -359,17 +359,17 @@ export class HexMapSVG {
    */
   private getTerrainColor(terrain: TerrainType): string {
     const colors: Record<TerrainType, string> = {
-      zeus: "#ffd700", // Yellow for Zeus
-      sea: "#87ceeb", // Pale blue for sea
-      shallow: "#000000", // Black for shallow water
-      monsters: "#d4a574", // Light brown for monsters
-      cubes: "#e8c99b", // Darker yellow-tan for cubes (more visible)
-      temple: "#f9d9a9", // Yellow-tan for temple
-      clouds: "#f0f8ff", // Light blue-white for clouds
-      city: "#b0b0b0", // Light gray for city
-      foundations: "#b0b0b0", // Light gray for foundations
+      zeus: '#ffd700', // Yellow for Zeus
+      sea: '#87ceeb', // Pale blue for sea
+      shallow: '#000000', // Black for shallow water
+      monsters: '#d4a574', // Light brown for monsters
+      cubes: '#e8c99b', // Darker yellow-tan for cubes (more visible)
+      temple: '#f9d9a9', // Yellow-tan for temple
+      clouds: '#f0f8ff', // Light blue-white for clouds
+      city: '#b0b0b0', // Light gray for city
+      foundations: '#b0b0b0', // Light gray for foundations
     };
-    return colors[terrain] || "#cccccc";
+    return colors[terrain] || '#cccccc';
   }
 
   /**
@@ -377,15 +377,15 @@ export class HexMapSVG {
    */
   private getStrokeColor(color: HexColor): string {
     const colors: Record<HexColor, string> = {
-      none: "#333333",
-      red: "#DC143C",
-      pink: "#ff69b4",
-      blue: "#0000ff",
-      black: "#000000",
-      green: "#008000",
-      yellow: "#ffff00",
+      none: '#333333',
+      red: '#DC143C',
+      pink: '#ff69b4',
+      blue: '#0000ff',
+      black: '#000000',
+      green: '#008000',
+      yellow: '#ffff00',
     };
-    return colors[color] || "#333333";
+    return colors[color] || '#333333';
   }
 
   /**
@@ -400,15 +400,15 @@ export class HexMapSVG {
    */
   private getTerrainLabel(terrain: TerrainType): string {
     const labels: Record<TerrainType, string> = {
-      zeus: "Zeus",
-      sea: "Sea",
-      shallow: "Shallow",
-      monsters: "Monsters",
-      cubes: "Cubes",
-      temple: "Temple",
-      clouds: "Clouds",
-      city: "City",
-      foundations: "Foundations",
+      zeus: 'Zeus',
+      sea: 'Sea',
+      shallow: 'Shallow',
+      monsters: 'Monsters',
+      cubes: 'Cubes',
+      temple: 'Temple',
+      clouds: 'Clouds',
+      city: 'City',
+      foundations: 'Foundations',
     };
     return labels[terrain] || terrain;
   }
@@ -427,7 +427,7 @@ export class HexMapSVG {
       const cubeSize = 8 * scale;
       const spacing = cubeSize * 3;
 
-      let cubesContent = "";
+      let cubesContent = '';
 
       // Safety check: if no cube colors, return empty string
       if (cubeColors.length === 0) {
@@ -462,9 +462,9 @@ export class HexMapSVG {
 
       return cubesContent;
     } catch (error) {
-      console.error("Error in generateColoredCubes:", error);
+      console.error('Error in generateColoredCubes:', error);
       // Return empty string on error - the fallback generic icon will be used
-      return "";
+      return '';
     }
   }
 
@@ -483,7 +483,7 @@ export class HexMapSVG {
       const triangleSize = 15 * scale;
       const spacing = triangleSize * 2;
 
-      let monstersContent = "";
+      let monstersContent = '';
 
       // Safety check: if no monster colors, return empty string
       if (monsterColors.length === 0) {
@@ -511,7 +511,7 @@ export class HexMapSVG {
           `${monsterX - triangleSize / 2},${monsterY - triangleHeight / 2}`,
           `${monsterX + triangleSize / 2},${monsterY - triangleHeight / 2}`,
           `${monsterX},${monsterY + triangleHeight / 2}`,
-        ].join(" ");
+        ].join(' ');
 
         monstersContent += `
           <polygon 
@@ -526,9 +526,9 @@ export class HexMapSVG {
 
       return monstersContent;
     } catch (error) {
-      console.error("Error in generateColoredMonsters:", error);
+      console.error('Error in generateColoredMonsters:', error);
       // Return empty string on error - the fallback generic icon will be used
-      return "";
+      return '';
     }
   }
 
@@ -537,15 +537,15 @@ export class HexMapSVG {
    */
   private getCubeFillColor(color: HexColor): string {
     const colors: Record<HexColor, string> = {
-      none: "#cccccc",
-      red: "#ff0000", // More vibrant red
-      pink: "#ff69b4", // More vibrant pink
-      blue: "#0000ff", // More vibrant blue
-      black: "#000000", // Pure black
-      green: "#008000", // Consistent green (same as hex outlines)
-      yellow: "#ffff00", // More vibrant yellow
+      none: '#cccccc',
+      red: '#ff0000', // More vibrant red
+      pink: '#ff69b4', // More vibrant pink
+      blue: '#0000ff', // More vibrant blue
+      black: '#000000', // Pure black
+      green: '#008000', // Consistent green (same as hex outlines)
+      yellow: '#ffff00', // More vibrant yellow
     };
-    return colors[color] || "#cccccc";
+    return colors[color] || '#cccccc';
   }
 
   /**
@@ -619,7 +619,7 @@ export class HexMapSVG {
   </g>
 </svg>`;
 
-    console.log("SVG generation completed successfully");
+    console.log('SVG generation completed successfully');
     return svgContent;
   }
 

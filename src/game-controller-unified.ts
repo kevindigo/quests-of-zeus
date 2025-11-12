@@ -1,14 +1,14 @@
 // Game Controller for Quests of Zeus with Unified Resource Selection
 // Manages the game UI and user interactions
 
-import { QuestsZeusGameEngine } from "./game-engine.ts";
-import type { HexColor } from "./types.ts";
+import { QuestsZeusGameEngine } from './game-engine.ts';
+import type { HexColor } from './types.ts';
 
 // Type declarations for DOM APIs (for Deno type checking)
 
 export class GameController {
   private gameEngine: QuestsZeusGameEngine;
-  private selectedResourceType: "die" | "card" | null = null;
+  private selectedResourceType: 'die' | 'card' | null = null;
   private selectedResourceColor: HexColor | null = null;
 
   constructor() {
@@ -22,9 +22,9 @@ export class GameController {
 
   private setupEventListeners(): void {
     // Setup event listeners for game controls
-    const startGameButton = document.getElementById("startGame");
+    const startGameButton = document.getElementById('startGame');
     if (startGameButton) {
-      startGameButton.addEventListener("click", () => {
+      startGameButton.addEventListener('click', () => {
         this.startNewGame();
       });
     }
@@ -36,12 +36,12 @@ export class GameController {
   private setupResourceSelectionListeners(): void {
     // This would be called when the DOM is updated to attach event listeners
     // to resource elements (dice and cards)
-    document.addEventListener("click", (event) => {
+    document.addEventListener('click', (event) => {
       const target = event.target as HTMLElement;
-      if (target.classList.contains("resource-item")) {
-        const resourceType = target.getAttribute("data-resource-type");
+      if (target.classList.contains('resource-item')) {
+        const resourceType = target.getAttribute('data-resource-type');
         const resourceColor = target.getAttribute(
-          "data-resource-color",
+          'data-resource-color',
         ) as HexColor;
         if (resourceType && resourceColor) {
           this.selectResource(resourceType, resourceColor);
@@ -50,9 +50,9 @@ export class GameController {
     });
 
     // Clear resource selection
-    document.addEventListener("click", (event) => {
+    document.addEventListener('click', (event) => {
       const target = event.target as HTMLElement;
-      if (target.id === "clearResourceSelection") {
+      if (target.id === 'clearResourceSelection') {
         this.clearResourceSelection();
       }
     });
@@ -64,10 +64,10 @@ export class GameController {
   }
 
   private showWelcomeScreen(): void {
-    const playerInfoContainer = document.getElementById("playerInfo");
-    const questInfoContainer = document.getElementById("questInfo");
-    const phaseDisplay = document.getElementById("phaseDisplay");
-    const hexMapContainer = document.getElementById("hexMapSVG");
+    const playerInfoContainer = document.getElementById('playerInfo');
+    const questInfoContainer = document.getElementById('questInfo');
+    const phaseDisplay = document.getElementById('phaseDisplay');
+    const hexMapContainer = document.getElementById('hexMapSVG');
 
     if (playerInfoContainer) {
       playerInfoContainer.innerHTML = `
@@ -153,7 +153,7 @@ export class GameController {
   }
 
   private updatePlayerInfo(_gameState: unknown): void {
-    const playerInfoContainer = document.getElementById("playerInfo");
+    const playerInfoContainer = document.getElementById('playerInfo');
     if (!playerInfoContainer) return;
 
     // Get current player for display
@@ -196,7 +196,7 @@ export class GameController {
         `<div class="storage-slot slot-${index} ${slot.type}">
                 <div class="slot-content">
                   ${
-          slot.type === "empty"
+          slot.type === 'empty'
             ? '<span class="empty-slot">Empty</span>'
             : `<span class="item-type">${slot.type}</span>
                      <span class="color-swatch" style="background-color: ${
@@ -206,7 +206,7 @@ export class GameController {
         }
                 </div>
               </div>`
-      ).join("")
+      ).join('')
     }
           </div>
         </div>
@@ -220,10 +220,10 @@ export class GameController {
       _currentPlayer.oracleDice.length === 0
         ? '<div class="no-resources">No dice rolled yet</div>'
         : _currentPlayer.oracleDice.map((color: string) => {
-          const isSelected = this.selectedResourceType === "die" &&
+          const isSelected = this.selectedResourceType === 'die' &&
             this.selectedResourceColor === color;
           return `<div class="resource-item die color-${color} ${
-            isSelected ? "selected-resource" : ""
+            isSelected ? 'selected-resource' : ''
           }" 
                      style="background-color: ${this.getColorHex(color)}"
                      data-resource-type="die"
@@ -231,7 +231,7 @@ export class GameController {
                      title="Oracle Die: ${color}">
                 ${color.charAt(0).toUpperCase()}
               </div>`;
-        }).join("")
+        }).join('')
     }
             </div>
             </div>
@@ -241,14 +241,14 @@ export class GameController {
                 ${
       _currentPlayer.oracleCards.length === 0
         ? '<div class="no-resources">No oracle cards</div>'
-        : ""
+        : ''
     }
                 ${
       _currentPlayer.oracleCards.map((color: string, _index: number) => {
-        const isSelected = this.selectedResourceType === "card" &&
+        const isSelected = this.selectedResourceType === 'card' &&
           this.selectedResourceColor === color;
         return `<div class="resource-item card color-${color} ${
-          isSelected ? "selected-resource" : ""
+          isSelected ? 'selected-resource' : ''
         }" 
                            style="background-color: ${this.getColorHex(color)}" 
                            data-resource-type="card"
@@ -256,7 +256,7 @@ export class GameController {
                            title="Oracle Card: ${color}">
                     ${color.charAt(0).toUpperCase()}
                   </div>`;
-      }).join("")
+      }).join('')
     }
               </div>
             </div>
@@ -270,13 +270,13 @@ export class GameController {
              ${this.selectedResourceColor}
              <button id="clearResourceSelection" class="action-btn secondary">Clear</button>
            </div>`
-        : ""
+        : ''
     }
           ${
-      this.selectedResourceType === "die" && this.selectedResourceColor &&
+      this.selectedResourceType === 'die' && this.selectedResourceColor &&
         _currentPlayer.favor > 0
         ? this.renderRecolorOptions(_currentPlayer)
-        : ""
+        : ''
     }
         </div>
       </div>
@@ -285,7 +285,7 @@ export class GameController {
 
   private renderMap(_gameState: unknown): void {
     // This would render the hex map with player positions and available moves
-    const hexMapContainer = document.getElementById("hexMapSVG");
+    const hexMapContainer = document.getElementById('hexMapSVG');
     if (!hexMapContainer) return;
 
     hexMapContainer.innerHTML = `
@@ -297,7 +297,7 @@ export class GameController {
   }
 
   private updatePhaseDisplay(phase: string): void {
-    const phaseDisplay = document.getElementById("phaseDisplay");
+    const phaseDisplay = document.getElementById('phaseDisplay');
     if (!phaseDisplay) return;
 
     phaseDisplay.innerHTML = `
@@ -311,7 +311,7 @@ export class GameController {
   }
 
   private showGameOver(winner: string): void {
-    const phaseDisplay = document.getElementById("phaseDisplay");
+    const phaseDisplay = document.getElementById('phaseDisplay');
     if (!phaseDisplay) return;
 
     phaseDisplay.innerHTML = `
@@ -323,9 +323,9 @@ export class GameController {
     `;
 
     // Add event listener for new game button
-    const newGameButton = document.getElementById("newGame");
+    const newGameButton = document.getElementById('newGame');
     if (newGameButton) {
-      newGameButton.addEventListener("click", () => {
+      newGameButton.addEventListener('click', () => {
         this.startNewGame();
       });
     }
@@ -348,18 +348,18 @@ export class GameController {
   private selectResource(resourceType: string, resourceColor: HexColor): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
 
-    if (resourceType === "die") {
+    if (resourceType === 'die') {
       // Check if the player has this die
       if (currentPlayer.oracleDice.includes(resourceColor)) {
-        this.selectedResourceType = "die";
+        this.selectedResourceType = 'die';
         this.selectedResourceColor = resourceColor;
         this.showMessage(`Selected ${resourceColor} die`);
         this.renderGameState();
       }
-    } else if (resourceType === "card") {
+    } else if (resourceType === 'card') {
       // Check if the player has this oracle card
       if (currentPlayer.oracleCards.includes(resourceColor)) {
-        this.selectedResourceType = "card";
+        this.selectedResourceType = 'card';
         this.selectedResourceColor = resourceColor;
         this.showMessage(`Selected ${resourceColor} oracle card`);
         this.renderGameState();
@@ -370,7 +370,7 @@ export class GameController {
   private clearResourceSelection(): void {
     this.selectedResourceType = null;
     this.selectedResourceColor = null;
-    this.showMessage("Resource selection cleared");
+    this.showMessage('Resource selection cleared');
     this.renderGameState();
   }
 
@@ -382,14 +382,14 @@ export class GameController {
 
   private getColorHex(color: string): string {
     const colors: Record<string, string> = {
-      red: "#DC143C",
-      pink: "#ff69b4",
-      blue: "#0000ff",
-      black: "#000000",
-      green: "#008000",
-      yellow: "#ffff00",
+      red: '#DC143C',
+      pink: '#ff69b4',
+      blue: '#0000ff',
+      black: '#000000',
+      green: '#008000',
+      yellow: '#ffff00',
     };
-    return colors[color] || "#333333";
+    return colors[color] || '#333333';
   }
 
   // Note: The rest of the methods (highlightAvailableMoves, etc.)

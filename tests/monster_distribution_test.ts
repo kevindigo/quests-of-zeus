@@ -4,9 +4,9 @@
  * Tests: basic distribution, edge cases, algorithm robustness
  */
 
-import { assert, assertEquals } from "@std/assert";
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import { COLOR_WHEEL } from "../src/types.ts";
+import { assert, assertEquals } from '@std/assert';
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { COLOR_WHEEL } from '../src/types.ts';
 
 // Helper function to run distribution tests
 function runDistributionTests(
@@ -14,7 +14,7 @@ function runDistributionTests(
   runNumber?: number,
 ): void {
   const monsterHexes = engine.getMonsterHexes();
-  const runLabel = runNumber ? `Run ${runNumber}: ` : "";
+  const runLabel = runNumber ? `Run ${runNumber}: ` : '';
 
   // Test 1: Should have exactly 9 monster hexes
   assertEquals(
@@ -61,7 +61,7 @@ function runDistributionTests(
       uniqueColors.size,
       hex.monsterColors.length,
       `${runLabel}Hex (${hex.q},${hex.r}) has duplicate colors: ${
-        hex.monsterColors.join(", ")
+        hex.monsterColors.join(', ')
       }`,
     );
   }
@@ -87,14 +87,14 @@ function runDistributionTests(
 }
 
 // Basic distribution test with 2 players
-Deno.test("MonsterDistribution - basic distribution with 2 players", () => {
+Deno.test('MonsterDistribution - basic distribution with 2 players', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
   runDistributionTests(engine);
 });
 
 // Test the distribution algorithm multiple times to ensure consistency
-Deno.test("MonsterDistribution - distribution consistency", () => {
+Deno.test('MonsterDistribution - distribution consistency', () => {
   const testRuns = 10;
 
   for (let run = 0; run < testRuns; run++) {
@@ -105,14 +105,14 @@ Deno.test("MonsterDistribution - distribution consistency", () => {
 });
 
 // Test edge cases
-Deno.test("MonsterDistribution - edge cases", () => {
+Deno.test('MonsterDistribution - edge cases', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
   runDistributionTests(engine);
 });
 
 // Test algorithm completeness and robustness
-Deno.test("MonsterDistribution - algorithm completeness", () => {
+Deno.test('MonsterDistribution - algorithm completeness', () => {
   // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 10; run++) {
@@ -123,7 +123,7 @@ Deno.test("MonsterDistribution - algorithm completeness", () => {
 });
 
 // Test that distribution is always even across many runs
-Deno.test("MonsterDistribution - even distribution across runs", () => {
+Deno.test('MonsterDistribution - even distribution across runs', () => {
   // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 20; run++) {
@@ -146,7 +146,7 @@ Deno.test("MonsterDistribution - even distribution across runs", () => {
 });
 
 // Test color distribution is correct across multiple runs
-Deno.test("MonsterDistribution - color distribution consistency", () => {
+Deno.test('MonsterDistribution - color distribution consistency', () => {
   // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 5; run++) {
@@ -176,7 +176,7 @@ Deno.test("MonsterDistribution - color distribution consistency", () => {
 });
 
 // Test that no hex has more than 2 monsters across multiple runs
-Deno.test("MonsterDistribution - max monsters per hex", () => {
+Deno.test('MonsterDistribution - max monsters per hex', () => {
   // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 10; run++) {
@@ -199,7 +199,7 @@ Deno.test("MonsterDistribution - max monsters per hex", () => {
 });
 
 // Test the algorithm with the actual player count (2 players)
-Deno.test("MonsterDistribution - actual player count (2 players)", () => {
+Deno.test('MonsterDistribution - actual player count (2 players)', () => {
   // const _playerCount = 2; // Unused variable removed
 
   // 2 players * 6 colors = 12 monsters total
@@ -235,10 +235,10 @@ Deno.test("MonsterDistribution - actual player count (2 players)", () => {
     assert(max <= 2, `Run ${run + 1}: Max monsters should be ≤ 2`);
 
     // Verify the exact distribution pattern
-    const sortedPattern = monstersPerHex.sort().join("");
+    const sortedPattern = monstersPerHex.sort().join('');
     assertEquals(
       sortedPattern,
-      "111111222",
+      '111111222',
       `Run ${run + 1}: Distribution pattern should be "111111222"`,
     );
   }

@@ -1,9 +1,9 @@
 // SeaColorManager - Handles sea hex coloring with constraint satisfaction
 
-import type { HexCell, HexColor } from "../types.ts";
-import { COLOR_WHEEL } from "../types.ts";
-import type { HexGridOperations } from "./HexGridOperations.ts";
-import type { UtilityService } from "./UtilityService.ts";
+import type { HexCell, HexColor } from '../types.ts';
+import { COLOR_WHEEL } from '../types.ts';
+import type { HexGridOperations } from './HexGridOperations.ts';
+import type { UtilityService } from './UtilityService.ts';
 
 export class SeaColorManager {
   private hexGridOperations: HexGridOperations;
@@ -31,7 +31,7 @@ export class SeaColorManager {
       if (row) {
         for (let arrayR = 0; arrayR < row.length; arrayR++) {
           const cell = row[arrayR];
-          if (cell && cell.terrain === "sea") {
+          if (cell && cell.terrain === 'sea') {
             seaCells.push(cell);
           }
         }
@@ -68,7 +68,7 @@ export class SeaColorManager {
       );
 
       for (const neighbor of neighbors) {
-        if (neighbor.terrain === "sea" && neighbor.color !== "none") {
+        if (neighbor.terrain === 'sea' && neighbor.color !== 'none') {
           adjacentColors.add(neighbor.color);
         }
       }
@@ -81,7 +81,7 @@ export class SeaColorManager {
       // If there are available colors, choose the one that has been used least so far
       if (availableColors.length > 0) {
         // Find the color with the minimum usage count among available colors
-        let leastUsedColor: HexColor = availableColors[0] || "none";
+        let leastUsedColor: HexColor = availableColors[0] || 'none';
         let minCount = colorCounts[leastUsedColor]!;
 
         for (const color of availableColors) {
@@ -142,7 +142,7 @@ export class SeaColorManager {
 
     // Count potential conflicts for each color
     for (const neighbor of neighbors) {
-      if (neighbor.terrain === "sea" && neighbor.color !== "none") {
+      if (neighbor.terrain === 'sea' && neighbor.color !== 'none') {
         colorConflicts[neighbor.color]++;
       }
     }

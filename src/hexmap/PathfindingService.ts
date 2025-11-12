@@ -1,7 +1,7 @@
 // PathfindingService - Pathfinding and connectivity analysis
 
-import type { HexCell, TerrainType } from "../types.ts";
-import type { HexGridOperations } from "./HexGridOperations.ts";
+import type { HexCell, TerrainType } from '../types.ts';
+import type { HexGridOperations } from './HexGridOperations.ts';
 
 export class PathfindingService {
   private hexGridOperations: HexGridOperations;
@@ -45,12 +45,12 @@ export class PathfindingService {
         const cellKey = `${adjacentCell.q},${adjacentCell.r}`;
 
         // If we found zeus, return true
-        if (adjacentCell.terrain === "zeus") {
+        if (adjacentCell.terrain === 'zeus') {
           return true;
         }
 
         // If we haven't visited this cell and it's sea (valid path)
-        if (!visited.has(cellKey) && adjacentCell.terrain === "sea") {
+        if (!visited.has(cellKey) && adjacentCell.terrain === 'sea') {
           visited.add(cellKey);
           queue.push(adjacentCell);
         }
@@ -108,13 +108,13 @@ export class PathfindingService {
         }
 
         // If we found zeus, return true
-        if (adjacentCell.terrain === "zeus") {
+        if (adjacentCell.terrain === 'zeus') {
           return true;
         }
 
         // If we haven't visited this cell and it's sea (valid path)
         // NOTE: Do NOT allow shallow cells - ships cannot navigate through shallows
-        if (!visited.has(cellKey) && adjacentCell.terrain === "sea") {
+        if (!visited.has(cellKey) && adjacentCell.terrain === 'sea') {
           visited.add(cellKey);
           queue.push(adjacentCell);
         }

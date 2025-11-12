@@ -1,10 +1,10 @@
 // Test to verify the recoloring movement validation fix
 
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { Player } from "../src/types.ts";
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import type { Player } from '../src/types.ts';
 
 function testRecolorMovementValidationFix() {
-  console.log("Testing recoloring movement validation fix...\n");
+  console.log('Testing recoloring movement validation fix...\n');
 
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
@@ -15,28 +15,28 @@ function testRecolorMovementValidationFix() {
   console.log(`Initial favor: ${player.favor}\n`);
 
   // Set up specific dice for testing
-  player.oracleDice = ["black", "pink", "blue"];
+  player.oracleDice = ['black', 'pink', 'blue'];
   player.favor = 5;
 
-  console.log(`Initial dice: ${player.oracleDice.join(", ")}`);
+  console.log(`Initial dice: ${player.oracleDice.join(', ')}`);
   console.log(`Initial favor: ${player.favor}\n`);
 
   // Test 1: Set recoloring intention for black die → pink
   console.log(
-    "Test 1: Set recoloring intention for black die → pink (1 favor)",
+    'Test 1: Set recoloring intention for black die → pink (1 favor)',
   );
-  const success = gameEngine.setRecolorIntention(player.id, "black", 1);
-  console.log(`  Result: ${success ? "SUCCESS" : "FAILED"}`);
+  const success = gameEngine.setRecolorIntention(player.id, 'black', 1);
+  console.log(`  Result: ${success ? 'SUCCESS' : 'FAILED'}`);
 
   if (success) {
     console.log(`  Recolored dice: ${JSON.stringify(player.recoloredDice)}`);
   }
 
   // Test 2: Get available moves for black die with recoloring
-  console.log("\nTest 2: Available moves for black die with recoloring");
+  console.log('\nTest 2: Available moves for black die with recoloring');
   const availableMoves = gameEngine.getAvailableMovesForDie(
     player.id,
-    "black",
+    'black',
     player.favor,
   );
   console.log(
@@ -54,11 +54,11 @@ function testRecolorMovementValidationFix() {
       player.id,
       targetMove.q,
       targetMove.r,
-      "black", // Original die color
+      'black', // Original die color
       targetMove.favorCost,
     );
 
-    console.log(`  Move result: ${moveResult.success ? "SUCCESS" : "FAILED"}`);
+    console.log(`  Move result: ${moveResult.success ? 'SUCCESS' : 'FAILED'}`);
 
     if (moveResult.success) {
       console.log(`  ✓ Successfully moved using recolored die`);
@@ -72,12 +72,12 @@ function testRecolorMovementValidationFix() {
       );
       console.log(
         `  Remaining dice: ${
-          player.oracleDice.join(", ")
+          player.oracleDice.join(', ')
         } (black die should be consumed)`,
       );
 
       // Verify the die was consumed
-      if (!player.oracleDice.includes("black")) {
+      if (!player.oracleDice.includes('black')) {
         console.log(`  ✓ Black die correctly consumed`);
       } else {
         console.log(`  ✗ Black die not consumed`);
@@ -99,24 +99,24 @@ function testRecolorMovementValidationFix() {
       );
     }
   } else {
-    console.log("  No moves available to test movement");
+    console.log('  No moves available to test movement');
   }
 
   // Test 4: Verify that the validation now works correctly
-  console.log("\nTest 4: Verify validation works correctly");
+  console.log('\nTest 4: Verify validation works correctly');
 
   // Reset player for new test
-  player.oracleDice = ["black", "pink", "blue"];
+  player.oracleDice = ['black', 'pink', 'blue'];
   player.favor = 5;
   player.recoloredDice = {};
 
   // Set recoloring intention for black die → pink
-  gameEngine.setRecolorIntention(player.id, "black", 1);
+  gameEngine.setRecolorIntention(player.id, 'black', 1);
 
   // Get available moves again
   const movesAfterRecolor = gameEngine.getAvailableMovesForDie(
     player.id,
-    "black",
+    'black',
     player.favor,
   );
   console.log(
@@ -132,7 +132,7 @@ function testRecolorMovementValidationFix() {
       player.id,
       testMove.q,
       testMove.r,
-      "black",
+      'black',
       testMove.favorCost,
     );
 
@@ -150,7 +150,7 @@ function testRecolorMovementValidationFix() {
     }
   }
 
-  console.log("\n--- Recoloring movement validation fix test completed ---");
+  console.log('\n--- Recoloring movement validation fix test completed ---');
 }
 
 // Run the test

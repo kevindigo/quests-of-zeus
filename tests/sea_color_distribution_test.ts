@@ -1,5 +1,5 @@
-import { assert } from "@std/assert";
-import { getMapStatistics, HexMap } from "../src/hexmap.ts";
+import { assert } from '@std/assert';
+import { getMapStatistics, HexMap } from '../src/hexmap.ts';
 
 interface HexCell {
   q: number;
@@ -12,7 +12,7 @@ interface HexCell {
  * Test to analyze the distribution of colors across sea tiles
  * This addresses the concern about uneven color distribution (17 vs 6 tiles)
  */
-Deno.test("Sea color distribution - balanced distribution across multiple maps", () => {
+Deno.test('Sea color distribution - balanced distribution across multiple maps', () => {
   const testCount = 50; // More tests for better statistics
   const colorStats: Record<
     string,
@@ -20,7 +20,7 @@ Deno.test("Sea color distribution - balanced distribution across multiple maps",
   > = {};
 
   // Initialize stats for each color
-  const colors = ["red", "pink", "blue", "black", "green", "yellow"];
+  const colors = ['red', 'pink', 'blue', 'black', 'green', 'yellow'];
   for (const color of colors) {
     colorStats[color] = {
       min: Infinity,
@@ -118,10 +118,10 @@ Deno.test("Sea color distribution - balanced distribution across multiple maps",
     )
   );
 
-  assert(!extremeCaseFound, "No extreme cases (16+ vs 5-) should be detected");
+  assert(!extremeCaseFound, 'No extreme cases (16+ vs 5-) should be detected');
 });
 
-Deno.test("Sea color distribution - adjacent same color conflicts", () => {
+Deno.test('Sea color distribution - adjacent same color conflicts', () => {
   const testCount = 10;
   let totalConflicts = 0;
 
@@ -157,11 +157,11 @@ function countAdjacentSameColorSeaHexes(
     if (row && Array.isArray(row)) {
       for (let arrayR = 0; arrayR < row.length; arrayR++) {
         const cell = row[arrayR] as HexCell;
-        if (cell && cell.terrain === "sea" && cell.color !== "none") {
+        if (cell && cell.terrain === 'sea' && cell.color !== 'none') {
           const neighbors = map.getNeighbors(cell.q, cell.r);
 
           for (const neighbor of neighbors) {
-            if (neighbor.terrain === "sea" && neighbor.color !== "none") {
+            if (neighbor.terrain === 'sea' && neighbor.color !== 'none') {
               // Create a unique key for this pair to avoid double counting
               const pairKey = getPairKey(cell, neighbor);
 

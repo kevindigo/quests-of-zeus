@@ -1,4 +1,4 @@
-import type { CoreColor, PlayerColorName, StorageSlot } from "./types.ts";
+import type { CoreColor, PlayerColorName, StorageSlot } from './types.ts';
 
 export class Player {
   public constructor(
@@ -11,7 +11,7 @@ export class Player {
     this.name = name;
     this.color = color;
     this.shipPosition = shipPosition;
-    this.storage = [{ type: "empty" }, { type: "empty" }];
+    this.storage = [{ type: 'empty' }, { type: 'empty' }];
     this.completedQuests = 0;
     this.completedQuestTypes = {
       temple_offering: 0,

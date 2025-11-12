@@ -64,7 +64,7 @@ service classes, each with a single responsibility:
 ## Usage
 
 ```typescript
-import { HexMap } from "./hexmap/HexMap.ts";
+import { HexMap } from './hexmap/HexMap.ts';
 
 // Create a new map
 const map = new HexMap();

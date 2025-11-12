@@ -1,37 +1,37 @@
 // Game type definitions for Quests of Zeus
-import type { HexMap } from "./hexmap.ts";
-import type { Player } from "./Player.ts";
+import type { HexMap } from './hexmap.ts';
+import type { Player } from './Player.ts';
 
 // Terrain types for the hexagonal map
 export type TerrainType =
-  | "zeus" // Zeus locations
-  | "sea" // Sea tiles
-  | "shallow" // Shallow water
-  | "monsters" // Monster locations
-  | "cubes" // Cube locations
-  | "temple" // Temple locations
-  | "clouds" // Cloud locations
-  | "city" // City locations
-  | "foundations"; // Foundation locations
+  | 'zeus' // Zeus locations
+  | 'sea' // Sea tiles
+  | 'shallow' // Shallow water
+  | 'monsters' // Monster locations
+  | 'cubes' // Cube locations
+  | 'temple' // Temple locations
+  | 'clouds' // Cloud locations
+  | 'city' // City locations
+  | 'foundations'; // Foundation locations
 
 // Color types for hex cells
 export type CoreColor =
-  | "black"
-  | "pink"
-  | "blue"
-  | "yellow"
-  | "green"
-  | "red";
+  | 'black'
+  | 'pink'
+  | 'blue'
+  | 'yellow'
+  | 'green'
+  | 'red';
 
 // Color constants for the 6 fundamental colors
 // These colors are used to power actions in the game
 export const CORE_COLORS = {
-  BLACK: "black" as CoreColor,
-  PINK: "pink" as CoreColor,
-  BLUE: "blue" as CoreColor,
-  YELLOW: "yellow" as CoreColor,
-  GREEN: "green" as CoreColor,
-  RED: "red" as CoreColor,
+  BLACK: 'black' as CoreColor,
+  PINK: 'pink' as CoreColor,
+  BLUE: 'blue' as CoreColor,
+  YELLOW: 'yellow' as CoreColor,
+  GREEN: 'green' as CoreColor,
+  RED: 'red' as CoreColor,
 } as const;
 
 export const COLOR_WHEEL: CoreColor[] = [
@@ -45,7 +45,7 @@ export const COLOR_WHEEL: CoreColor[] = [
 
 // Color types for hex cells
 export type HexColor =
-  | "none"
+  | 'none'
   | CoreColor;
 
 export interface HexCell {
@@ -59,18 +59,18 @@ export interface HexCell {
 }
 
 export type PlayerColorName =
-  | "blue"
-  | "yellow"
-  | "green"
-  | "red";
+  | 'blue'
+  | 'yellow'
+  | 'green'
+  | 'red';
 
 export const PLAYER_COLOR_NAMES = {
-  BLACK: "black" as PlayerColorName,
-  PINK: "pink" as PlayerColorName,
-  BLUE: "blue" as PlayerColorName,
-  YELLOW: "yellow" as PlayerColorName,
-  GREEN: "green" as PlayerColorName,
-  RED: "red" as PlayerColorName,
+  BLACK: 'black' as PlayerColorName,
+  PINK: 'pink' as PlayerColorName,
+  BLUE: 'blue' as PlayerColorName,
+  YELLOW: 'yellow' as PlayerColorName,
+  GREEN: 'green' as PlayerColorName,
+  RED: 'red' as PlayerColorName,
 } as const;
 
 export const PLAYER_COLORS = [
@@ -81,7 +81,7 @@ export const PLAYER_COLORS = [
 ];
 
 export interface StorageSlot {
-  type: "cube" | "statue" | "empty";
+  type: 'cube' | 'statue' | 'empty';
   color?: HexColor;
 }
 
@@ -107,17 +107,17 @@ export interface MoveShipResult {
   success: boolean;
   error?: {
     type:
-      | "invalid_player"
-      | "wrong_phase"
-      | "invalid_target"
-      | "not_sea"
-      | "no_die"
-      | "die_not_available"
-      | "wrong_color"
-      | "not_reachable"
-      | "not_enough_favor"
-      | "recoloring_failed"
-      | "unknown";
+      | 'invalid_player'
+      | 'wrong_phase'
+      | 'invalid_target'
+      | 'not_sea'
+      | 'no_die'
+      | 'die_not_available'
+      | 'wrong_color'
+      | 'not_reachable'
+      | 'not_enough_favor'
+      | 'recoloring_failed'
+      | 'unknown';
     message: string;
     details?: {
       playerId?: number;
@@ -145,7 +145,7 @@ export interface GameState {
   players: Player[];
   currentPlayerIndex: number;
   round: number;
-  phase: "setup" | "action" | "end";
+  phase: 'setup' | 'action' | 'end';
   monsterStrength: number;
   cubeHexes: CubeHex[];
   monsterHexes: MonsterHex[];

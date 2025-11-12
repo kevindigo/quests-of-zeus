@@ -7,11 +7,11 @@ import {
   assertEquals,
   assertFalse,
   assertGreater,
-} from "@std/assert";
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { CoreColor } from "../src/types.ts";
+} from '@std/assert';
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import type { CoreColor } from '../src/types.ts';
 
-Deno.test("ResourceSelectionIntegration - cannot use multiple oracle cards in same turn", () => {
+Deno.test('ResourceSelectionIntegration - cannot use multiple oracle cards in same turn', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -19,26 +19,26 @@ Deno.test("ResourceSelectionIntegration - cannot use multiple oracle cards in sa
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleCards = ["blue", "red"];
+  player.oracleCards = ['blue', 'red'];
   player.favor = 5;
   player.usedOracleCardThisTurn = false;
 
   // First oracle card usage should succeed
-  const firstResult = engine.spendOracleCardForFavor(player.id, "blue");
+  const firstResult = engine.spendOracleCardForFavor(player.id, 'blue');
   assert(firstResult, `First oracle card usage should succeed`);
-  assert(player.usedOracleCardThisTurn, "Oracle card usage flag should be set");
+  assert(player.usedOracleCardThisTurn, 'Oracle card usage flag should be set');
 
-  const secondResult = engine.spendOracleCardForFavor(player.id, "red");
-  assertFalse(secondResult, "Second oracle card usage should fail");
+  const secondResult = engine.spendOracleCardForFavor(player.id, 'red');
+  assertFalse(secondResult, 'Second oracle card usage should fail');
   // Red oracle card should still be available
   assertArrayIncludes(
     player.oracleCards,
-    ["red"],
-    "Red oracle card should still be available",
+    ['red'],
+    'Red oracle card should still be available',
   );
 });
 
-Deno.test("ResourceSelectionIntegration - favor spending works with both resource types", () => {
+Deno.test('ResourceSelectionIntegration - favor spending works with both resource types', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -46,38 +46,38 @@ Deno.test("ResourceSelectionIntegration - favor spending works with both resourc
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
-  player.oracleCards = ["pink"];
+  player.oracleDice = ['blue', 'red', 'green'] as CoreColor[];
+  player.oracleCards = ['pink'];
   const initialFavor = player.favor;
   player.usedOracleCardThisTurn = false;
 
   // Spend die for favor
-  const dieFavorSuccess = engine.spendDieForFavor(player.id, "blue");
-  assert(dieFavorSuccess, "Should be able to spend die for favor");
+  const dieFavorSuccess = engine.spendDieForFavor(player.id, 'blue');
+  assert(dieFavorSuccess, 'Should be able to spend die for favor');
   assertEquals(
     player.favor,
     initialFavor + 2,
-    "Favor should increase by 2 from die",
+    'Favor should increase by 2 from die',
   );
 
   // Spend oracle card for favor
-  const cardFavorSuccess = engine.spendOracleCardForFavor(player.id, "pink");
-  assert(cardFavorSuccess, "Should be able to spend oracle card for favor");
+  const cardFavorSuccess = engine.spendOracleCardForFavor(player.id, 'pink');
+  assert(cardFavorSuccess, 'Should be able to spend oracle card for favor');
   assertEquals(
     player.favor,
     initialFavor + 4,
-    "Favor should increase by 4 total",
+    'Favor should increase by 4 total',
   );
 
   // Oracle card usage flag should be set
   assertEquals(
     player.usedOracleCardThisTurn,
     true,
-    "Oracle card usage flag should be set",
+    'Oracle card usage flag should be set',
   );
 });
 
-Deno.test("ResourceSelectionIntegration - resource availability after actions", () => {
+Deno.test('ResourceSelectionIntegration - resource availability after actions', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -85,12 +85,12 @@ Deno.test("ResourceSelectionIntegration - resource availability after actions", 
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
-  player.oracleCards = ["pink", "yellow"];
+  player.oracleDice = ['blue', 'red', 'green'] as CoreColor[];
+  player.oracleCards = ['pink', 'yellow'];
   player.favor = 5;
   // Find a sea hex to start from instead of Zeus hex
   const gameState = engine.getGameState();
-  const seaTiles = gameState.map.getCellsByTerrain("sea");
+  const seaTiles = gameState.map.getCellsByTerrain('sea');
   if (seaTiles.length > 0) {
     player.shipPosition = { q: seaTiles[0]!.q, r: seaTiles[0]!.r };
   }
@@ -102,7 +102,7 @@ Deno.test("ResourceSelectionIntegration - resource availability after actions", 
   // Use a die for movement
   const availableMoves = engine.getAvailableMovesForDie(
     player.id,
-    "blue",
+    'blue',
     player.favor,
   );
 
@@ -113,39 +113,39 @@ Deno.test("ResourceSelectionIntegration - resource availability after actions", 
       player.id,
       targetMove.q,
       targetMove.r,
-      "blue",
+      'blue',
       targetMove.favorCost,
     );
 
-    assert(moveResult.success, "Should be able to move using die");
+    assert(moveResult.success, 'Should be able to move using die');
 
     // Die should be consumed
     assertEquals(
       player.oracleDice.length,
       initialDieCount - 1,
-      "One die should be consumed",
+      'One die should be consumed',
     );
     assertEquals(
-      player.oracleDice.includes("blue"),
+      player.oracleDice.includes('blue'),
       false,
-      "Blue die should be consumed",
+      'Blue die should be consumed',
     );
 
     // Oracle cards should remain unchanged
     assertEquals(
       player.oracleCards.length,
       initialCardCount,
-      "Oracle cards should remain unchanged",
+      'Oracle cards should remain unchanged',
     );
     assertEquals(
       player.usedOracleCardThisTurn,
       false,
-      "Oracle card usage flag should not be set",
+      'Oracle card usage flag should not be set',
     );
   }
 });
 
-Deno.test("ResourceSelectionIntegration - end turn resets oracle card usage", () => {
+Deno.test('ResourceSelectionIntegration - end turn resets oracle card usage', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -153,7 +153,7 @@ Deno.test("ResourceSelectionIntegration - end turn resets oracle card usage", ()
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleCards = ["blue"];
+  player.oracleCards = ['blue'];
   player.usedOracleCardThisTurn = true; // Simulate that oracle card was used this turn
 
   // End turn
@@ -167,18 +167,18 @@ Deno.test("ResourceSelectionIntegration - end turn resets oracle card usage", ()
   assertEquals(
     updatedPlayer.usedOracleCardThisTurn,
     false,
-    "Oracle card usage flag should be reset after end turn",
+    'Oracle card usage flag should be reset after end turn',
   );
 
   // Oracle card should still be available (if not consumed)
   assertEquals(
-    updatedPlayer.oracleCards.includes("blue"),
+    updatedPlayer.oracleCards.includes('blue'),
     true,
-    "Oracle card should still be available",
+    'Oracle card should still be available',
   );
 });
 
-Deno.test("ResourceSelectionIntegration - combined resource actions in sequence", () => {
+Deno.test('ResourceSelectionIntegration - combined resource actions in sequence', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -188,15 +188,15 @@ Deno.test("ResourceSelectionIntegration - combined resource actions in sequence"
   // Set up deterministic test conditions
   const gameState = engine.getGameState();
   const map = gameState.map;
-  const zeuses = map.getCellsByTerrain("zeus");
+  const zeuses = map.getCellsByTerrain('zeus');
   assertEquals(zeuses.length, 1);
   const zeus = zeuses[0]!;
-  const seaNeighbors = map.getNeighborsOfType(zeus, map.getGrid(), "sea");
+  const seaNeighbors = map.getNeighborsOfType(zeus, map.getGrid(), 'sea');
   assertGreater(seaNeighbors.length, 0);
   const destination = seaNeighbors[0]!;
   const color = destination.color as CoreColor;
 
-  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
+  player.oracleDice = ['blue', 'red', 'green'] as CoreColor[];
   player.oracleCards = [color];
   player.usedOracleCardThisTurn = false;
 
@@ -206,8 +206,8 @@ Deno.test("ResourceSelectionIntegration - combined resource actions in sequence"
 
   // Sequence of actions:
   // 1. Spend die for favor
-  const dieFavorSuccess = engine.spendDieForFavor(player.id, "blue");
-  assert(dieFavorSuccess, "Should be able to spend die for favor");
+  const dieFavorSuccess = engine.spendDieForFavor(player.id, 'blue');
+  assert(dieFavorSuccess, 'Should be able to spend die for favor');
 
   // 2. Use oracle card for movement
   const oracleMoveResult = engine.spendOracleCardForMovement(
@@ -225,37 +225,37 @@ Deno.test("ResourceSelectionIntegration - combined resource actions in sequence"
   );
 
   // 3. Spend another die for favor
-  const secondDieFavorSuccess = engine.spendDieForFavor(player.id, "red");
+  const secondDieFavorSuccess = engine.spendDieForFavor(player.id, 'red');
   assert(
     secondDieFavorSuccess,
-    "Should be able to spend another die for favor",
+    'Should be able to spend another die for favor',
   );
 
   // Verify final state
   assertEquals(
     player.favor,
     initialFavor + 4,
-    "Favor should increase by 4 total (2 from each die)",
+    'Favor should increase by 4 total (2 from each die)',
   );
   assertEquals(
     player.oracleDice.length,
     initialDieCount - 2,
-    "Two dice should be consumed",
+    'Two dice should be consumed',
   );
   assertEquals(
     player.oracleCards.length,
     initialCardCount - 1,
-    "One oracle card should be consumed",
+    'One oracle card should be consumed',
   );
   assertEquals(
     player.usedOracleCardThisTurn,
     true,
-    "Oracle card usage flag should be set",
+    'Oracle card usage flag should be set',
   );
   assertEquals(
     player.shipPosition,
     { q: destination.q, r: destination.r },
-    "Ship position should be updated",
+    'Ship position should be updated',
   );
 });
 

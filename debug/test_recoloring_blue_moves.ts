@@ -1,9 +1,9 @@
 // Debug test to understand why blue moves are still available with high recoloring cost
 
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { HexColor } from "../src/hexmap.ts";
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import type { HexColor } from '../src/hexmap.ts';
 
-console.log("=== Debug: Blue Moves with High Recoloring Cost ===");
+console.log('=== Debug: Blue Moves with High Recoloring Cost ===');
 
 const gameEngine = new QuestsZeusGameEngine();
 gameEngine.initializeGame();
@@ -11,38 +11,38 @@ gameEngine.initializeGame();
 const player = gameEngine.getCurrentPlayer();
 
 // Set up deterministic test conditions matching the failing test
-player.oracleDice = ["black", "pink", "blue"] as HexColor[];
+player.oracleDice = ['black', 'pink', 'blue'] as HexColor[];
 player.favor = 5;
 
 // Clear any recoloring intentions that might exist from initialization
 player.recoloredDice = {};
 
-console.log("Initial state:");
-console.log("  Player favor:", player.favor);
-console.log("  Oracle dice:", player.oracleDice);
-console.log("  Recolored dice:", player.recoloredDice);
+console.log('Initial state:');
+console.log('  Player favor:', player.favor);
+console.log('  Oracle dice:', player.oracleDice);
+console.log('  Recolored dice:', player.recoloredDice);
 
 // Set a high recoloring cost that would make some moves unaffordable
 player.favor = 3; // Reduce favor
 const highRecolorSuccess = gameEngine.setRecolorIntention(
   player.id,
-  "black",
+  'black',
   2,
 ); // black → blue (2 favor recoloring cost)
 
-console.log("\nAfter setting high recoloring intention:");
-console.log("  Player favor:", player.favor);
-console.log("  Recolored dice:", player.recoloredDice);
-console.log("  Recoloring success:", highRecolorSuccess);
+console.log('\nAfter setting high recoloring intention:');
+console.log('  Player favor:', player.favor);
+console.log('  Recolored dice:', player.recoloredDice);
+console.log('  Recoloring success:', highRecolorSuccess);
 
 const movesWithHighRecolor = gameEngine.getAvailableMovesForDie(
   player.id,
-  "black",
+  'black',
   player.favor,
 );
 
-console.log("\nAvailable moves for black die with high recoloring:");
-console.log("  Total moves:", movesWithHighRecolor.length);
+console.log('\nAvailable moves for black die with high recoloring:');
+console.log('  Total moves:', movesWithHighRecolor.length);
 
 // Debug each move
 for (const move of movesWithHighRecolor) {
@@ -62,7 +62,7 @@ for (const move of movesWithHighRecolor) {
 }
 
 // Let's also check what sea tile color this move goes to
-console.log("\n=== Checking sea tile colors ===");
+console.log('\n=== Checking sea tile colors ===');
 const gameState = gameEngine.getGameState();
 for (const move of movesWithHighRecolor) {
   const cell = gameState.map.getCell(move.q, move.r);
@@ -72,7 +72,7 @@ for (const move of movesWithHighRecolor) {
 }
 
 // Let's also check what happens if we try to make one of these moves
-console.log("\n=== Testing actual move execution ===");
+console.log('\n=== Testing actual move execution ===');
 if (movesWithHighRecolor.length > 0) {
   const testMove = movesWithHighRecolor[0];
   console.log(
@@ -82,6 +82,6 @@ if (movesWithHighRecolor.length > 0) {
   const cell = gameState.map.getCell(testMove.q, testMove.r);
   console.log(`Sea tile color: ${cell?.color}`);
 
-  console.log("  ✓ This move uses recolored black die to match blue sea tile");
+  console.log('  ✓ This move uses recolored black die to match blue sea tile');
   console.log(`  Recoloring cost: 2`);
 }

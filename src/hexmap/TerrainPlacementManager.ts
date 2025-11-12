@@ -1,10 +1,10 @@
 // TerrainPlacementManager - Handles all terrain generation and placement logic
 
-import type { HexCell, HexColor, TerrainType } from "../types.ts";
-import { COLOR_WHEEL } from "../types.ts";
-import type { HexGridOperations } from "./HexGridOperations.ts";
-import type { SeaColorManager } from "./SeaColorManager.ts";
-import type { UtilityService } from "./UtilityService.ts";
+import type { HexCell, HexColor, TerrainType } from '../types.ts';
+import { COLOR_WHEEL } from '../types.ts';
+import type { HexGridOperations } from './HexGridOperations.ts';
+import type { SeaColorManager } from './SeaColorManager.ts';
+import type { UtilityService } from './UtilityService.ts';
 
 export class TerrainPlacementManager {
   private hexGridOperations: HexGridOperations;
@@ -46,13 +46,13 @@ export class TerrainPlacementManager {
 
         // For all hexes, default to shallows
         // The sea generation for Zeus neighbors will be handled after Zeus placement
-        const terrain: TerrainType = "shallow";
+        const terrain: TerrainType = 'shallow';
 
         const cell: HexCell = {
           q,
           r,
           terrain,
-          color: "none",
+          color: 'none',
         };
 
         // Add special locations based on terrain and position
@@ -65,7 +65,7 @@ export class TerrainPlacementManager {
 
     // Ensure grid is valid before placing special terrain
     if (!grid || grid.length === 0) {
-      console.error("generateGrid: Grid generation failed, grid is empty");
+      console.error('generateGrid: Grid generation failed, grid is empty');
       return grid;
     }
 
@@ -117,7 +117,7 @@ export class TerrainPlacementManager {
     const zeusCell = this.hexGridOperations.getCellFromGrid(grid, zeusQ, zeusR);
     if (zeusCell) {
       // Place Zeus at the selected neighbor hex
-      zeusCell.terrain = "zeus";
+      zeusCell.terrain = 'zeus';
 
       // Set all neighbors of the Zeus hex to sea
       this.setZeusNeighborsToSea(grid, zeusQ, zeusR);
@@ -176,10 +176,10 @@ export class TerrainPlacementManager {
         placementQ,
         placementR,
       );
-      if (cell && cell.terrain === "shallow") {
-        cell.terrain = "city";
+      if (cell && cell.terrain === 'shallow') {
+        cell.terrain = 'city';
         // Assign a random color to the city
-        const color = shuffledColors[cornerDirection] || "none";
+        const color = shuffledColors[cornerDirection] || 'none';
         cell.color = color;
 
         // After placing city, set 2 random neighboring hexes to sea
@@ -191,10 +191,10 @@ export class TerrainPlacementManager {
           cornerCoords.q,
           cornerCoords.r,
         );
-        if (cornerCell && cornerCell.terrain === "shallow") {
-          cornerCell.terrain = "city";
+        if (cornerCell && cornerCell.terrain === 'shallow') {
+          cornerCell.terrain = 'city';
           // Assign a random color to the city
-          const color = shuffledColors[cornerDirection] || "none";
+          const color = shuffledColors[cornerDirection] || 'none';
           cornerCell.color = color;
 
           // After placing city, set 2 random neighboring hexes to sea
@@ -239,7 +239,7 @@ export class TerrainPlacementManager {
 
     // Set all neighbors of Zeus to sea
     for (const neighbor of neighbors) {
-      neighbor.terrain = "sea";
+      neighbor.terrain = 'sea';
     }
   }
 
@@ -278,7 +278,7 @@ export class TerrainPlacementManager {
 
     // Filter neighbors that are currently shallows (eligible to become sea)
     const eligibleNeighbors = neighbors.filter((cell) =>
-      cell.terrain === "shallow"
+      cell.terrain === 'shallow'
     );
 
     // If there are eligible neighbors, randomly select 2 of them
@@ -289,7 +289,7 @@ export class TerrainPlacementManager {
       // Set up to 2 random neighbors to sea
       const neighborsToConvert = Math.min(2, eligibleNeighbors.length);
       for (let i = 0; i < neighborsToConvert; i++) {
-        eligibleNeighbors[i]!.terrain = "sea";
+        eligibleNeighbors[i]!.terrain = 'sea';
       }
     }
   }
@@ -308,7 +308,7 @@ export class TerrainPlacementManager {
   placeSpecialTerrain(grid: HexCell[][]): void {
     // Ensure grid is valid before proceeding
     if (!grid || !Array.isArray(grid) || grid.length === 0) {
-      console.error("placeSpecialTerrain: Invalid grid provided", grid);
+      console.error('placeSpecialTerrain: Invalid grid provided', grid);
       return;
     }
 
@@ -324,7 +324,7 @@ export class TerrainPlacementManager {
       if (row) {
         for (let arrayR = 0; arrayR < row.length; arrayR++) {
           const cell = row[arrayR];
-          if (cell && cell.terrain === "shallow") {
+          if (cell && cell.terrain === 'shallow') {
             availableCells.push(cell);
           }
         }
@@ -336,11 +336,11 @@ export class TerrainPlacementManager {
 
     // Place terrain types with their required counts (excluding cities which are already placed)
     const terrainPlacements: [TerrainType, number][] = [
-      ["cubes", 6],
-      ["temple", 6],
-      ["foundations", 6],
-      ["monsters", 9],
-      ["clouds", 12],
+      ['cubes', 6],
+      ['temple', 6],
+      ['foundations', 6],
+      ['monsters', 9],
+      ['clouds', 12],
     ];
 
     let cellIndex = 0;
@@ -351,10 +351,10 @@ export class TerrainPlacementManager {
       // For temples and clouds, create shuffled color arrays to assign random colors
       let templeColors: HexColor[] = [];
       let cloudColors: HexColor[] = [];
-      if (terrainType === "temple") {
+      if (terrainType === 'temple') {
         templeColors = [...COLOR_WHEEL];
         this.utilityService.shuffleArray(templeColors);
-      } else if (terrainType === "clouds") {
+      } else if (terrainType === 'clouds') {
         // For clouds, we need 12 hexes with 6 colors, so each color appears twice
         // Create an array with each color repeated twice
         cloudColors = [];
@@ -374,14 +374,14 @@ export class TerrainPlacementManager {
         // Check if this cell is a valid candidate for placement
         if (this.isValidTerrainPlacement(cell!, grid)) {
           // Only place if the cell is still shallows (not already taken by previous placement)
-          if (cell!.terrain === "shallow") {
+          if (cell!.terrain === 'shallow') {
             cell!.terrain = terrainType;
 
             // Assign random color to temples, similar to cities
-            if (terrainType === "temple") {
+            if (terrainType === 'temple') {
               cell!.color = templeColors[placed]!;
             } // Assign colors to clouds - each color appears on exactly 2 cloud hexes
-            else if (terrainType === "clouds") {
+            else if (terrainType === 'clouds') {
               cell!.color = cloudColors[placed]!;
             }
 
@@ -406,14 +406,14 @@ export class TerrainPlacementManager {
           cellIndex++;
 
           // Fallback: place on any shallow cell without landmass constraint
-          if (cell!.terrain === "shallow") {
+          if (cell!.terrain === 'shallow') {
             cell!.terrain = terrainType;
 
             // Assign random color to temples, similar to cities
-            if (terrainType === "temple") {
+            if (terrainType === 'temple') {
               cell!.color = templeColors[placed]!;
             } // Assign colors to clouds - each color appears on exactly 2 cloud hexes
-            else if (terrainType === "clouds") {
+            else if (terrainType === 'clouds') {
               cell!.color = cloudColors[placed]!;
             }
 
@@ -455,7 +455,7 @@ export class TerrainPlacementManager {
       grid,
     );
     return neighbors.some((neighbor) =>
-      neighbor.terrain === "shallow" || neighbor.terrain === "sea"
+      neighbor.terrain === 'shallow' || neighbor.terrain === 'sea'
     );
   }
 
@@ -468,8 +468,8 @@ export class TerrainPlacementManager {
       if (row) {
         for (let arrayR = 0; arrayR < row.length; arrayR++) {
           const cell = row[arrayR];
-          if (cell && cell.terrain === "shallow") {
-            cell.terrain = "sea";
+          if (cell && cell.terrain === 'shallow') {
+            cell.terrain = 'sea';
           }
         }
       }

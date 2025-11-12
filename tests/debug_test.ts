@@ -1,7 +1,7 @@
-import { assertEquals, assertExists } from "@std/assert";
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
+import { assertEquals, assertExists } from '@std/assert';
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
 
-Deno.test("Debug test - check player IDs", () => {
+Deno.test('Debug test - check player IDs', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -14,5 +14,5 @@ Deno.test("Debug test - check player IDs", () => {
   assertExists(player2);
 
   // This should pass if we're using the correct player
-  assertEquals(currentPlayer.id, 1, "Current player should be player 1");
+  assertEquals(currentPlayer.id, 1, 'Current player should be player 1');
 });

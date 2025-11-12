@@ -1,13 +1,13 @@
 // Tests for combined die and oracle card spending functionality
 // Verifies that users can select either resource type and use it for movement, favor gain, or oracle card drawing
 
-import { assert, assertEquals } from "@std/assert";
-import { GameController } from "../src/game-controller.ts";
-import { type GameState, QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { Player } from "../src/Player.ts";
-import type { CoreColor, HexCell } from "../src/types.ts";
+import { assert, assertEquals } from '@std/assert';
+import { GameController } from '../src/game-controller.ts';
+import { type GameState, QuestsZeusGameEngine } from '../src/game-engine.ts';
+import type { Player } from '../src/Player.ts';
+import type { CoreColor, HexCell } from '../src/types.ts';
 
-Deno.test("CombinedResourceSpending - select die for movement", () => {
+Deno.test('CombinedResourceSpending - select die for movement', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -15,14 +15,14 @@ Deno.test("CombinedResourceSpending - select die for movement", () => {
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
+  player.oracleDice = ['blue', 'red', 'green'] as CoreColor[];
   player.favor = 5;
   player.shipPosition = { q: 0, r: 0 };
 
   // Test that player can select a die and use it for movement
   const availableMoves = engine.getAvailableMovesForDie(
     player.id,
-    "blue",
+    'blue',
     player.favor,
   );
 
@@ -36,29 +36,29 @@ Deno.test("CombinedResourceSpending - select die for movement", () => {
       player.id,
       targetMove.q,
       targetMove.r,
-      "blue",
+      'blue',
       targetMove.favorCost,
     );
 
-    assert(moveResult.success, "Should be able to move using selected die");
+    assert(moveResult.success, 'Should be able to move using selected die');
 
     // Die should be consumed
     assertEquals(
-      player.oracleDice.includes("blue"),
+      player.oracleDice.includes('blue'),
       false,
-      "Blue die should be consumed",
+      'Blue die should be consumed',
     );
 
     // Ship position should be updated
     assertEquals(
       player.shipPosition,
       { q: targetMove.q, r: targetMove.r },
-      "Ship position should be updated",
+      'Ship position should be updated',
     );
   }
 });
 
-Deno.test("CombinedResourceSpending - select die for favor gain", () => {
+Deno.test('CombinedResourceSpending - select die for favor gain', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -66,26 +66,26 @@ Deno.test("CombinedResourceSpending - select die for favor gain", () => {
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
+  player.oracleDice = ['blue', 'red', 'green'] as CoreColor[];
   const initialFavor = player.favor;
 
   // Test that player can select a die and spend it for favor
-  const success = engine.spendDieForFavor(player.id, "blue");
+  const success = engine.spendDieForFavor(player.id, 'blue');
 
-  assert(success, "Should be able to spend die for favor");
+  assert(success, 'Should be able to spend die for favor');
 
   // Die should be consumed
   assertEquals(
-    player.oracleDice.includes("blue"),
+    player.oracleDice.includes('blue'),
     false,
-    "Blue die should be consumed",
+    'Blue die should be consumed',
   );
 
   // Favor should increase by 2
-  assertEquals(player.favor, initialFavor + 2, "Favor should increase by 2");
+  assertEquals(player.favor, initialFavor + 2, 'Favor should increase by 2');
 });
 
-Deno.test("CombinedResourceSpending - select die to draw oracle card", () => {
+Deno.test('CombinedResourceSpending - select die to draw oracle card', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -93,31 +93,31 @@ Deno.test("CombinedResourceSpending - select die to draw oracle card", () => {
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
+  player.oracleDice = ['blue', 'red', 'green'] as CoreColor[];
   const initialCardCount = player.oracleCards.length;
 
   // Test that player can select a die and spend it to draw an oracle card
-  const success = engine.drawOracleCard(player.id, "blue");
+  const success = engine.drawOracleCard(player.id, 'blue');
 
-  assert(success, "Should be able to spend die to draw oracle card");
+  assert(success, 'Should be able to spend die to draw oracle card');
 
   // Die should be consumed
   assertEquals(
-    player.oracleDice.includes("blue"),
+    player.oracleDice.includes('blue'),
     false,
-    "Blue die should be consumed",
+    'Blue die should be consumed',
   );
 
   // Oracle card count should increase by 1
   assertEquals(
     player.oracleCards.length,
     initialCardCount + 1,
-    "Oracle card count should increase by 1",
+    'Oracle card count should increase by 1',
   );
 });
 
 function findAdjacentSeaHex(gameState: GameState, player: Player): HexCell {
-  const seaTiles = gameState.map.getCellsByTerrain("sea");
+  const seaTiles = gameState.map.getCellsByTerrain('sea');
   if (seaTiles.length > 0) {
     player.shipPosition = { q: seaTiles[0]!.q, r: seaTiles[0]!.r };
   }
@@ -128,7 +128,7 @@ function findAdjacentSeaHex(gameState: GameState, player: Player): HexCell {
     player.shipPosition.r,
   );
   const seaNeighbors = neighbors.filter((candidateCell: HexCell) => {
-    return (candidateCell.terrain == "sea");
+    return (candidateCell.terrain == 'sea');
   });
   const destination = seaNeighbors[0];
   assert(
@@ -141,7 +141,7 @@ function findAdjacentSeaHex(gameState: GameState, player: Player): HexCell {
   return destination;
 }
 
-Deno.test("CombinedResourceSpending - select oracle card for movement", () => {
+Deno.test('CombinedResourceSpending - select oracle card for movement', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -173,27 +173,27 @@ Deno.test("CombinedResourceSpending - select oracle card for movement", () => {
 
   // Oracle card should be consumed
   assertEquals(
-    player.oracleCards.includes("blue"),
+    player.oracleCards.includes('blue'),
     false,
-    "Blue oracle card should be consumed",
+    'Blue oracle card should be consumed',
   );
 
   // Ship position should be updated
   assertEquals(
     player.shipPosition,
     { q: destination.q, r: destination.r },
-    "Ship position should be updated",
+    'Ship position should be updated',
   );
 
   // Oracle card usage flag should be set
   assertEquals(
     player.usedOracleCardThisTurn,
     true,
-    "Oracle card usage flag should be set",
+    'Oracle card usage flag should be set',
   );
 });
 
-Deno.test("CombinedResourceSpending - select oracle card for favor gain", () => {
+Deno.test('CombinedResourceSpending - select oracle card for favor gain', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -201,34 +201,34 @@ Deno.test("CombinedResourceSpending - select oracle card for favor gain", () => 
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleCards = ["blue"];
+  player.oracleCards = ['blue'];
   const initialFavor = player.favor;
   player.usedOracleCardThisTurn = false;
 
   // Test that player can select an oracle card and spend it for favor
-  const success = engine.spendOracleCardForFavor(player.id, "blue");
+  const success = engine.spendOracleCardForFavor(player.id, 'blue');
 
-  assert(success, "Should be able to spend oracle card for favor");
+  assert(success, 'Should be able to spend oracle card for favor');
 
   // Oracle card should be consumed
   assertEquals(
-    player.oracleCards.includes("blue"),
+    player.oracleCards.includes('blue'),
     false,
-    "Blue oracle card should be consumed",
+    'Blue oracle card should be consumed',
   );
 
   // Favor should increase by 2
-  assertEquals(player.favor, initialFavor + 2, "Favor should increase by 2");
+  assertEquals(player.favor, initialFavor + 2, 'Favor should increase by 2');
 
   // Oracle card usage flag should be set
   assertEquals(
     player.usedOracleCardThisTurn,
     true,
-    "Oracle card usage flag should be set",
+    'Oracle card usage flag should be set',
   );
 });
 
-Deno.test("CombinedResourceSpending - cannot use both die and oracle card in same turn", () => {
+Deno.test('CombinedResourceSpending - cannot use both die and oracle card in same turn', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -279,58 +279,58 @@ Deno.test("CombinedResourceSpending - cannot use both die and oracle card in sam
   );
 });
 
-Deno.test("CombinedResourceSpending - resource selection clears when switching types", () => {
+Deno.test('CombinedResourceSpending - resource selection clears when switching types', () => {
   const engine = new QuestsZeusGameEngine();
   const controller = new GameController(engine);
   engine.initializeGame();
 
   const player = engine.getCurrentPlayer();
   assertExists(player);
-  player.oracleDice = ["red", "black"];
-  player.oracleCards = ["blue"];
+  player.oracleDice = ['red', 'black'];
+  player.oracleCards = ['blue'];
 
   controller.clearResourceSelection();
   assertEquals(controller.getSelectedDieColor(), null);
   assertEquals(controller.getSelectedCardColor(), null);
 
-  assert(controller.selectDieColor("red"));
+  assert(controller.selectDieColor('red'));
   assertEquals(
     controller.getSelectedDieColor(),
-    "red",
-    "Expected die to be selected",
+    'red',
+    'Expected die to be selected',
   );
   assertEquals(
     controller.getSelectedCardColor(),
     null,
-    "Expected card to be cleared",
+    'Expected card to be cleared',
   );
 
-  assert(controller.selectCardColor("blue"));
+  assert(controller.selectCardColor('blue'));
   assertEquals(
     controller.getSelectedDieColor(),
     null,
-    "Expected die to be cleared",
+    'Expected die to be cleared',
   );
   assertEquals(
     controller.getSelectedCardColor(),
-    "blue",
-    "Expected card to be selected",
+    'blue',
+    'Expected card to be selected',
   );
 
-  assert(controller.selectDieColor("red"));
+  assert(controller.selectDieColor('red'));
   assertEquals(
     controller.getSelectedDieColor(),
-    "red",
-    "Expected die to be selected again",
+    'red',
+    'Expected die to be selected again',
   );
   assertEquals(
     controller.getSelectedCardColor(),
     null,
-    "Expected card to be cleared again",
+    'Expected card to be cleared again',
   );
 });
 
-Deno.test("CombinedResourceSpending - favor spending with both resource types", () => {
+Deno.test('CombinedResourceSpending - favor spending with both resource types', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -338,27 +338,27 @@ Deno.test("CombinedResourceSpending - favor spending with both resource types", 
   assertExists(player);
 
   // Set up deterministic test conditions
-  player.oracleDice = ["blue", "red", "green"] as CoreColor[];
-  player.oracleCards = ["pink"];
+  player.oracleDice = ['blue', 'red', 'green'] as CoreColor[];
+  player.oracleCards = ['pink'];
   const initialFavor = player.favor;
   player.usedOracleCardThisTurn = false;
 
   // Spend die for favor
-  const dieFavorSuccess = engine.spendDieForFavor(player.id, "blue");
-  assert(dieFavorSuccess, "Should be able to spend die for favor");
+  const dieFavorSuccess = engine.spendDieForFavor(player.id, 'blue');
+  assert(dieFavorSuccess, 'Should be able to spend die for favor');
   assertEquals(
     player.favor,
     initialFavor + 2,
-    "Favor should increase by 2 from die",
+    'Favor should increase by 2 from die',
   );
 
   // Spend oracle card for favor
-  const cardFavorSuccess = engine.spendOracleCardForFavor(player.id, "pink");
-  assert(cardFavorSuccess, "Should be able to spend oracle card for favor");
+  const cardFavorSuccess = engine.spendOracleCardForFavor(player.id, 'pink');
+  assert(cardFavorSuccess, 'Should be able to spend oracle card for favor');
   assertEquals(
     player.favor,
     initialFavor + 4,
-    "Favor should increase by 4 total",
+    'Favor should increase by 4 total',
   );
 });
 

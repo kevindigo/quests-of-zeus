@@ -1,9 +1,9 @@
 // Tests for terrain distribution in the game map
 
-import { assertExists, assertGreater, assertLessOrEqual } from "@std/assert";
-import { HexMap } from "../src/hexmap.ts";
+import { assertExists, assertGreater, assertLessOrEqual } from '@std/assert';
+import { HexMap } from '../src/hexmap.ts';
 
-Deno.test("Terrain distribution - all expected terrains present", () => {
+Deno.test('Terrain distribution - all expected terrains present', () => {
   const hexMap = new HexMap();
   const grid = hexMap.getGrid();
 
@@ -26,15 +26,15 @@ Deno.test("Terrain distribution - all expected terrains present", () => {
 
   // Check if all expected terrain types are present
   const expectedTerrains = [
-    "zeus",
-    "sea",
-    "shallow",
-    "monsters",
-    "cubes",
-    "temple",
-    "clouds",
-    "city",
-    "foundations",
+    'zeus',
+    'sea',
+    'shallow',
+    'monsters',
+    'cubes',
+    'temple',
+    'clouds',
+    'city',
+    'foundations',
   ];
 
   // Assert all expected terrains are present
@@ -51,7 +51,7 @@ Deno.test("Terrain distribution - all expected terrains present", () => {
   }
 });
 
-Deno.test("Terrain distribution - constraints satisfied", () => {
+Deno.test('Terrain distribution - constraints satisfied', () => {
   const hexMap = new HexMap();
   const grid = hexMap.getGrid();
 
@@ -73,8 +73,8 @@ Deno.test("Terrain distribution - constraints satisfied", () => {
   }
 
   // Check specific constraints
-  const shallowCount = terrainCounts["shallow"] || 0;
-  const seaCount = terrainCounts["sea"] || 0;
+  const shallowCount = terrainCounts['shallow'] || 0;
+  const seaCount = terrainCounts['sea'] || 0;
 
   // Assert terrain constraints
   assertLessOrEqual(
@@ -89,12 +89,12 @@ Deno.test("Terrain distribution - constraints satisfied", () => {
   );
 });
 
-Deno.test("Terrain distribution - basic grid structure", () => {
+Deno.test('Terrain distribution - basic grid structure', () => {
   const hexMap = new HexMap();
   const grid = hexMap.getGrid();
 
   // Additional assertions for basic sanity
-  assertGreater(grid.length, 0, "Grid should have at least one row");
+  assertGreater(grid.length, 0, 'Grid should have at least one row');
 
   // Count total cells to verify grid has content
   let totalCells = 0;
@@ -110,5 +110,5 @@ Deno.test("Terrain distribution - basic grid structure", () => {
     }
   }
 
-  assertGreater(totalCells, 0, "Grid should have at least one cell");
+  assertGreater(totalCells, 0, 'Grid should have at least one cell');
 });

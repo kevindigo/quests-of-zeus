@@ -19,7 +19,7 @@ export function generateZeusIcon(options: IconOptions): string {
   const size = 14 * scale * 2.5; // 2.5x larger to fill more space
 
   // Monochrome black color
-  const strokeColor = "#000000";
+  const strokeColor = '#000000';
   const circleStrokeWidth = 3 * scale; // Thick circle border
   const zStrokeWidth = 2.5 * scale; // Thick Z stroke
 
@@ -66,11 +66,11 @@ export function generateCityIcon(options: IconOptions): string {
   const size = 12 * scale * 2.5; // 2.5x larger to fill more space
 
   // Monochrome black color with thick strokes
-  const strokeColor = "#000000";
+  const strokeColor = '#000000';
   const strokeWidth = 2.5 * scale; // Thick black lines
 
   // Use hex color for fill, fallback to none if not provided
-  const fillColor = hexColor || "none";
+  const fillColor = hexColor || 'none';
 
   return `
     <g transform="translate(${centerX}, ${centerY})" class="city-icon">
@@ -166,11 +166,11 @@ export function generateTempleIcon(options: IconOptions): string {
   const size = 12 * scale * 2.5; // 2.5x larger to fill more space
 
   // Monochrome black color with thick strokes
-  const strokeColor = "#000000";
+  const strokeColor = '#000000';
   const strokeWidth = 2.5 * scale; // Thick black lines
 
   // Use hex color for fill, fallback to none if not provided
-  const fillColor = hexColor || "none";
+  const fillColor = hexColor || 'none';
 
   return `
     <g transform="translate(${centerX}, ${centerY})" class="temple-icon">
@@ -216,7 +216,7 @@ export function generateMonsterIcon(options: IconOptions): string {
   const size = 12 * scale * 2.5; // 2.5x larger to fill more space
 
   // Monochrome black color with thick strokes
-  const strokeColor = "#000000";
+  const strokeColor = '#000000';
   const strokeWidth = 2.5 * scale; // Thick black lines
 
   return `
@@ -340,7 +340,7 @@ export function generateCubesIcon(options: IconOptions): string {
   const size = 16 * scale * 2.5; // Even larger size to fill more space
 
   // Monochrome black color with thick strokes
-  const strokeColor = "#000000";
+  const strokeColor = '#000000';
   const strokeWidth = 2.5 * scale; // Thick black lines
 
   return `
@@ -497,8 +497,8 @@ export function generateStatueIcons(
   const size = 12 * scale * 2.5; // 2.5x larger to fill more space
 
   // Use hex color for statues, fallback to black if not provided
-  const strokeColor = hexColor || "#000000";
-  const fillColor = hexColor || "#cccccc";
+  const strokeColor = hexColor || '#000000';
+  const fillColor = hexColor || '#cccccc';
   const strokeWidth = 2 * scale; // Slightly thinner than other icons
 
   // Statue dimensions: tall thin rectangles with 3:1 ratio
@@ -506,7 +506,7 @@ export function generateStatueIcons(
   const statueHeight = statueWidth * 3; // Height = 3x width for 3:1 ratio
   const statueSpacing = statueWidth * 1.2; // Increased spacing for better visibility
 
-  let statuesContent = "";
+  let statuesContent = '';
 
   // Position statues at the bottom of the hex, below the city icon
   const startY = size * 0.8; // Position below the city buildings
@@ -553,7 +553,7 @@ export function generateCloudsIcon(options: IconOptions): string {
   const size = 12 * scale * 2.5; // 2.5x larger to fill more space
 
   // Monochrome black color with thick strokes
-  const strokeColor = "#000000";
+  const strokeColor = '#000000';
   const strokeWidth = 2.5 * scale; // Thick black lines
 
   return `
@@ -603,7 +603,7 @@ export function generateFoundationsIcon(options: IconOptions): string {
   const size = 12 * scale * 2.5; // 2.5x larger to fill more space
 
   // Monochrome black color with thick strokes
-  const strokeColor = "#000000";
+  const strokeColor = '#000000';
   const strokeWidth = 2.5 * scale; // Thick black lines
 
   // Consistent parallelogram dimensions - all oriented with top lines to left, bottom lines to right

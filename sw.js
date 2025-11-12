@@ -1,16 +1,16 @@
-const CACHE_NAME = "quests-zeus-v2";
+const CACHE_NAME = 'quests-zeus-v2';
 const urlsToCache = [
-  "/",
-  "/index.html",
-  "/dist/hexmap.js",
-  "/dist/hexmap-svg.js",
-  "/manifest.json",
-  "/assets/icon-192.png",
-  "/assets/icon-512.png",
+  '/',
+  '/index.html',
+  '/dist/hexmap.js',
+  '/dist/hexmap-svg.js',
+  '/manifest.json',
+  '/assets/icon-192.png',
+  '/assets/icon-512.png',
 ];
 
 // Install event - cache essential files
-self.addEventListener("install", (event) => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -20,7 +20,7 @@ self.addEventListener("install", (event) => {
 });
 
 // Fetch event - serve from cache, fallback to network
-self.addEventListener("fetch", (event) => {
+self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
@@ -31,7 +31,7 @@ self.addEventListener("fetch", (event) => {
 });
 
 // Activate event - clean up old caches
-self.addEventListener("activate", (event) => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(

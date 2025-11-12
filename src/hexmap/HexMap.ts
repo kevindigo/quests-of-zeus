@@ -1,11 +1,11 @@
 // Refactored HexMap class - Main container that coordinates between services
 
-import type { HexCell, HexColor, TerrainType } from "../types.ts";
-import { HexGridOperations } from "./HexGridOperations.ts";
-import { PathfindingService } from "./PathfindingService.ts";
-import { SeaColorManager } from "./SeaColorManager.ts";
-import { TerrainPlacementManager } from "./TerrainPlacementManager.ts";
-import { UtilityService } from "./UtilityService.ts";
+import type { HexCell, HexColor, TerrainType } from '../types.ts';
+import { HexGridOperations } from './HexGridOperations.ts';
+import { PathfindingService } from './PathfindingService.ts';
+import { SeaColorManager } from './SeaColorManager.ts';
+import { TerrainPlacementManager } from './TerrainPlacementManager.ts';
+import { UtilityService } from './UtilityService.ts';
 
 export class HexMap {
   private grid: HexCell[][];
@@ -39,9 +39,9 @@ export class HexMap {
   }
 
   public getZeus(): HexCell {
-    const zeuses = this.getCellsByTerrain("zeus");
+    const zeuses = this.getCellsByTerrain('zeus');
     if (zeuses.length < 1) {
-      throw new Error("Zeus not found!");
+      throw new Error('Zeus not found!');
     }
     return zeuses[0]!;
   }
@@ -180,7 +180,7 @@ export class HexMap {
       if (row) {
         for (let arrayR = 0; arrayR < row.length; arrayR++) {
           const cell = row[arrayR];
-          if (cell && cell.terrain === "sea") {
+          if (cell && cell.terrain === 'sea') {
             seaCells.push(cell);
           }
         }
@@ -201,8 +201,8 @@ export class HexMap {
 
       // Check if this cell meets the constraints for conversion
       if (this.isEligibleForSeaToShallowsConversion(cell)) {
-        cell.terrain = "shallow";
-        cell.color = "none"; // Reset color when converting to shallows
+        cell.terrain = 'shallow';
+        cell.color = 'none'; // Reset color when converting to shallows
         conversions++;
       }
     }
@@ -213,12 +213,12 @@ export class HexMap {
    */
   private isEligibleForSeaToShallowsConversion(cell: HexCell): boolean {
     // Constraint 1: Should not have zeus as neighbor
-    if (this.hasNeighborOfType(cell, this.grid, "zeus")) {
+    if (this.hasNeighborOfType(cell, this.grid, 'zeus')) {
       return false;
     }
 
     // Constraint 2: Should not have city as neighbor
-    if (this.hasNeighborOfType(cell, this.grid, "city")) {
+    if (this.hasNeighborOfType(cell, this.grid, 'city')) {
       return false;
     }
 
@@ -226,7 +226,7 @@ export class HexMap {
     const neighbors = this.getNeighbors(cell.q, cell.r);
 
     for (const neighbor of neighbors) {
-      if (neighbor.terrain === "sea") {
+      if (neighbor.terrain === 'sea') {
         // For sea neighbors: check if they can reach zeus (excluding the candidate cell)
         if (
           !this.pathfindingService.canReachZeusFromSeaNeighbor(
@@ -237,9 +237,9 @@ export class HexMap {
         ) {
           return false;
         }
-      } else if (neighbor.terrain !== "shallow") {
+      } else if (neighbor.terrain !== 'shallow') {
         // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
-        if (!this.hasNeighborOfType(neighbor, this.grid, "sea")) {
+        if (!this.hasNeighborOfType(neighbor, this.grid, 'sea')) {
           return false;
         }
       }

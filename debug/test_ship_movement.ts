@@ -1,5 +1,5 @@
 // Simple test for ship movement logic
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
 
 const engine = new QuestsZeusGameEngine();
 engine.initializeGame();
@@ -7,15 +7,15 @@ engine.initializeGame();
 const _gameState = engine.getGameState();
 const player = engine.getCurrentPlayer();
 
-console.log("Initial ship position:", player.shipPosition);
+console.log('Initial ship position:', player.shipPosition);
 
 // Roll dice to enter action phase
 const dice = engine.rollOracleDice(player.id);
-console.log("Rolled dice:", dice);
+console.log('Rolled dice:', dice);
 
 // Get available moves
 const availableMoves = engine.getAvailableMoves(player.id);
-console.log("Available moves:", availableMoves.length);
+console.log('Available moves:', availableMoves.length);
 
 // Log some available moves
 availableMoves.slice(0, 5).forEach((move, index) => {
@@ -36,10 +36,10 @@ if (availableMoves.length > 0) {
     firstMove.r,
     firstMove.dieColor,
   );
-  console.log("Move successful:", moveResult.success);
+  console.log('Move successful:', moveResult.success);
   if (!moveResult.success && moveResult.error) {
-    console.log("Move error:", moveResult.error);
+    console.log('Move error:', moveResult.error);
   }
-  console.log("New ship position:", player.shipPosition);
-  console.log("Remaining dice:", player.oracleDice);
+  console.log('New ship position:', player.shipPosition);
+  console.log('Remaining dice:', player.oracleDice);
 }

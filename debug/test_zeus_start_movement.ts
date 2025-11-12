@@ -1,8 +1,8 @@
 // Test script to verify movement works correctly when starting from Zeus
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { HexColor } from "../src/hexmap.ts";
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import type { HexColor } from '../src/hexmap.ts';
 
-console.log("=== Testing Movement from Zeus Starting Position ===\n");
+console.log('=== Testing Movement from Zeus Starting Position ===\n');
 
 const engine = new QuestsZeusGameEngine();
 engine.initializeGame();
@@ -10,31 +10,31 @@ engine.initializeGame();
 const gameState = engine.getGameState();
 const player = engine.getCurrentPlayer();
 
-console.log("Initial ship position:", player.shipPosition);
+console.log('Initial ship position:', player.shipPosition);
 
 // Check what terrain the ship starts on
 const startCell = gameState.map.getCell(
   player.shipPosition.q,
   player.shipPosition.r,
 );
-console.log("Starting terrain:", startCell?.terrain);
+console.log('Starting terrain:', startCell?.terrain);
 
 // Get adjacent cells
 const adjacentCells = gameState.map.getNeighbors(
   player.shipPosition.q,
   player.shipPosition.r,
 );
-console.log("\nAdjacent cells to Zeus:");
+console.log('\nAdjacent cells to Zeus:');
 adjacentCells.forEach((cell) => {
   console.log(
     `  (${cell.q}, ${cell.r}): ${cell.terrain} ${
-      cell.terrain === "sea" ? `(${cell.color})` : ""
+      cell.terrain === 'sea' ? `(${cell.color})` : ''
     }`,
   );
 });
 
 // Test reachability logic directly
-console.log("\n=== Testing Reachability from Zeus ===");
+console.log('\n=== Testing Reachability from Zeus ===');
 const reachableTiles = (engine as QuestsZeusGameEngine & {
   getReachableSeaTiles: (
     q: number,
@@ -46,7 +46,7 @@ const reachableTiles = (engine as QuestsZeusGameEngine & {
   player.shipPosition.r,
   3,
 );
-console.log("Reachable sea tiles from Zeus:", reachableTiles.length);
+console.log('Reachable sea tiles from Zeus:', reachableTiles.length);
 
 // Group by steps for debugging
 const tilesBySteps: {
@@ -85,11 +85,11 @@ Object.keys(tilesBySteps).sort((a, b) => parseInt(a) - parseInt(b)).forEach(
 
 // Roll dice to enter action phase
 const dice = engine.rollOracleDice(player.id);
-console.log("\nRolled dice:", dice);
+console.log('\nRolled dice:', dice);
 
 // Get available moves
 const availableMoves = engine.getAvailableMoves(player.id);
-console.log("\nAvailable moves from Zeus:", availableMoves.length);
+console.log('\nAvailable moves from Zeus:', availableMoves.length);
 
 // Log all available moves
 availableMoves.forEach((move, index) => {
@@ -111,25 +111,25 @@ if (availableMoves.length > 0) {
     firstMove.r,
     firstMove.dieColor,
   );
-  console.log("Move successful:", moveResult.success);
+  console.log('Move successful:', moveResult.success);
 
   if (moveResult.success) {
-    console.log("✓ SUCCESS: Movement from Zeus works correctly!");
-    console.log("New ship position:", player.shipPosition);
-    console.log("Remaining dice:", player.oracleDice);
+    console.log('✓ SUCCESS: Movement from Zeus works correctly!');
+    console.log('New ship position:', player.shipPosition);
+    console.log('Remaining dice:', player.oracleDice);
   } else {
-    console.log("✗ FAILURE: Movement from Zeus failed!");
+    console.log('✗ FAILURE: Movement from Zeus failed!');
     if (moveResult.error) {
-      console.log("Error details:", moveResult.error);
+      console.log('Error details:', moveResult.error);
     }
   }
 } else {
   console.log(
-    "\nNo available moves from Zeus - this might be expected if no dice match adjacent sea colors",
+    '\nNo available moves from Zeus - this might be expected if no dice match adjacent sea colors',
   );
   console.log(
-    "Adjacent sea colors:",
-    adjacentCells.filter((c) => c.terrain === "sea").map((c) => c.color),
+    'Adjacent sea colors:',
+    adjacentCells.filter((c) => c.terrain === 'sea').map((c) => c.color),
   );
-  console.log("Player dice:", dice);
+  console.log('Player dice:', dice);
 }

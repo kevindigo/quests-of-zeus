@@ -69,16 +69,16 @@
     </div>
 
     <script type="module">
-      import { QuestsZeusGameEngine } from "./src/game-engine.ts";
-      import { HexMapSVG } from "./src/hexmap-svg.ts";
+      import { QuestsZeusGameEngine } from './src/game-engine.ts';
+      import { HexMapSVG } from './src/hexmap-svg.ts';
 
       async function runTest() {
-        const results = document.getElementById("testResults");
-        const svgContainer = document.getElementById("svgContainer");
+        const results = document.getElementById('testResults');
+        const svgContainer = document.getElementById('svgContainer');
 
         results.innerHTML =
           '<div class="test-info">Running test...</div>';
-        svgContainer.innerHTML = "";
+        svgContainer.innerHTML = '';
 
         try {
           // Create game engine and initialize
@@ -107,15 +107,15 @@
 
           // Test results
           let testResults = '<div class="test-info">';
-          testResults += "<h3>Test Results:</h3>";
+          testResults += '<h3>Test Results:</h3>';
 
           // Check if SVG contains monster elements
-          const hasMonsterElements = svg.includes("colored-monster") ||
-            svg.includes("monster-count");
+          const hasMonsterElements = svg.includes('colored-monster') ||
+            svg.includes('monster-count');
           testResults += `<p class="${
-            hasMonsterElements ? "success" : "error"
+            hasMonsterElements ? 'success' : 'error'
           }">✅ Monster elements found in SVG: ${
-            hasMonsterElements ? "PASS" : "FAIL"
+            hasMonsterElements ? 'PASS' : 'FAIL'
           }</p>`;
 
           // Count colored monsters in SVG
@@ -126,9 +126,9 @@
             0,
           );
           testResults += `<p class="${
-            monsterCount === expectedCount ? "success" : "error"
+            monsterCount === expectedCount ? 'success' : 'error'
           }">✅ Colored monsters rendered: ${monsterCount}/${expectedCount} ${
-            monsterCount === expectedCount ? "PASS" : "FAIL"
+            monsterCount === expectedCount ? 'PASS' : 'FAIL'
           }</p>`;
 
           // Check for specific monster hexes
@@ -144,31 +144,31 @@
             }
           }
           testResults += `<p class="${
-            allMonsterCountsCorrect ? "success" : "error"
+            allMonsterCountsCorrect ? 'success' : 'error'
           }">✅ Monster counts displayed correctly: ${
-            allMonsterCountsCorrect ? "PASS" : "FAIL"
+            allMonsterCountsCorrect ? 'PASS' : 'FAIL'
           }</p>`;
 
           // Check for triangle shapes (polygon elements with 3 points)
-          const hasTriangles = svg.includes("polygon") &&
-            svg.includes("colored-monster");
+          const hasTriangles = svg.includes('polygon') &&
+            svg.includes('colored-monster');
           testResults += `<p class="${
-            hasTriangles ? "success" : "error"
+            hasTriangles ? 'success' : 'error'
           }">✅ Triangle shapes used for monsters: ${
-            hasTriangles ? "PASS" : "FAIL"
+            hasTriangles ? 'PASS' : 'FAIL'
           }</p>`;
 
-          testResults += "</div>";
+          testResults += '</div>';
           results.innerHTML = testResults;
         } catch (error) {
           results.innerHTML =
             `<div class="test-info error">Test failed: ${error.message}</div>`;
-          console.error("Test error:", error);
+          console.error('Test error:', error);
         }
       }
 
       // Run test automatically when page loads
-      document.addEventListener("DOMContentLoaded", runTest);
+      document.addEventListener('DOMContentLoaded', runTest);
     </script>
   </body>
 </html>

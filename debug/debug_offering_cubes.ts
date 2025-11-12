@@ -1,26 +1,26 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { QuestsZeusGameEngine } from "./src/game-engine.ts";
+import { QuestsZeusGameEngine } from './src/game-engine.ts';
 
 function debugOfferingCubes() {
-  console.log("Debugging Offering cubes initialization...\n");
+  console.log('Debugging Offering cubes initialization...\n');
 
   try {
     const gameEngine = new QuestsZeusGameEngine();
     const gameState = gameEngine.initializeGame();
 
-    console.log("✓ Game initialized successfully");
+    console.log('✓ Game initialized successfully');
     console.log(`✓ Number of players: ${gameState.players.length}`);
     console.log(`✓ Number of cube hexes: ${gameState.cubeHexes?.length || 0}`);
 
     if (!gameState.cubeHexes) {
-      console.log("❌ cubeHexes is undefined");
+      console.log('❌ cubeHexes is undefined');
       return;
     }
 
     // Check that we have exactly 6 cube hexes
     if (gameState.cubeHexes.length === 6) {
-      console.log("✅ Correct number of cube hexes (6)");
+      console.log('✅ Correct number of cube hexes (6)');
     } else {
       console.log(
         `❌ Expected 6 cube hexes, found ${gameState.cubeHexes.length}`,
@@ -71,21 +71,21 @@ function debugOfferingCubes() {
     });
 
     if (hexesWithDuplicates.length === 0) {
-      console.log("✅ No color appears twice on any island");
+      console.log('✅ No color appears twice on any island');
     } else {
       console.log(
         `❌ Found ${hexesWithDuplicates.length} hexes with duplicate colors`,
       );
     }
 
-    console.log("\nCube hex distribution:");
+    console.log('\nCube hex distribution:');
     gameState.cubeHexes.forEach((ch) => {
       console.log(
-        `  Position (${ch.q}, ${ch.r}): ${ch.cubeColors.join(", ")}`,
+        `  Position (${ch.q}, ${ch.r}): ${ch.cubeColors.join(', ')}`,
       );
     });
   } catch (error) {
-    console.error("❌ Error:", error);
+    console.error('❌ Error:', error);
   }
 }
 

@@ -60,13 +60,13 @@
     </div>
 
     <script type="module">
-      import { GameController } from "./dist/game-controller.js";
+      import { GameController } from './dist/game-controller.js';
 
       // Initialize the game controller
       const gameController = new GameController();
 
-      document.addEventListener("DOMContentLoaded", () => {
-        console.log("Page loaded, initializing game...");
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('Page loaded, initializing game...');
         gameController.initializeGameUI();
       });
 
@@ -77,34 +77,34 @@
         cellSize: 30,
       };
 
-      document.getElementById("toggleCoordinates").addEventListener(
-        "click",
+      document.getElementById('toggleCoordinates').addEventListener(
+        'click',
         () => {
           currentOptions.showCoordinates = !currentOptions
             .showCoordinates;
-          document.getElementById("toggleCoordinates").textContent =
+          document.getElementById('toggleCoordinates').textContent =
             currentOptions.showCoordinates
-              ? "Hide Coordinates"
-              : "Show Coordinates";
+              ? 'Hide Coordinates'
+              : 'Show Coordinates';
           // Note: This would need to be integrated with the game controller
         },
       );
 
-      document.getElementById("toggleLabels").addEventListener(
-        "click",
+      document.getElementById('toggleLabels').addEventListener(
+        'click',
         () => {
           currentOptions.showTerrainLabels = !currentOptions
             .showTerrainLabels;
-          document.getElementById("toggleLabels").textContent =
+          document.getElementById('toggleLabels').textContent =
             currentOptions.showTerrainLabels
-              ? "Hide Labels"
-              : "Show Labels";
+              ? 'Hide Labels'
+              : 'Show Labels';
           // Note: This would need to be integrated with the game controller
         },
       );
 
-      document.getElementById("zoomIn").addEventListener(
-        "click",
+      document.getElementById('zoomIn').addEventListener(
+        'click',
         () => {
           currentOptions.cellSize = Math.min(
             currentOptions.cellSize + 5,
@@ -114,8 +114,8 @@
         },
       );
 
-      document.getElementById("zoomOut").addEventListener(
-        "click",
+      document.getElementById('zoomOut').addEventListener(
+        'click',
         () => {
           currentOptions.cellSize = Math.max(
             currentOptions.cellSize - 5,
@@ -125,19 +125,19 @@
         },
       );
 
-      document.getElementById("resetZoom").addEventListener(
-        "click",
+      document.getElementById('resetZoom').addEventListener(
+        'click',
         () => {
           currentOptions.cellSize = 30;
           // Note: This would need to be integrated with the game controller
         },
       );
 
-      document.getElementById("newGame").addEventListener(
-        "click",
+      document.getElementById('newGame').addEventListener(
+        'click',
         () => {
           if (
-            confirm("Start a new game? Current progress will be lost.")
+            confirm('Start a new game? Current progress will be lost.')
           ) {
             gameController.startNewGame();
           }
@@ -145,15 +145,15 @@
       );
 
       // Service Worker Registration
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker.register("/sw.js")
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
             .then((registration) => {
-              console.log("SW registered: ", registration);
+              console.log('SW registered: ', registration);
             })
             .catch((registrationError) => {
               console.log(
-                "SW registration failed: ",
+                'SW registration failed: ',
                 registrationError,
               );
             });
@@ -162,10 +162,10 @@
 
       // PWA Installation
       let deferredPrompt;
-      window.addEventListener("beforeinstallprompt", (e) => {
+      window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        console.log("PWA installation available");
+        console.log('PWA installation available');
       });
     </script>
   </body>

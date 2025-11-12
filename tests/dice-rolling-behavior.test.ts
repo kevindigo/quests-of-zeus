@@ -1,10 +1,10 @@
 // Tests for the new dice rolling behavior (dice rolled at end of turn)
 
-import { assert, assertEquals, assertExists } from "@std/assert";
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import type { HexColor } from "../src/types.ts";
+import { assert, assertEquals, assertExists } from '@std/assert';
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import type { HexColor } from '../src/types.ts';
 
-Deno.test("DiceRolling - all players start with dice rolled", () => {
+Deno.test('DiceRolling - all players start with dice rolled', () => {
   const engine = new QuestsZeusGameEngine();
 
   // Initialize the game
@@ -22,7 +22,7 @@ Deno.test("DiceRolling - all players start with dice rolled", () => {
     // Each die should be a valid color
     player.oracleDice.forEach((dieColor, dieIndex) => {
       assert(
-        ["red", "pink", "blue", "black", "green", "yellow"].includes(dieColor),
+        ['red', 'pink', 'blue', 'black', 'green', 'yellow'].includes(dieColor),
         `Player ${
           index + 1
         } die ${dieIndex} should be a valid color, got ${dieColor}`,
@@ -31,10 +31,10 @@ Deno.test("DiceRolling - all players start with dice rolled", () => {
   });
 
   // Game should start in action phase since dice are already rolled
-  assertEquals(state.phase, "action", "Game should start in action phase");
+  assertEquals(state.phase, 'action', 'Game should start in action phase');
 });
 
-Deno.test("DiceRolling - dice rolled for next player at end of turn", () => {
+Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -49,7 +49,7 @@ Deno.test("DiceRolling - dice rolled for next player at end of turn", () => {
   assertEquals(
     initialState.currentPlayerIndex,
     0,
-    "Player 1 should be current player initially",
+    'Player 1 should be current player initially',
   );
 
   initialState.players[0].oracleDice = [];
@@ -63,14 +63,14 @@ Deno.test("DiceRolling - dice rolled for next player at end of turn", () => {
   assertEquals(
     stateAfterEndTurn.currentPlayerIndex,
     1,
-    "Player 2 should be current player after endTurn",
+    'Player 2 should be current player after endTurn',
   );
 
   // Game should still be in action phase
   assertEquals(
     stateAfterEndTurn.phase,
-    "action",
-    "Game should remain in action phase after endTurn",
+    'action',
+    'Game should remain in action phase after endTurn',
   );
 
   // Player 1 should have new dice rolled
@@ -78,7 +78,7 @@ Deno.test("DiceRolling - dice rolled for next player at end of turn", () => {
   assertEquals(stateAfterEndTurn.players[0].oracleDice.length, 3);
 });
 
-Deno.test("DiceRolling - recoloring intentions cleared at end of turn", () => {
+Deno.test('DiceRolling - recoloring intentions cleared at end of turn', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -88,7 +88,7 @@ Deno.test("DiceRolling - recoloring intentions cleared at end of turn", () => {
   // Set up a recoloring intention for Player 1
   const dieColorToRecolor = player1.oracleDice[0];
   const success = engine.setRecolorIntention(1, dieColorToRecolor!, 1);
-  assert(success, "Should be able to set recoloring intention");
+  assert(success, 'Should be able to set recoloring intention');
 
   // Verify recoloring intention was set
   assertExists(player1.recoloredDice[dieColorToRecolor!]);
@@ -106,12 +106,12 @@ Deno.test("DiceRolling - recoloring intentions cleared at end of turn", () => {
   );
 });
 
-Deno.test("DiceRolling - round advances when all players have taken turns", () => {
+Deno.test('DiceRolling - round advances when all players have taken turns', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   const initialState = engine.getGameState();
-  assertEquals(initialState.round, 1, "Game should start at round 1");
+  assertEquals(initialState.round, 1, 'Game should start at round 1');
 
   // End Player 1's turn (Player 2 becomes current)
   engine.endTurn();
@@ -119,7 +119,7 @@ Deno.test("DiceRolling - round advances when all players have taken turns", () =
   assertEquals(
     stateAfterPlayer1Turn.round,
     1,
-    "Round should still be 1 after first endTurn",
+    'Round should still be 1 after first endTurn',
   );
 
   // End Player 2's turn (Player 1 becomes current again)
@@ -128,29 +128,29 @@ Deno.test("DiceRolling - round advances when all players have taken turns", () =
   assertEquals(
     stateAfterPlayer2Turn.round,
     2,
-    "Round should advance to 2 after all players have taken turns",
+    'Round should advance to 2 after all players have taken turns',
   );
 
   // Current player should be back to Player 1
   assertEquals(
     stateAfterPlayer2Turn.currentPlayerIndex,
     0,
-    "Current player should be Player 1 after full round",
+    'Current player should be Player 1 after full round',
   );
 });
 
-Deno.test("DiceRolling - dice are valid colors after rolling", () => {
+Deno.test('DiceRolling - dice are valid colors after rolling', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
   const state = engine.getGameState();
   const validColors: HexColor[] = [
-    "red",
-    "pink",
-    "blue",
-    "black",
-    "green",
-    "yellow",
+    'red',
+    'pink',
+    'blue',
+    'black',
+    'green',
+    'yellow',
   ];
 
   // Check all players' dice are valid colors
@@ -183,7 +183,7 @@ Deno.test("DiceRolling - dice are valid colors after rolling", () => {
   }
 });
 
-Deno.test("DiceRolling - next player always has dice ready", () => {
+Deno.test('DiceRolling - next player always has dice ready', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 

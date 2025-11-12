@@ -1,10 +1,10 @@
 // Test for die recoloring feature
 
-import { QuestsZeusGameEngine } from "./src/game-engine.ts";
-import type { Player } from "./src/types.ts";
+import { QuestsZeusGameEngine } from './src/game-engine.ts';
+import type { Player } from './src/types.ts';
 
 function testRecolorDie() {
-  console.log("Testing die recoloring feature...\n");
+  console.log('Testing die recoloring feature...\n');
 
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
@@ -18,7 +18,7 @@ function testRecolorDie() {
 
   // Roll dice to get some oracle dice
   const dice = gameEngine.rollOracleDice(player.id);
-  console.log(`Rolled oracle dice: ${dice.join(", ")}`);
+  console.log(`Rolled oracle dice: ${dice.join(', ')}`);
 
   // Test recoloring with different favor amounts
   const testCases = [
@@ -44,8 +44,8 @@ function testRecolorDie() {
 
     if (success) {
       console.log(`✓ Successfully set recoloring intention`);
-      console.log(`  Original dice: ${originalDice.join(", ")}`);
-      console.log(`  Dice after intention: ${player.oracleDice.join(", ")}`);
+      console.log(`  Original dice: ${originalDice.join(', ')}`);
+      console.log(`  Dice after intention: ${player.oracleDice.join(', ')}`);
       console.log(`  Favor not spent yet: ${player.favor} (same as original)`);
 
       // Verify the die was NOT recolored yet (only intention set)
@@ -76,7 +76,7 @@ function testRecolorDie() {
   }
 
   // Test edge cases
-  console.log("\n--- Testing edge cases ---");
+  console.log('\n--- Testing edge cases ---');
 
   // Test with insufficient favor
   const highFavorCost = player.favor + 10;
@@ -90,24 +90,24 @@ function testRecolorDie() {
   );
   console.log(
     `  Result: ${
-      insufficientFavorResult ? "✗ Should have failed" : "✓ Correctly failed"
+      insufficientFavorResult ? '✗ Should have failed' : '✓ Correctly failed'
     }`,
   );
 
   // Test with invalid die color
-  console.log("\nTesting with invalid die color:");
+  console.log('\nTesting with invalid die color:');
   const invalidColorResult = gameEngine.setRecolorIntention(
     player.id,
-    "none" as "none",
+    'none' as 'none',
     1,
   );
   console.log(
     `  Result: ${
-      invalidColorResult ? "✗ Should have failed" : "✓ Correctly failed"
+      invalidColorResult ? '✗ Should have failed' : '✓ Correctly failed'
     }`,
   );
 
-  console.log("\n--- Die recoloring feature test completed ---");
+  console.log('\n--- Die recoloring feature test completed ---');
 }
 
 // Run the test

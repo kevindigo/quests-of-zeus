@@ -1,8 +1,8 @@
 // Debug test for movement system
-import { assertEquals } from "@std/assert/equals";
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
+import { assertEquals } from '@std/assert/equals';
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
 
-Deno.test("Debug movement system", () => {
+Deno.test('Debug movement system', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
@@ -14,5 +14,5 @@ Deno.test("Debug movement system", () => {
     player.shipPosition.q,
     player.shipPosition.r,
   );
-  assertEquals(startCell?.terrain, "zeus");
+  assertEquals(startCell?.terrain, 'zeus');
 });

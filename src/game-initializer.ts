@@ -1,7 +1,7 @@
 // Game initialization and setup for Quests of Zeus
-import type { HexCell } from "./game-engine.ts";
-import { HexMap } from "./hexmap.ts";
-import { Player } from "./Player.ts";
+import type { HexCell } from './game-engine.ts';
+import { HexMap } from './hexmap.ts';
+import { Player } from './Player.ts';
 import {
   type CityHex,
   COLOR_WHEEL,
@@ -11,15 +11,15 @@ import {
   type HexColor,
   type MonsterHex,
   PLAYER_COLORS,
-} from "./types.ts";
+} from './types.ts';
 
 export function findZeus(map: HexMap): HexCell {
-  const zeusCell = map.getCellsByTerrain("zeus")[0];
+  const zeusCell = map.getCellsByTerrain('zeus')[0];
   if (zeusCell) {
     return zeusCell;
   }
 
-  throw new Error("Zeus not found in map!");
+  throw new Error('Zeus not found in map!');
 }
 
 export class GameInitializer {
@@ -56,7 +56,7 @@ export class GameInitializer {
       players,
       currentPlayerIndex: 0,
       round: 1,
-      phase: "action", // Start directly in action phase since dice are already rolled
+      phase: 'action', // Start directly in action phase since dice are already rolled
       monsterStrength: 3,
       cubeHexes,
       monsterHexes,
@@ -121,7 +121,7 @@ export class GameInitializer {
     const cubeHexes: CubeHex[] = [];
 
     // Get all cube hexes from the map
-    const cubeCells = map.getCellsByTerrain("cubes");
+    const cubeCells = map.getCellsByTerrain('cubes');
 
     // We should have exactly 6 cube hexes
     if (cubeCells.length !== 6) {
@@ -158,7 +158,7 @@ export class GameInitializer {
     for (let i = 0; i < cubeCells.length && i < 6; i++) {
       const cell = cubeCells[i];
       if (!cell) {
-        throw new Error("Missing some cube cells?");
+        throw new Error('Missing some cube cells?');
       }
       const thisPattern = basePattern[i] || [];
       const hexColors = thisPattern.slice(0, playerCount);
@@ -184,7 +184,7 @@ export class GameInitializer {
     const monsterHexes: MonsterHex[] = [];
 
     // Get all monster hexes from the map
-    const monsterCells = map.getCellsByTerrain("monsters");
+    const monsterCells = map.getCellsByTerrain('monsters');
 
     // Check if we have exactly 9 monster hexes as expected
     if (monsterCells.length !== 9) {
@@ -223,7 +223,7 @@ export class GameInitializer {
     while (colorIndex < totalColors) {
       const currentHex = monsterHexes[hexIndex];
       if (!currentHex) {
-        throw new Error("Missing monster hex?");
+        throw new Error('Missing monster hex?');
       }
       const currentColor = monsterColorsToPlace[colorIndex];
       if (currentColor) {
@@ -237,7 +237,7 @@ export class GameInitializer {
   }
 
   private initializeCities(map: HexMap): CityHex[] {
-    const cityCells = map.getCellsByTerrain("city");
+    const cityCells = map.getCellsByTerrain('city');
 
     if (cityCells.length !== 6) {
       console.warn(`Expected 6 city hexes but found ${cityCells.length}`);
@@ -261,15 +261,15 @@ export class GameInitializer {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       if (!array[i]) {
-        throw new Error("Unable to shuffle missing elements");
+        throw new Error('Unable to shuffle missing elements');
       }
       const temp = array[i];
       if (!array[j]) {
-        throw new Error("Unable to shuffle missing elements");
+        throw new Error('Unable to shuffle missing elements');
       }
       array[i] = array[j];
       if (!temp) {
-        throw new Error("Unable to shuffle missing elements");
+        throw new Error('Unable to shuffle missing elements');
       }
       array[j] = temp;
     }

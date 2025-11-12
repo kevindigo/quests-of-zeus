@@ -3,12 +3,12 @@
  * Focuses on algorithm robustness, performance, and boundary conditions
  */
 
-import { assert, assertEquals } from "@std/assert";
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
-import { COLOR_WHEEL } from "../src/types.ts";
+import { assert, assertEquals } from '@std/assert';
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { COLOR_WHEEL } from '../src/types.ts';
 
 // Test algorithm performance and timing
-Deno.test("MonsterDistribution - algorithm performance", () => {
+Deno.test('MonsterDistribution - algorithm performance', () => {
   const startTime = performance.now();
 
   // Run multiple iterations to test performance
@@ -39,7 +39,7 @@ Deno.test("MonsterDistribution - algorithm performance", () => {
 });
 
 // Test that algorithm always produces valid results
-Deno.test("MonsterDistribution - always valid results", () => {
+Deno.test('MonsterDistribution - always valid results', () => {
   const testRuns = 100;
   let validRuns = 0;
 
@@ -103,7 +103,7 @@ Deno.test("MonsterDistribution - always valid results", () => {
 });
 
 // Test distribution statistics over many runs
-Deno.test("MonsterDistribution - statistical analysis", () => {
+Deno.test('MonsterDistribution - statistical analysis', () => {
   const runs = 100;
   const distributionStats = {
     totalRuns: runs,
@@ -124,7 +124,7 @@ Deno.test("MonsterDistribution - statistical analysis", () => {
     const monstersPerHex = monsterHexes.map((
       hex: { monsterColors: string[] },
     ) => hex.monsterColors.length);
-    const pattern = monstersPerHex.sort().join("");
+    const pattern = monstersPerHex.sort().join('');
     distributionStats.distributionPatterns.set(
       pattern,
       (distributionStats.distributionPatterns.get(pattern) || 0) + 1,
@@ -145,7 +145,7 @@ Deno.test("MonsterDistribution - statistical analysis", () => {
 
   // With 2 players, the sorted distribution pattern should always be "111111222"
   // (6 hexes with 1 monster, 3 hexes with 2 monsters)
-  const expectedPattern = "111111222";
+  const expectedPattern = '111111222';
   const actualPatterns = Array.from(
     distributionStats.distributionPatterns.keys(),
   );
@@ -153,7 +153,7 @@ Deno.test("MonsterDistribution - statistical analysis", () => {
     actualPatterns.length,
     1,
     `Should only have one distribution pattern for 2 players, but got: ${
-      actualPatterns.join(", ")
+      actualPatterns.join(', ')
     }`,
   );
   assertEquals(
@@ -173,21 +173,21 @@ Deno.test("MonsterDistribution - statistical analysis", () => {
 });
 
 // Test that algorithm handles initialization correctly
-Deno.test("MonsterDistribution - initialization robustness", () => {
+Deno.test('MonsterDistribution - initialization robustness', () => {
   // Test multiple sequential initializations
   for (let i = 0; i < 10; i++) {
     const engine = new QuestsZeusGameEngine();
     const state = engine.initializeGame();
 
     // Verify game state is properly initialized
-    assert(state.players.length === 2, "Should have 2 players");
-    assert(state.map !== undefined, "Hex map should be initialized");
+    assert(state.players.length === 2, 'Should have 2 players');
+    assert(state.map !== undefined, 'Hex map should be initialized');
 
     const monsterHexes = engine.getMonsterHexes();
     assertEquals(
       monsterHexes.length,
       9,
-      "Should have 9 monster hexes after initialization",
+      'Should have 9 monster hexes after initialization',
     );
   }
 });

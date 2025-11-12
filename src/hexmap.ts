@@ -1,8 +1,8 @@
 // Hexagonal map representation for Quests of Zeus
 // The game uses a hexagon-shaped grid with radius 6 and various terrain types
 
-import { HexMap } from "./hexmap/HexMap.ts";
-import type { HexColor } from "./types.ts";
+import { HexMap } from './hexmap/HexMap.ts';
+import type { HexColor } from './types.ts';
 
 // Game state
 let gameMap: HexMap = new HexMap();
@@ -42,7 +42,7 @@ export function getMapStatistics() {
           terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
 
           // Count sea tiles by color
-          if (cell.terrain === "sea" && cell.color !== "none") {
+          if (cell.terrain === 'sea' && cell.color !== 'none') {
             seaColorCounts[cell.color] = (seaColorCounts[cell.color] || 0) + 1;
           }
 
@@ -74,4 +74,4 @@ export function getMap() {
 }
 
 // Re-export the HexMap class for backward compatibility
-export { HexMap } from "./hexmap/HexMap.ts";
+export { HexMap } from './hexmap/HexMap.ts';

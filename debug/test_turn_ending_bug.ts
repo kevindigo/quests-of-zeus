@@ -1,9 +1,9 @@
 // Test script to reproduce the turn ending bug
 // This script will test various movement scenarios to identify when turns end incorrectly
 
-import { QuestsZeusGameEngine } from "../src/game-engine.ts";
+import { QuestsZeusGameEngine } from '../src/game-engine.ts';
 
-console.log("=== Testing Turn Ending Bug ===\n");
+console.log('=== Testing Turn Ending Bug ===\n');
 
 // Initialize the game
 const gameEngine = new QuestsZeusGameEngine();
@@ -16,10 +16,10 @@ console.log(
   `Player position: (${player1.shipPosition.q}, ${player1.shipPosition.r})`,
 );
 console.log(`Player favor: ${player1.favor}`);
-console.log(`Player dice: ${player1.oracleDice.join(", ")}`);
+console.log(`Player dice: ${player1.oracleDice.join(', ')}`);
 
 // Test 1: Try to move to an invalid hex (should not end turn)
-console.log("\n--- Test 1: Invalid move (should NOT end turn) ---");
+console.log('\n--- Test 1: Invalid move (should NOT end turn) ---');
 const invalidMoveResult = gameEngine.moveShip(
   player1.id,
   100,
@@ -32,11 +32,11 @@ console.log(
 );
 
 // Test 2: Try to move with wrong die color (should not end turn)
-console.log("\n--- Test 2: Wrong die color (should NOT end turn) ---");
+console.log('\n--- Test 2: Wrong die color (should NOT end turn) ---');
 // Find a sea hex that's not the color of any of the player's dice
-const seaHexes = gameState.map.getCellsByTerrain("sea");
+const seaHexes = gameState.map.getCellsByTerrain('sea');
 const wrongColorHex = seaHexes.find((hex) =>
-  hex.color !== "none" &&
+  hex.color !== 'none' &&
   !player1.oracleDice.includes(hex.color)
 );
 
@@ -55,11 +55,11 @@ if (wrongColorHex) {
     `Current player after wrong color move: ${gameEngine.getCurrentPlayer().name}`,
   );
 } else {
-  console.log("Could not find a sea hex with wrong color for testing");
+  console.log('Could not find a sea hex with wrong color for testing');
 }
 
 // Test 3: Try a valid move (should end turn)
-console.log("\n--- Test 3: Valid move (should end turn) ---");
+console.log('\n--- Test 3: Valid move (should end turn) ---');
 // Find a valid move
 const validMoves = gameEngine.getAvailableMoves(player1.id);
 if (validMoves.length > 0) {
@@ -78,7 +78,7 @@ if (validMoves.length > 0) {
     `Current player after valid move: ${gameEngine.getCurrentPlayer().name}`,
   );
 } else {
-  console.log("No valid moves available for testing");
+  console.log('No valid moves available for testing');
 }
 
-console.log("\n=== Turn Ending Bug Test Complete ===");
+console.log('\n=== Turn Ending Bug Test Complete ===');
