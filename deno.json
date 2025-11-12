@@ -39,5 +39,9 @@
   },
   "lint": {
     "rules": {}
+  },
+  "fmt": {
+    "indentWidth": 2,
+    "useTabs": false
   }
 }

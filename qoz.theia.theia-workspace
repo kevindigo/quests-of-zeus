@@ -1,0 +1,24 @@
+{
+  "folders": [
+    {
+      "path": "src"
+    },
+    {
+      "path": "tests"
+    },
+    {
+      "path": "debug"
+    },
+    {
+      "path": "helpers"
+    },
+    {
+      "path": "assets"
+    }
+],
+"settings": {
+    "[typescript]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
+    }
+}
+}
