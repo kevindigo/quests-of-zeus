@@ -38,10 +38,14 @@
     "useUnknownInCatchVariables": true
   },
   "lint": {
-    "rules": {}
+    "rules": {
+      "tags": ["recommended"],
+      "quotes": ["error", "single"]
+    }
   },
   "fmt": {
     "indentWidth": 2,
-    "useTabs": false
+    "useTabs": false,
+    "singleQuote": true
   }
 }
