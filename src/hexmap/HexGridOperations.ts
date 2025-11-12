@@ -91,8 +91,13 @@ export class HexGridOperations {
       return null;
     }
 
+    // Calculate the radius from the grid length
+    // For a hex grid with radius R, the grid has 2*R + 1 rows
+    const radius = (grid.length - 1) / 2;
+
     // Convert axial coordinates to array indices
-    const arrayQ = q + 6; // Offset to make coordinates non-negative
+    // q ranges from -radius to radius, so array index = q + radius
+    const arrayQ = q + radius;
 
     // Check if q coordinate is within bounds
     if (arrayQ < 0 || arrayQ >= grid.length) {

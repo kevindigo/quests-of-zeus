@@ -1,6 +1,7 @@
 // Refactored HexMap class - Main container that coordinates between services
 
 import type { HexCell, HexColor, TerrainType } from '../types.ts';
+import type { HexGrid } from './HexGrid.ts';
 import { HexGridOperations } from './HexGridOperations.ts';
 import { PathfindingService } from './PathfindingService.ts';
 import { SeaColorManager } from './SeaColorManager.ts';
@@ -8,7 +9,7 @@ import { TerrainPlacementManager } from './TerrainPlacementManager.ts';
 import { UtilityService } from './UtilityService.ts';
 
 export class HexMap {
-  private grid: HexCell[][];
+  private grid: HexGrid;
   readonly width: number = 13; // -6 to +6 inclusive
   readonly height: number = 13; // -6 to +6 inclusive
 
@@ -50,21 +51,21 @@ export class HexMap {
    * Get the grid for external access
    */
   getGrid(): HexCell[][] {
-    return this.grid;
+    return this.grid.grid;
   }
 
   /**
    * Get a cell at specific coordinates
    */
   getCell(q: number, r: number): HexCell | null {
-    return this.hexGridOperations.getCellFromGrid(this.grid, q, r);
+    return this.hexGridOperations.getCellFromGrid(this.getGrid(), q, r);
   }
 
   /**
    * Get all neighboring cells for a given cell
    */
   getNeighbors(q: number, r: number): HexCell[] {
-    return this.hexGridOperations.getNeighborsFromGrid(q, r, this.grid);
+    return this.hexGridOperations.getNeighborsFromGrid(q, r, this.getGrid());
   }
 
   /**
@@ -73,8 +74,8 @@ export class HexMap {
   getCellsByTerrain(terrain: TerrainType): HexCell[] {
     const cells: HexCell[] = [];
     // The grid is a jagged array (hexagon shape), so we need to iterate through each row
-    for (let arrayQ = 0; arrayQ < this.grid.length; arrayQ++) {
-      const row = this.grid[arrayQ];
+    for (let arrayQ = 0; arrayQ < this.getGrid().length; arrayQ++) {
+      const row = this.getGrid()[arrayQ];
       if (row) {
         for (let arrayR = 0; arrayR < row.length; arrayR++) {
           const cell = row[arrayR];
@@ -101,16 +102,7 @@ export class HexMap {
    * Serialize the map for storage or transmission
    */
   serialize(): HexCell[][] {
-    return JSON.parse(JSON.stringify(this.grid));
-  }
-
-  /**
-   * Deserialize a map from stored data
-   */
-  static deserialize(data: HexCell[][]): HexMap {
-    const map = new HexMap();
-    map.grid = data;
-    return map;
+    return JSON.parse(JSON.stringify(this.grid.grid));
   }
 
   getNeighborsOfType(
@@ -175,8 +167,8 @@ export class HexMap {
     const seaCells: HexCell[] = [];
 
     // Collect all sea cells
-    for (let arrayQ = 0; arrayQ < this.grid.length; arrayQ++) {
-      const row = this.grid[arrayQ];
+    for (let arrayQ = 0; arrayQ < this.getGrid().length; arrayQ++) {
+      const row = this.getGrid()[arrayQ];
       if (row) {
         for (let arrayR = 0; arrayR < row.length; arrayR++) {
           const cell = row[arrayR];
@@ -213,12 +205,12 @@ export class HexMap {
    */
   private isEligibleForSeaToShallowsConversion(cell: HexCell): boolean {
     // Constraint 1: Should not have zeus as neighbor
-    if (this.hasNeighborOfType(cell, this.grid, 'zeus')) {
+    if (this.hasNeighborOfType(cell, this.getGrid(), 'zeus')) {
       return false;
     }
 
     // Constraint 2: Should not have city as neighbor
-    if (this.hasNeighborOfType(cell, this.grid, 'city')) {
+    if (this.hasNeighborOfType(cell, this.getGrid(), 'city')) {
       return false;
     }
 
@@ -232,14 +224,14 @@ export class HexMap {
           !this.pathfindingService.canReachZeusFromSeaNeighbor(
             neighbor,
             cell,
-            this.grid,
+            this.getGrid(),
           )
         ) {
           return false;
         }
       } else if (neighbor.terrain !== 'shallow') {
         // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
-        if (!this.hasNeighborOfType(neighbor, this.grid, 'sea')) {
+        if (!this.hasNeighborOfType(neighbor, this.getGrid(), 'sea')) {
           return false;
         }
       }

@@ -2,6 +2,7 @@
 
 import type { HexCell, HexColor, TerrainType } from '../types.ts';
 import { COLOR_WHEEL } from '../types.ts';
+import { HexGrid } from './HexGrid.ts';
 import type { HexGridOperations } from './HexGridOperations.ts';
 import type { SeaColorManager } from './SeaColorManager.ts';
 import type { UtilityService } from './UtilityService.ts';
@@ -25,55 +26,29 @@ export class TerrainPlacementManager {
    * Generate a hexagon-shaped grid with radius 6
    * for the Quests of Zeus game
    */
-  generateGrid(): HexCell[][] {
-    const grid: HexCell[][] = [];
+  generateGrid(): HexGrid {
     const radius = 6;
+    const shallow: TerrainType = 'shallow';
+    const grid = new HexGrid(radius, shallow);
 
-    // Generate hexagon-shaped grid
-    for (let q = -radius; q <= radius; q++) {
-      const row: HexCell[] = [];
-      const r1 = Math.max(-radius, -q - radius);
-      const r2 = Math.min(radius, -q + radius);
+    grid.forEachCell((cell) => {
+      // Calculate distance from center
+      const distanceFromCenter = HexGrid.hexDistance(
+        cell.q,
+        cell.r,
+        0,
+        0,
+      );
 
-      for (let r = r1; r <= r2; r++) {
-        // Calculate distance from center
-        const distanceFromCenter = this.hexGridOperations.hexDistance(
-          q,
-          r,
-          0,
-          0,
-        );
-
-        // For all hexes, default to shallows
-        // The sea generation for Zeus neighbors will be handled after Zeus placement
-        const terrain: TerrainType = 'shallow';
-
-        const cell: HexCell = {
-          q,
-          r,
-          terrain,
-          color: 'none',
-        };
-
-        // Add special locations based on terrain and position
-        this.addSpecialLocations(cell, q, r, distanceFromCenter);
-
-        row.push(cell);
-      }
-      grid.push(row);
-    }
-
-    // Ensure grid is valid before placing special terrain
-    if (!grid || grid.length === 0) {
-      console.error('generateGrid: Grid generation failed, grid is empty');
-      return grid;
-    }
+      // Add special locations based on terrain and position
+      this.addSpecialLocations(cell, cell.q, cell.r, distanceFromCenter);
+    });
 
     // Place Zeus randomly in one of the neighbor hexes of the center
-    this.placeZeus(grid);
+    this.placeZeus(grid.grid);
 
     // Place special terrain types randomly
-    this.placeSpecialTerrain(grid);
+    this.placeSpecialTerrain(grid.grid);
 
     return grid;
   }

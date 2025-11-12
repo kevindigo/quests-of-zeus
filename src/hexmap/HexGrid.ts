@@ -1,11 +1,26 @@
+import type { TerrainType } from '../game-engine.ts';
 import type { HexCell } from '../types.ts';
 
 export class HexGrid {
-  public constructor(radius: number) {
-    this.grid = generateHexShapedGrid(radius);
+  public constructor(radius: number, defaultTerrain: TerrainType) {
+    this.radius = radius;
+    this.grid = HexGrid.generateHexShapedGrid(this.radius, defaultTerrain);
   }
 
-  public static generateHexShapedGrid(radius: number): HexCell[][] {
+  public forEachCell(callback: (cell: HexCell) => void): void {
+    // Simply iterate through all rows and all cells in each row
+    // The grid structure already contains all valid cells
+    for (const row of this.grid) {
+      for (const cell of row) {
+        callback(cell);
+      }
+    }
+  }
+
+  public static generateHexShapedGrid(
+    radius: number,
+    defaultTerrain: TerrainType,
+  ): HexCell[][] {
     const grid: HexCell[][] = [];
 
     for (let q = -radius; q <= radius; q++) {
@@ -14,8 +29,8 @@ export class HexGrid {
       const r2 = Math.min(radius, -q + radius);
 
       for (let r = r1; r <= r2; r++) {
-        const terrain: TerrainType = 'none';
         const color = 'none';
+        const terrain = defaultTerrain;
         const cell: HexCell = { q, r, terrain, color };
 
         row.push(cell);
@@ -37,5 +52,6 @@ export class HexGrid {
     return (Math.abs(q1 - q2) + Math.abs(r1 - r2) + Math.abs(s1 - s2)) / 2;
   }
 
-  private grid: HexCell[][];
+  private radius: number;
+  public readonly grid: HexCell[][];
 }
