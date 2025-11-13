@@ -41,7 +41,7 @@ export class Player {
   public readonly id: number;
   public readonly name: string;
   public readonly color: PlayerColorName;
-  private shipPosition: { q: number; r: number };
+  private shipPosition: HexCoordinates;
   public readonly storage: [StorageSlot, StorageSlot]; // 2 storage slots, each can hold 1 cube or 1 statue
   public completedQuests: number;
   public readonly completedQuestTypes: {
