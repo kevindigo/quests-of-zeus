@@ -286,21 +286,7 @@ export class TerrainPlacementManager {
     // Place cities first in the corners
     this.placeCities(grid);
 
-    const availableCells: HexCell[] = [];
-
-    // Collect all cells that are shallows
-    // We need to iterate through the grid array directly since getCell expects a different structure
-    for (let arrayQ = 0; arrayQ < grid.grid.length; arrayQ++) {
-      const row = grid.grid[arrayQ];
-      if (row) {
-        for (let arrayR = 0; arrayR < row.length; arrayR++) {
-          const cell = row[arrayR];
-          if (cell && cell.terrain === 'shallow') {
-            availableCells.push(cell);
-          }
-        }
-      }
-    }
+    const availableCells = grid.getCellsOfType('shallow');
 
     // Shuffle available cells for random placement
     this.utilityService.shuffleArray(availableCells);
