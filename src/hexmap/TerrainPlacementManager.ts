@@ -48,7 +48,7 @@ export class TerrainPlacementManager {
     this.placeZeus(grid);
 
     // Place special terrain types randomly
-    this.placeSpecialTerrain(grid.grid);
+    this.placeSpecialTerrain(grid);
 
     return grid;
   }
@@ -109,7 +109,7 @@ export class TerrainPlacementManager {
    * Place the city there, then set 2 random neighboring hexes to sea
    * Each city is randomly assigned one of the 6 fundamental colors
    */
-  private placeCities(grid: HexCell[][]): void {
+  private placeCities(grid: HexGrid): void {
     // Create a shuffled copy of the colors to assign randomly to cities
     const shuffledColors = [...COLOR_WHEEL];
     this.utilityService.shuffleArray(shuffledColors);
@@ -146,8 +146,7 @@ export class TerrainPlacementManager {
       }
 
       // Place the city if the cell exists
-      const cell = this.hexGridOperations.getCellFromGrid(
-        grid,
+      const cell = grid.getCellFromGrid(
         placementQ,
         placementR,
       );
@@ -161,8 +160,7 @@ export class TerrainPlacementManager {
         this.setRandomNeighborsToSea(grid, placementQ, placementR);
       } else {
         // Fallback: place at the corner if the randomized placement failed
-        const cornerCell = this.hexGridOperations.getCellFromGrid(
-          grid,
+        const cornerCell = grid.getCellFromGrid(
           cornerCoords.q,
           cornerCoords.r,
         );
@@ -224,7 +222,7 @@ export class TerrainPlacementManager {
    * @param r - The r coordinate of the center cell
    */
   private setRandomNeighborsToSea(
-    grid: HexCell[][],
+    grid: HexGrid,
     q: number,
     r: number,
   ): void {
@@ -239,8 +237,7 @@ export class TerrainPlacementManager {
         direction,
       );
       if (adjacentCoords) {
-        const neighbor = this.hexGridOperations.getCellFromGrid(
-          grid,
+        const neighbor = grid.getCellFromGrid(
           adjacentCoords.q,
           adjacentCoords.r,
         );
@@ -279,9 +276,9 @@ export class TerrainPlacementManager {
    * - Convert ALL remaining shallows to sea (100% conversion)
    * None of these should overlap with each other
    */
-  placeSpecialTerrain(grid: HexCell[][]): void {
+  placeSpecialTerrain(grid: HexGrid): void {
     // Ensure grid is valid before proceeding
-    if (!grid || !Array.isArray(grid) || grid.length === 0) {
+    if (!grid) {
       console.error('placeSpecialTerrain: Invalid grid provided', grid);
       return;
     }
@@ -293,8 +290,8 @@ export class TerrainPlacementManager {
 
     // Collect all cells that are shallows
     // We need to iterate through the grid array directly since getCell expects a different structure
-    for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-      const row = grid[arrayQ];
+    for (let arrayQ = 0; arrayQ < grid.grid.length; arrayQ++) {
+      const row = grid.grid[arrayQ];
       if (row) {
         for (let arrayR = 0; arrayR < row.length; arrayR++) {
           const cell = row[arrayR];
@@ -407,14 +404,14 @@ export class TerrainPlacementManager {
     this.convertShallowsToSea(grid);
 
     // Assign colors to all sea hexes
-    this.seaColorManager.assignColorsToSeaHexes(grid);
+    this.seaColorManager.assignColorsToSeaHexes(grid.grid);
   }
 
   /**
    * Check if a cell is valid for terrain placement
    * Currently uses a simple constraint: must have at least one sea or shallow neighbor
    */
-  private isValidTerrainPlacement(cell: HexCell, grid: HexCell[][]): boolean {
+  private isValidTerrainPlacement(cell: HexCell, grid: HexGrid): boolean {
     // For now, use a simple constraint: cell must have at least one sea or shallow neighbor
     return this.hasShallowsOrSeaNeighbor(cell, grid);
   }
@@ -422,11 +419,11 @@ export class TerrainPlacementManager {
   /**
    * Check if a cell has at least one neighbor that is shallows or sea
    */
-  private hasShallowsOrSeaNeighbor(cell: HexCell, grid: HexCell[][]): boolean {
+  private hasShallowsOrSeaNeighbor(cell: HexCell, grid: HexGrid): boolean {
     const neighbors = this.hexGridOperations.getNeighborsFromGrid(
       cell.q,
       cell.r,
-      grid,
+      grid.grid,
     );
     return neighbors.some((neighbor) =>
       neighbor.terrain === 'shallow' || neighbor.terrain === 'sea'
@@ -436,9 +433,10 @@ export class TerrainPlacementManager {
   /**
    * Convert all remaining shallows to sea (100% conversion)
    */
-  private convertShallowsToSea(grid: HexCell[][]): void {
-    for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-      const row = grid[arrayQ];
+  private convertShallowsToSea(grid: HexGrid): void {
+
+    for (let arrayQ = 0; arrayQ < grid.grid.length; arrayQ++) {
+      const row = grid.grid[arrayQ];
       if (row) {
         for (let arrayR = 0; arrayR < row.length; arrayR++) {
           const cell = row[arrayR];
