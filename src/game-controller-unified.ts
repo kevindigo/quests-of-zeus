@@ -2,7 +2,7 @@
 // Manages the game UI and user interactions
 
 import { QuestsZeusGameEngine } from './game-engine.ts';
-import type { HexColor } from './types.ts';
+import type { CoreColor, HexColor } from './types.ts';
 
 // Type declarations for DOM APIs (for Deno type checking)
 
@@ -42,7 +42,7 @@ export class GameController {
         const resourceType = target.getAttribute('data-resource-type');
         const resourceColor = target.getAttribute(
           'data-resource-color',
-        ) as HexColor;
+        ) as CoreColor;
         if (resourceType && resourceColor) {
           this.selectResource(resourceType, resourceColor);
         }
@@ -189,25 +189,7 @@ export class GameController {
           <h4>Storage (2 slots)</h4>
           <div class="storage-slots">
             ${
-      _currentPlayer.storage.map((
-        slot: { type: string; color: string },
-        index: number,
-      ) =>
-        `<div class="storage-slot slot-${index} ${slot.type}">
-                <div class="slot-content">
-                  ${
-          slot.type === 'empty'
-            ? '<span class="empty-slot">Empty</span>'
-            : `<span class="item-type">${slot.type}</span>
-                     <span class="color-swatch" style="background-color: ${
-              this.getColorHex(slot.color)
-            }"></span>
-                     <span class="item-color">${slot.color}</span>`
-        }
-                </div>
-              </div>`
-      ).join('')
-    }
+'?'    }
           </div>
         </div>
         <div class="resources-section">
@@ -345,7 +327,7 @@ export class GameController {
     `;
   }
 
-  private selectResource(resourceType: string, resourceColor: HexColor): void {
+  private selectResource(resourceType: string, resourceColor: CoreColor): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
 
     if (resourceType === 'die') {
