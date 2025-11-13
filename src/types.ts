@@ -1,5 +1,5 @@
 // Game type definitions for Quests of Zeus
-import type { HexMap } from './hexmap.ts';
+import type { HexMap } from './hexmap/HexMap.ts';
 import type { Player } from './Player.ts';
 
 // Terrain types for the hexagonal map

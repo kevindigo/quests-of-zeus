@@ -1,7 +1,7 @@
 // Tests for cube distribution in the Quests of Zeus game
 
 import { assert, assertEquals } from '@std/assert';
-import { HexMap } from '../src/hexmap.ts';
+import { HexMap } from '../src/hexmap/HexMap.ts';
 
 Deno.test('Cube distribution - correct number of cube hexes', () => {
   const hexMap = new HexMap();

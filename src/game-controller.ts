@@ -321,13 +321,9 @@ export class GameController {
     const hexMapContainer = document.getElementById('hexMapSVG');
     if (!hexMapContainer) return;
 
-    const grid = gameState.map.serialize();
+    const grid = gameState.map.getHexGrid();
     console.log('Grid structure:', grid);
-    console.log('Grid length:', grid.length);
-
-    if (grid && grid.length > 0) {
-      console.log('First row length:', grid[0]?.length);
-    }
+    console.log('Grid length:', grid.getRadius());
 
     try {
       // Update the hex map SVG with cube hex data

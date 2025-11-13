@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run --allow-read
 
 import { assert, assertEquals } from '@std/assert';
-import { HexMap } from '../src/hexmap.ts';
+import { HexMap } from '../src/hexmap/HexMap.ts';
 
 // Test the new Zeus placement logic
 Deno.test('Zeus placement - randomly in neighbor hexes', () => {

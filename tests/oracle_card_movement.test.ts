@@ -98,7 +98,10 @@ Deno.test('OracleCardMovement - cannot use oracle card twice per turn', () => {
     assert(targetHex);
 
     // Position player on a sea hex adjacent to the target
-    const adjacentHexes = gameState.map.getNeighbors(targetHex.q, targetHex.r);
+    const adjacentHexes = gameState.map.getNeighbors(
+      targetHex.q,
+      targetHex.r,
+    );
     const adjacentSeaHex = adjacentHexes.find((hex) => hex.terrain === 'sea');
 
     if (adjacentSeaHex) {

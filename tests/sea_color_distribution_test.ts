@@ -1,6 +1,7 @@
 import { assert } from '@std/assert';
-import { getMapStatistics, HexMap } from '../src/hexmap.ts';
+import { getMapStatistics } from '../src/hexmap.ts';
 import type { HexGrid } from '../src/hexmap/HexGrid.ts';
+import { HexMap } from '../src/hexmap/HexMap.ts';
 
 interface HexCell {
   q: number;

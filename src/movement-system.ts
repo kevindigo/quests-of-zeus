@@ -1,5 +1,5 @@
 // Movement and reachability logic for Quests of Zeus
-import type { HexMap } from './hexmap.ts';
+import type { HexMap } from './hexmap/HexMap.ts';
 import type { CoreColor, HexCell, HexColor } from './types.ts';
 
 export class MovementSystem {

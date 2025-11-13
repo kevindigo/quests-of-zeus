@@ -9,18 +9,13 @@ export type HexCoordinates = {
 };
 
 export class HexGrid {
-  private static readonly directionVectors: HexCoordinates[] = [
-    { q: 1, r: -1 }, // 0: Northeast
-    { q: 1, r: 0 }, // 1: East
-    { q: 0, r: 1 }, // 2: Southeast
-    { q: -1, r: 1 }, // 3: Southwest
-    { q: -1, r: 0 }, // 4: West
-    { q: 0, r: -1 }, // 5: Northwest
-  ];
-
   public constructor(radius: number, defaultTerrain: TerrainType) {
     this.radius = radius;
     this.grid = HexGrid.generateHexShapedGrid(this.radius, defaultTerrain);
+  }
+
+  public getRadius(): number {
+    return this.radius;
   }
 
   public getCell(coordinates: HexCoordinates): HexCell | null {
@@ -62,16 +57,21 @@ export class HexGrid {
   }
 
   public getNeighborsOf(cell: HexCell): HexCell[] {
-    const q = cell.q;
-    const r = cell.r;
-    const center: HexCoordinates = { q, r };
+    return this.getNeighborsByQR(cell.q, cell.r);
+  }
+
+  public getNeighborsByQR(q: number, r: number): HexCell[] {
+    return this.getNeighborsByCoordinates({ q, r });
+  }
+
+  public getNeighborsByCoordinates(coordinates: HexCoordinates): HexCell[] {
     const neighbors: HexCell[] = [];
     for (
       let direction = 0;
       direction < HexGrid.directionVectors.length;
       ++direction
     ) {
-      const thatPosition = HexGrid.getCoordinates(center, direction);
+      const thatPosition = HexGrid.getCoordinates(coordinates, direction);
       const thatNeighbor = this.getCell(thatPosition);
       if (thatNeighbor) {
         neighbors.push(thatNeighbor);
@@ -79,7 +79,9 @@ export class HexGrid {
     }
     if (neighbors.length < 3) {
       console.error(
-        `Only found ${neighbors.length} neighbors of ${JSON.stringify(cell)}`,
+        `Only found ${neighbors.length} neighbors of ${
+          JSON.stringify(coordinates)
+        }`,
       );
     }
     return neighbors;
@@ -152,6 +154,15 @@ export class HexGrid {
     return this.directionVectors[safeDirection]!;
   }
 
+  private static readonly directionVectors: HexCoordinates[] = [
+    { q: 1, r: -1 }, // 0: Northeast
+    { q: 1, r: 0 }, // 1: East
+    { q: 0, r: 1 }, // 2: Southeast
+    { q: -1, r: 1 }, // 3: Southwest
+    { q: -1, r: 0 }, // 4: West
+    { q: 0, r: -1 }, // 5: Northwest
+  ];
+
   private radius: number;
-  public readonly grid: HexCell[][];
+  private readonly grid: HexCell[][];
 }

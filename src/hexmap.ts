@@ -55,16 +55,3 @@ export function getMapStatistics() {
     totalCells,
   };
 }
-
-export function getMap() {
-  return {
-    map: gameMap.serialize(),
-    dimensions: {
-      width: gameMap.width,
-      height: gameMap.height,
-    },
-  };
-}
-
-// Re-export the HexMap class for backward compatibility
-export { HexMap } from './hexmap/HexMap.ts';

@@ -49,44 +49,24 @@ export class HexMap {
   }
 
   /**
-   * Get the grid for external access
-   */
-  getGrid(): HexCell[][] {
-    return this.grid.grid;
-  }
-
-  /**
    * Get a cell at specific coordinates
    */
   getCell(q: number, r: number): HexCell | null {
-    return this.hexGridOperations.getCellFromGrid(this.getGrid(), q, r);
+    return this.getHexGrid().getCellFromGrid(q, r);
   }
 
   /**
    * Get all neighboring cells for a given cell
    */
   getNeighbors(q: number, r: number): HexCell[] {
-    return this.hexGridOperations.getNeighborsFromGrid(q, r, this.getGrid());
+    return this.getHexGrid().getNeighborsByQR(q, r);
   }
 
   /**
    * Get all cells of a specific terrain type
    */
   getCellsByTerrain(terrain: TerrainType): HexCell[] {
-    const cells: HexCell[] = [];
-    // The grid is a jagged array (hexagon shape), so we need to iterate through each row
-    for (let arrayQ = 0; arrayQ < this.getGrid().length; arrayQ++) {
-      const row = this.getGrid()[arrayQ];
-      if (row) {
-        for (let arrayR = 0; arrayR < row.length; arrayR++) {
-          const cell = row[arrayR];
-          if (cell && cell.terrain === terrain) {
-            cells.push(cell);
-          }
-        }
-      }
-    }
-    return cells;
+    return this.getHexGrid().getCellsOfType(terrain);
   }
 
   /**
@@ -97,13 +77,6 @@ export class HexMap {
     if (cell) {
       cell.color = color;
     }
-  }
-
-  /**
-   * Serialize the map for storage or transmission
-   */
-  serialize(): HexCell[][] {
-    return JSON.parse(JSON.stringify(this.getGrid()));
   }
 
   getNeighborsOfType(
@@ -160,20 +133,7 @@ export class HexMap {
    * This simulates the sea-to-shallows conversion that happens during gameplay
    */
   convertSeaToShallows(): void {
-    const seaCells: HexCell[] = [];
-
-    // Collect all sea cells
-    for (let arrayQ = 0; arrayQ < this.getGrid().length; arrayQ++) {
-      const row = this.getGrid()[arrayQ];
-      if (row) {
-        for (let arrayR = 0; arrayR < row.length; arrayR++) {
-          const cell = row[arrayR];
-          if (cell && cell.terrain === 'sea') {
-            seaCells.push(cell);
-          }
-        }
-      }
-    }
+    const seaCells = this.getHexGrid().getCellsOfType('sea');
 
     // Shuffle sea cells for random selection
     this.utilityService.shuffleArray(seaCells);

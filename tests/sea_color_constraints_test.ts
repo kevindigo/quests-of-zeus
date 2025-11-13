@@ -1,6 +1,6 @@
 import { assert } from '@std/assert';
-import { HexMap } from '../src/hexmap.ts';
 import type { HexGrid } from '../src/hexmap/HexGrid.ts';
+import { HexMap } from '../src/hexmap/HexMap.ts';
 import type { HexCell } from '../src/types.ts';
 
 /**

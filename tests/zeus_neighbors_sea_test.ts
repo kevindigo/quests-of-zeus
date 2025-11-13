@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run --allow-read
 
 import { assertEquals } from '@std/assert';
-import { HexMap } from '../src/hexmap.ts';
+import { HexMap } from '../src/hexmap/HexMap.ts';
 
 // Test that all neighbors of the Zeus hex are sea
 Deno.test('Zeus neighbors should all be sea', () => {

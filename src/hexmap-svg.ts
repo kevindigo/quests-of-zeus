@@ -1,6 +1,7 @@
 // SVG Hex Map Generator for Quests of Zeus
 // Generates an SVG representation of the hex map
 
+import type { HexGrid } from './hexmap/HexGrid.ts';
 import {
   generateCityIcon,
   generateCloudsIcon,
@@ -559,7 +560,7 @@ export class HexMapSVG {
   /**
    * Generate complete SVG for the hex map
    */
-  generateSVG(grid: HexCell[][]): string {
+  generateSVG(grid: HexGrid): string {
     const { cellSize } = this.options;
 
     // For hexagon with radius 6, the dimensions are fixed
@@ -601,19 +602,15 @@ export class HexMapSVG {
   <g class="hex-grid">`;
 
     // Generate all hex cells
-    for (let q = 0; q < grid.length; q++) {
-      const row = grid[q] || [];
-      for (let r = 0; r < row.length; r++) {
-        const cell = row[r];
-        if (cell) {
-          console.log(
-            `Generating hex cell at (${cell.q}, ${cell.r}) with terrain: ${cell.terrain}`,
-          );
-          const { x, y } = this.calculateCellPosition(cell.q, cell.r);
-          svgContent += this.generateHexCell(cell, x, y);
-        }
+    grid.forEachCell((cell) => {
+      if (cell) {
+        console.log(
+          `Generating hex cell at (${cell.q}, ${cell.r}) with terrain: ${cell.terrain}`,
+        );
+        const { x, y } = this.calculateCellPosition(cell.q, cell.r);
+        svgContent += this.generateHexCell(cell, x, y);
       }
-    }
+    });
 
     svgContent += `
   </g>
@@ -626,7 +623,7 @@ export class HexMapSVG {
   /**
    * Generate SVG with interactive JavaScript
    */
-  generateInteractiveSVG(grid: HexCell[][]): { svg: string; script: string } {
+  generateInteractiveSVG(grid: HexGrid): { svg: string; script: string } {
     const svg = this.generateSVG(grid);
 
     const script = `
