@@ -416,17 +416,10 @@ export class TerrainPlacementManager {
    * Convert all remaining shallows to sea (100% conversion)
    */
   private convertShallowsToSea(grid: HexGrid): void {
-
-    for (let arrayQ = 0; arrayQ < grid.grid.length; arrayQ++) {
-      const row = grid.grid[arrayQ];
-      if (row) {
-        for (let arrayR = 0; arrayR < row.length; arrayR++) {
-          const cell = row[arrayR];
-          if (cell && cell.terrain === 'shallow') {
-            cell.terrain = 'sea';
-          }
-        }
+    grid.forEachCell(cell => {
+      if (cell && cell.terrain === 'shallow') {
+        cell.terrain = 'sea';
       }
-    }
+    });
   }
 }
