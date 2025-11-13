@@ -39,11 +39,11 @@ Deno.test('Cube distribution - integration with HexMap', () => {
   const hexMap = new HexMap();
 
   // Verify the grid is properly created
-  const grid = hexMap.getGrid();
-  assert(grid.length > 0, 'Grid should have rows');
+  const grid = hexMap.getHexGrid();
+  assert(grid);
 
   // Verify we can find cube cells
-  const cubeCells = hexMap.getCellsByTerrain('cubes');
+  const cubeCells = grid.getCellsOfType('cubes');
   assertEquals(cubeCells.length, 6, 'Should find exactly 6 cube hexes');
 
   // Verify all cube cells have the correct terrain type and no color assigned
