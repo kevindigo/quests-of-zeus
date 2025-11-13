@@ -11,7 +11,7 @@ export class Player {
     this.id = id;
     this.name = name;
     this.color = color;
-    this.shipPosition = shipPosition;
+    this.shipPosition = { q: shipPosition.q, r: shipPosition.r };
     this.storage = [{ type: 'empty' }, { type: 'empty' }];
     this.completedQuests = 0;
     this.completedQuestTypes = {
@@ -33,10 +33,15 @@ export class Player {
     return { q: this.shipPosition.q, r: this.shipPosition.r };
   }
 
+  public setShipPosition(newCoordinates: HexCoordinates): void {
+    this.shipPosition.q = newCoordinates.q;
+    this.shipPosition.r = newCoordinates.r;
+  }
+
   public readonly id: number;
   public readonly name: string;
   public readonly color: PlayerColorName;
-  public shipPosition: { q: number; r: number };
+  private shipPosition: { q: number; r: number };
   public readonly storage: [StorageSlot, StorageSlot]; // 2 storage slots, each can hold 1 cube or 1 statue
   public completedQuests: number;
   public readonly completedQuestTypes: {

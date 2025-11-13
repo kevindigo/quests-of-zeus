@@ -263,7 +263,7 @@ export class QuestsZeusGameEngine {
     }
 
     // Move the ship
-    player.shipPosition = { q: targetQ, r: targetR };
+    player.setShipPosition({ q: targetQ, r: targetR });
     return { success: true };
   }
 

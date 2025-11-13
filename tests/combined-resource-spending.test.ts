@@ -18,7 +18,7 @@ Deno.test('CombinedResourceSpending - select die for movement', () => {
   // Set up deterministic test conditions
   player.oracleDice = ['blue', 'red', 'green'] as CoreColor[];
   player.favor = 5;
-  player.shipPosition = { q: 0, r: 0 };
+  player.setShipPosition({ q: 0, r: 0 });
 
   // Test that player can select a die and use it for movement
   const availableMoves = engine.getAvailableMovesForDie(
@@ -120,7 +120,7 @@ Deno.test('CombinedResourceSpending - select die to draw oracle card', () => {
 function findAdjacentSeaHex(gameState: GameState, player: Player): HexCell {
   const seaTiles = gameState.map.getCellsByTerrain('sea');
   if (seaTiles.length > 0) {
-    player.shipPosition = { q: seaTiles[0]!.q, r: seaTiles[0]!.r };
+    player.setShipPosition({ q: seaTiles[0]!.q, r: seaTiles[0]!.r });
   }
 
   // Find a sea neighbor

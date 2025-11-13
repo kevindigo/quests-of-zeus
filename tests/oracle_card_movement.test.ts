@@ -48,7 +48,7 @@ Deno.test('OracleCardMovement - spend oracle card for movement', () => {
     const adjacentSeaHex = adjacentHexes.find((hex) => hex.terrain === 'sea');
 
     if (adjacentSeaHex) {
-      player.shipPosition = { q: adjacentSeaHex.q, r: adjacentSeaHex.r };
+      player.setShipPosition({ q: adjacentSeaHex.q, r: adjacentSeaHex.r });
 
       // Test spending oracle card for movement
       const moveResult = engine.spendOracleCardForMovement(
@@ -105,7 +105,7 @@ Deno.test('OracleCardMovement - cannot use oracle card twice per turn', () => {
     const adjacentSeaHex = adjacentHexes.find((hex) => hex.terrain === 'sea');
 
     if (adjacentSeaHex) {
-      player.shipPosition = { q: adjacentSeaHex.q, r: adjacentSeaHex.r };
+      player.setShipPosition({ q: adjacentSeaHex.q, r: adjacentSeaHex.r });
 
       // First oracle card movement should succeed
       const firstMoveResult = engine.spendOracleCardForMovement(

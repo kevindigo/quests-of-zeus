@@ -92,7 +92,7 @@ Deno.test('ResourceSelectionIntegration - resource availability after actions', 
   const gameState = engine.getGameState();
   const seaTiles = gameState.map.getCellsByTerrain('sea');
   if (seaTiles.length > 0) {
-    player.shipPosition = { q: seaTiles[0]!.q, r: seaTiles[0]!.r };
+    player.setShipPosition({ q: seaTiles[0]!.q, r: seaTiles[0]!.r });
   }
   player.usedOracleCardThisTurn = false;
 
