@@ -1,10 +1,31 @@
 import type { TerrainType } from '../game-engine.ts';
 import type { HexCell } from '../types.ts';
 
+export type Direction = 0 | 1 | 2 | 3 | 4 | 5;
+
+export type HexCoordinates = {
+  q: number;
+  r: number;
+}
+
+
 export class HexGrid {
+  private static readonly directionVectors:HexCoordinates[] = [
+    {q: 1, r: -1},  // 0: Northeast
+    {q: 1, r: 0},   // 1: East
+    {q: 0, r: 1},   // 2: Southeast
+    {q: -1, r: 1},  // 3: Southwest
+    {q: -1, r: 0},  // 4: West
+    {q: 0, r: -1},  // 5: Northwest
+  ];
+
   public constructor(radius: number, defaultTerrain: TerrainType) {
     this.radius = radius;
     this.grid = HexGrid.generateHexShapedGrid(this.radius, defaultTerrain);
+  }
+
+  public getCell(coordinates: HexCoordinates): HexCell | null {
+    return this.getCellFromGrid(coordinates.q, coordinates.r);
   }
 
   public getCellFromGrid(
@@ -39,6 +60,21 @@ export class HexGrid {
     }
 
     return null;
+  }
+
+  public getNeighborsOf(cell: HexCell): HexCell[] {
+    const q = cell.q;
+    const r = cell.r;
+    const center:HexCoordinates = {q, r};
+    const neighbors: HexCell[] = [];
+    for(let direction = 0; direction < HexGrid.directionVectors.length; ++direction) {
+      const thatPosition = HexGrid.getCoordinates(center, direction);
+      const thatNeighbor = this.getCell(thatPosition);
+      if(thatNeighbor) {
+        neighbors.push(thatNeighbor);
+      }
+    }
+    return neighbors;
   }
 
   public forEachCell(callback: (cell: HexCell) => void): void {
@@ -83,6 +119,11 @@ export class HexGrid {
     return grid;
   }
 
+  public static getCoordinates(from: HexCoordinates, direction: number): HexCoordinates {
+    const vector = this.getVector(direction);
+    return {q: from.q + vector.q, r: from.r + vector.r};
+  }
+
   public static hexDistance(
     q1: number,
     r1: number,
@@ -92,6 +133,11 @@ export class HexGrid {
     const s1 = -q1 - r1;
     const s2 = -q2 - r2;
     return (Math.abs(q1 - q2) + Math.abs(r1 - r2) + Math.abs(s1 - s2)) / 2;
+  }
+
+  public static getVector(direction: number): HexCoordinates {
+    const safeDirection = direction % this.directionVectors.length;
+    return this.directionVectors[safeDirection]!;
   }
 
   private radius: number;

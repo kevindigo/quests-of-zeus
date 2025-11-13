@@ -1,6 +1,6 @@
 // Tests for the HexGrid class
 
-import { assert, assertEquals } from '@std/assert';
+import { assert, assertArrayIncludes, assertEquals } from '@std/assert';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { HexCell, TerrainType } from '../src/types.ts';
 
@@ -244,4 +244,31 @@ Deno.test('HexGrid - getCellsOfType', () => {
   center.terrain = 'zeus';
   assertEquals(grid.getCellsOfType('zeus').length, 1);
   assertEquals(grid.getCellsOfType('sea').length, 18);
+});
+
+Deno.test('HexGrid - direction and directionVectors', () => {
+  assertEquals(HexGrid.getVector(0), {q: 1, r: -1});
+  assertEquals(HexGrid.getVector(1), {q: 1, r: 0});
+  assertEquals(HexGrid.getVector(2), {q: 0, r: 1});
+  assertEquals(HexGrid.getVector(3), {q: -1, r: 1});
+  assertEquals(HexGrid.getVector(4), {q: -1, r: 0});
+  assertEquals(HexGrid.getVector(5), {q: 0, r: -1});
+
+  assertEquals(HexGrid.getVector(11), {q: 0, r: -1});
+});
+
+Deno.test('HexGrid - getNeighborsFromGrid', () => {
+  const grid = new HexGrid(2, 'sea');
+  const center = grid.getCellFromGrid(0, 0);
+  assert(center);
+  const neighbors = grid.getNeighborsOf(center);
+  assert(neighbors);
+  assertEquals(neighbors.length, 6);
+  const coordinates = neighbors.map(cell => {
+    return {q: cell.q, r: cell.r};
+  });
+  for(let direction = 0; direction < 6; ++direction) {
+    const expected = HexGrid.getVector(direction);
+    assertArrayIncludes(coordinates, [expected]);
+  }
 });
