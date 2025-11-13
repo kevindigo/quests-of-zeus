@@ -2,7 +2,7 @@
 
 import { assertEquals } from '@std/assert';
 import { HexMap } from '../src/hexmap.ts';
-import { type HexCell } from '../src/types.ts';
+import type { HexCell } from '../src/types.ts';
 
 // Test the sea-to-shallows conversion functionality
 Deno.test('Sea to shallows conversion - basic functionality', () => {
@@ -57,7 +57,6 @@ Deno.test('Sea to shallows conversion - basic functionality', () => {
       // 1. Should not have zeus as neighbor
       const hasZeusNeighborCheck = hexMap.hasNeighborOfType(
         shallowCell,
-        grid,
         'zeus',
       );
       assertEquals(
@@ -69,7 +68,6 @@ Deno.test('Sea to shallows conversion - basic functionality', () => {
       // 2. Should not have city as neighbor
       const hasCityNeighborCheck = hexMap.hasNeighborOfType(
         shallowCell,
-        grid,
         'city',
       );
       assertEquals(
@@ -94,7 +92,6 @@ Deno.test('Sea to shallows conversion - basic functionality', () => {
       // Constraint 1: Should not have zeus as neighbor
       const hasZeusNeighborConstraint = hexMap.hasNeighborOfType(
         shallowCell,
-        grid,
         'zeus',
       );
       if (hasZeusNeighborConstraint) {
@@ -104,7 +101,6 @@ Deno.test('Sea to shallows conversion - basic functionality', () => {
       // Constraint 2: Should not have city as neighbor
       const hasCityNeighborConstraint = hexMap.hasNeighborOfType(
         shallowCell,
-        grid,
         'city',
       );
       if (hasCityNeighborConstraint) {
@@ -124,7 +120,7 @@ Deno.test('Sea to shallows conversion - basic functionality', () => {
           }
         } else if (neighbor.terrain !== 'shallow') {
           // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
-          if (!hexMap.hasNeighborOfType(neighbor, grid, 'sea')) {
+          if (!hexMap.hasNeighborOfType(neighbor, 'sea')) {
             allConstraintsSatisfied = false;
             break;
           }

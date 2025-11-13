@@ -34,7 +34,6 @@ Deno.test('OracleCardSpending - spend for movement', () => {
   const zeus = findZeus(gameState.map);
   const adjacentSeaHexes = gameState.map.getNeighborsOfType(
     zeus,
-    gameState.map.getGrid(),
     'sea',
   );
   const destination = adjacentSeaHexes[0]!;

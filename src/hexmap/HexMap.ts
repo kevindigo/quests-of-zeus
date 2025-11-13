@@ -108,14 +108,10 @@ export class HexMap {
 
   getNeighborsOfType(
     cell: HexCell,
-    grid: HexCell[][],
     terrainType: TerrainType,
   ): HexCell[] {
-    const neighbors = this.hexGridOperations.getNeighborsFromGrid(
-      cell.q,
-      cell.r,
-      grid,
-    );
+    const neighbors = this.getHexGrid().getNeighborsOf(cell);
+
     if (neighbors) {
       return neighbors.filter((neighborCell) => {
         return neighborCell.terrain === terrainType;
@@ -130,10 +126,9 @@ export class HexMap {
    */
   hasNeighborOfType(
     cell: HexCell,
-    grid: HexCell[][],
     terrainType: TerrainType,
   ): boolean {
-    const relevantNeighbors = this.getNeighborsOfType(cell, grid, terrainType);
+    const relevantNeighbors = this.getNeighborsOfType(cell, terrainType);
     return relevantNeighbors.length > 0;
   }
 
@@ -206,12 +201,12 @@ export class HexMap {
    */
   private isEligibleForSeaToShallowsConversion(cell: HexCell): boolean {
     // Constraint 1: Should not have zeus as neighbor
-    if (this.hasNeighborOfType(cell, this.getGrid(), 'zeus')) {
+    if (this.hasNeighborOfType(cell, 'zeus')) {
       return false;
     }
 
     // Constraint 2: Should not have city as neighbor
-    if (this.hasNeighborOfType(cell, this.getGrid(), 'city')) {
+    if (this.hasNeighborOfType(cell, 'city')) {
       return false;
     }
 
@@ -232,7 +227,7 @@ export class HexMap {
         }
       } else if (neighbor.terrain !== 'shallow') {
         // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
-        if (!this.hasNeighborOfType(neighbor, this.getGrid(), 'sea')) {
+        if (!this.hasNeighborOfType(neighbor, 'sea')) {
           return false;
         }
       }
