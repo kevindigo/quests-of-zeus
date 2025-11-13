@@ -1,5 +1,5 @@
 import type { TerrainType } from '../game-engine.ts';
-import type { HexCell } from './HexCell.ts';
+import { HexCell } from './HexCell.ts';
 
 export type Direction = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -120,7 +120,7 @@ export class HexGrid {
       for (let r = r1; r <= r2; r++) {
         const color = 'none';
         const terrain = defaultTerrain;
-        const cell: HexCell = { q, r, terrain, color };
+        const cell = new HexCell(q, r, terrain, color);
 
         row.push(cell);
       }

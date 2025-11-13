@@ -411,7 +411,8 @@ export class GameController {
     // Group players by their position
     const playersByPosition = new Map<string, Player[]>();
     players.forEach((player) => {
-      const positionKey = `${player.shipPosition.q},${player.shipPosition.r}`;
+      const position = player.getShipPosition();
+      const positionKey = `${position.q},${position.r}`;
       if (!playersByPosition.has(positionKey)) {
         playersByPosition.set(positionKey, []);
       }
@@ -640,9 +641,10 @@ export class GameController {
 
     switch (phase) {
       case 'action': {
+        const position = currentPlayer.getShipPosition();
         const currentCell = this.gameEngine.getGameState().map.getCell(
-          currentPlayer.shipPosition.q,
-          currentPlayer.shipPosition.r,
+          position.q,
+          position.r,
         );
 
         let actions = '';
@@ -1129,9 +1131,10 @@ export class GameController {
 
   private collectOffering(): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const position = currentPlayer.getShipPosition();
     const currentCell = this.gameEngine.getGameState().map.getCell(
-      currentPlayer.shipPosition.q,
-      currentPlayer.shipPosition.r,
+      position.q,
+      position.r,
     );
 
     if (currentCell?.terrain === 'cubes' && currentCell.color !== 'none') {

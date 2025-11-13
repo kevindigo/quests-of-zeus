@@ -1,4 +1,5 @@
 import type { HexColor, TerrainType } from '../types.ts';
+import type { HexCoordinates } from './HexGrid.ts';
 
 export class HexCell {
   public constructor(
@@ -12,11 +13,13 @@ export class HexCell {
     this.terrain = terrain;
     this.color = color || 'none';
   }
-  // Coordinates using axial coordinate system for hex grids
+
+  public getCoordinates(): HexCoordinates {
+    return { q: this.q, r: this.r };
+  }
+
   public readonly q: number; // Column coordinate
   public readonly r: number; // Row coordinate
-
-  // Cell characteristics
   public terrain: TerrainType;
   public color: HexColor;
 }
