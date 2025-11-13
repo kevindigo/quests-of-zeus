@@ -45,7 +45,7 @@ export class TerrainPlacementManager {
     });
 
     // Place Zeus randomly in one of the neighbor hexes of the center
-    this.placeZeus(grid.grid);
+    this.placeZeus(grid);
 
     // Place special terrain types randomly
     this.placeSpecialTerrain(grid.grid);
@@ -71,7 +71,7 @@ export class TerrainPlacementManager {
    * Place Zeus randomly in one of the neighbor hexes of the center
    * and set all neighbors of the chosen Zeus hex to sea
    */
-  private placeZeus(grid: HexCell[][]): void {
+  private placeZeus(grid: HexGrid): void {
     // Define the 6 neighbor hexes around the center
     const neighborHexes = [
       [1, 0],
@@ -89,7 +89,7 @@ export class TerrainPlacementManager {
     const zeusR = zeusDelta[1] || 0;
 
     // Find the cell for Zeus placement
-    const zeusCell = this.hexGridOperations.getCellFromGrid(grid, zeusQ, zeusR);
+    const zeusCell = grid.getCellFromGrid(zeusQ, zeusR);
     if (zeusCell) {
       // Place Zeus at the selected neighbor hex
       zeusCell.terrain = 'zeus';
@@ -186,7 +186,7 @@ export class TerrainPlacementManager {
    * @param zeusR - The r coordinate of the Zeus cell
    */
   private setZeusNeighborsToSea(
-    grid: HexCell[][],
+    grid: HexGrid,
     zeusQ: number,
     zeusR: number,
   ): void {
@@ -201,8 +201,7 @@ export class TerrainPlacementManager {
         direction,
       );
       if (adjacentCoords) {
-        const neighbor = this.hexGridOperations.getCellFromGrid(
-          grid,
+        const neighbor = grid.getCellFromGrid(
           adjacentCoords.q,
           adjacentCoords.r,
         );
