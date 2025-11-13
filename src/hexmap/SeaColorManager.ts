@@ -2,6 +2,7 @@
 
 import type { HexCell, HexColor } from '../types.ts';
 import { COLOR_WHEEL } from '../types.ts';
+import type { HexGrid } from './HexGrid.ts';
 import type { HexGridOperations } from './HexGridOperations.ts';
 import type { UtilityService } from './UtilityService.ts';
 
@@ -22,23 +23,9 @@ export class SeaColorManager {
    * This ensures no adjacent sea hexes have the same color (like map coloring algorithm)
    * and favors the color that has been used least so far for better distribution
    */
-  assignColorsToSeaHexes(grid: HexCell[][]): void {
-    const seaCells: HexCell[] = [];
+  assignColorsToSeaHexes(grid: HexGrid): void {
+    const seaCells = grid.getCellsOfType('sea');
 
-    // Collect all sea cells
-    for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-      const row = grid[arrayQ];
-      if (row) {
-        for (let arrayR = 0; arrayR < row.length; arrayR++) {
-          const cell = row[arrayR];
-          if (cell && cell.terrain === 'sea') {
-            seaCells.push(cell);
-          }
-        }
-      }
-    }
-
-    // If there are no sea cells, nothing to do
     if (seaCells.length === 0) {
       return;
     }
@@ -64,7 +51,7 @@ export class SeaColorManager {
       const neighbors = this.hexGridOperations.getNeighborsFromGrid(
         cell.q,
         cell.r,
-        grid,
+        grid.grid,
       );
 
       for (const neighbor of neighbors) {
@@ -110,7 +97,7 @@ export class SeaColorManager {
       } else {
         // If no colors available (should be rare), choose the least conflicting color
         // This minimizes same-color adjacencies when elimination is impossible
-        cell.color = this.getLeastConflictingColor(cell, grid);
+        cell.color = this.getLeastConflictingColor(cell, grid.grid);
         colorCounts[cell.color]++;
       }
     }
