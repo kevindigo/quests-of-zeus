@@ -1,7 +1,7 @@
 // Tests for combined die and oracle card spending functionality
 // Verifies that users can select either resource type and use it for movement, favor gain, or oracle card drawing
 
-import { assert, assertEquals } from '@std/assert';
+import { assert, assertEquals, assertGreater } from '@std/assert';
 import { GameController } from '../src/game-controller.ts';
 import { type GameState, QuestsZeusGameEngine } from '../src/game-engine.ts';
 import type { Player } from '../src/Player.ts';
@@ -150,10 +150,16 @@ Deno.test('CombinedResourceSpending - select oracle card for movement', () => {
 
   // Find a sea hex to start from instead of Zeus hex
   const gameState = engine.getGameState();
-  const destination = findAdjacentSeaHex(gameState, player);
+  const origin = gameState.map.getZeus();
+  const zeusNeighbors = gameState.map.getNeighbors(origin.q, origin.r);
+  assert(zeusNeighbors);
+  assertGreater(zeusNeighbors.length, 0);
+  const destination = zeusNeighbors[0];
+  assert(destination);
+  const destinationColor = destination.color as CoreColor;
 
   // Set up deterministic test conditions
-  player.oracleCards = [destination.color as CoreColor];
+  player.oracleCards = [destinationColor];
   player.favor = 0;
   player.usedOracleCardThisTurn = false;
 
@@ -161,7 +167,7 @@ Deno.test('CombinedResourceSpending - select oracle card for movement', () => {
     player.id,
     destination.q,
     destination.r,
-    destination.color as CoreColor,
+    destinationColor,
     0,
   );
   assert(
