@@ -1,29 +1,22 @@
 import { assertEquals } from '@std/assert';
-import { type HexColor } from '../src/types.ts';
 import { HexMap } from '../src/hexmap.ts';
+import type { HexColor } from '../src/types.ts';
 
 Deno.test('Cloud hex color assignment', () => {
   const hexMap = new HexMap();
-  const grid = hexMap.getGrid();
+  const grid = hexMap.getHexGrid();
 
   // Find all cloud hexes
   const cloudHexes: { q: number; r: number; color: HexColor }[] = [];
-
-  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-    const row = grid[arrayQ];
-    if (row) {
-      for (let arrayR = 0; arrayR < row.length; arrayR++) {
-        const cell = row[arrayR];
-        if (cell && cell.terrain === 'clouds') {
-          cloudHexes.push({
-            q: cell.q,
-            r: cell.r,
-            color: cell.color,
-          });
-        }
-      }
+  grid.forEachCell(cell => {
+    if (cell && cell.terrain === 'clouds') {
+      cloudHexes.push({
+        q: cell.q,
+        r: cell.r,
+        color: cell.color,
+      });
     }
-  }
+  });
 
   // Count colors
   const colorCounts: Record<HexColor, number> = {
