@@ -1,7 +1,7 @@
 import { assert } from '@std/assert';
-import { getMapStatistics } from '../src/hexmap.ts';
 import type { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { HexMap } from '../src/hexmap/HexMap.ts';
+import type { HexColor } from '../src/types.ts';
 
 interface HexCell {
   q: number;
@@ -37,7 +37,7 @@ Deno.test('Sea color distribution - balanced distribution across multiple maps',
   for (let i = 0; i < testCount; i++) {
     const map = new HexMap();
     const grid = map.getHexGrid();
-    const stats = getMapStatistics();
+    const stats = getMapStatistics(grid);
 
     // Count conflicts
     const conflicts = countAdjacentSameColorSeaHexes(map, grid);
@@ -186,4 +186,38 @@ function getPairKey(cell1: unknown, cell2: unknown): string {
   const [minQ, maxQ] = [Math.min(c1.q, c2.q), Math.max(c1.q, c2.q)];
   const [minR, maxR] = [Math.min(c1.r, c2.r), Math.max(c1.r, c2.r)];
   return `${minQ},${minR}-${maxQ},${maxR}`;
+}
+
+function getMapStatistics(grid: HexGrid) {
+  const terrainCounts: Record<string, number> = {};
+  const seaColorCounts: Record<HexColor, number> = {
+    none: 0,
+    red: 0,
+    pink: 0,
+    blue: 0,
+    black: 0,
+    green: 0,
+    yellow: 0,
+  };
+  let totalCells = 0;
+
+  grid.forEachCell((cell) => {
+    if (cell) {
+      terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
+
+      // Count sea tiles by color
+      if (cell.terrain === 'sea' && cell.color !== 'none') {
+        seaColorCounts[cell.color] = (seaColorCounts[cell.color] || 0) + 1;
+      }
+
+      totalCells++;
+    }
+  });
+
+  return {
+    radius: grid.getRadius(),
+    terrainCounts,
+    seaColorCounts,
+    totalCells,
+  };
 }
