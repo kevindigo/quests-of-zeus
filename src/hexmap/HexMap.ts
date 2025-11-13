@@ -102,7 +102,7 @@ export class HexMap {
    * Serialize the map for storage or transmission
    */
   serialize(): HexCell[][] {
-    return JSON.parse(JSON.stringify(this.grid.grid));
+    return JSON.parse(JSON.stringify(this.getGrid()));
   }
 
   getNeighborsOfType(
