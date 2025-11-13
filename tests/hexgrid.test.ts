@@ -223,3 +223,16 @@ Deno.test('HexGrid - different radius values', () => {
     });
   });
 });
+
+Deno.test('HexGrid - getCellFromGrid', () => {
+  const grid = new HexGrid(2, 'sea');
+  const center = grid.getCellFromGrid(0, 0);
+  assert(center);
+  assertEquals(center.q, 0);
+  assertEquals(center.r, 0);
+
+  const top = grid.getCellFromGrid(0, -2);
+  assert(top);
+  assertEquals(top.q, 0);
+  assertEquals(top.r, -2);
+});

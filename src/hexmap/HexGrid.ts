@@ -7,6 +7,40 @@ export class HexGrid {
     this.grid = HexGrid.generateHexShapedGrid(this.radius, defaultTerrain);
   }
 
+  public getCellFromGrid(
+    q: number,
+    r: number,
+  ): HexCell | null {
+    // Check if grid is valid
+    if (!this.grid || !Array.isArray(this.grid) || this.grid.length === 0) {
+      return null;
+    }
+
+    // Convert axial coordinates to array indices
+    // q ranges from -radius to radius, so array index = q + radius
+    const arrayQ = q + this.radius;
+
+    if (arrayQ < 0 || arrayQ >= this.grid.length) {
+      return null;
+    }
+
+    const row = this.grid[arrayQ];
+    if (!row) {
+      return null;
+    }
+
+    // For hexagonal grid, we need to find the cell with matching r coordinate
+    // Since each row only contains valid r coordinates for that q
+    // ToDo: change to array .find
+    for (const cell of row) {
+      if (cell.r === r) {
+        return cell;
+      }
+    }
+
+    return null;
+  }
+
   public forEachCell(callback: (cell: HexCell) => void): void {
     // Simply iterate through all rows and all cells in each row
     // The grid structure already contains all valid cells
