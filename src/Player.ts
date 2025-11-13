@@ -1,3 +1,4 @@
+import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import type { CoreColor, PlayerColorName, StorageSlot } from './types.ts';
 
 export class Player {
@@ -19,12 +20,17 @@ export class Player {
       foundation: 0,
       cloud: 0,
     };
+    this.oracleCards = [];
     this.oracleDice = [];
+    this.recoloredCards = {};
+    this.recoloredDice = {};
     this.favor = 0;
     this.shield = 0;
-    this.recoloredDice = {};
-    this.oracleCards = [];
     this.usedOracleCardThisTurn = false;
+  }
+
+  public getShipPosition(): HexCoordinates {
+    return { q: this.shipPosition.q, r: this.shipPosition.r };
   }
 
   public readonly id: number;
