@@ -1,6 +1,7 @@
 // Refactored HexMap class - Main container that coordinates between services
 
-import type { HexCell, HexColor, TerrainType } from '../types.ts';
+import type { HexColor, TerrainType } from '../types.ts';
+import type { HexCell } from './HexCell.ts';
 import type { HexGrid } from './HexGrid.ts';
 import { HexGridOperations } from './HexGridOperations.ts';
 import { PathfindingService } from './PathfindingService.ts';

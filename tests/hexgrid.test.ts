@@ -1,8 +1,9 @@
 // Tests for the HexGrid class
 
 import { assert, assertArrayIncludes, assertEquals } from '@std/assert';
+import type { HexCell } from '../src/hexmap/HexCell.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
-import type { HexCell, TerrainType } from '../src/types.ts';
+import type { TerrainType } from '../src/types.ts';
 
 Deno.test('HexGrid - constructor and basic properties', () => {
   const radius = 3;

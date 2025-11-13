@@ -1,7 +1,8 @@
 // SeaColorManager - Handles sea hex coloring with constraint satisfaction
 
-import type { HexCell, HexColor } from '../types.ts';
+import type { HexColor } from '../types.ts';
 import { COLOR_WHEEL } from '../types.ts';
+import type { HexCell } from './HexCell.ts';
 import type { HexGrid } from './HexGrid.ts';
 import type { UtilityService } from './UtilityService.ts';
 

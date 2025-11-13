@@ -1,6 +1,7 @@
 // PathfindingService - Pathfinding and connectivity analysis
 
-import type { HexCell, TerrainType } from '../types.ts';
+import type { TerrainType } from '../types.ts';
+import type { HexCell } from './HexCell.ts';
 import type { HexGrid } from './HexGrid.ts';
 import type { HexGridOperations } from './HexGridOperations.ts';
 

@@ -4,8 +4,9 @@
 import { assert, assertEquals, assertGreater } from '@std/assert';
 import { GameController } from '../src/game-controller.ts';
 import { type GameState, QuestsZeusGameEngine } from '../src/game-engine.ts';
+import type { HexCell } from '../src/hexmap/HexCell.ts';
 import type { Player } from '../src/Player.ts';
-import type { CoreColor, HexCell } from '../src/types.ts';
+import type { CoreColor } from '../src/types.ts';
 
 Deno.test('CombinedResourceSpending - select die for movement', () => {
   const engine = new QuestsZeusGameEngine();

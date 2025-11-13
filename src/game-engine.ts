@@ -7,7 +7,6 @@ export { QuestsZeusGameEngine } from './game-engine-core.ts';
 export type {
   CubeHex,
   GameState,
-  HexCell,
   HexColor,
   MonsterHex,
   MoveShipResult,

@@ -1,7 +1,8 @@
 // TerrainPlacementManager - Handles all terrain generation and placement logic
 
-import type { HexCell, HexColor, TerrainType } from '../types.ts';
+import type { HexColor, TerrainType } from '../types.ts';
 import { COLOR_WHEEL } from '../types.ts';
+import type { HexCell } from './HexCell.ts';
 import { HexGrid } from './HexGrid.ts';
 import type { HexGridOperations } from './HexGridOperations.ts';
 import type { SeaColorManager } from './SeaColorManager.ts';

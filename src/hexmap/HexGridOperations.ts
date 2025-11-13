@@ -1,6 +1,6 @@
 // HexGridOperations - Core hex grid coordinate calculations and operations
 
-import type { HexCell } from '../types.ts';
+import type { HexCell } from './HexCell.ts';
 
 export class HexGridOperations {
   /**

@@ -1,6 +1,6 @@
 // Game initialization and setup for Quests of Zeus
-import type { HexCell } from './game-engine.ts';
-import { HexMap } from '../src/hexmap/HexMap.ts';
+import type { HexCell } from './hexmap/HexCell.ts';
+import { HexMap } from './hexmap/HexMap.ts';
 import { Player } from './Player.ts';
 import {
   type CityHex,
