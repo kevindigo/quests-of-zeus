@@ -1,5 +1,6 @@
 import { assert } from '@std/assert';
 import { HexMap } from '../src/hexmap.ts';
+import type { HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { HexCell } from '../src/types.ts';
 
 /**
@@ -15,7 +16,7 @@ Deno.test('Sea color constraints - adjacent sea hexes should not have same color
 
   for (let i = 0; i < testCount; i++) {
     const map = new HexMap();
-    const grid = map.getGrid();
+    const grid = map.getHexGrid();
     const conflicts = countAdjacentSameColorSeaHexes(map, grid);
 
     totalConflicts += conflicts;
@@ -48,36 +49,30 @@ Deno.test('Sea color constraints - adjacent sea hexes should not have same color
  */
 function countAdjacentSameColorSeaHexes(
   map: HexMap,
-  grid: HexCell[][],
+  grid: HexGrid,
 ): number {
   let conflicts = 0;
   const processedPairs = new Set<string>();
 
-  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-    const row = grid[arrayQ];
-    if (row && Array.isArray(row)) {
-      for (let arrayR = 0; arrayR < row.length; arrayR++) {
-        const cell = row[arrayR];
-        if (cell && cell.terrain === 'sea' && cell.color !== 'none') {
-          const neighbors = map.getNeighbors(cell.q, cell.r);
+  grid.forEachCell((cell) => {
+    if (cell && cell.terrain === 'sea' && cell.color !== 'none') {
+      const neighbors = map.getNeighbors(cell.q, cell.r);
 
-          for (const neighbor of neighbors) {
-            if (neighbor.terrain === 'sea' && neighbor.color !== 'none') {
-              // Create a unique key for this pair to avoid double counting
-              const pairKey = getPairKey(cell, neighbor);
+      for (const neighbor of neighbors) {
+        if (neighbor.terrain === 'sea' && neighbor.color !== 'none') {
+          // Create a unique key for this pair to avoid double counting
+          const pairKey = getPairKey(cell, neighbor);
 
-              if (
-                !processedPairs.has(pairKey) && cell.color === neighbor.color
-              ) {
-                conflicts++;
-                processedPairs.add(pairKey);
-              }
-            }
+          if (
+            !processedPairs.has(pairKey) && cell.color === neighbor.color
+          ) {
+            conflicts++;
+            processedPairs.add(pairKey);
           }
         }
       }
     }
-  }
+  });
 
   return conflicts;
 }
