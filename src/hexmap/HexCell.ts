@@ -1,11 +1,22 @@
 import type { HexColor, TerrainType } from '../types.ts';
 
-export interface HexCell {
+export class HexCell {
+  public constructor(
+    q: number,
+    r: number,
+    terrain: TerrainType,
+    color?: HexColor,
+  ) {
+    this.q = q;
+    this.r = r;
+    this.terrain = terrain;
+    this.color = color || 'none';
+  }
   // Coordinates using axial coordinate system for hex grids
-  q: number; // Column coordinate
-  r: number; // Row coordinate
+  public readonly q: number; // Column coordinate
+  public readonly r: number; // Row coordinate
 
   // Cell characteristics
-  terrain: TerrainType;
-  color: HexColor;
+  public terrain: TerrainType;
+  public color: HexColor;
 }
