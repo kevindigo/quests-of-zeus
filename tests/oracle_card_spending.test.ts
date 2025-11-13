@@ -60,7 +60,7 @@ Deno.test('OracleCardSpending - spend for movement', () => {
 
   // Ship position should be updated
   assertEquals(
-    player.shipPosition,
+    player.getShipPosition(),
     { q: destination!.q, r: destination!.r },
     'Ship position should be updated',
   );
@@ -131,6 +131,7 @@ Deno.test('OracleCardSpending - cannot use more than one oracle card per turn', 
   );
 });
 
+// FixMe: This test seems to be intermittent
 Deno.test('OracleCardSpending - movement with favor spending', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();

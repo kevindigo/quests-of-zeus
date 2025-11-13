@@ -52,7 +52,7 @@ Deno.test('CombinedResourceSpending - select die for movement', () => {
 
     // Ship position should be updated
     assertEquals(
-      player.shipPosition,
+      player.getShipPosition(),
       { q: targetMove.q, r: targetMove.r },
       'Ship position should be updated',
     );
@@ -125,8 +125,8 @@ function findAdjacentSeaHex(gameState: GameState, player: Player): HexCell {
 
   // Find a sea neighbor
   const neighbors = gameState.map.getNeighbors(
-    player.shipPosition.q,
-    player.shipPosition.r,
+    player.getShipPosition().q,
+    player.getShipPosition().r,
   );
   const seaNeighbors = neighbors.filter((candidateCell: HexCell) => {
     return (candidateCell.terrain == 'sea');
@@ -134,9 +134,9 @@ function findAdjacentSeaHex(gameState: GameState, player: Player): HexCell {
   const destination = seaNeighbors[0];
   assert(
     destination,
-    `No sea neighbors found from ${JSON.stringify(player.shipPosition)} among ${
-      JSON.stringify(neighbors)
-    }`,
+    `No sea neighbors found from ${
+      JSON.stringify(player.getShipPosition())
+    } among ${JSON.stringify(neighbors)}`,
   );
 
   return destination;
@@ -187,7 +187,7 @@ Deno.test('CombinedResourceSpending - select oracle card for movement', () => {
 
   // Ship position should be updated
   assertEquals(
-    player.shipPosition,
+    player.getShipPosition(),
     { q: destination.q, r: destination.r },
     'Ship position should be updated',
   );
@@ -245,7 +245,7 @@ Deno.test('CombinedResourceSpending - cannot use both die and oracle card in sam
   // Set up deterministic test conditions
   const gameState = engine.getGameState();
 
-  const shipAt = player.shipPosition;
+  const shipAt = player.getShipPosition();
   const originCell = gameState.map.getCell(shipAt.q, shipAt.r);
   assert(originCell);
   const destination = findAdjacentSeaHex(gameState, player);

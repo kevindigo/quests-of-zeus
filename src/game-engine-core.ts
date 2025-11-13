@@ -140,7 +140,7 @@ export class QuestsZeusGameEngine {
     const player = this.getValidPlayer(playerId);
 
     // First validate the move using the same logic as getAvailableMovesForOracleCard
-    const currentPos = player.shipPosition;
+    const currentPos = player.getShipPosition();
     const targetCell = this.state!.map.getCell(targetQ, targetR);
 
     if (!targetCell) {
@@ -436,7 +436,7 @@ export class QuestsZeusGameEngine {
     const player = this.state!.players.find((p) => p.id === playerId);
     if (!player || this.state!.phase !== 'action') return [];
 
-    const currentPos = player.shipPosition;
+    const currentPos = player.getShipPosition();
     const movementRange = 3 + (favorSpent || 0);
     const reachableSeaTiles = this.movementSystem!.getReachableSeaTiles(
       currentPos.q,
@@ -506,16 +506,16 @@ export class QuestsZeusGameEngine {
     for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
       const movementRange = 3 + favorSpent;
       const reachableSeaTiles = this.movementSystem!.getReachableSeaTiles(
-        player.shipPosition.q,
-        player.shipPosition.r,
+        player.getShipPosition().q,
+        player.getShipPosition().r,
         movementRange,
       );
 
       for (const seaTile of reachableSeaTiles) {
         if (
           seaTile.color === effectiveDieColor &&
-          !(seaTile.q === player.shipPosition.q &&
-            seaTile.r === player.shipPosition.r)
+          !(seaTile.q === player.getShipPosition().q &&
+            seaTile.r === player.getShipPosition().r)
         ) {
           const totalFavorCost = favorSpent + recoloringCost;
           if (totalFavorCost <= availableFavor) {

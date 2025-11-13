@@ -59,8 +59,8 @@ Deno.test('OracleCardMovement - spend oracle card for movement', () => {
       );
 
       assert(moveResult.success, 'Oracle card movement should succeed');
-      assertEquals(player.shipPosition.q, targetHex.q);
-      assertEquals(player.shipPosition.r, targetHex.r);
+      assertEquals(player.getShipPosition().q, targetHex.q);
+      assertEquals(player.getShipPosition().r, targetHex.r);
       assertEquals(
         player.oracleCards.length,
         0,

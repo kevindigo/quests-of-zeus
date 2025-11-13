@@ -11,8 +11,8 @@ Deno.test('Debug movement system', () => {
   // Check what type of hex the player starts on
   const gameState = engine.getGameState();
   const startCell = gameState.map.getCell(
-    player.shipPosition.q,
-    player.shipPosition.r,
+    player.getShipPosition().q,
+    player.getShipPosition().r,
   );
   assertEquals(startCell?.terrain, 'zeus');
 });

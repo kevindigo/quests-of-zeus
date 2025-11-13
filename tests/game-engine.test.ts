@@ -56,7 +56,7 @@ Deno.test('GameEngine - player creation', () => {
   assertEquals(player2?.name, 'Player 2');
 
   // All players should start on the same position (Zeus hex)
-  assertEquals(player1?.shipPosition, player2?.shipPosition);
+  assertEquals(player1?.getShipPosition(), player2?.getShipPosition());
 
   // Check that players start with empty storage
   assertEquals(player1?.storage.length, 2);
@@ -271,34 +271,34 @@ Deno.test('GameEngine - all players start on Zeus hex', () => {
 
   // Verify all players start on the Zeus hex
   assertEquals(
-    player1.shipPosition,
+    player1.getShipPosition(),
     zeusPosition,
     'Player 1 should start on Zeus hex',
   );
   assertEquals(
-    player2.shipPosition,
+    player2.getShipPosition(),
     zeusPosition,
     'Player 2 should start on Zeus hex',
   );
 
   // Verify all players start on the same position
   assertEquals(
-    player1.shipPosition,
-    player2.shipPosition,
+    player1.getShipPosition(),
+    player2.getShipPosition(),
     'All players should start on the same position',
   );
 
   // Verify the starting position is actually a Zeus hex
   const player1Cell = state.map.getCell(
-    player1.shipPosition.q,
-    player1.shipPosition.r,
+    player1.getShipPosition().q,
+    player1.getShipPosition().r,
   );
   assertExists(player1Cell);
   assertEquals(player1Cell.terrain, 'zeus', 'Player 1 should be on a Zeus hex');
 
   const player2Cell = state.map.getCell(
-    player2.shipPosition.q,
-    player2.shipPosition.r,
+    player2.getShipPosition().q,
+    player2.getShipPosition().r,
   );
   assertExists(player2Cell);
   assertEquals(player2Cell.terrain, 'zeus', 'Player 2 should be on a Zeus hex');

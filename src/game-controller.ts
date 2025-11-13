@@ -1552,7 +1552,7 @@ export class GameController {
       recoloringCost = player.recoloredCards[cardColor].favorCost;
     }
 
-    const currentPos = player.shipPosition;
+    const currentPos = player.getShipPosition();
     const availableMoves: { q: number; r: number; favorCost: number }[] = [];
 
     // Calculate maximum favor that can be spent for extra range moves

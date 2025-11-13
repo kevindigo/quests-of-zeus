@@ -253,7 +253,7 @@ Deno.test('ResourceSelectionIntegration - combined resource actions in sequence'
     'Oracle card usage flag should be set',
   );
   assertEquals(
-    player.shipPosition,
+    player.getShipPosition(),
     { q: destination.q, r: destination.r },
     'Ship position should be updated',
   );

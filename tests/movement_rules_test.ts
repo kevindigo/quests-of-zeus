@@ -2,7 +2,7 @@
 
 import { assert, assertEquals } from '@std/assert';
 import { QuestsZeusGameEngine } from '../src/game-engine.ts';
-import { CoreColor } from '../src/types.ts';
+import type { CoreColor } from '../src/types.ts';
 
 Deno.test('Movement Rules - Only move to sea spaces', () => {
   const engine = new QuestsZeusGameEngine();
@@ -153,7 +153,7 @@ Deno.test('Movement Rules - Successful movement consumes die', () => {
 
     // Check that ship position was updated
     assertEquals(
-      samePlayer.shipPosition,
+      samePlayer.getShipPosition(),
       { q: firstMove.q, r: firstMove.r },
       'Ship position should be updated',
     );
