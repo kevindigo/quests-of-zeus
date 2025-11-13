@@ -5,24 +5,17 @@ import { HexMap } from '../src/hexmap.ts';
 
 Deno.test('Terrain distribution - all expected terrains present', () => {
   const hexMap = new HexMap();
-  const grid = hexMap.getGrid();
+  const grid = hexMap.getHexGrid();
 
   // Count terrain types
   const terrainCounts: Record<string, number> = {};
   let totalCells = 0;
-
-  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-    const row = grid[arrayQ];
-    if (row) {
-      for (let arrayR = 0; arrayR < row.length; arrayR++) {
-        const cell = row[arrayR];
-        if (cell) {
-          terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
-          totalCells++;
-        }
-      }
+  grid.forEachCell((cell) => {
+    if (cell) {
+      terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
+      totalCells++;
     }
-  }
+  });
 
   // Check if all expected terrain types are present
   const expectedTerrains = [
@@ -53,24 +46,17 @@ Deno.test('Terrain distribution - all expected terrains present', () => {
 
 Deno.test('Terrain distribution - constraints satisfied', () => {
   const hexMap = new HexMap();
-  const grid = hexMap.getGrid();
+  const grid = hexMap.getHexGrid();
 
   // Count terrain types
   const terrainCounts: Record<string, number> = {};
   let totalCells = 0;
-
-  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-    const row = grid[arrayQ];
-    if (row) {
-      for (let arrayR = 0; arrayR < row.length; arrayR++) {
-        const cell = row[arrayR];
-        if (cell) {
-          terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
-          totalCells++;
-        }
-      }
+  grid.forEachCell((cell) => {
+    if (cell) {
+      terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
+      totalCells++;
     }
-  }
+  });
 
   // Check specific constraints
   const shallowCount = terrainCounts['shallow'] || 0;
@@ -91,24 +77,11 @@ Deno.test('Terrain distribution - constraints satisfied', () => {
 
 Deno.test('Terrain distribution - basic grid structure', () => {
   const hexMap = new HexMap();
-  const grid = hexMap.getGrid();
-
-  // Additional assertions for basic sanity
-  assertGreater(grid.length, 0, 'Grid should have at least one row');
-
-  // Count total cells to verify grid has content
+  const grid = hexMap.getHexGrid();
   let totalCells = 0;
-  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-    const row = grid[arrayQ];
-    if (row) {
-      for (let arrayR = 0; arrayR < row.length; arrayR++) {
-        const cell = row[arrayR];
-        if (cell) {
-          totalCells++;
-        }
-      }
-    }
-  }
+  grid.forEachCell(() => {
+    ++totalCells;
+  });
 
   assertGreater(totalCells, 0, 'Grid should have at least one cell');
 });
