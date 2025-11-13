@@ -239,7 +239,7 @@ Deno.test('HexGrid - getCellFromGrid', () => {
 
 Deno.test('HexGrid - getCellsOfType', () => {
   const grid = new HexGrid(2, 'sea');
-  const center = grid.getCellFromGrid(0,0);
+  const center = grid.getCellFromGrid(0, 0);
   assert(center);
   center.terrain = 'zeus';
   assertEquals(grid.getCellsOfType('zeus').length, 1);
@@ -247,14 +247,14 @@ Deno.test('HexGrid - getCellsOfType', () => {
 });
 
 Deno.test('HexGrid - direction and directionVectors', () => {
-  assertEquals(HexGrid.getVector(0), {q: 1, r: -1});
-  assertEquals(HexGrid.getVector(1), {q: 1, r: 0});
-  assertEquals(HexGrid.getVector(2), {q: 0, r: 1});
-  assertEquals(HexGrid.getVector(3), {q: -1, r: 1});
-  assertEquals(HexGrid.getVector(4), {q: -1, r: 0});
-  assertEquals(HexGrid.getVector(5), {q: 0, r: -1});
+  assertEquals(HexGrid.getVector(0), { q: 1, r: -1 });
+  assertEquals(HexGrid.getVector(1), { q: 1, r: 0 });
+  assertEquals(HexGrid.getVector(2), { q: 0, r: 1 });
+  assertEquals(HexGrid.getVector(3), { q: -1, r: 1 });
+  assertEquals(HexGrid.getVector(4), { q: -1, r: 0 });
+  assertEquals(HexGrid.getVector(5), { q: 0, r: -1 });
 
-  assertEquals(HexGrid.getVector(11), {q: 0, r: -1});
+  assertEquals(HexGrid.getVector(11), { q: 0, r: -1 });
 });
 
 Deno.test('HexGrid - getNeighborsFromGrid', () => {
@@ -264,10 +264,10 @@ Deno.test('HexGrid - getNeighborsFromGrid', () => {
   const neighbors = grid.getNeighborsOf(center);
   assert(neighbors);
   assertEquals(neighbors.length, 6);
-  const coordinates = neighbors.map(cell => {
-    return {q: cell.q, r: cell.r};
+  const coordinates = neighbors.map((cell) => {
+    return { q: cell.q, r: cell.r };
   });
-  for(let direction = 0; direction < 6; ++direction) {
+  for (let direction = 0; direction < 6; ++direction) {
     const expected = HexGrid.getVector(direction);
     assertArrayIncludes(coordinates, [expected]);
   }
