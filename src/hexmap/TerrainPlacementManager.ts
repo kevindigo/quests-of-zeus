@@ -6,7 +6,7 @@ import type { HexCell } from './HexCell.ts';
 import { HexGrid } from './HexGrid.ts';
 import type { HexGridOperations } from './HexGridOperations.ts';
 import type { SeaColorManager } from './SeaColorManager.ts';
-import type { UtilityService } from './UtilityService.ts';
+import type { UtilityService } from '../UtilityService.ts';
 
 export class TerrainPlacementManager {
   private hexGridOperations: HexGridOperations;

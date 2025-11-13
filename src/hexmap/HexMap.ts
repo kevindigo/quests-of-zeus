@@ -7,7 +7,7 @@ import { HexGridOperations } from './HexGridOperations.ts';
 import { PathfindingService } from './PathfindingService.ts';
 import { SeaColorManager } from './SeaColorManager.ts';
 import { TerrainPlacementManager } from './TerrainPlacementManager.ts';
-import { UtilityService } from './UtilityService.ts';
+import { UtilityService } from '../UtilityService.ts';
 
 export class HexMap {
   constructor() {
