@@ -156,9 +156,6 @@ Deno.test('OracleCardSpending - movement with favor spending', () => {
     const favorCandidates = candidates.filter((candidate) => {
       return candidate.favorCost > 0;
     });
-    console.log(
-      `DEBUG: ${color} found ${candidates.length} total, ${favorCandidates.length} needing favor`,
-    );
     if (!foundMove && favorCandidates.length > 0) {
       foundMove = true;
       const move = favorCandidates[0]!;

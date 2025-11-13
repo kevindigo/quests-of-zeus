@@ -90,10 +90,6 @@ export class GameInitializer {
       player.oracleDice = initialDice, // All players start with dice already rolled
         player.favor = 3 + i, // First player gets 3 favor, each subsequent gets 1 more
         players.push(player);
-      console.log(`player is a Player? ${player instanceof Player}`);
-      console.log(
-        `player positin = ${JSON.stringify(player.getShipPosition())}`,
-      );
     }
 
     return players;
