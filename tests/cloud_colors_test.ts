@@ -8,7 +8,7 @@ Deno.test('Cloud hex color assignment', () => {
 
   // Find all cloud hexes
   const cloudHexes: { q: number; r: number; color: HexColor }[] = [];
-  grid.forEachCell(cell => {
+  grid.forEachCell((cell) => {
     if (cell && cell.terrain === 'clouds') {
       cloudHexes.push({
         q: cell.q,

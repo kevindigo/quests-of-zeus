@@ -416,7 +416,7 @@ export class TerrainPlacementManager {
    * Convert all remaining shallows to sea (100% conversion)
    */
   private convertShallowsToSea(grid: HexGrid): void {
-    grid.forEachCell(cell => {
+    grid.forEachCell((cell) => {
       if (cell && cell.terrain === 'shallow') {
         cell.terrain = 'sea';
       }

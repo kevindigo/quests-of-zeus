@@ -190,18 +190,24 @@ export class GameInitializer {
     if (monsterCells.length !== 9) {
       console.warn(`Expected 9 monster cells but found ${monsterCells.length}`);
     }
-    if(monsterCells.length !== 9) {
-      throw new Error(`monsterCells expected 9 but have ${monsterCells.length}`);
+    if (monsterCells.length !== 9) {
+      throw new Error(
+        `monsterCells expected 9 but have ${monsterCells.length}`,
+      );
     }
 
     // Shuffle the monster cells for random distribution
     const shuffledMonsterCells = [...monsterCells];
-    if(monsterCells.length !== 9) {
-      throw new Error(`monsterCells expected 9 but have ${monsterCells.length}`);
+    if (monsterCells.length !== 9) {
+      throw new Error(
+        `monsterCells expected 9 but have ${monsterCells.length}`,
+      );
     }
     this.shuffleArray(shuffledMonsterCells);
-    if(shuffledMonsterCells.length !== 9) {
-      throw new Error(`shuffledMonsterCells expected 9 but have ${shuffledMonsterCells.length}`);
+    if (shuffledMonsterCells.length !== 9) {
+      throw new Error(
+        `shuffledMonsterCells expected 9 but have ${shuffledMonsterCells.length}`,
+      );
     }
 
     // Create a shuffled list of all monster colors to place
@@ -222,8 +228,10 @@ export class GameInitializer {
         monsterColors: [],
       });
     }
-    if(monsterHexes.length !== 9) {
-      throw new Error(`monsterHexes expected 9 but have ${monsterHexes.length}`);
+    if (monsterHexes.length !== 9) {
+      throw new Error(
+        `monsterHexes expected 9 but have ${monsterHexes.length}`,
+      );
     }
 
     // Distribute monsters evenly by stepping through hexes and colors
@@ -234,11 +242,15 @@ export class GameInitializer {
 
     while (colorIndex < totalColors) {
       if (monsterHexes.length !== 9) {
-        throw new Error(`Expected 9 hexes but have ${monsterHexes.length} (colorIndex is ${colorIndex})`);
+        throw new Error(
+          `Expected 9 hexes but have ${monsterHexes.length} (colorIndex is ${colorIndex})`,
+        );
       }
       const currentHex = monsterHexes[hexIndex];
       if (!currentHex) {
-        throw new Error(`Missing monster hex (${hexIndex} of ${monsterHexes.length})?`);
+        throw new Error(
+          `Missing monster hex (${hexIndex} of ${monsterHexes.length})?`,
+        );
       }
       const currentColor = monsterColorsToPlace[colorIndex];
       if (currentColor) {

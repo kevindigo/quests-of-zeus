@@ -153,7 +153,7 @@ function countAdjacentSameColorSeaHexes(
   let conflicts = 0;
   const processedPairs = new Set<string>();
 
-  grid.forEachCell(cell => {      
+  grid.forEachCell((cell) => {
     if (cell && cell.terrain === 'sea' && cell.color !== 'none') {
       const neighbors = map.getNeighbors(cell.q, cell.r);
 

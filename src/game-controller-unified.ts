@@ -188,8 +188,7 @@ export class GameController {
         <div class="storage">
           <h4>Storage (2 slots)</h4>
           <div class="storage-slots">
-            ${
-'?'    }
+            ${'?'}
           </div>
         </div>
         <div class="resources-section">

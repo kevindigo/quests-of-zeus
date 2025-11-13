@@ -6,17 +6,16 @@ export type Direction = 0 | 1 | 2 | 3 | 4 | 5;
 export type HexCoordinates = {
   q: number;
   r: number;
-}
-
+};
 
 export class HexGrid {
-  private static readonly directionVectors:HexCoordinates[] = [
-    {q: 1, r: -1},  // 0: Northeast
-    {q: 1, r: 0},   // 1: East
-    {q: 0, r: 1},   // 2: Southeast
-    {q: -1, r: 1},  // 3: Southwest
-    {q: -1, r: 0},  // 4: West
-    {q: 0, r: -1},  // 5: Northwest
+  private static readonly directionVectors: HexCoordinates[] = [
+    { q: 1, r: -1 }, // 0: Northeast
+    { q: 1, r: 0 }, // 1: East
+    { q: 0, r: 1 }, // 2: Southeast
+    { q: -1, r: 1 }, // 3: Southwest
+    { q: -1, r: 0 }, // 4: West
+    { q: 0, r: -1 }, // 5: Northwest
   ];
 
   public constructor(radius: number, defaultTerrain: TerrainType) {
@@ -65,17 +64,23 @@ export class HexGrid {
   public getNeighborsOf(cell: HexCell): HexCell[] {
     const q = cell.q;
     const r = cell.r;
-    const center:HexCoordinates = {q, r};
+    const center: HexCoordinates = { q, r };
     const neighbors: HexCell[] = [];
-    for(let direction = 0; direction < HexGrid.directionVectors.length; ++direction) {
+    for (
+      let direction = 0;
+      direction < HexGrid.directionVectors.length;
+      ++direction
+    ) {
       const thatPosition = HexGrid.getCoordinates(center, direction);
       const thatNeighbor = this.getCell(thatPosition);
-      if(thatNeighbor) {
+      if (thatNeighbor) {
         neighbors.push(thatNeighbor);
       }
     }
-    if(neighbors.length < 3) {
-      console.error(`Only found ${neighbors.length} neighbors of ${JSON.stringify(cell)}`);
+    if (neighbors.length < 3) {
+      console.error(
+        `Only found ${neighbors.length} neighbors of ${JSON.stringify(cell)}`,
+      );
     }
     return neighbors;
   }
@@ -89,10 +94,11 @@ export class HexGrid {
   }
 
   public getCellsOfType(terrainType: TerrainType): HexCell[] {
-    const results:HexCell[] = [];
-    this.forEachCell(cell => {
-      if(cell.terrain === terrainType)
+    const results: HexCell[] = [];
+    this.forEachCell((cell) => {
+      if (cell.terrain === terrainType) {
         results.push(cell);
+      }
     });
 
     return results;
@@ -122,9 +128,12 @@ export class HexGrid {
     return grid;
   }
 
-  public static getCoordinates(from: HexCoordinates, direction: number): HexCoordinates {
+  public static getCoordinates(
+    from: HexCoordinates,
+    direction: number,
+  ): HexCoordinates {
     const vector = this.getVector(direction);
-    return {q: from.q + vector.q, r: from.r + vector.r};
+    return { q: from.q + vector.q, r: from.r + vector.r };
   }
 
   public static hexDistance(

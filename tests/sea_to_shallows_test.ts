@@ -10,11 +10,11 @@ Deno.test('Sea to shallows conversion - basic functionality', () => {
 
   // Count terrain distribution
   const terrainCounts: Record<string, number> = {};
-  grid.forEachCell(cell => {
+  grid.forEachCell((cell) => {
     if (cell) {
       terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
     }
-  })
+  });
 
   const shallowCount = terrainCounts['shallow'] || 0;
   // Sea count variable intentionally unused for debugging
