@@ -11,6 +11,7 @@ Deno.test('HexGrid - constructor and basic properties', () => {
 
   // Test that grid is created
   assert(grid, 'Grid should be created');
+  assertEquals(grid.getRadius(), radius);
 });
 
 Deno.test('HexGrid - static generateHexShapedGrid', () => {
