@@ -146,12 +146,12 @@ export class HexMap {
   canReachZeusFromSeaNeighbor(
     seaNeighbor: HexCell,
     candidateCell: HexCell,
-    grid: HexCell[][],
+    grid: HexGrid,
   ): boolean {
     return this.pathfindingService.canReachZeusFromSeaNeighbor(
       seaNeighbor,
       candidateCell,
-      grid,
+      grid.grid,
     );
   }
 

@@ -94,7 +94,7 @@ Deno.test('Sea to shallows conversion - basic functionality', () => {
         if (neighbor.terrain === 'sea') {
           // For sea neighbors: check if they can reach zeus (excluding the candidate cell)
           if (
-            !hexMap.canReachZeusFromSeaNeighbor(neighbor, shallowCell, grid.grid)
+            !hexMap.canReachZeusFromSeaNeighbor(neighbor, shallowCell, grid)
           ) {
             allConstraintsSatisfied = false;
             break;
