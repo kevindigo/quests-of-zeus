@@ -74,6 +74,9 @@ export class HexGrid {
         neighbors.push(thatNeighbor);
       }
     }
+    if(neighbors.length < 3) {
+      console.error(`Only found ${neighbors.length} neighbors of ${JSON.stringify(cell)}`);
+    }
     return neighbors;
   }
 
