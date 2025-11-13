@@ -44,6 +44,10 @@ export class HexMap {
     return zeuses[0]!;
   }
 
+  public getHexGrid(): HexGrid {
+    return this.grid;
+  }
+
   /**
    * Get the grid for external access
    */
