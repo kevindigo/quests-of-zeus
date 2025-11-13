@@ -42,13 +42,21 @@ export class HexGrid {
   }
 
   public forEachCell(callback: (cell: HexCell) => void): void {
-    // Simply iterate through all rows and all cells in each row
-    // The grid structure already contains all valid cells
     for (const row of this.grid) {
       for (const cell of row) {
         callback(cell);
       }
     }
+  }
+
+  public getCellsOfType(terrainType: TerrainType): HexCell[] {
+    const results:HexCell[] = [];
+    this.forEachCell(cell => {
+      if(cell.terrain === terrainType)
+        results.push(cell);
+    });
+
+    return results;
   }
 
   public static generateHexShapedGrid(

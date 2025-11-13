@@ -236,3 +236,12 @@ Deno.test('HexGrid - getCellFromGrid', () => {
   assertEquals(top.q, 0);
   assertEquals(top.r, -2);
 });
+
+Deno.test('HexGrid - getCellsOfType', () => {
+  const grid = new HexGrid(2, 'sea');
+  const center = grid.getCellFromGrid(0,0);
+  assert(center);
+  center.terrain = 'zeus';
+  assertEquals(grid.getCellsOfType('zeus').length, 1);
+  assertEquals(grid.getCellsOfType('sea').length, 18);
+});
