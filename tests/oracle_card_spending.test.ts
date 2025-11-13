@@ -145,6 +145,7 @@ Deno.test('OracleCardSpending - movement with favor spending', () => {
   player.usedOracleCardThisTurn = false;
 
   // Find a sea tile that requires favor spending to reach
+  // FixMe: This test can occaisionally fail!
   let foundMove = false;
   COLOR_WHEEL.forEach((color) => {
     const candidates = engine.getAvailableMovesForDie(
