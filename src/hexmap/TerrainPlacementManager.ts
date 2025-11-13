@@ -406,11 +406,7 @@ export class TerrainPlacementManager {
    * Check if a cell has at least one neighbor that is shallows or sea
    */
   private hasShallowsOrSeaNeighbor(cell: HexCell, grid: HexGrid): boolean {
-    const neighbors = this.hexGridOperations.getNeighborsFromGrid(
-      cell.q,
-      cell.r,
-      grid.grid,
-    );
+    const neighbors = grid.getNeighborsOf(cell);
     return neighbors.some((neighbor) =>
       neighbor.terrain === 'shallow' || neighbor.terrain === 'sea'
     );
