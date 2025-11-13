@@ -151,7 +151,7 @@ export class HexMap {
     return this.pathfindingService.canReachZeusFromSeaNeighbor(
       seaNeighbor,
       candidateCell,
-      grid.grid,
+      grid,
     );
   }
 
@@ -220,7 +220,7 @@ export class HexMap {
           !this.pathfindingService.canReachZeusFromSeaNeighbor(
             neighbor,
             cell,
-            this.getGrid(),
+            this.getHexGrid(),
           )
         ) {
           return false;

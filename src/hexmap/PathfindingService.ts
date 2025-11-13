@@ -1,6 +1,7 @@
 // PathfindingService - Pathfinding and connectivity analysis
 
 import type { HexCell, TerrainType } from '../types.ts';
+import type { HexGrid } from './HexGrid.ts';
 import type { HexGridOperations } from './HexGridOperations.ts';
 
 export class PathfindingService {
@@ -68,7 +69,7 @@ export class PathfindingService {
   canReachZeusFromSeaNeighbor(
     seaNeighbor: HexCell,
     candidateCell: HexCell,
-    grid: HexCell[][],
+    grid: HexGrid,
   ): boolean {
     const visited = new Set<string>();
     const queue: HexCell[] = [seaNeighbor];
@@ -88,11 +89,7 @@ export class PathfindingService {
           continue; // Skip if adjacent cell is off the map
         }
 
-        const adjacentCell = this.hexGridOperations.getCellFromGrid(
-          grid,
-          adjacentCoords.q,
-          adjacentCoords.r,
-        );
+        const adjacentCell = grid.getCell(adjacentCoords);
         if (!adjacentCell) {
           continue; // Skip if adjacent cell is off the map
         }
