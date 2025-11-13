@@ -188,12 +188,21 @@ export class GameInitializer {
 
     // Check if we have exactly 9 monster hexes as expected
     if (monsterCells.length !== 9) {
-      console.warn(`Expected 9 monster hexes but found ${monsterCells.length}`);
+      console.warn(`Expected 9 monster cells but found ${monsterCells.length}`);
+    }
+    if(monsterCells.length !== 9) {
+      throw new Error(`monsterCells expected 9 but have ${monsterCells.length}`);
     }
 
-    // Shuffle the monster hexes for random distribution
-    const shuffledMonsterHexes = [...monsterCells];
-    this.shuffleArray(shuffledMonsterHexes);
+    // Shuffle the monster cells for random distribution
+    const shuffledMonsterCells = [...monsterCells];
+    if(monsterCells.length !== 9) {
+      throw new Error(`monsterCells expected 9 but have ${monsterCells.length}`);
+    }
+    this.shuffleArray(shuffledMonsterCells);
+    if(shuffledMonsterCells.length !== 9) {
+      throw new Error(`shuffledMonsterCells expected 9 but have ${shuffledMonsterCells.length}`);
+    }
 
     // Create a shuffled list of all monster colors to place
     const monsterColors = [...COLOR_WHEEL];
@@ -206,12 +215,15 @@ export class GameInitializer {
     }
 
     // Initialize empty monster hexes
-    for (const cell of shuffledMonsterHexes) {
+    for (const cell of shuffledMonsterCells) {
       monsterHexes.push({
         q: cell.q,
         r: cell.r,
         monsterColors: [],
       });
+    }
+    if(monsterHexes.length !== 9) {
+      throw new Error(`monsterHexes expected 9 but have ${monsterHexes.length}`);
     }
 
     // Distribute monsters evenly by stepping through hexes and colors
@@ -221,9 +233,12 @@ export class GameInitializer {
     const totalColors = monsterColorsToPlace.length;
 
     while (colorIndex < totalColors) {
+      if (monsterHexes.length !== 9) {
+        throw new Error(`Expected 9 hexes but have ${monsterHexes.length} (colorIndex is ${colorIndex})`);
+      }
       const currentHex = monsterHexes[hexIndex];
       if (!currentHex) {
-        throw new Error('Missing monster hex?');
+        throw new Error(`Missing monster hex (${hexIndex} of ${monsterHexes.length})?`);
       }
       const currentColor = monsterColorsToPlace[colorIndex];
       if (currentColor) {
