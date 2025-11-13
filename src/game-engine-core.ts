@@ -406,7 +406,10 @@ export class QuestsZeusGameEngine {
   // Public getters
   public getGameState(): GameState {
     this.ensureInitialized();
-    const stateCopy = JSON.parse(JSON.stringify(this.state));
+    if (!this.state) {
+      throw new Error(`Cannot getGameState because state is null`);
+    }
+    const stateCopy = this.state.deepCopy();
     stateCopy.map = this.state!.map;
     return stateCopy;
   }
