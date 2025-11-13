@@ -9,16 +9,6 @@ import { TerrainPlacementManager } from './TerrainPlacementManager.ts';
 import { UtilityService } from './UtilityService.ts';
 
 export class HexMap {
-  private grid: HexGrid;
-  readonly width: number = 13; // -6 to +6 inclusive
-  readonly height: number = 13; // -6 to +6 inclusive
-
-  private terrainPlacementManager: TerrainPlacementManager;
-  private seaColorManager: SeaColorManager;
-  private hexGridOperations: HexGridOperations;
-  private pathfindingService: PathfindingService;
-  private utilityService: UtilityService;
-
   constructor() {
     this.utilityService = new UtilityService();
     this.hexGridOperations = new HexGridOperations();
@@ -196,4 +186,14 @@ export class HexMap {
 
     return true;
   }
+
+  private grid: HexGrid;
+  readonly width: number = 13; // -6 to +6 inclusive
+  readonly height: number = 13; // -6 to +6 inclusive
+
+  private terrainPlacementManager: TerrainPlacementManager;
+  private seaColorManager: SeaColorManager;
+  private hexGridOperations: HexGridOperations;
+  private pathfindingService: PathfindingService;
+  private utilityService: UtilityService;
 }
