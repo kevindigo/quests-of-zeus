@@ -1,7 +1,4 @@
-import {
-  assert,
-  assertEquals,
-} from 'https://deno.land/std@0.178.0/testing/asserts.ts';
+import { assert, assertEquals } from '@std/assert';
 import { QuestsZeusGameEngine } from '../src/game-engine.ts';
 
 Deno.test('Card recolor UI integration test', () => {
