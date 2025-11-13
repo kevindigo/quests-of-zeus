@@ -3,27 +3,20 @@ import {
   assertGreaterOrEqual,
   assertNotEquals,
 } from '@std/assert';
-import { type HexCell } from '../src/types.ts';
 import { HexMap } from '../src/hexmap.ts';
+import type { HexCell } from '../src/types.ts';
 
 Deno.test('Temple color assignment - should have exactly 6 temples', () => {
   const hexMap = new HexMap();
-  const grid = hexMap.getGrid();
+  const grid = hexMap.getHexGrid();
 
   // Find all temple cells
   const templeCells: HexCell[] = [];
-
-  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-    const row = grid[arrayQ];
-    if (row) {
-      for (let arrayR = 0; arrayR < row.length; arrayR++) {
-        const cell = row[arrayR];
-        if (cell && cell.terrain === 'temple') {
-          templeCells.push(cell);
-        }
-      }
+  grid.forEachCell((cell) => {
+    if (cell && cell.terrain === 'temple') {
+      templeCells.push(cell);
     }
-  }
+  });
 
   // Check if we have the expected number of temples
   assertEquals(templeCells.length, 6, 'Should have exactly 6 temples');
@@ -31,22 +24,15 @@ Deno.test('Temple color assignment - should have exactly 6 temples', () => {
 
 Deno.test('Temple color assignment - all temples should have colors', () => {
   const hexMap = new HexMap();
-  const grid = hexMap.getGrid();
+  const grid = hexMap.getHexGrid();
 
   // Find all temple cells
   const templeCells: HexCell[] = [];
-
-  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-    const row = grid[arrayQ];
-    if (row) {
-      for (let arrayR = 0; arrayR < row.length; arrayR++) {
-        const cell = row[arrayR];
-        if (cell && cell.terrain === 'temple') {
-          templeCells.push(cell);
-        }
-      }
+  grid.forEachCell((cell) => {
+    if (cell && cell.terrain === 'temple') {
+      templeCells.push(cell);
     }
-  }
+  });
 
   // Check that all temples have colors assigned
   const coloredTemples = templeCells.filter((cell) => cell.color !== 'none');
@@ -78,22 +64,15 @@ Deno.test('Temple color assignment - all temples should have colors', () => {
 
 Deno.test('Temple color assignment - temples should have colored outlines', () => {
   const hexMap = new HexMap();
-  const grid = hexMap.getGrid();
+  const grid = hexMap.getHexGrid();
 
   // Find all temple cells and collect their colors
   const templeColors = new Set<string>();
-
-  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-    const row = grid[arrayQ];
-    if (row) {
-      for (let arrayR = 0; arrayR < row.length; arrayR++) {
-        const cell = row[arrayR];
-        if (cell && cell.terrain === 'temple' && cell.color !== 'none') {
-          templeColors.add(cell.color);
-        }
-      }
+  grid.forEachCell((cell) => {
+    if (cell && cell.terrain === 'temple' && cell.color !== 'none') {
+      templeColors.add(cell.color);
     }
-  }
+  });
 
   // Check that temples have colored outlines (at least one unique color)
   assertGreaterOrEqual(
@@ -105,22 +84,15 @@ Deno.test('Temple color assignment - temples should have colored outlines', () =
 
 Deno.test('Temple color assignment - all temples should have unique coordinates', () => {
   const hexMap = new HexMap();
-  const grid = hexMap.getGrid();
+  const grid = hexMap.getHexGrid();
 
   // Find all temple cells
   const templeCells: HexCell[] = [];
-
-  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-    const row = grid[arrayQ];
-    if (row) {
-      for (let arrayR = 0; arrayR < row.length; arrayR++) {
-        const cell = row[arrayR];
-        if (cell && cell.terrain === 'temple') {
-          templeCells.push(cell);
-        }
-      }
+  grid.forEachCell((cell) => {
+    if (cell && cell.terrain === 'temple') {
+      templeCells.push(cell);
     }
-  }
+  });
 
   // Check that no two temples share the same coordinates
   const coordinateSet = new Set<string>();
@@ -139,23 +111,4 @@ Deno.test('Temple color assignment - all temples should have unique coordinates'
     0,
     'All temples should have unique coordinates',
   );
-});
-
-Deno.test('HexMap grid structure - should have valid grid', () => {
-  const hexMap = new HexMap();
-  const grid = hexMap.getGrid();
-
-  // Basic grid structure checks
-  assertGreaterOrEqual(grid.length, 1, 'Grid should have at least one row');
-
-  // Check that grid is properly structured
-  grid.forEach((row, rowIndex) => {
-    if (row) {
-      assertGreaterOrEqual(
-        row.length,
-        1,
-        `Row ${rowIndex} should have at least one cell`,
-      );
-    }
-  });
 });
