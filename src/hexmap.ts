@@ -29,28 +29,21 @@ export function getMapStatistics() {
     green: 0,
     yellow: 0,
   };
-  const grid = gameMap.getGrid();
+  const grid = gameMap.getHexGrid();
   let totalCells = 0;
 
-  // The grid is a jagged array (hexagon shape), so we need to iterate through each row
-  for (let arrayQ = 0; arrayQ < grid.length; arrayQ++) {
-    const row = grid[arrayQ];
-    if (row) {
-      for (let arrayR = 0; arrayR < row.length; arrayR++) {
-        const cell = row[arrayR];
-        if (cell) {
-          terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
+  grid.forEachCell((cell) => {
+    if (cell) {
+      terrainCounts[cell.terrain] = (terrainCounts[cell.terrain] || 0) + 1;
 
-          // Count sea tiles by color
-          if (cell.terrain === 'sea' && cell.color !== 'none') {
-            seaColorCounts[cell.color] = (seaColorCounts[cell.color] || 0) + 1;
-          }
-
-          totalCells++;
-        }
+      // Count sea tiles by color
+      if (cell.terrain === 'sea' && cell.color !== 'none') {
+        seaColorCounts[cell.color] = (seaColorCounts[cell.color] || 0) + 1;
       }
+
+      totalCells++;
     }
-  }
+  });
 
   return {
     dimensions: {
