@@ -23,10 +23,7 @@ export class HexMap {
     this.utilityService = new UtilityService();
     this.hexGridOperations = new HexGridOperations();
     this.pathfindingService = new PathfindingService(this.hexGridOperations);
-    this.seaColorManager = new SeaColorManager(
-      this.hexGridOperations,
-      this.utilityService,
-    );
+    this.seaColorManager = new SeaColorManager(this.utilityService);
     this.terrainPlacementManager = new TerrainPlacementManager(
       this.hexGridOperations,
       this.seaColorManager,

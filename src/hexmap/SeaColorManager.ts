@@ -3,18 +3,14 @@
 import type { HexCell, HexColor } from '../types.ts';
 import { COLOR_WHEEL } from '../types.ts';
 import type { HexGrid } from './HexGrid.ts';
-import type { HexGridOperations } from './HexGridOperations.ts';
 import type { UtilityService } from './UtilityService.ts';
 
 export class SeaColorManager {
-  private hexGridOperations: HexGridOperations;
   private utilityService: UtilityService;
 
   constructor(
-    hexGridOperations: HexGridOperations,
     utilityService: UtilityService,
   ) {
-    this.hexGridOperations = hexGridOperations;
     this.utilityService = utilityService;
   }
 
@@ -48,11 +44,7 @@ export class SeaColorManager {
     for (const cell of seaCells) {
       // Get colors used by adjacent sea cells
       const adjacentColors = new Set<HexColor>();
-      const neighbors = this.hexGridOperations.getNeighborsFromGrid(
-        cell.q,
-        cell.r,
-        grid.grid,
-      );
+      const neighbors = grid.getNeighborsOf(cell);
 
       for (const neighbor of neighbors) {
         if (neighbor.terrain === 'sea' && neighbor.color !== 'none') {
@@ -97,7 +89,7 @@ export class SeaColorManager {
       } else {
         // If no colors available (should be rare), choose the least conflicting color
         // This minimizes same-color adjacencies when elimination is impossible
-        cell.color = this.getLeastConflictingColor(cell, grid.grid);
+        cell.color = this.getLeastConflictingColor(cell, grid);
         colorCounts[cell.color]++;
       }
     }
@@ -111,12 +103,8 @@ export class SeaColorManager {
    * Get the color that would cause the fewest conflicts with adjacent sea hexes
    * Used as fallback when no conflict-free color is available
    */
-  private getLeastConflictingColor(cell: HexCell, grid: HexCell[][]): HexColor {
-    const neighbors = this.hexGridOperations.getNeighborsFromGrid(
-      cell.q,
-      cell.r,
-      grid,
-    );
+  private getLeastConflictingColor(cell: HexCell, grid: HexGrid): HexColor {
+    const neighbors = grid.getNeighborsOf(cell);
 
     // Initialize conflict counts for all colors using a more TypeScript-friendly approach
     const colorConflicts = {} as Record<HexColor, number>;
