@@ -6,7 +6,7 @@ import type { CoreColor, HexColor } from './types.ts';
 
 // Type declarations for DOM APIs (for Deno type checking)
 
-export class GameController {
+export class GameControllerUnified {
   private gameEngine: QuestsZeusGameEngine;
   private selectedResourceType: 'die' | 'card' | null = null;
   private selectedResourceColor: HexColor | null = null;
