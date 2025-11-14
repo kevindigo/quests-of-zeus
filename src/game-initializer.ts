@@ -4,7 +4,7 @@ import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMap } from './hexmap/HexMap.ts';
 import { Player } from './Player.ts';
 import {
-  type CityHex,
+  CityHex,
   COLOR_WHEEL,
   type CoreColor,
   CubeHex,
@@ -263,11 +263,7 @@ export class GameInitializer {
     }
 
     const cityHexes = cityCells.map((cityCell) => {
-      return {
-        q: cityCell.q,
-        r: cityCell.r,
-        statues: 3,
-      };
+      return new CityHex(cityCell.getCoordinates());
     });
 
     return cityHexes;

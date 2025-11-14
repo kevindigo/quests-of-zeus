@@ -99,7 +99,13 @@ export class MonsterHex {
   monsterColors: HexColor[]; // Array of monster colors on this hex (no duplicates, max 2 per hex)
 }
 
-export interface CityHex {
+export class CityHex {
+  public constructor(coordinates: HexCoordinates) {
+    this.q = coordinates.q;
+    this.r = coordinates.r;
+    this.statues = 3;
+  }
+
   q: number;
   r: number;
   statues: number;
