@@ -38,6 +38,10 @@ export class SeaColorManager {
 
     // Assign colors using constraint-based approach with least-used color preference
     for (const cell of seaCells) {
+      if (cell.color != 'none') {
+        continue;
+      }
+
       // Get colors used by adjacent sea cells
       const adjacentColors = new Set<HexColor>();
       const neighbors = grid.getNeighborsOf(cell);
