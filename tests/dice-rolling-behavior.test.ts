@@ -111,13 +111,13 @@ Deno.test('DiceRolling - round advances when all players have taken turns', () =
   engine.initializeGame();
 
   const initialState = engine.getGameState();
-  assertEquals(initialState.round, 1, 'Game should start at round 1');
+  assertEquals(initialState.getRound(), 1, 'Game should start at round 1');
 
   // End Player 1's turn (Player 2 becomes current)
   engine.endTurn();
   const stateAfterPlayer1Turn = engine.getGameState();
   assertEquals(
-    stateAfterPlayer1Turn.round,
+    stateAfterPlayer1Turn.getRound(),
     1,
     'Round should still be 1 after first endTurn',
   );
@@ -126,7 +126,7 @@ Deno.test('DiceRolling - round advances when all players have taken turns', () =
   engine.endTurn();
   const stateAfterPlayer2Turn = engine.getGameState();
   assertEquals(
-    stateAfterPlayer2Turn.round,
+    stateAfterPlayer2Turn.getRound(),
     2,
     'Round should advance to 2 after all players have taken turns',
   );

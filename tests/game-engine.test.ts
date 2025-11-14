@@ -15,7 +15,7 @@ Deno.test('GameEngine - initialization', () => {
 
   assertExists(state.map);
   assertEquals(state.players.length, 2);
-  assertEquals(state.round, 1);
+  assertEquals(state.getRound(), 1);
   assertEquals(state.getPhase(), 'action'); // Game starts in action phase since dice are already rolled
 
   // All players should start with dice already rolled

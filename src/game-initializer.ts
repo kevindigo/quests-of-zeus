@@ -53,7 +53,6 @@ export class GameInitializer {
       map,
       players,
       0,
-      1,
     );
 
     state.setPhase('action');

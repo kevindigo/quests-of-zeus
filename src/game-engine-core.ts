@@ -374,7 +374,7 @@ export class QuestsZeusGameEngine {
 
     this.state!.currentPlayerIndex = nextPlayerIndex;
     if (this.state!.currentPlayerIndex === 0) {
-      this.state!.round++;
+      this.state!.advanceRound();
     }
     this.state!.setPhase('action');
   }
