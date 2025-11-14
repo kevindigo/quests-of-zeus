@@ -29,8 +29,14 @@ export class TerrainPlacementManager {
 
     this.placeZeus(grid);
     this.placeCities(grid);
-    this.placeSpecialTerrain(grid);
-    this.convertSeaToShallows(grid);
+    this.placeTerrainOfType(grid, 6, 'cubes');
+    this.placeTerrainOfType(grid, 6, 'temple');
+    this.placeTerrainOfType(grid, 6, 'foundations');
+    this.placeTerrainOfType(grid, 9, 'monsters');
+    this.placeTerrainOfType(grid, 12, 'clouds');
+
+    this.convertAllShallowsToSea(grid);
+    this.convertSomeSeaToShallows(grid);
 
     this.setColors(grid, 'temple');
     this.setColors(grid, 'clouds');
@@ -184,41 +190,6 @@ export class TerrainPlacementManager {
     }
   }
 
-  /**
-   * Place special terrain types randomly across the map
-   * - 6 cities (placed first in corners)
-   * - 6 cubes
-   * - 6 temples
-   * - 6 foundations
-   * - 9 monsters
-   * - 12 clouds
-   * - Convert ALL remaining shallows to sea (100% conversion)
-   * None of these should overlap with each other
-   */
-  placeSpecialTerrain(grid: HexGrid): void {
-    // Ensure grid is valid before proceeding
-    if (!grid) {
-      console.error('placeSpecialTerrain: Invalid grid provided', grid);
-      return;
-    }
-
-    // Place terrain types with their required counts (excluding cities which are already placed)
-    const terrainPlacements: [TerrainType, number][] = [
-      ['cubes', 6],
-      ['temple', 6],
-      ['foundations', 6],
-      ['monsters', 9],
-      ['clouds', 12],
-    ];
-
-    for (const [terrainType, count] of terrainPlacements) {
-      this.placeTerrainOfType(grid, count, terrainType);
-    }
-
-    // Final step: Convert ALL remaining shallows to sea (100% conversion)
-    this.convertShallowsToSea(grid);
-  }
-
   private placeTerrainOfType(
     grid: HexGrid,
     count: number,
@@ -277,7 +248,7 @@ export class TerrainPlacementManager {
   /**
    * Convert all remaining shallows to sea (100% conversion)
    */
-  private convertShallowsToSea(grid: HexGrid): void {
+  private convertAllShallowsToSea(grid: HexGrid): void {
     grid.forEachCell((cell) => {
       if (cell && cell.terrain === 'shallow') {
         cell.terrain = 'sea';
@@ -298,7 +269,7 @@ export class TerrainPlacementManager {
    * Convert some sea cells to shallows based on game constraints
    * This simulates the sea-to-shallows conversion that happens during gameplay
    */
-  convertSeaToShallows(grid: HexGrid): void {
+  private convertSomeSeaToShallows(grid: HexGrid): void {
     const seaCells = grid.getCellsOfType('sea');
 
     // Shuffle sea cells for random selection
