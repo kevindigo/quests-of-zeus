@@ -7,7 +7,7 @@ import {
   type CityHex,
   COLOR_WHEEL,
   type CoreColor,
-  type CubeHex,
+  CubeHex,
   GameState,
   type HexColor,
   type MonsterHex,
@@ -161,11 +161,9 @@ export class GameInitializer {
       const thisPattern = basePattern[i] || [];
       const hexColors = thisPattern.slice(0, playerCount);
 
-      cubeHexes.push({
-        q: cell.q,
-        r: cell.r,
-        cubeColors: hexColors,
-      });
+      const cubeHex = new CubeHex(cell.getCoordinates());
+      cubeHex.cubeColors = hexColors;
+      cubeHexes.push(cubeHex);
     }
 
     return cubeHexes;

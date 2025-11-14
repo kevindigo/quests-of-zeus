@@ -1,4 +1,5 @@
 // Game type definitions for Quests of Zeus
+import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import type { HexMap } from './hexmap/HexMap.ts';
 import { Player } from './Player.ts';
 
@@ -75,7 +76,13 @@ export interface StorageSlot {
   color?: HexColor;
 }
 
-export interface CubeHex {
+export class CubeHex {
+  public constructor(coordinates: HexCoordinates) {
+    this.q = coordinates.q;
+    this.r = coordinates.r;
+    this.cubeColors = [];
+  }
+
   q: number;
   r: number;
   cubeColors: HexColor[]; // Array of colors that have cubes on this hex (no duplicates)
