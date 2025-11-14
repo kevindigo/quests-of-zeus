@@ -52,7 +52,6 @@ export class GameInitializer {
     const state = new GameState(
       map,
       players,
-      0,
     );
 
     state.setPhase('action');

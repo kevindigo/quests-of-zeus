@@ -47,7 +47,7 @@ Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
 
   // Player 1 should be current player initially
   assertEquals(
-    initialState.currentPlayerIndex,
+    initialState.getCurrentPlayerIndex(),
     0,
     'Player 1 should be current player initially',
   );
@@ -61,7 +61,7 @@ Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
 
   // Player 2 should now be current player
   assertEquals(
-    stateAfterEndTurn.currentPlayerIndex,
+    stateAfterEndTurn.getCurrentPlayerIndex(),
     1,
     'Player 2 should be current player after endTurn',
   );
@@ -133,7 +133,7 @@ Deno.test('DiceRolling - round advances when all players have taken turns', () =
 
   // Current player should be back to Player 1
   assertEquals(
-    stateAfterPlayer2Turn.currentPlayerIndex,
+    stateAfterPlayer2Turn.getCurrentPlayerIndex(),
     0,
     'Current player should be Player 1 after full round',
   );
@@ -190,7 +190,8 @@ Deno.test('DiceRolling - next player always has dice ready', () => {
   // Simulate multiple turns and verify next player always has dice
   for (let turn = 0; turn < 5; turn++) {
     const currentState = engine.getGameState();
-    const currentPlayer = currentState.players[currentState.currentPlayerIndex];
+    const currentPlayer =
+      currentState.players[currentState.getCurrentPlayerIndex()];
 
     // Current player should have dice
     assertEquals(
@@ -203,7 +204,7 @@ Deno.test('DiceRolling - next player always has dice ready', () => {
     engine.endTurn();
 
     const nextState = engine.getGameState();
-    const nextPlayer = nextState.players[nextState.currentPlayerIndex];
+    const nextPlayer = nextState.players[nextState.getCurrentPlayerIndex()];
 
     // Next player should have dice ready
     assertEquals(

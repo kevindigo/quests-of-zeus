@@ -6,11 +6,10 @@ export class GameState {
   public constructor(
     map: HexMap,
     players: Player[],
-    currentPlayerIndex: number,
   ) {
     this.map = map;
     this.players = players;
-    this.currentPlayerIndex = currentPlayerIndex;
+    this.currentPlayerIndex = 0;
     this.round = 1;
     this.phase = 'setup';
     this.cubeHexes = [];
@@ -44,9 +43,9 @@ export class GameState {
     const newGameState = new GameState(
       JSON.parse(JSON.stringify(this.map)),
       copyOfPlayers,
-      this.currentPlayerIndex,
     );
 
+    newGameState.setCurrentPlayerIndex(this.getCurrentPlayerIndex());
     newGameState.setRound(this.getRound());
     newGameState.setPhase(this.getPhase());
     newGameState.setCubeHexes(this.getCubeHexes());
@@ -54,6 +53,14 @@ export class GameState {
     newGameState.setCityHexes(this.getCityHexes());
 
     return newGameState;
+  }
+
+  public getCurrentPlayerIndex(): number {
+    return this.currentPlayerIndex;
+  }
+
+  public setCurrentPlayerIndex(newIndex: number): void {
+    this.currentPlayerIndex = newIndex;
   }
 
   public getRound(): number {
@@ -102,7 +109,7 @@ export class GameState {
 
   public map: HexMap;
   public players: Player[];
-  public currentPlayerIndex: number;
+  private currentPlayerIndex: number;
   private round: number;
   private phase: Phase;
   private cubeHexes: CubeHex[];

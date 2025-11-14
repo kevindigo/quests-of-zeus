@@ -349,14 +349,15 @@ export class QuestsZeusGameEngine {
 
   public endTurn(): void {
     this.ensureInitialized();
-    const currentPlayer = this.state!.players[this.state!.currentPlayerIndex];
+    const currentPlayer =
+      this.state!.players[this.state!.getCurrentPlayerIndex()];
     if (currentPlayer) {
       currentPlayer.usedOracleCardThisTurn = false;
       currentPlayer.recoloredDice = {};
       currentPlayer.recoloredCards = {};
     }
 
-    const nextPlayerIndex = (this.state!.currentPlayerIndex + 1) %
+    const nextPlayerIndex = (this.state!.getCurrentPlayerIndex() + 1) %
       this.state!.players.length;
     const nextPlayer = this.state!.players[nextPlayerIndex];
 
@@ -372,8 +373,8 @@ export class QuestsZeusGameEngine {
       nextPlayer.oracleDice = dice;
     }
 
-    this.state!.currentPlayerIndex = nextPlayerIndex;
-    if (this.state!.currentPlayerIndex === 0) {
+    this.state!.setCurrentPlayerIndex(nextPlayerIndex);
+    if (this.state!.getCurrentPlayerIndex() === 0) {
       this.state!.advanceRound();
     }
     this.state!.setPhase('action');
@@ -393,7 +394,7 @@ export class QuestsZeusGameEngine {
     const player = this.state!.players.find((p) => p.id === playerId);
     if (
       !player ||
-      this.state!.currentPlayerIndex !== this.getPlayerIndex(playerId)
+      this.state!.getCurrentPlayerIndex() !== this.getPlayerIndex(playerId)
     ) {
       throw new Error('Invalid player or not your turn');
     }
@@ -418,7 +419,7 @@ export class QuestsZeusGameEngine {
 
   public getCurrentPlayer(): Player {
     this.ensureInitialized();
-    const player = this.state!.players[this.state!.currentPlayerIndex];
+    const player = this.state!.players[this.state!.getCurrentPlayerIndex()];
     if (!player) {
       throw new Error('Current player not found');
     }
