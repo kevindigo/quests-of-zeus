@@ -1,7 +1,6 @@
 // Refactored HexMap class - Main container that coordinates between services
 
 import type { HexColor, TerrainType } from '../types.ts';
-import { UtilityService } from '../UtilityService.ts';
 import type { HexCell } from './HexCell.ts';
 import type { HexCoordinates, HexGrid } from './HexGrid.ts';
 import { HexGridOperations } from './HexGridOperations.ts';
@@ -11,14 +10,12 @@ import { TerrainPlacementManager } from './TerrainPlacementManager.ts';
 
 export class HexMap {
   constructor() {
-    this.utilityService = new UtilityService();
     this.hexGridOperations = new HexGridOperations();
     this.pathfindingService = new PathfindingService(this.hexGridOperations);
-    this.seaColorManager = new SeaColorManager(this.utilityService);
+    this.seaColorManager = new SeaColorManager();
     this.terrainPlacementManager = new TerrainPlacementManager(
       this.hexGridOperations,
       this.seaColorManager,
-      this.utilityService,
     );
 
     this.grid = this.terrainPlacementManager.generateGrid();
@@ -98,5 +95,4 @@ export class HexMap {
   private seaColorManager: SeaColorManager;
   private hexGridOperations: HexGridOperations;
   private pathfindingService: PathfindingService;
-  private utilityService: UtilityService;
 }

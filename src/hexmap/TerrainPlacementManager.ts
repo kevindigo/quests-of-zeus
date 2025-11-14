@@ -2,7 +2,7 @@
 
 import type { HexColor, TerrainType } from '../types.ts';
 import { COLOR_WHEEL } from '../types.ts';
-import type { UtilityService } from '../UtilityService.ts';
+import { UtilityService } from '../UtilityService.ts';
 import type { HexCell } from './HexCell.ts';
 import { HexGrid } from './HexGrid.ts';
 import type { HexGridOperations } from './HexGridOperations.ts';
@@ -10,18 +10,12 @@ import { PathfindingService } from './PathfindingService.ts';
 import type { SeaColorManager } from './SeaColorManager.ts';
 
 export class TerrainPlacementManager {
-  private hexGridOperations: HexGridOperations;
-  private seaColorManager: SeaColorManager;
-  private utilityService: UtilityService;
-
   constructor(
     hexGridOperations: HexGridOperations,
     seaColorManager: SeaColorManager,
-    utilityService: UtilityService,
   ) {
     this.hexGridOperations = hexGridOperations;
     this.seaColorManager = seaColorManager;
-    this.utilityService = utilityService;
   }
 
   /**
@@ -90,7 +84,7 @@ export class TerrainPlacementManager {
   private placeCities(grid: HexGrid): void {
     // Create a shuffled copy of the colors to assign randomly to cities
     const shuffledColors = [...COLOR_WHEEL];
-    this.utilityService.shuffleArray(shuffledColors);
+    UtilityService.shuffleArray(shuffledColors);
 
     for (let cornerDirection = 0; cornerDirection < 6; cornerDirection++) {
       // Get the corner coordinates
@@ -230,7 +224,7 @@ export class TerrainPlacementManager {
     // If there are eligible neighbors, randomly select 2 of them
     if (eligibleNeighbors.length > 0) {
       // Shuffle the eligible neighbors
-      this.utilityService.shuffleArray(eligibleNeighbors);
+      UtilityService.shuffleArray(eligibleNeighbors);
 
       // Set up to 2 random neighbors to sea
       const neighborsToConvert = Math.min(2, eligibleNeighbors.length);
@@ -264,7 +258,7 @@ export class TerrainPlacementManager {
     const availableCells = grid.getCellsOfType('shallow');
 
     // Shuffle available cells for random placement
-    this.utilityService.shuffleArray(availableCells);
+    UtilityService.shuffleArray(availableCells);
 
     // Place terrain types with their required counts (excluding cities which are already placed)
     const terrainPlacements: [TerrainType, number][] = [
@@ -285,7 +279,7 @@ export class TerrainPlacementManager {
       let cloudColors: HexColor[] = [];
       if (terrainType === 'temple') {
         templeColors = [...COLOR_WHEEL];
-        this.utilityService.shuffleArray(templeColors);
+        UtilityService.shuffleArray(templeColors);
       } else if (terrainType === 'clouds') {
         // For clouds, we need 12 hexes with 6 colors, so each color appears twice
         // Create an array with each color repeated twice
@@ -295,7 +289,7 @@ export class TerrainPlacementManager {
           cloudColors.push(color);
         }
         // Shuffle the colors to distribute them randomly
-        this.utilityService.shuffleArray(cloudColors);
+        UtilityService.shuffleArray(cloudColors);
       }
 
       // First pass: try to place with landmass constraints
@@ -406,7 +400,7 @@ export class TerrainPlacementManager {
     const seaCells = grid.getCellsOfType('sea');
 
     // Shuffle sea cells for random selection
-    this.utilityService.shuffleArray(seaCells);
+    UtilityService.shuffleArray(seaCells);
 
     let conversions = 0;
     const maxConversions = 10;
@@ -470,4 +464,6 @@ export class TerrainPlacementManager {
 
     return true;
   }
+  private hexGridOperations: HexGridOperations;
+  private seaColorManager: SeaColorManager;
 }

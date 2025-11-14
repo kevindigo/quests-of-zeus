@@ -2,17 +2,12 @@
 
 import type { HexColor } from '../types.ts';
 import { COLOR_WHEEL } from '../types.ts';
+import { UtilityService } from '../UtilityService.ts';
 import type { HexCell } from './HexCell.ts';
 import type { HexGrid } from './HexGrid.ts';
-import type { UtilityService } from '../UtilityService.ts';
 
 export class SeaColorManager {
-  private utilityService: UtilityService;
-
-  constructor(
-    utilityService: UtilityService,
-  ) {
-    this.utilityService = utilityService;
+  constructor() {
   }
 
   /**
@@ -28,7 +23,7 @@ export class SeaColorManager {
     }
 
     // Shuffle sea cells to introduce randomness in processing order
-    this.utilityService.shuffleArray(seaCells);
+    UtilityService.shuffleArray(seaCells);
 
     // Track color usage counts
     const colorCounts: Record<HexColor, number> = {
