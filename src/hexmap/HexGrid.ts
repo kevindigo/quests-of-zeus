@@ -57,11 +57,7 @@ export class HexGrid {
   }
 
   public getNeighborsOf(cell: HexCell): HexCell[] {
-    return this.getNeighborsByQR(cell.q, cell.r);
-  }
-
-  public getNeighborsByQR(q: number, r: number): HexCell[] {
-    return this.getNeighborsByCoordinates({ q, r });
+    return this.getNeighborsByCoordinates(cell.getCoordinates());
   }
 
   public getNeighborsByCoordinates(coordinates: HexCoordinates): HexCell[] {
