@@ -235,6 +235,7 @@ Deno.test('CombinedResourceSpending - select oracle card for favor gain', () => 
   );
 });
 
+// FixMe: This test seems to be intermittent
 Deno.test('CombinedResourceSpending - cannot use both die and oracle card in same turn', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
