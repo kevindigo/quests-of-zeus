@@ -325,27 +325,31 @@ export class TerrainPlacementManager {
     const pathfinder = new PathfindingService(this.hexGridOperations);
     const neighbors = grid.getNeighborsOf(cell);
 
-    for (const neighbor of neighbors) {
-      if (neighbor.terrain === 'sea') {
-        // For sea neighbors: check if they can reach zeus (excluding the candidate cell)
-        if (
-          !pathfinder.canReachZeusFromSeaNeighbor(
-            neighbor,
-            cell,
-            grid,
-          )
-        ) {
-          return true;
+    cell.terrain = 'shallow';
+    try {
+      for (const neighbor of neighbors) {
+        if (neighbor.terrain === 'sea') {
+          // For sea neighbors: check if they can reach zeus (excluding the candidate cell)
+          if (
+            !pathfinder.canReachZeusFromSeaNeighbor(
+              neighbor,
+              cell,
+              grid,
+            )
+          ) {
+            return true;
+          }
+        } else if (neighbor.terrain !== 'shallow') {
+          // Land neighbors must still have at least one sea neighbor
+          if (!grid.hasNeighborOfType(neighbor, 'sea')) {
+            return true;
+          }
         }
-      } else if (neighbor.terrain !== 'shallow') {
-        // Land neighbors must still have at least one sea neighbor
-        if (!grid.hasNeighborOfType(neighbor, 'sea')) {
-          return true;
-        }
+        // For shallow neighbors, no additional checks needed
       }
-      // For shallow neighbors, no additional checks needed
+    } finally {
+      cell.terrain = 'sea';
     }
-
     return false;
   }
   private hexGridOperations: HexGridOperations;
