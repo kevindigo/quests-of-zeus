@@ -44,7 +44,7 @@ Deno.test('Zeus placement - randomly in neighbor hexes', () => {
   );
 
   // The center cell (0, 0) should exist
-  const centerCell = hexMap.getCell(0, 0);
+  const centerCell = hexMap.getCell({ q: 0, r: 0 });
   assertEquals(
     centerCell !== null,
     true,

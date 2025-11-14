@@ -42,8 +42,8 @@ export class HexMap {
   /**
    * Get a cell at specific coordinates
    */
-  getCell(q: number, r: number): HexCell | null {
-    return this.getHexGrid().getCell({ q, r });
+  getCell(coordinates: HexCoordinates): HexCell | null {
+    return this.getHexGrid().getCell(coordinates);
   }
 
   /**
@@ -64,7 +64,7 @@ export class HexMap {
    * Set the color of a specific cell
    */
   setCellColor(q: number, r: number, color: HexColor): void {
-    const cell = this.getCell(q, r);
+    const cell = this.getCell({ q, r });
     if (cell) {
       cell.color = color;
     }

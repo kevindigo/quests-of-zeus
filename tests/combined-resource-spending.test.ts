@@ -246,7 +246,7 @@ Deno.test('CombinedResourceSpending - cannot use both die and oracle card in sam
   const gameState = engine.getGameState();
 
   const shipAt = player.getShipPosition();
-  const originCell = gameState.map.getCell(shipAt.q, shipAt.r);
+  const originCell = gameState.map.getCell(shipAt);
   assert(originCell);
   const destination = findAdjacentSeaHex(gameState, player);
 

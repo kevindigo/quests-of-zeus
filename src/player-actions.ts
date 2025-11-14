@@ -62,7 +62,7 @@ export class PlayerActions {
     }
 
     const currentPos = player.getShipPosition();
-    const targetCell = this.state.map.getCell(targetQ, targetR);
+    const targetCell = this.state.map.getCell({ q: targetQ, r: targetR });
 
     if (!targetCell) {
       return {
@@ -222,8 +222,7 @@ export class PlayerActions {
 
     // Check if player is on a cube hex
     const currentCell = this.state.map.getCell(
-      player.getShipPosition().q,
-      player.getShipPosition().r,
+      player.getShipPosition(),
     );
     if (!currentCell || currentCell.terrain !== 'cubes') {
       return false;
@@ -264,8 +263,7 @@ export class PlayerActions {
 
     // Check if player is on a monster hex
     const currentCell = this.state.map.getCell(
-      player.getShipPosition().q,
-      player.getShipPosition().r,
+      player.getShipPosition(),
     );
     if (!currentCell || currentCell.terrain !== 'monsters') {
       return false;
@@ -305,8 +303,7 @@ export class PlayerActions {
 
     // Check if player is on a temple hex
     const currentCell = this.state.map.getCell(
-      player.getShipPosition().q,
-      player.getShipPosition().r,
+      player.getShipPosition(),
     );
     if (!currentCell || currentCell.terrain !== 'temple') {
       return false;
@@ -333,8 +330,7 @@ export class PlayerActions {
 
     // Check if player is on a foundation hex
     const currentCell = this.state.map.getCell(
-      player.getShipPosition().q,
-      player.getShipPosition().r,
+      player.getShipPosition(),
     );
     if (!currentCell || currentCell.terrain !== 'foundations') {
       return false;
@@ -353,8 +349,7 @@ export class PlayerActions {
 
     // Check if player is on a cloud hex
     const currentCell = this.state.map.getCell(
-      player.getShipPosition().q,
-      player.getShipPosition().r,
+      player.getShipPosition(),
     );
     if (!currentCell || currentCell.terrain !== 'clouds') {
       return false;

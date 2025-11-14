@@ -63,7 +63,7 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   // Should have moves that require pink sea tiles (since black die can be recolored to pink)
   const gameState = gameEngine.getGameState();
   const movesToPinkTiles = availableMoves.filter((move) => {
-    const cell = gameState.map.getCell(move.q, move.r);
+    const cell = gameState.map.getCell({ q: move.q, r: move.r });
     return cell && cell.color === 'pink';
   });
 
@@ -153,7 +153,7 @@ Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () =>
   // Should only have moves to black sea tiles
   const gameState = gameEngine.getGameState();
   const movesToBlackTiles = movesWithoutRecolor.filter((move) => {
-    const cell = gameState.map.getCell(move.q, move.r);
+    const cell = gameState.map.getCell({ q: move.q, r: move.r });
     return cell && cell.color === 'black';
   });
 

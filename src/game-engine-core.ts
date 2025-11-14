@@ -141,7 +141,7 @@ export class QuestsZeusGameEngine {
 
     // First validate the move using the same logic as getAvailableMovesForOracleCard
     const currentPos = player.getShipPosition();
-    const targetCell = this.state!.map.getCell(targetQ, targetR);
+    const targetCell = this.state!.map.getCell({ q: targetQ, r: targetR });
 
     if (!targetCell) {
       return {

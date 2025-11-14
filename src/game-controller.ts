@@ -643,8 +643,7 @@ export class GameController {
       case 'action': {
         const position = currentPlayer.getShipPosition();
         const currentCell = this.gameEngine.getGameState().map.getCell(
-          position.q,
-          position.r,
+          position,
         );
 
         let actions = '';
@@ -974,8 +973,7 @@ export class GameController {
                     playerDice: currentPlayer.oracleDice,
                     recoloredDice: currentPlayer.recoloredDice,
                     targetCell: this.gameEngine.getGameState().map.getCell(
-                      q,
-                      r,
+                      { q, r },
                     ),
                     moveResult,
                   });
@@ -1037,7 +1035,10 @@ export class GameController {
                 playerFavor: currentPlayer.favor,
                 playerDice: currentPlayer.oracleDice,
                 recoloredDice: currentPlayer.recoloredDice,
-                targetCell: this.gameEngine.getGameState().map.getCell(q, r),
+                targetCell: this.gameEngine.getGameState().map.getCell({
+                  q,
+                  r,
+                }),
                 moveResult,
               });
             }
@@ -1133,8 +1134,7 @@ export class GameController {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     const position = currentPlayer.getShipPosition();
     const currentCell = this.gameEngine.getGameState().map.getCell(
-      position.q,
-      position.r,
+      position,
     );
 
     if (currentCell?.terrain === 'cubes' && currentCell.color !== 'none') {

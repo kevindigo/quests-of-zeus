@@ -139,7 +139,7 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
 
   // Check that we have moves to pink sea tiles
   const movesToPinkTiles = movesWithRecolor.filter((move) => {
-    const cell = gameState.map.getCell(move.q, move.r);
+    const cell = gameState.map.getCell({ q: move.q, r: move.r });
     return cell && cell.color === 'pink';
   });
 
@@ -223,7 +223,7 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   // Should only have moves to black sea tiles now
   const gameState = gameEngine.getGameState();
   const movesToBlackTiles = movesAfterClear.filter((move) => {
-    const cell = gameState.map.getCell(move.q, move.r);
+    const cell = gameState.map.getCell({ q: move.q, r: move.r });
     return cell && cell.color === 'black';
   });
 

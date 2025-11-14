@@ -253,15 +253,13 @@ Deno.test('GameEngine - all players start on Zeus hex', () => {
 
   // Verify the starting position is actually a Zeus hex
   const player1Cell = state.map.getCell(
-    player1.getShipPosition().q,
-    player1.getShipPosition().r,
+    player1.getShipPosition(),
   );
   assertExists(player1Cell);
   assertEquals(player1Cell.terrain, 'zeus', 'Player 1 should be on a Zeus hex');
 
   const player2Cell = state.map.getCell(
-    player2.getShipPosition().q,
-    player2.getShipPosition().r,
+    player2.getShipPosition(),
   );
   assertExists(player2Cell);
   assertEquals(player2Cell.terrain, 'zeus', 'Player 2 should be on a Zeus hex');
