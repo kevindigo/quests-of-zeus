@@ -3,13 +3,12 @@ import type { HexCoordinates } from './HexGrid.ts';
 
 export class HexCell {
   public constructor(
-    q: number,
-    r: number,
+    coordinates: HexCoordinates,
     terrain: TerrainType,
     color?: HexColor,
   ) {
-    this.q = q;
-    this.r = r;
+    this.q = coordinates.q;
+    this.r = coordinates.r;
     this.terrain = terrain;
     this.color = color || 'none';
   }

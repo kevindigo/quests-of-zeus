@@ -112,7 +112,7 @@ export class HexGrid {
       for (let r = r1; r <= r2; r++) {
         const color = 'none';
         const terrain = defaultTerrain;
-        const cell = new HexCell(q, r, terrain, color);
+        const cell = new HexCell({ q, r }, terrain, color);
 
         row.push(cell);
       }
