@@ -1,6 +1,7 @@
 #!/usr/bin/env -S deno run --allow-read
 
 import { assert, assertEquals } from '@std/assert';
+import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { HexMap } from '../src/hexmap/HexMap.ts';
 
 // Test the new Zeus placement logic
@@ -44,7 +45,7 @@ Deno.test('Zeus placement - randomly in neighbor hexes', () => {
   );
 
   // The center cell (0, 0) should exist
-  const centerCell = hexMap.getCell({ q: 0, r: 0 });
+  const centerCell = hexMap.getCell(HexGrid.CENTER);
   assertEquals(
     centerCell !== null,
     true,

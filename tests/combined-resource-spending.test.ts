@@ -5,6 +5,7 @@ import { assert, assertEquals, assertGreater } from '@std/assert';
 import { GameController } from '../src/game-controller.ts';
 import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 import type { HexCell } from '../src/hexmap/HexCell.ts';
+import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { Player } from '../src/Player.ts';
 import type { CoreColor, GameState } from '../src/types.ts';
 
@@ -18,7 +19,7 @@ Deno.test('CombinedResourceSpending - select die for movement', () => {
   // Set up deterministic test conditions
   player.oracleDice = ['blue', 'red', 'green'] as CoreColor[];
   player.favor = 5;
-  player.setShipPosition({ q: 0, r: 0 });
+  player.setShipPosition(HexGrid.CENTER);
 
   // Test that player can select a die and use it for movement
   const availableMoves = engine.getAvailableMovesForDie(

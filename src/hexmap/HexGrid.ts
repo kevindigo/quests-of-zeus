@@ -191,6 +191,8 @@ export class HexGrid {
     return this.directionVectors[safeDirection]!;
   }
 
+  public static CENTER = { q: 0, r: 0 };
+
   private static readonly directionVectors: HexCoordinates[] = [
     { q: 1, r: -1 }, // 0: Northeast
     { q: 1, r: 0 }, // 1: East

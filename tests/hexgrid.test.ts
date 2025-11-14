@@ -233,7 +233,7 @@ Deno.test('HexGrid - different radius values', () => {
 
 Deno.test('HexGrid - getCellFromGrid', () => {
   const grid = new HexGrid(2, 'sea');
-  const center = grid.getCell({ q: 0, r: 0 });
+  const center = grid.getCell(HexGrid.CENTER);
   assert(center);
   assertEquals(center.q, 0);
   assertEquals(center.r, 0);
@@ -246,7 +246,7 @@ Deno.test('HexGrid - getCellFromGrid', () => {
 
 Deno.test('HexGrid - getCellsOfType', () => {
   const grid = new HexGrid(2, 'sea');
-  const center = grid.getCell({ q: 0, r: 0 });
+  const center = grid.getCell(HexGrid.CENTER);
   assert(center);
   center.terrain = 'zeus';
   assertEquals(grid.getCellsOfType('zeus').length, 1);
@@ -266,7 +266,7 @@ Deno.test('HexGrid - direction and directionVectors', () => {
 
 Deno.test('HexGrid - getNeighborsFromGrid', () => {
   const grid = new HexGrid(2, 'sea');
-  const center = grid.getCell({ q: 0, r: 0 });
+  const center = grid.getCell(HexGrid.CENTER);
   assert(center);
   const neighbors = grid.getNeighborsOf(center);
   assert(neighbors);
@@ -288,7 +288,7 @@ Deno.test('HexGrid - getNeighborsOfType / hasNeighborsOfType', () => {
   const neighbor5 = grid.getCell(HexGrid.getVector(5));
   assert(neighbor5);
   neighbor5.terrain = 'shallow';
-  const center = grid.getCell({ q: 0, r: 0 });
+  const center = grid.getCell(HexGrid.CENTER);
   assert(center);
   const shallowNeighbors = grid.getNeighborsOfType(center, 'shallow');
   assertEquals(shallowNeighbors.length, 2);
@@ -299,7 +299,7 @@ Deno.test('HexGrid - getNeighborsOfType / hasNeighborsOfType', () => {
 
 Deno.test('HexGrid - islandSize', () => {
   const grid = new HexGrid(3, 'sea');
-  const center = grid.getCell({ q: 0, r: 0 });
+  const center = grid.getCell(HexGrid.CENTER);
   assert(center);
   assertEquals(grid.islandSize(center), 0);
   center.terrain = 'temple';
