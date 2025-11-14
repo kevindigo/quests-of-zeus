@@ -35,7 +35,7 @@ export class MovementSystem {
         continue;
       }
 
-      const neighbors = this.map.getNeighbors(current.q, current.r);
+      const neighbors = this.map.getNeighbors({ q: current.q, r: current.r });
 
       for (const neighbor of neighbors) {
         if (neighbor.terrain === 'sea') {

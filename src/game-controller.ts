@@ -1630,8 +1630,7 @@ export class GameController {
       }
 
       const neighbors = this.gameEngine.getGameState().map.getNeighbors(
-        current.q,
-        current.r,
+        { q: current.q, r: current.r },
       );
 
       for (const neighbor of neighbors) {

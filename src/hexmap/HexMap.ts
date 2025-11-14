@@ -1,13 +1,13 @@
 // Refactored HexMap class - Main container that coordinates between services
 
 import type { HexColor, TerrainType } from '../types.ts';
+import { UtilityService } from '../UtilityService.ts';
 import type { HexCell } from './HexCell.ts';
-import type { HexGrid } from './HexGrid.ts';
+import type { HexCoordinates, HexGrid } from './HexGrid.ts';
 import { HexGridOperations } from './HexGridOperations.ts';
 import { PathfindingService } from './PathfindingService.ts';
 import { SeaColorManager } from './SeaColorManager.ts';
 import { TerrainPlacementManager } from './TerrainPlacementManager.ts';
-import { UtilityService } from '../UtilityService.ts';
 
 export class HexMap {
   constructor() {
@@ -49,8 +49,8 @@ export class HexMap {
   /**
    * Get all neighboring cells for a given cell
    */
-  getNeighbors(q: number, r: number): HexCell[] {
-    return this.getHexGrid().getNeighborsByQR(q, r);
+  getNeighbors(coordinates: HexCoordinates): HexCell[] {
+    return this.getHexGrid().getNeighborsByCoordinates(coordinates);
   }
 
   /**
@@ -162,7 +162,7 @@ export class HexMap {
     }
 
     // Constraint 3: Check all neighbors
-    const neighbors = this.getNeighbors(cell.q, cell.r);
+    const neighbors = this.getNeighbors(cell.getCoordinates());
 
     for (const neighbor of neighbors) {
       if (neighbor.terrain === 'sea') {

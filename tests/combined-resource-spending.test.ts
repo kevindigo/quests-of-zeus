@@ -125,8 +125,7 @@ function findAdjacentSeaHex(gameState: GameState, player: Player): HexCell {
 
   // Find a sea neighbor
   const neighbors = gameState.map.getNeighbors(
-    player.getShipPosition().q,
-    player.getShipPosition().r,
+    player.getShipPosition(),
   );
   const seaNeighbors = neighbors.filter((candidateCell: HexCell) => {
     return (candidateCell.terrain == 'sea');
@@ -152,7 +151,7 @@ Deno.test('CombinedResourceSpending - select oracle card for movement', () => {
   // Find a sea hex to start from instead of Zeus hex
   const gameState = engine.getGameState();
   const origin = gameState.map.getZeus();
-  const zeusNeighbors = gameState.map.getNeighbors(origin.q, origin.r);
+  const zeusNeighbors = gameState.map.getNeighbors(origin.getCoordinates());
   assert(zeusNeighbors);
   assertGreater(zeusNeighbors.length, 0);
   const destination = zeusNeighbors[0];

@@ -89,7 +89,7 @@ Deno.test('Sea to shallows conversion - basic functionality', () => {
       }
 
       // Constraint 3: Check all neighbors
-      const allNeighbors = hexMap.getNeighbors(shallowCell.q, shallowCell.r);
+      const allNeighbors = hexMap.getNeighbors(shallowCell.getCoordinates());
       for (const neighbor of allNeighbors) {
         if (neighbor.terrain === 'sea') {
           // For sea neighbors: check if they can reach zeus (excluding the candidate cell)
