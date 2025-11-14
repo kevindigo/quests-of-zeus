@@ -311,6 +311,17 @@ export class TerrainPlacementManager {
     }
 
     // Constraint 3: Check all neighbors
+    if (this.wouldBlockAccessToZeusIfShallow(grid, cell)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private wouldBlockAccessToZeusIfShallow(
+    grid: HexGrid,
+    cell: HexCell,
+  ): boolean {
     const pathfinder = new PathfindingService(this.hexGridOperations);
     const neighbors = grid.getNeighborsOf(cell);
 
@@ -324,18 +335,18 @@ export class TerrainPlacementManager {
             grid,
           )
         ) {
-          return false;
+          return true;
         }
       } else if (neighbor.terrain !== 'shallow') {
-        // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
+        // Land neighbors must still have at least one sea neighbor
         if (!grid.hasNeighborOfType(neighbor, 'sea')) {
-          return false;
+          return true;
         }
       }
       // For shallow neighbors, no additional checks needed
     }
 
-    return true;
+    return false;
   }
   private hexGridOperations: HexGridOperations;
   private seaColorManager: SeaColorManager;
