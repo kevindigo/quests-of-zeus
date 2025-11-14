@@ -41,11 +41,9 @@ async function build() {
     // Build all TypeScript files to dist/
     const result = await esbuild.build({
       entryPoints: [
-        'src/hexmap.ts',
         'src/hexmap-svg.ts',
         'src/game-engine.ts',
         'src/game-controller.ts',
-        'src/hexmap/index.ts',
       ],
       bundle: true,
       outdir: 'dist',
