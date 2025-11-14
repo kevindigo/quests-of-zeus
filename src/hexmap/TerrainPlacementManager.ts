@@ -2,11 +2,11 @@
 
 import type { HexColor, TerrainType } from '../types.ts';
 import { COLOR_WHEEL } from '../types.ts';
+import type { UtilityService } from '../UtilityService.ts';
 import type { HexCell } from './HexCell.ts';
 import { HexGrid } from './HexGrid.ts';
 import type { HexGridOperations } from './HexGridOperations.ts';
 import type { SeaColorManager } from './SeaColorManager.ts';
-import type { UtilityService } from '../UtilityService.ts';
 
 export class TerrainPlacementManager {
   private hexGridOperations: HexGridOperations;
@@ -90,7 +90,7 @@ export class TerrainPlacementManager {
     const zeusR = zeusDelta[1] || 0;
 
     // Find the cell for Zeus placement
-    const zeusCell = grid.getCellFromGrid(zeusQ, zeusR);
+    const zeusCell = grid.getCell({ q: zeusQ, r: zeusR });
     if (zeusCell) {
       // Place Zeus at the selected neighbor hex
       zeusCell.terrain = 'zeus';
@@ -147,10 +147,10 @@ export class TerrainPlacementManager {
       }
 
       // Place the city if the cell exists
-      const cell = grid.getCellFromGrid(
-        placementQ,
-        placementR,
-      );
+      const cell = grid.getCell({
+        q: placementQ,
+        r: placementR,
+      });
       if (cell && cell.terrain === 'shallow') {
         cell.terrain = 'city';
         // Assign a random color to the city
@@ -161,9 +161,8 @@ export class TerrainPlacementManager {
         this.setRandomNeighborsToSea(grid, placementQ, placementR);
       } else {
         // Fallback: place at the corner if the randomized placement failed
-        const cornerCell = grid.getCellFromGrid(
-          cornerCoords.q,
-          cornerCoords.r,
+        const cornerCell = grid.getCell(
+          cornerCoords,
         );
         if (cornerCell && cornerCell.terrain === 'shallow') {
           cornerCell.terrain = 'city';
@@ -200,9 +199,8 @@ export class TerrainPlacementManager {
         direction,
       );
       if (adjacentCoords) {
-        const neighbor = grid.getCellFromGrid(
-          adjacentCoords.q,
-          adjacentCoords.r,
+        const neighbor = grid.getCell(
+          adjacentCoords,
         );
         if (neighbor) {
           neighbors.push(neighbor);
@@ -238,9 +236,8 @@ export class TerrainPlacementManager {
         direction,
       );
       if (adjacentCoords) {
-        const neighbor = grid.getCellFromGrid(
-          adjacentCoords.q,
-          adjacentCoords.r,
+        const neighbor = grid.getCell(
+          adjacentCoords,
         );
         if (neighbor) {
           neighbors.push(neighbor);

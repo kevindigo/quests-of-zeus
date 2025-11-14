@@ -228,12 +228,12 @@ Deno.test('HexGrid - different radius values', () => {
 
 Deno.test('HexGrid - getCellFromGrid', () => {
   const grid = new HexGrid(2, 'sea');
-  const center = grid.getCellFromGrid(0, 0);
+  const center = grid.getCell({ q: 0, r: 0 });
   assert(center);
   assertEquals(center.q, 0);
   assertEquals(center.r, 0);
 
-  const top = grid.getCellFromGrid(0, -2);
+  const top = grid.getCell({ q: 0, r: -2 });
   assert(top);
   assertEquals(top.q, 0);
   assertEquals(top.r, -2);
@@ -241,7 +241,7 @@ Deno.test('HexGrid - getCellFromGrid', () => {
 
 Deno.test('HexGrid - getCellsOfType', () => {
   const grid = new HexGrid(2, 'sea');
-  const center = grid.getCellFromGrid(0, 0);
+  const center = grid.getCell({ q: 0, r: 0 });
   assert(center);
   center.terrain = 'zeus';
   assertEquals(grid.getCellsOfType('zeus').length, 1);
@@ -261,7 +261,7 @@ Deno.test('HexGrid - direction and directionVectors', () => {
 
 Deno.test('HexGrid - getNeighborsFromGrid', () => {
   const grid = new HexGrid(2, 'sea');
-  const center = grid.getCellFromGrid(0, 0);
+  const center = grid.getCell({ q: 0, r: 0 });
   assert(center);
   const neighbors = grid.getNeighborsOf(center);
   assert(neighbors);

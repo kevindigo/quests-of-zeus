@@ -19,13 +19,9 @@ export class HexGrid {
   }
 
   public getCell(coordinates: HexCoordinates): HexCell | null {
-    return this.getCellFromGrid(coordinates.q, coordinates.r);
-  }
+    const q = coordinates.q;
+    const r = coordinates.r;
 
-  public getCellFromGrid(
-    q: number,
-    r: number,
-  ): HexCell | null {
     // Check if grid is valid
     if (!this.grid || !Array.isArray(this.grid) || this.grid.length === 0) {
       return null;

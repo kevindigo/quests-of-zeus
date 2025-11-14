@@ -43,7 +43,7 @@ export class HexMap {
    * Get a cell at specific coordinates
    */
   getCell(q: number, r: number): HexCell | null {
-    return this.getHexGrid().getCellFromGrid(q, r);
+    return this.getHexGrid().getCell({ q, r });
   }
 
   /**
