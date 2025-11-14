@@ -79,6 +79,22 @@ export class HexGrid {
     return neighbors;
   }
 
+  public hasNeighborOfType(cell: HexCell, terrainType: TerrainType): boolean {
+    const neighborsOfType = this.getNeighborsOfType(cell, terrainType);
+    return neighborsOfType.length > 0;
+  }
+
+  public getNeighborsOfType(
+    cell: HexCell,
+    terrainType: TerrainType,
+  ): HexCell[] {
+    const neighbors = this.getNeighborsOf(cell);
+    const neighborsOfType = neighbors.filter((neighbor) => {
+      return (neighbor.terrain === terrainType);
+    });
+    return neighborsOfType;
+  }
+
   public forEachCell(callback: (cell: HexCell) => void): void {
     for (const row of this.grid) {
       for (const cell of row) {

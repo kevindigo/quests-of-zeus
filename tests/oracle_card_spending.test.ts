@@ -32,7 +32,7 @@ Deno.test('OracleCardSpending - spend for movement', () => {
   // Set up deterministic test conditions
   const gameState = engine.getGameState();
   const zeus = findZeus(gameState.map);
-  const adjacentSeaHexes = gameState.map.getNeighborsOfType(
+  const adjacentSeaHexes = gameState.map.getHexGrid().getNeighborsOfType(
     zeus,
     'sea',
   );

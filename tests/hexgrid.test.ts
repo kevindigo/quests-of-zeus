@@ -1,6 +1,11 @@
 // Tests for the HexGrid class
 
-import { assert, assertArrayIncludes, assertEquals } from '@std/assert';
+import {
+  assert,
+  assertArrayIncludes,
+  assertEquals,
+  assertFalse,
+} from '@std/assert';
 import type { HexCell } from '../src/hexmap/HexCell.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { TerrainType } from '../src/types.ts';
@@ -273,4 +278,21 @@ Deno.test('HexGrid - getNeighborsFromGrid', () => {
     const expected = HexGrid.getVector(direction);
     assertArrayIncludes(coordinates, [expected]);
   }
+});
+
+Deno.test('HexGrid - getNeighborsOfType / hasNeighborsOfType', () => {
+  const grid = new HexGrid(2, 'sea');
+  const neighbor3 = grid.getCell(HexGrid.getVector(3));
+  assert(neighbor3);
+  neighbor3.terrain = 'shallow';
+  const neighbor5 = grid.getCell(HexGrid.getVector(5));
+  assert(neighbor5);
+  neighbor5.terrain = 'shallow';
+  const center = grid.getCell({ q: 0, r: 0 });
+  assert(center);
+  const shallowNeighbors = grid.getNeighborsOfType(center, 'shallow');
+  assertEquals(shallowNeighbors.length, 2);
+  assertArrayIncludes(shallowNeighbors, [neighbor3, neighbor5]);
+  assert(grid.hasNeighborOfType(center, 'shallow'));
+  assertFalse(grid.hasNeighborOfType(center, 'city'));
 });

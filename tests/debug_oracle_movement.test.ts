@@ -13,7 +13,7 @@ Deno.test('Debug oracle card movement', () => {
   const gameState = engine.getGameState();
   const map = gameState.map;
   const zeus = map.getZeus();
-  const neighbors = map.getNeighborsOfType(zeus, 'sea');
+  const neighbors = map.getHexGrid().getNeighborsOfType(zeus, 'sea');
   assertGreater(neighbors.length, 0);
   const destination = neighbors[0]!;
   const destinationColor = destination.color as CoreColor;

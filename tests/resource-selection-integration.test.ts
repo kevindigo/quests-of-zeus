@@ -191,7 +191,7 @@ Deno.test('ResourceSelectionIntegration - combined resource actions in sequence'
   const zeuses = map.getCellsByTerrain('zeus');
   assertEquals(zeuses.length, 1);
   const zeus = zeuses[0]!;
-  const seaNeighbors = map.getNeighborsOfType(zeus, 'sea');
+  const seaNeighbors = map.getHexGrid().getNeighborsOfType(zeus, 'sea');
   assertGreater(seaNeighbors.length, 0);
   const destination = seaNeighbors[0]!;
   const color = destination.color as CoreColor;

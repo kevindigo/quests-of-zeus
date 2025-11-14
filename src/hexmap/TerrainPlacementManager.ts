@@ -6,6 +6,7 @@ import type { UtilityService } from '../UtilityService.ts';
 import type { HexCell } from './HexCell.ts';
 import { HexGrid } from './HexGrid.ts';
 import type { HexGridOperations } from './HexGridOperations.ts';
+import { PathfindingService } from './PathfindingService.ts';
 import type { SeaColorManager } from './SeaColorManager.ts';
 
 export class TerrainPlacementManager {
@@ -37,6 +38,9 @@ export class TerrainPlacementManager {
 
     // Place special terrain types randomly
     this.placeSpecialTerrain(grid);
+
+    // Convert some sea cells to shallows based on game constraints
+    this.convertSeaToShallows(grid);
 
     return grid;
   }
@@ -392,5 +396,78 @@ export class TerrainPlacementManager {
         cell.terrain = 'sea';
       }
     });
+  }
+
+  /**
+   * Convert some sea cells to shallows based on game constraints
+   * This simulates the sea-to-shallows conversion that happens during gameplay
+   */
+  convertSeaToShallows(grid: HexGrid): void {
+    const seaCells = grid.getCellsOfType('sea');
+
+    // Shuffle sea cells for random selection
+    this.utilityService.shuffleArray(seaCells);
+
+    let conversions = 0;
+    const maxConversions = 10;
+
+    // Try to convert up to 10 sea cells to shallows
+    for (const cell of seaCells) {
+      if (conversions >= maxConversions) {
+        break;
+      }
+
+      // Check if this cell meets the constraints for conversion
+      if (this.isEligibleForSeaToShallowsConversion(grid, cell)) {
+        cell.terrain = 'shallow';
+        cell.color = 'none'; // Reset color when converting to shallows
+        conversions++;
+      }
+    }
+  }
+
+  /**
+   * Check if a sea cell is eligible for conversion to shallows
+   */
+  private isEligibleForSeaToShallowsConversion(
+    grid: HexGrid,
+    cell: HexCell,
+  ): boolean {
+    // Constraint 1: Should not have zeus as neighbor
+    if (grid.hasNeighborOfType(cell, 'zeus')) {
+      return false;
+    }
+
+    // Constraint 2: Should not have city as neighbor
+    if (grid.hasNeighborOfType(cell, 'city')) {
+      return false;
+    }
+
+    // Constraint 3: Check all neighbors
+    const pathfinder = new PathfindingService(this.hexGridOperations);
+    const neighbors = grid.getNeighborsOf(cell);
+
+    for (const neighbor of neighbors) {
+      if (neighbor.terrain === 'sea') {
+        // For sea neighbors: check if they can reach zeus (excluding the candidate cell)
+        if (
+          !pathfinder.canReachZeusFromSeaNeighbor(
+            neighbor,
+            cell,
+            grid,
+          )
+        ) {
+          return false;
+        }
+      } else if (neighbor.terrain !== 'shallow') {
+        // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
+        if (!grid.hasNeighborOfType(neighbor, 'sea')) {
+          return false;
+        }
+      }
+      // For shallow neighbors, no additional checks needed
+    }
+
+    return true;
   }
 }
