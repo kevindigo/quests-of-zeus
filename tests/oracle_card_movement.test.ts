@@ -1,7 +1,7 @@
 // Tests for oracle card movement functionality
 
 import { assert, assertEquals } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 
 Deno.test('OracleCardMovement - basic functionality', () => {
   const engine = new QuestsZeusGameEngine();

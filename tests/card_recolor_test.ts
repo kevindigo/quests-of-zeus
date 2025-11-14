@@ -1,5 +1,5 @@
 import { assert, assertEquals } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 
 Deno.test('Card recolor test', () => {
   const gameEngine = new QuestsZeusGameEngine();

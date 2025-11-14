@@ -1,4 +1,4 @@
-import type { TerrainType } from '../game-engine.ts';
+import type { TerrainType } from '../types.ts';
 import { HexCell } from './HexCell.ts';
 
 export type Direction = 0 | 1 | 2 | 3 | 4 | 5;

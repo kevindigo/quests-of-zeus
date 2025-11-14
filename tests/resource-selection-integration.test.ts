@@ -8,7 +8,7 @@ import {
   assertFalse,
   assertGreater,
 } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('ResourceSelectionIntegration - cannot use multiple oracle cards in same turn', () => {

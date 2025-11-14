@@ -1,7 +1,7 @@
 // Game Controller for Quests of Zeus
 // Manages the game UI and user interactions
 
-import { QuestsZeusGameEngine } from './game-engine.ts';
+import { QuestsZeusGameEngine } from './game-engine-core.ts';
 import { HexMapSVG } from './hexmap-svg.ts';
 import type { Player } from './Player.ts';
 import {

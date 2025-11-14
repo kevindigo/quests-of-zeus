@@ -1,6 +1,6 @@
 import { assert } from '@std/assert/assert';
 import { assertEquals } from '@std/assert/equals';
-import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('Minimal recolor test', () => {

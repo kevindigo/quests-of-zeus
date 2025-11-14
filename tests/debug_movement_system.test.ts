@@ -1,6 +1,6 @@
 // Debug test for movement system
 import { assertEquals } from '@std/assert/equals';
-import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 
 Deno.test('Debug movement system', () => {
   const engine = new QuestsZeusGameEngine();

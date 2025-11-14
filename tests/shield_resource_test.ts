@@ -1,5 +1,5 @@
 import { assert, assertEquals, assertExists } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 
 Deno.test('Shield resource - players start with 0 shield', () => {
   const gameEngine = new QuestsZeusGameEngine();

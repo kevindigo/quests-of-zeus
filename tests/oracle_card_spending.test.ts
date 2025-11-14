@@ -1,7 +1,7 @@
 // Tests for oracle card spending functionality
 
 import { assert, assertEquals, assertFalse } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 import { findZeus } from '../src/game-initializer.ts';
 import { COLOR_WHEEL, type CoreColor } from '../src/types.ts';
 

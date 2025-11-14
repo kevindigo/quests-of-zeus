@@ -1,7 +1,7 @@
 // Game Controller for Quests of Zeus with Unified Resource Selection
 // Manages the game UI and user interactions
 
-import { QuestsZeusGameEngine } from './game-engine.ts';
+import { QuestsZeusGameEngine } from './game-engine-core.ts';
 import type { CoreColor, HexColor } from './types.ts';
 
 // Type declarations for DOM APIs (for Deno type checking)

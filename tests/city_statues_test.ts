@@ -1,7 +1,7 @@
 // Test for city statue functionality
 
 import { assert, assertEquals } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 import { COLOR_WHEEL } from '../src/types.ts';
 
 Deno.test('City Statue Functionality - Basic Operations', () => {

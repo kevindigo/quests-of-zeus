@@ -1,8 +1,5 @@
-import {
-  assert,
-  assertEquals,
-} from 'https://deno.land/std@0.178.0/testing/asserts.ts';
-import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { assert, assertEquals } from '@std/assert';
+import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 
 Deno.test('Simple recolor test', () => {
   const gameEngine = new QuestsZeusGameEngine();

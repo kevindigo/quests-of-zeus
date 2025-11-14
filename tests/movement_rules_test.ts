@@ -1,7 +1,7 @@
 // Tests for the new movement rules
 
 import { assert, assertEquals } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('Movement Rules - Only move to sea spaces', () => {

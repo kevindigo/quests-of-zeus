@@ -1,7 +1,7 @@
 // Tests for the Quests of Zeus game engine
 
 import { assert, assertEquals, assertExists } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 
 Deno.test('GameEngine - initialization', () => {
   const engine = new QuestsZeusGameEngine();

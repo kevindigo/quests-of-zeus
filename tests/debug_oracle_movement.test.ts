@@ -1,6 +1,6 @@
 // Debug test for oracle card movement
 import { assert, assertGreater } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine.ts';
+import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('Debug oracle card movement', () => {
