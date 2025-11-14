@@ -149,7 +149,7 @@ export class TerrainPlacementManager {
         continue;
       }
 
-      if (this.isValidTerrainPlacement(cell!, grid)) {
+      if (this.isValidTerrainPlacement(grid, cell!, terrainType)) {
         cell!.terrain = terrainType;
         placed++;
       }
@@ -164,8 +164,28 @@ export class TerrainPlacementManager {
     return placed;
   }
 
-  private isValidTerrainPlacement(cell: HexCell, grid: HexGrid): boolean {
-    return this.isEligibleToBeLandOrShallows(grid, cell);
+  private isValidTerrainPlacement(
+    grid: HexGrid,
+    cell: HexCell,
+    proposedTerrainType: TerrainType,
+  ): boolean {
+    if (!this.isEligibleToBeLandOrShallows(grid, cell)) {
+      return false;
+    }
+
+    cell.terrain = proposedTerrainType;
+    try {
+      const MAX_ISLAND_SIZE = 5;
+      const islandSize = grid.islandSize(cell);
+      // console.warn(`Island size: ${islandSize}`);
+      if (islandSize > MAX_ISLAND_SIZE) {
+        return false;
+      }
+    } finally {
+      cell.terrain = 'sea';
+    }
+
+    return true;
   }
 
   private setColors(grid: HexGrid, terrainType: TerrainType): void {
