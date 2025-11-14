@@ -30,12 +30,11 @@ export class TerrainPlacementManager {
     this.placeZeus(grid);
     this.placeCities(grid);
     this.placeSpecialTerrain(grid);
+    this.convertSeaToShallows(grid);
 
     this.setColors(grid, 'temple');
     this.setColors(grid, 'clouds');
-
-    this.convertSeaToShallows(grid);
-
+    this.seaColorManager.assignColorsToSeaHexes(grid);
     return grid;
   }
 
@@ -44,33 +43,21 @@ export class TerrainPlacementManager {
    * and set all neighbors of the chosen Zeus hex to sea
    */
   private placeZeus(grid: HexGrid): void {
-    // Define the 6 neighbor hexes around the center
-    const neighborHexes = [
-      [1, 0],
-      [1, -1],
-      [0, -1],
-      [-1, 0],
-      [-1, 1],
-      [0, 1],
-    ];
-
-    // Randomly select one of the neighbor hexes
-    const randomIndex = Math.floor(Math.random() * neighborHexes.length);
-    const zeusDelta = neighborHexes[randomIndex] || [];
-    const zeusQ = zeusDelta[0] || 0;
-    const zeusR = zeusDelta[1] || 0;
-
-    // Find the cell for Zeus placement
-    const zeusCell = grid.getCell({ q: zeusQ, r: zeusR });
-    if (zeusCell) {
-      // Place Zeus at the selected neighbor hex
-      zeusCell.terrain = 'zeus';
-
-      // Set all neighbors of the Zeus hex to sea
-      this.setZeusNeighborsToSea(grid, zeusQ, zeusR);
-    } else {
-      console.error(`Failed to place Zeus at (${zeusQ}, ${zeusR})`);
+    const randomDirection = Math.floor(Math.random() * 6);
+    const zeusCoordinates = HexGrid.getVector(randomDirection);
+    const zeusCell = grid.getCell(zeusCoordinates);
+    if (!zeusCell) {
+      throw new Error(
+        `Cell at ${JSON.stringify(zeusCoordinates)} does not exist?`,
+      );
     }
+    zeusCell.terrain = 'zeus';
+    const neighbors = grid.getNeighborsOf(zeusCell);
+    UtilityService.shuffleArray(neighbors);
+    neighbors.forEach((neighbor, index) => {
+      neighbor.terrain = 'sea';
+      neighbor.color = COLOR_WHEEL[index]!;
+    });
   }
 
   /**
@@ -145,43 +132,6 @@ export class TerrainPlacementManager {
           this.setRandomNeighborsToSea(grid, cornerCoords.q, cornerCoords.r);
         }
       }
-    }
-  }
-
-  /**
-   * Set all neighbors of the Zeus hex to sea
-   * @param grid - The grid containing all cells
-   * @param zeusQ - The q coordinate of the Zeus cell
-   * @param zeusR - The r coordinate of the Zeus cell
-   */
-  private setZeusNeighborsToSea(
-    grid: HexGrid,
-    zeusQ: number,
-    zeusR: number,
-  ): void {
-    // Get all neighboring cells of the Zeus hex
-    const neighbors: HexCell[] = [];
-
-    // Check all 6 directions using getAdjacent
-    for (let direction = 0; direction < 6; direction++) {
-      const adjacentCoords = this.hexGridOperations.getAdjacent(
-        zeusQ,
-        zeusR,
-        direction,
-      );
-      if (adjacentCoords) {
-        const neighbor = grid.getCell(
-          adjacentCoords,
-        );
-        if (neighbor) {
-          neighbors.push(neighbor);
-        }
-      }
-    }
-
-    // Set all neighbors of Zeus to sea
-    for (const neighbor of neighbors) {
-      neighbor.terrain = 'sea';
     }
   }
 
@@ -296,9 +246,6 @@ export class TerrainPlacementManager {
 
     // Final step: Convert ALL remaining shallows to sea (100% conversion)
     this.convertShallowsToSea(grid);
-
-    // Assign colors to all sea hexes
-    this.seaColorManager.assignColorsToSeaHexes(grid);
   }
 
   /**
