@@ -297,54 +297,24 @@ export class TerrainPlacementManager {
         const cell = availableCells[cellIndex];
         cellIndex++;
 
+        if (cell!.terrain !== 'shallow') {
+          continue;
+        }
+
         // Check if this cell is a valid candidate for placement
         if (this.isValidTerrainPlacement(cell!, grid)) {
           // Only place if the cell is still shallows (not already taken by previous placement)
-          if (cell!.terrain === 'shallow') {
-            cell!.terrain = terrainType;
+          cell!.terrain = terrainType;
 
-            // Assign random color to temples, similar to cities
-            if (terrainType === 'temple') {
-              cell!.color = templeColors[placed]!;
-            } // Assign colors to clouds - each color appears on exactly 2 cloud hexes
-            else if (terrainType === 'clouds') {
-              cell!.color = cloudColors[placed]!;
-            }
-
-            placed++;
+          // Assign random color to temples, similar to cities
+          if (terrainType === 'temple') {
+            cell!.color = templeColors[placed]!;
+          } // Assign colors to clouds - each color appears on exactly 2 cloud hexes
+          else if (terrainType === 'clouds') {
+            cell!.color = cloudColors[placed]!;
           }
-        }
-      }
 
-      // Second pass: if we couldn't place enough, relax constraints for remaining cells
-      if (placed < count) {
-        console.warn(
-          `Could only place ${placed} of ${count} ${terrainType} cells with constraints, relaxing constraints for remaining ${
-            count - placed
-          }`,
-        );
-
-        // Reset cellIndex to start from beginning for fallback placement
-        cellIndex = 0;
-
-        while (placed < count && cellIndex < availableCells.length) {
-          const cell = availableCells[cellIndex];
-          cellIndex++;
-
-          // Fallback: place on any shallow cell without landmass constraint
-          if (cell!.terrain === 'shallow') {
-            cell!.terrain = terrainType;
-
-            // Assign random color to temples, similar to cities
-            if (terrainType === 'temple') {
-              cell!.color = templeColors[placed]!;
-            } // Assign colors to clouds - each color appears on exactly 2 cloud hexes
-            else if (terrainType === 'clouds') {
-              cell!.color = cloudColors[placed]!;
-            }
-
-            placed++;
-          }
+          placed++;
         }
       }
 
