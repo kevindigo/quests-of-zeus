@@ -101,43 +101,6 @@ Deno.test('GameEngine - oracle dice rolling', () => {
   assertEquals(player?.oracleDice.length, 3);
 });
 
-Deno.test('GameEngine - movement validation', () => {
-  const engine = new QuestsZeusGameEngine();
-
-  // Should throw error when game is not initialized
-  try {
-    engine.getAvailableMoves(1);
-    assert(false, 'Should have thrown error');
-  } catch (error: unknown) {
-    assertEquals(
-      (error as Error).message,
-      'Game not initialized. Call initializeGame() first.',
-    );
-  }
-
-  // Initialize the game
-  engine.initializeGame();
-
-  // Game should already be in action phase with dice ready
-  const state = engine.getGameState();
-  assertEquals(state.phase, 'action');
-
-  // Get available moves
-  const availableMoves = engine.getAvailableMoves(1);
-  assertExists(availableMoves);
-
-  // With new movement rules, available moves should include die color information
-  assertEquals(Array.isArray(availableMoves), true);
-
-  // Check that each move has the required properties
-  if (availableMoves.length > 0) {
-    const firstMove = availableMoves[0];
-    assert('q' in firstMove!, 'Move should have q coordinate');
-    assert('r' in firstMove, 'Move should have r coordinate');
-    assert('dieColor' in firstMove, 'Move should have dieColor property');
-  }
-});
-
 Deno.test('GameEngine - quest completion', () => {
   const engine = new QuestsZeusGameEngine();
 

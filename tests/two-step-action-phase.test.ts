@@ -25,58 +25,6 @@ Deno.test('GameController - die selection', () => {
   );
 });
 
-Deno.test('GameController - movement with selected die', () => {
-  const engine = new QuestsZeusGameEngine();
-  engine.initializeGame();
-
-  // Game now starts with dice already rolled
-  const player = engine.getPlayer(1);
-  assertExists(player);
-  assertEquals(player.oracleDice.length, 3);
-
-  // Get available moves
-  const availableMoves = engine.getAvailableMoves(1);
-
-  if (availableMoves.length > 0) {
-    const firstMove = availableMoves[0];
-    const requiredDieColor = firstMove!.dieColor;
-
-    // Verify that the player has the required die
-    assert(
-      player.oracleDice.includes(requiredDieColor),
-      `Player should have ${requiredDieColor} die for this move`,
-    );
-
-    // Count how many dice of this color the player has before the move
-    const diceCountBefore = player.oracleDice.filter((color: string) =>
-      color === requiredDieColor
-    ).length;
-
-    // Test moving with the correct die color
-    const moveResult = engine.moveShip(
-      1,
-      firstMove!.q,
-      firstMove!.r,
-      requiredDieColor,
-    );
-    assertEquals(
-      moveResult.success,
-      true,
-      'Move should succeed with correct die color',
-    );
-
-    // Verify exactly one die of this color was consumed
-    const diceCountAfter = player.oracleDice.filter((color: string) =>
-      color === requiredDieColor
-    ).length;
-    assertEquals(
-      diceCountAfter,
-      diceCountBefore - 1,
-      'Exactly one die should be consumed after move',
-    );
-  }
-});
-
 Deno.test('GameController - die selection and clearing', () => {
   // This test would verify the UI behavior of selecting and clearing dice
   // Since we can't easily test UI interactions, we'll document the expected behavior:

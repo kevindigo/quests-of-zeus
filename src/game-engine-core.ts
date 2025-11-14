@@ -428,34 +428,6 @@ export class QuestsZeusGameEngine {
     return this.state!.players.find((p) => p.id === playerId);
   }
 
-  public getAvailableMoves(
-    playerId: number,
-    favorSpent?: number,
-  ): { q: number; r: number; dieColor: CoreColor }[] {
-    this.ensureInitialized();
-    const player = this.state!.players.find((p) => p.id === playerId);
-    if (!player || this.state!.phase !== 'action') return [];
-
-    const currentPos = player.getShipPosition();
-    const movementRange = 3 + (favorSpent || 0);
-    const reachableSeaTiles = this.movementSystem!.getReachableSeaTiles(
-      currentPos.q,
-      currentPos.r,
-      movementRange,
-    );
-
-    return reachableSeaTiles
-      .filter((seaTile) =>
-        player.oracleDice.includes(seaTile.color) &&
-        !(seaTile.q === currentPos.q && seaTile.r === currentPos.r)
-      )
-      .map((seaTile) => ({
-        q: seaTile.q,
-        r: seaTile.r,
-        dieColor: seaTile.color,
-      }));
-  }
-
   public getCityHexes(): CityHex[] {
     this.ensureInitialized();
     return this.state!.cityHexes;
