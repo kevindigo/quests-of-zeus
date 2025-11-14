@@ -10,7 +10,7 @@ import {
   CubeHex,
   GameState,
   type HexColor,
-  type MonsterHex,
+  MonsterHex,
   PLAYER_COLORS,
 } from './types.ts';
 
@@ -218,11 +218,7 @@ export class GameInitializer {
 
     // Initialize empty monster hexes
     for (const cell of shuffledMonsterCells) {
-      monsterHexes.push({
-        q: cell.q,
-        r: cell.r,
-        monsterColors: [],
-      });
+      monsterHexes.push(new MonsterHex(cell.getCoordinates()));
     }
     if (monsterHexes.length !== 9) {
       throw new Error(

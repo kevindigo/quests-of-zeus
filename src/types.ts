@@ -88,7 +88,12 @@ export class CubeHex {
   cubeColors: HexColor[]; // Array of colors that have cubes on this hex (no duplicates)
 }
 
-export interface MonsterHex {
+export class MonsterHex {
+  public constructor(coordinates: HexCoordinates) {
+    this.q = coordinates.q;
+    this.r = coordinates.r;
+    this.monsterColors = [];
+  }
   q: number;
   r: number;
   monsterColors: HexColor[]; // Array of monster colors on this hex (no duplicates, max 2 per hex)
