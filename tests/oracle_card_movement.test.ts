@@ -7,7 +7,7 @@ Deno.test('OracleCardMovement - basic functionality', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const playerId = 1;
+  const playerId = 0;
   const player = engine.getPlayer(playerId);
   assertExists(player);
 
@@ -25,7 +25,7 @@ Deno.test('OracleCardMovement - spend oracle card for movement', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const playerId = 1;
+  const playerId = 0;
   const player = engine.getPlayer(playerId);
   assertExists(player);
 
@@ -81,7 +81,7 @@ Deno.test('OracleCardMovement - cannot use oracle card twice per turn', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const playerId = 1;
+  const playerId = 0;
   const player = engine.getPlayer(playerId);
   assertExists(player);
 
@@ -146,7 +146,7 @@ Deno.test('OracleCardMovement - cannot use oracle card without having it', () =>
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const playerId = 1;
+  const playerId = 0;
   const player = engine.getPlayer(playerId);
   assertExists(player);
 
@@ -183,7 +183,7 @@ Deno.test('OracleCardMovement - oracle card usage resets on end turn', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const playerId = 1;
+  const playerId = 0;
   const player = engine.getPlayer(playerId);
   assertExists(player);
 

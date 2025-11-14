@@ -394,77 +394,62 @@ export class GameController {
   }
 
   private addPlayerMarkers(players: Player[]): void {
-    // Group players by their position
-    const playersByPosition = new Map<string, Player[]>();
     players.forEach((player) => {
       const position = player.getShipPosition();
-      const positionKey = `${position.q},${position.r}`;
-      if (!playersByPosition.has(positionKey)) {
-        playersByPosition.set(positionKey, []);
-      }
-      playersByPosition.get(positionKey)!.push(player);
-    });
-
-    // Add markers for each position group
-    playersByPosition.forEach((playersAtPosition: Player[], positionKey) => {
-      const [q, r] = positionKey.split(',').map(Number);
+      const q = position.q;
+      const r = position.r;
       const cell = document.querySelector(`[data-q="${q}"][data-r="${r}"]`);
       if (cell) {
         const rect = cell.getBoundingClientRect();
         const svg = cell.closest('svg');
         if (svg) {
           const point = svg.createSVGPoint();
+          const quadrant = player.id;
+          let offsetX = 0;
+          let offsetY = 0;
 
-          playersAtPosition.forEach((player: Player, index: number) => {
-            // Calculate position in one of the four quadrants of the hex
-            // Use smaller offsets to position dots closer to the center
-            const quadrant = player.id;
-            let offsetX = 0;
-            let offsetY = 0;
+          // Reduce the offset to move dots closer to center (from 1/4 to 1/6 of the width/height)
+          const offsetFactor = 6;
 
-            // Reduce the offset to move dots closer to center (from 1/4 to 1/6 of the width/height)
-            const offsetFactor = 6;
+          switch (quadrant) {
+            case 0: // Upper left
+              offsetX = -rect.width / offsetFactor;
+              offsetY = -rect.height / offsetFactor;
+              break;
+            case 1: // Upper right
+              offsetX = rect.width / offsetFactor;
+              offsetY = -rect.height / offsetFactor;
+              break;
+            case 2: // Lower left
+              offsetX = -rect.width / offsetFactor;
+              offsetY = rect.height / offsetFactor;
+              break;
+            case 3: // Lower right
+              offsetX = rect.width / offsetFactor;
+              offsetY = rect.height / offsetFactor;
+              break;
+          }
 
-            switch (quadrant) {
-              case 0: // Upper left
-                offsetX = -rect.width / offsetFactor;
-                offsetY = -rect.height / offsetFactor;
-                break;
-              case 1: // Upper right
-                offsetX = rect.width / offsetFactor;
-                offsetY = -rect.height / offsetFactor;
-                break;
-              case 2: // Lower left
-                offsetX = -rect.width / offsetFactor;
-                offsetY = rect.height / offsetFactor;
-                break;
-              case 3: // Lower right
-                offsetX = rect.width / offsetFactor;
-                offsetY = rect.height / offsetFactor;
-                break;
-            }
+          point.x = rect.left + rect.width / 2 + offsetX;
+          point.y = rect.top + rect.height / 2 + offsetY;
+          const svgPoint = point.matrixTransform(
+            svg.getScreenCTM()!.inverse(),
+          );
 
-            point.x = rect.left + rect.width / 2 + offsetX;
-            point.y = rect.top + rect.height / 2 + offsetY;
-            const svgPoint = point.matrixTransform(
-              svg.getScreenCTM()!.inverse(),
-            );
+          const marker = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'circle',
+          );
+          marker.setAttribute('cx', svgPoint.x.toString());
+          marker.setAttribute('cy', svgPoint.y.toString());
+          marker.setAttribute('r', '8');
+          marker.setAttribute('fill', this.getColorHex(player.color));
+          marker.setAttribute('stroke', '#fff');
+          marker.setAttribute('stroke-width', '2');
+          marker.setAttribute('class', 'player-marker');
+          marker.setAttribute('data-player-id', player.id.toString());
 
-            const marker = document.createElementNS(
-              'http://www.w3.org/2000/svg',
-              'circle',
-            );
-            marker.setAttribute('cx', svgPoint.x.toString());
-            marker.setAttribute('cy', svgPoint.y.toString());
-            marker.setAttribute('r', '8');
-            marker.setAttribute('fill', this.getColorHex(player.color));
-            marker.setAttribute('stroke', '#fff');
-            marker.setAttribute('stroke-width', '2');
-            marker.setAttribute('class', 'player-marker');
-            marker.setAttribute('data-player-id', player.id.toString());
-
-            svg.appendChild(marker);
-          });
+          svg.appendChild(marker);
         } else {
           console.warn(
             `Could not find SVG container for players at (${q}, ${r})`,

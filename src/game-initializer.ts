@@ -80,7 +80,7 @@ export class GameInitializer {
       }
 
       const player = new Player(
-        i + 1,
+        i,
         `Player ${i + 1}`,
         PLAYER_COLORS[i]!,
         startPosition,

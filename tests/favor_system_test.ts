@@ -9,8 +9,8 @@ Deno.test('Favor System - player initialization', () => {
   engine.initializeGame();
 
   // Check that players have the correct favor values
-  const player1 = engine.getPlayer(1);
-  const player2 = engine.getPlayer(2);
+  const player1 = engine.getPlayer(0);
+  const player2 = engine.getPlayer(1);
 
   assertExists(player1);
   assertExists(player2);
@@ -58,7 +58,7 @@ Deno.test('Spend Die for Favor - basic functionality', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const player1 = engine.getPlayer(1);
+  const player1 = engine.getPlayer(0);
   assertExists(player1);
 
   // Game now starts in action phase with dice already rolled
@@ -73,7 +73,7 @@ Deno.test('Spend Die for Favor - basic functionality', () => {
   const initialColorCount =
     player1.oracleDice.filter((color: string) => color === dieColor).length;
 
-  const success = engine.spendDieForFavor(1, dieColor!);
+  const success = engine.spendDieForFavor(player1.id, dieColor!);
 
   assert(success, 'Should successfully spend die for favor');
   assertEquals(player1.favor, initialFavor + 2, 'Should gain 2 favor');
@@ -97,7 +97,7 @@ Deno.test('Spend Die for Favor - invalid scenarios', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const player1 = engine.getPlayer(1);
+  const player1 = engine.getPlayer(0);
   assertExists(player1);
 
   // Game now starts in action phase with dice already rolled
@@ -119,7 +119,7 @@ Deno.test('Spend Die for Favor - invalid scenarios', () => {
     }
   }
 
-  const fail2 = engine.spendDieForFavor(1, unavailableColor);
+  const fail2 = engine.spendDieForFavor(player1.id, unavailableColor);
   assert(!fail2, "Should not be able to spend die player doesn't have");
 
   // Verify favor and dice count didn't change
@@ -135,7 +135,7 @@ Deno.test('Spend Die for Favor - turn continues after spending', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const player1 = engine.getPlayer(1);
+  const player1 = engine.getPlayer(0);
   assertExists(player1);
 
   // Game now starts in action phase with dice already rolled
@@ -144,7 +144,7 @@ Deno.test('Spend Die for Favor - turn continues after spending', () => {
 
   // Spend one die for favor
   const dieColor = player1.oracleDice[0];
-  const success = engine.spendDieForFavor(1, dieColor!);
+  const success = engine.spendDieForFavor(player1.id, dieColor!);
 
   assert(success, 'Should successfully spend die for favor');
 

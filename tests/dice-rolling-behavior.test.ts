@@ -82,12 +82,12 @@ Deno.test('DiceRolling - recoloring intentions cleared at end of turn', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const player1 = engine.getPlayer(1);
+  const player1 = engine.getPlayer(0);
   assertExists(player1);
 
   // Set up a recoloring intention for Player 1
   const dieColorToRecolor = player1.oracleDice[0];
-  const success = engine.setRecolorIntention(1, dieColorToRecolor!, 1);
+  const success = engine.setRecolorIntention(player1.id, dieColorToRecolor!, 1);
   assert(success, 'Should be able to set recoloring intention');
 
   // Verify recoloring intention was set

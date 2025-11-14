@@ -36,7 +36,7 @@ Deno.test('GameEngine - player creation', () => {
 
   // Should throw error when game is not initialized
   try {
-    engine.getPlayer(1);
+    engine.getPlayer(0);
     assert(false, 'Should have thrown error');
   } catch (error: unknown) {
     assertEquals(
@@ -47,8 +47,8 @@ Deno.test('GameEngine - player creation', () => {
 
   // Initialize the game
   engine.initializeGame();
-  const player1 = engine.getPlayer(1);
-  const player2 = engine.getPlayer(2);
+  const player1 = engine.getPlayer(0);
+  const player2 = engine.getPlayer(1);
 
   assertExists(player1);
   assertExists(player2);
@@ -76,7 +76,7 @@ Deno.test('GameEngine - oracle dice rolling', () => {
 
   // Should throw error when game is not initialized
   try {
-    engine.rollOracleDice(1);
+    engine.rollOracleDice(0);
     assert(false, 'Should have thrown error');
   } catch (error: unknown) {
     assertEquals(
@@ -89,12 +89,12 @@ Deno.test('GameEngine - oracle dice rolling', () => {
   engine.initializeGame();
 
   // Players should already have dice from initialization
-  const player = engine.getPlayer(1);
+  const player = engine.getPlayer(0);
   assertExists(player);
   assertEquals(player?.oracleDice.length, 3);
 
   // Test manually rolling dice (for debugging or special cases)
-  const dice = engine.rollOracleDice(1);
+  const dice = engine.rollOracleDice(player.id);
   assertEquals(dice.length, 3);
 
   // Player should still have dice after manual roll
@@ -151,8 +151,8 @@ Deno.test('GameEngine - shield resource', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const player1 = engine.getPlayer(1);
-  const player2 = engine.getPlayer(2);
+  const player1 = engine.getPlayer(0);
+  const player2 = engine.getPlayer(1);
 
   assertExists(player1);
   assertExists(player2);
@@ -183,8 +183,8 @@ Deno.test('GameEngine - shield resource', () => {
 
   // Test that shield is properly serialized in game state
   const gameState = engine.getGameState();
-  const serializedPlayer1 = gameState.players.find((p) => p.id === 1);
-  const serializedPlayer2 = gameState.players.find((p) => p.id === 2);
+  const serializedPlayer1 = gameState.players.find((p) => p.id === player1.id);
+  const serializedPlayer2 = gameState.players.find((p) => p.id === player2.id);
 
   assertExists(serializedPlayer1);
   assertExists(serializedPlayer2);
@@ -218,8 +218,8 @@ Deno.test('GameEngine - all players start on Zeus hex', () => {
   engine.initializeGame();
 
   // Get all players
-  const player1 = engine.getPlayer(1);
-  const player2 = engine.getPlayer(2);
+  const player1 = engine.getPlayer(0);
+  const player2 = engine.getPlayer(1);
 
   assertExists(player1);
   assertExists(player2);
@@ -269,7 +269,7 @@ Deno.test('GameEngine - draw oracle card by spending die', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
 
-  const playerId = 1;
+  const playerId = 0;
   const player = engine.getPlayer(playerId);
   assertExists(player);
 
