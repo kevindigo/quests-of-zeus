@@ -34,6 +34,7 @@ export class TerrainPlacementManager {
     this.placeTerrainOfType(grid, 9, 'monsters');
     this.placeTerrainOfType(grid, 12, 'clouds');
 
+    this.convertEdgesToShallows(grid);
     this.convertSomeSeaToShallows(grid);
 
     this.setColors(grid, 'temple');
@@ -197,10 +198,27 @@ export class TerrainPlacementManager {
     });
   }
 
-  /**
-   * Convert some sea cells to shallows based on game constraints
-   * This simulates the sea-to-shallows conversion that happens during gameplay
-   */
+  private convertEdgesToShallows(grid: HexGrid): void {
+    const radius = grid.getRadius();
+    const seaEdges: HexCell[] = [];
+    grid.forEachCell((cell) => {
+      const distance = HexGrid.hexDistance(0, 0, cell.q, cell.r);
+      if (distance == radius && cell.terrain === 'sea') {
+        seaEdges.push(cell);
+      }
+    });
+
+    UtilityService.shuffleArray(seaEdges);
+    seaEdges.forEach((edgeCell) => {
+      const isEligible = this.isEligibleToBeLandOrShallows(grid, edgeCell);
+      const cityNeighbors = grid.getNeighborsOfType(edgeCell, 'city');
+      const seaNeighbors = grid.getNeighborsOfType(edgeCell, 'sea');
+      if (isEligible && cityNeighbors.length < 1 && seaNeighbors.length >= 2) {
+        edgeCell.terrain = 'shallow';
+      }
+    });
+  }
+
   private convertSomeSeaToShallows(grid: HexGrid): void {
     const seaCells = grid.getCellsOfType('sea');
 
@@ -208,7 +226,7 @@ export class TerrainPlacementManager {
     UtilityService.shuffleArray(seaCells);
 
     let conversions = 0;
-    const maxConversions = 10;
+    const maxConversions = 5;
 
     // Try to convert up to 10 sea cells to shallows
     for (const cell of seaCells) {
