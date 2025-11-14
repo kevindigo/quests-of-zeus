@@ -195,8 +195,7 @@ export class QuestsZeusGameEngine {
 
     // Check if the target is reachable
     const reachableSeaTiles = this.movementSystem!.getReachableSeaTiles(
-      currentPos.q,
-      currentPos.r,
+      currentPos,
       movementRange,
     );
 
@@ -478,8 +477,7 @@ export class QuestsZeusGameEngine {
     for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
       const movementRange = 3 + favorSpent;
       const reachableSeaTiles = this.movementSystem!.getReachableSeaTiles(
-        player.getShipPosition().q,
-        player.getShipPosition().r,
+        player.getShipPosition(),
         movementRange,
       );
 

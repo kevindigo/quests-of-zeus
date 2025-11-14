@@ -1,5 +1,6 @@
 // Movement and reachability logic for Quests of Zeus
 import type { HexCell } from './hexmap/HexCell.ts';
+import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import type { HexMap } from './hexmap/HexMap.ts';
 import type { CoreColor, HexColor } from './types.ts';
 
@@ -13,8 +14,7 @@ export class MovementSystem {
    * Ships can start on non-sea tiles (like Zeus) and move to adjacent sea tiles
    */
   public getReachableSeaTiles(
-    startQ: number,
-    startR: number,
+    from: HexCoordinates,
     range: number,
   ): { q: number; r: number; color: CoreColor }[] {
     const reachableTiles: { q: number; r: number; color: CoreColor }[] = [];
@@ -22,9 +22,9 @@ export class MovementSystem {
     const queue: { q: number; r: number; steps: number }[] = [];
 
     // Start BFS from the current position (step 0)
-    const startKey = `${startQ},${startR}`;
+    const startKey = `${from.q},${from.r}`;
     visited.add(startKey);
-    queue.push({ q: startQ, r: startR, steps: 0 });
+    queue.push({ q: from.q, r: from.r, steps: 0 });
 
     // Continue BFS up to the movement range
     while (queue.length > 0) {
@@ -102,8 +102,7 @@ export class MovementSystem {
 
     // Check if the target is reachable within the movement range on sea tiles
     const reachableSeaTiles = this.getReachableSeaTiles(
-      currentPos.q,
-      currentPos.r,
+      currentPos,
       movementRange,
     );
 
