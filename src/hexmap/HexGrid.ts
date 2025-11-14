@@ -114,6 +114,35 @@ export class HexGrid {
     return results;
   }
 
+  public islandSize(cell: HexCell): number {
+    const islandHexes = new Set<HexCell>();
+    const candidateHexes: HexCell[] = [];
+    candidateHexes.push(cell);
+    // console.log(`Added candidate ${JSON.stringify(cell)}`);
+    while (candidateHexes.length > 0) {
+      const cellToCheck = candidateHexes.pop();
+      if (!cellToCheck) {
+        continue;
+      }
+      if (!cellToCheck.isDryLand()) {
+        continue;
+      }
+      islandHexes.add(cellToCheck);
+      // console.log(`Added island cell ${JSON.stringify(cellToCheck)}`);
+      const neighbors = this.getNeighborsOf(cellToCheck);
+      neighbors.forEach((neighbor) => {
+        const alreadyIncluded = islandHexes.has(neighbor);
+        if (!alreadyIncluded) {
+          if (neighbor.isDryLand()) {
+            candidateHexes.push(neighbor);
+            // console.log(`Added candidate ${JSON.stringify(neighbor)}`);
+          }
+        }
+      });
+    }
+
+    return islandHexes.size;
+  }
   public static generateHexShapedGrid(
     radius: number,
     defaultTerrain: TerrainType,

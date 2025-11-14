@@ -296,3 +296,19 @@ Deno.test('HexGrid - getNeighborsOfType / hasNeighborsOfType', () => {
   assert(grid.hasNeighborOfType(center, 'shallow'));
   assertFalse(grid.hasNeighborOfType(center, 'city'));
 });
+
+Deno.test('HexGrid - islandSize', () => {
+  const grid = new HexGrid(3, 'sea');
+  const center = grid.getCell({ q: 0, r: 0 });
+  assert(center);
+  assertEquals(grid.islandSize(center), 0);
+  center.terrain = 'temple';
+  assertEquals(grid.islandSize(center), 1);
+  for (let direction = 0; direction < 6; ++direction) {
+    const thatNeighbor = grid.getCell(HexGrid.getVector(direction));
+    assert(thatNeighbor);
+    thatNeighbor.terrain = 'monsters';
+    assertEquals(grid.islandSize(center), 2 + direction);
+    assertEquals(grid.islandSize(thatNeighbor), 2 + direction);
+  }
+});
