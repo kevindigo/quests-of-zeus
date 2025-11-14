@@ -127,9 +127,7 @@ Each of the 6 cities on the map has a unique color and can hold up to 3 statues:
 ```
 ├── src/
 │   ├── main.ts              # Game server
-│   ├── hexmap.ts            # Hex map generation and terrain
 │   ├── hexmap-svg.ts        # SVG visualization
-│   ├── game-engine.ts       # Core game mechanics
 │   └── game-controller.ts   # UI controller
 ├── index.html               # Main game interface
 ├── dist/                    # Compiled JavaScript files
