@@ -1,5 +1,6 @@
 // Game initialization and setup for Quests of Zeus
 import type { HexCell } from './hexmap/HexCell.ts';
+import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMap } from './hexmap/HexMap.ts';
 import { Player } from './Player.ts';
 import {
@@ -33,12 +34,9 @@ export class GameInitializer {
 
     // Find the Zeus hex coordinates
     const zeusCell = findZeus(map);
-    const zeusPosition = zeusCell
-      ? { q: zeusCell.q, r: zeusCell.r }
-      : { q: 0, r: 0 };
 
     // Initialize players (2-4 players)
-    const players = this.initializePlayers(zeusPosition);
+    const players = this.initializePlayers(zeusCell.getCoordinates());
 
     // Initialize the oracle card deck
     this.initializeOracleCardDeck();
@@ -67,7 +65,7 @@ export class GameInitializer {
   /**
    * Initialize players with starting positions and resources
    */
-  private initializePlayers(startPosition: { q: number; r: number }): Player[] {
+  private initializePlayers(startPosition: HexCoordinates): Player[] {
     const players: Player[] = [];
 
     for (let i = 0; i < 2; i++) { // Start with 2 players for now
