@@ -9,14 +9,12 @@ export class GameState {
     currentPlayerIndex: number,
     round: number,
     phase: 'setup' | 'action' | 'end',
-    monsterStrength: number,
   ) {
     this.map = map;
     this.players = players;
     this.currentPlayerIndex = currentPlayerIndex;
     this.round = round;
     this.phase = phase;
-    this.monsterStrength = monsterStrength;
     this.cubeHexes = [];
     this.monsterHexes = [];
     this.cityHexes = [];
@@ -51,7 +49,6 @@ export class GameState {
       this.currentPlayerIndex,
       JSON.parse(JSON.stringify(this.round)),
       this.phase,
-      this.monsterStrength,
     );
 
     newGameState.setCubeHexes(this.getCubeHexes());
@@ -90,7 +87,6 @@ export class GameState {
   public currentPlayerIndex: number;
   public round: number;
   public phase: 'setup' | 'action' | 'end';
-  public monsterStrength: number;
   private cubeHexes: CubeHex[];
   private monsterHexes: MonsterHex[];
   private cityHexes: CityHex[];

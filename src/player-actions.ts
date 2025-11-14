@@ -275,13 +275,12 @@ export class PlayerActions {
     }
 
     // Check if player has required oracle dice
-    const requiredDice = this.state.monsterStrength;
-    if (player.oracleDice.length < requiredDice) {
+    if (player.oracleDice.length !== 3) {
       return false;
     }
 
     // Consume oracle dice
-    player.oracleDice.splice(0, requiredDice);
+    // player.oracleDice.splice(0, requiredDice);
 
     // Remove one monster from this hex (first one)
     monsterHex.monsterColors.shift();

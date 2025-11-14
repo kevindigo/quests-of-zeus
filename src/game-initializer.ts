@@ -55,7 +55,6 @@ export class GameInitializer {
       0,
       1,
       'action', // Start directly in action phase since dice are already rolled
-      3,
     );
 
     state.setCubeHexes(cubeHexes);
