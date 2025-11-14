@@ -31,7 +31,7 @@ Deno.test('DiceRolling - all players start with dice rolled', () => {
   });
 
   // Game should start in action phase since dice are already rolled
-  assertEquals(state.phase, 'action', 'Game should start in action phase');
+  assertEquals(state.getPhase(), 'action', 'Game should start in action phase');
 });
 
 Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
@@ -68,7 +68,7 @@ Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
 
   // Game should still be in action phase
   assertEquals(
-    stateAfterEndTurn.phase,
+    stateAfterEndTurn.getPhase(),
     'action',
     'Game should remain in action phase after endTurn',
   );

@@ -376,7 +376,7 @@ export class QuestsZeusGameEngine {
     if (this.state!.currentPlayerIndex === 0) {
       this.state!.round++;
     }
-    this.state!.phase = 'action';
+    this.state!.setPhase('action');
   }
 
   private getPlayerIndex(playerId: number): number {
@@ -461,7 +461,7 @@ export class QuestsZeusGameEngine {
     this.ensureInitialized();
     const player = this.state!.players.find((p) => p.id === playerId);
     if (
-      !player || this.state!.phase !== 'action' ||
+      !player || this.state!.getPhase() !== 'action' ||
       !player.oracleDice.includes(dieColor)
     ) {
       return [];

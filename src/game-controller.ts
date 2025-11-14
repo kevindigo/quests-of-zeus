@@ -179,7 +179,7 @@ export class GameController {
     this.renderMap(gameState);
 
     // Update game phase display
-    this.updatePhaseDisplay(gameState.phase);
+    this.updatePhaseDisplay(gameState.getPhase());
 
     // Check for win condition
     const winCondition = this.gameEngine.checkWinCondition();
@@ -380,7 +380,7 @@ export class GameController {
       this.addPlayerMarkers(gameState.players);
 
       // Highlight available moves
-      if (gameState.phase === 'action') {
+      if (gameState.getPhase() === 'action') {
         this.highlightAvailableMoves();
       }
     } catch (error) {
@@ -760,7 +760,7 @@ export class GameController {
       const { q, r } = customEvent.detail;
       const gameState = this.gameEngine.getGameState();
 
-      if (gameState.phase === 'action') {
+      if (gameState.getPhase() === 'action') {
         const currentPlayer = this.gameEngine.getCurrentPlayer();
 
         // Check if moving with oracle card
@@ -1519,7 +1519,7 @@ export class GameController {
       return [];
     }
     const player = this.gameEngine.getPlayer(playerId);
-    if (!player || this.gameEngine.getGameState().phase !== 'action') {
+    if (!player || this.gameEngine.getGameState().getPhase() !== 'action') {
       return [];
     }
 

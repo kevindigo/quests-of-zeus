@@ -54,9 +54,9 @@ export class GameInitializer {
       players,
       0,
       1,
-      'action', // Start directly in action phase since dice are already rolled
     );
 
+    state.setPhase('action');
     state.setCubeHexes(cubeHexes);
     state.setMonsterHexes(monsterHexes);
     state.setCityHexes(cityHexes);

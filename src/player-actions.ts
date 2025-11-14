@@ -46,13 +46,13 @@ export class PlayerActions {
     dieColor?: CoreColor,
     favorSpent?: number,
   ): MoveShipResult {
-    if (this.state.phase !== 'action') {
+    if (this.state.getPhase() !== 'action') {
       return {
         success: false,
         error: {
           type: 'wrong_phase',
-          message: `Cannot move during ${this.state.phase} phase`,
-          details: { phase: this.state.phase },
+          message: `Cannot move during ${this.state.getPhase()} phase`,
+          details: { phase: this.state.getPhase() },
         },
       };
     }
@@ -212,7 +212,7 @@ export class PlayerActions {
    * Collect an offering cube
    */
   public collectOffering(player: Player, color: HexColor): boolean {
-    if (this.state.phase !== 'action') {
+    if (this.state.getPhase() !== 'action') {
       return false;
     }
 
@@ -253,7 +253,7 @@ export class PlayerActions {
    * Fight a monster
    */
   public fightMonster(player: Player): boolean {
-    if (this.state.phase !== 'action') {
+    if (this.state.getPhase() !== 'action') {
       return false;
     }
 
@@ -292,7 +292,7 @@ export class PlayerActions {
    * Build a temple
    */
   public buildTemple(player: Player): boolean {
-    if (this.state.phase !== 'action') {
+    if (this.state.getPhase() !== 'action') {
       return false;
     }
 
@@ -319,7 +319,7 @@ export class PlayerActions {
    * Build a foundation
    */
   public buildFoundation(player: Player): boolean {
-    if (this.state.phase !== 'action') {
+    if (this.state.getPhase() !== 'action') {
       return false;
     }
 
@@ -338,7 +338,7 @@ export class PlayerActions {
    * Complete a cloud quest
    */
   public completeCloudQuest(player: Player): boolean {
-    if (this.state.phase !== 'action') {
+    if (this.state.getPhase() !== 'action') {
       return false;
     }
 
@@ -365,7 +365,7 @@ export class PlayerActions {
    * Spend any die to gain 2 favor during the action phase
    */
   public spendDieForFavor(player: Player, dieColor: CoreColor): boolean {
-    if (this.state.phase !== 'action') {
+    if (this.state.getPhase() !== 'action') {
       return false;
     }
 

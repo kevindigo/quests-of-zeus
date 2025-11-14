@@ -151,7 +151,7 @@ Deno.test('Spend Die for Favor - turn continues after spending', () => {
   // Verify turn is still in action phase and player can use remaining dice
   const gameState = engine.getGameState();
   assertEquals(
-    gameState.phase,
+    gameState.getPhase(),
     'action',
     'Should still be in action phase after spending die',
   );
