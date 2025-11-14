@@ -1,6 +1,6 @@
 // TerrainPlacementManager - Handles all terrain generation and placement logic
 
-import type { HexColor, TerrainType } from '../types.ts';
+import type { TerrainType } from '../types.ts';
 import { COLOR_WHEEL } from '../types.ts';
 import { UtilityService } from '../UtilityService.ts';
 import type { HexCell } from './HexCell.ts';
@@ -32,6 +32,9 @@ export class TerrainPlacementManager {
 
     // Place special terrain types randomly
     this.placeSpecialTerrain(grid);
+
+    this.setColors(grid, 'temple');
+    this.setColors(grid, 'clouds');
 
     // Convert some sea cells to shallows based on game constraints
     this.convertSeaToShallows(grid);
@@ -274,24 +277,6 @@ export class TerrainPlacementManager {
     for (const [terrainType, count] of terrainPlacements) {
       let placed = 0;
 
-      // For temples and clouds, create shuffled color arrays to assign random colors
-      let templeColors: HexColor[] = [];
-      let cloudColors: HexColor[] = [];
-      if (terrainType === 'temple') {
-        templeColors = [...COLOR_WHEEL];
-        UtilityService.shuffleArray(templeColors);
-      } else if (terrainType === 'clouds') {
-        // For clouds, we need 12 hexes with 6 colors, so each color appears twice
-        // Create an array with each color repeated twice
-        cloudColors = [];
-        for (const color of COLOR_WHEEL) {
-          cloudColors.push(color);
-          cloudColors.push(color);
-        }
-        // Shuffle the colors to distribute them randomly
-        UtilityService.shuffleArray(cloudColors);
-      }
-
       while (placed < count && cellIndex < availableCells.length) {
         const cell = availableCells[cellIndex];
         cellIndex++;
@@ -303,14 +288,6 @@ export class TerrainPlacementManager {
         // Check if this cell is a valid candidate for placement
         if (this.isValidTerrainPlacement(cell!, grid)) {
           cell!.terrain = terrainType;
-
-          // Assign random color to temples, similar to cities
-          if (terrainType === 'temple') {
-            cell!.color = templeColors[placed]!;
-          } // Assign colors to clouds - each color appears on exactly 2 cloud hexes
-          else if (terrainType === 'clouds') {
-            cell!.color = cloudColors[placed]!;
-          }
 
           placed++;
         }
@@ -357,6 +334,15 @@ export class TerrainPlacementManager {
       if (cell && cell.terrain === 'shallow') {
         cell.terrain = 'sea';
       }
+    });
+  }
+
+  private setColors(grid: HexGrid, terrainType: TerrainType): void {
+    const hexesOfType = grid.getCellsOfType(terrainType);
+    UtilityService.shuffleArray(hexesOfType);
+    const colorCount = COLOR_WHEEL.length;
+    hexesOfType.forEach((cell, index) => {
+      cell.color = COLOR_WHEEL[index % colorCount]!;
     });
   }
 
