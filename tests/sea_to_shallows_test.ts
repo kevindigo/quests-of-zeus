@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --allow-read
 
-import { assertEquals } from '@std/assert';
+import { assert, assertEquals, assertFalse } from '@std/assert';
 import { HexMap } from '../src/hexmap/HexMap.ts';
 
 // Test the sea-to-shallows conversion functionality
@@ -46,18 +46,7 @@ Deno.test('Sea to shallows conversion - basic functionality', () => {
         `Shallow cell at (${shallowCell.q}, ${shallowCell.r}) should not have zeus neighbor`,
       );
 
-      // 2. Should not have city as neighbor
-      const hasCityNeighborCheck = grid.hasNeighborOfType(
-        shallowCell,
-        'city',
-      );
-      assertEquals(
-        hasCityNeighborCheck,
-        false,
-        `Shallow cell at (${shallowCell.q}, ${shallowCell.r}) should not have city neighbor`,
-      );
-
-      // 3. Check all neighbors of the shallow cell
+      // Check all neighbors of the shallow cell
       // To properly test the constraints, we need to simulate what the state was
       // during the conversion by temporarily converting the shallow cell back to sea
       // and then checking if it would pass the eligibility criteria
@@ -68,43 +57,22 @@ Deno.test('Sea to shallows conversion - basic functionality', () => {
       shallowCell.terrain = 'sea';
       shallowCell.color = originalColor !== 'none' ? originalColor : 'blue'; // Use a default color if needed
 
-      let allConstraintsSatisfied = true;
-
-      // Constraint 1: Should not have zeus as neighbor
-      const hasZeusNeighborConstraint = grid.hasNeighborOfType(
+      const hasZeusNeighbor = grid.hasNeighborOfType(
         shallowCell,
         'zeus',
       );
-      if (hasZeusNeighborConstraint) {
-        allConstraintsSatisfied = false;
-      }
+      assertFalse(hasZeusNeighbor);
 
-      // Constraint 2: Should not have city as neighbor
-      const hasCityNeighborConstraint = grid.hasNeighborOfType(
-        shallowCell,
-        'city',
-      );
-      if (hasCityNeighborConstraint) {
-        allConstraintsSatisfied = false;
-      }
-
-      // Constraint 3: Check all neighbors
       const allNeighbors = hexMap.getNeighbors(shallowCell.getCoordinates());
       for (const neighbor of allNeighbors) {
         if (neighbor.terrain === 'sea') {
           // For sea neighbors: check if they can reach zeus (excluding the candidate cell)
-          if (
-            !hexMap.canReachZeusFromSeaNeighbor(neighbor, shallowCell, grid)
-          ) {
-            allConstraintsSatisfied = false;
-            break;
-          }
+          assert(
+            hexMap.canReachZeusFromSeaNeighbor(neighbor, shallowCell, grid),
+          );
         } else if (neighbor.terrain !== 'shallow') {
           // For land neighbors (not sea or shallows): check if they have at least one sea neighbor
-          if (!grid.hasNeighborOfType(neighbor, 'sea')) {
-            allConstraintsSatisfied = false;
-            break;
-          }
+          assert(grid.hasNeighborOfType(neighbor, 'sea'));
         }
         // For shallow neighbors, no additional checks needed
       }
@@ -112,12 +80,6 @@ Deno.test('Sea to shallows conversion - basic functionality', () => {
       // Restore the shallow cell
       shallowCell.terrain = originalTerrain;
       shallowCell.color = originalColor;
-
-      assertEquals(
-        allConstraintsSatisfied,
-        true,
-        `All neighbor constraints should be satisfied for shallow cell at (${shallowCell.q}, ${shallowCell.r})`,
-      );
     }
   } else {
     // No shallow cells were converted (all constraints were too restrictive)

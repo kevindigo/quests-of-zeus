@@ -24,8 +24,7 @@ export class TerrainPlacementManager {
    */
   generateGrid(): HexGrid {
     const radius = 6;
-    const shallow: TerrainType = 'shallow';
-    const grid = new HexGrid(radius, shallow);
+    const grid = new HexGrid(radius, 'sea');
 
     this.placeZeus(grid);
     this.placeCities(grid);
@@ -35,7 +34,6 @@ export class TerrainPlacementManager {
     this.placeTerrainOfType(grid, 9, 'monsters');
     this.placeTerrainOfType(grid, 12, 'clouds');
 
-    this.convertAllShallowsToSea(grid);
     this.convertSomeSeaToShallows(grid);
 
     this.setColors(grid, 'temple');
@@ -111,82 +109,20 @@ export class TerrainPlacementManager {
       }
 
       // Place the city if the cell exists
-      const cell = grid.getCell({
+      const cityLocation = {
         q: placementQ,
         r: placementR,
-      });
-      if (cell && cell.terrain === 'shallow') {
-        cell.terrain = 'city';
-        // Assign a random color to the city
-        const color = shuffledColors[cornerDirection] || 'none';
-        cell.color = color;
-
-        // After placing city, set 2 random neighboring hexes to sea
-        this.setRandomNeighborsToSea(grid, placementQ, placementR);
-      } else {
-        // Fallback: place at the corner if the randomized placement failed
-        const cornerCell = grid.getCell(
-          cornerCoords,
+      };
+      const cell = grid.getCell(cityLocation);
+      if (!cell) {
+        throw new Error(
+          `Couldn't find cell to place city at ${JSON.stringify(cityLocation)}`,
         );
-        if (cornerCell && cornerCell.terrain === 'shallow') {
-          cornerCell.terrain = 'city';
-          // Assign a random color to the city
-          const color = shuffledColors[cornerDirection] || 'none';
-          cornerCell.color = color;
-
-          // After placing city, set 2 random neighboring hexes to sea
-          this.setRandomNeighborsToSea(grid, cornerCoords.q, cornerCoords.r);
-        }
       }
-    }
-  }
-
-  /**
-   * Set 2 random neighboring hexes of a given cell to sea
-   * @param grid - The grid containing all cells
-   * @param q - The q coordinate of the center cell
-   * @param r - The r coordinate of the center cell
-   */
-  private setRandomNeighborsToSea(
-    grid: HexGrid,
-    q: number,
-    r: number,
-  ): void {
-    // Get all neighboring cells using the provided grid
-    const neighbors: HexCell[] = [];
-
-    // Check all 6 directions using getAdjacent
-    for (let direction = 0; direction < 6; direction++) {
-      const adjacentCoords = this.hexGridOperations.getAdjacent(
-        q,
-        r,
-        direction,
-      );
-      if (adjacentCoords) {
-        const neighbor = grid.getCell(
-          adjacentCoords,
-        );
-        if (neighbor) {
-          neighbors.push(neighbor);
-        }
-      }
-    }
-
-    // Filter neighbors that are currently shallows (eligible to become sea)
-    const eligibleNeighbors = neighbors.filter((cell) =>
-      cell.terrain === 'shallow'
-    );
-
-    // If there are eligible neighbors, randomly select 2 of them
-    if (eligibleNeighbors.length > 0) {
-      // Shuffle the eligible neighbors
-      UtilityService.shuffleArray(eligibleNeighbors);
-
-      // Set up to 2 random neighbors to sea
-      const neighborsToConvert = Math.min(2, eligibleNeighbors.length);
-      for (let i = 0; i < neighborsToConvert; i++) {
-        eligibleNeighbors[i]!.terrain = 'sea';
-      }
+      cell.terrain = 'city';
+      // Assign a random color to the city
+      const color = shuffledColors[cornerDirection] || 'none';
+      cell.color = color;
     }
   }
 
@@ -197,63 +133,39 @@ export class TerrainPlacementManager {
   ): number {
     let placed = 0;
 
-    const availableCells = grid.getCellsOfType('shallow');
+    const seaCells = grid.getCellsOfType('sea');
+    const availableCells = seaCells.filter((cell) => {
+      return cell.color === 'none';
+    });
     UtilityService.shuffleArray(availableCells);
 
     let cellIndex = 0;
     while (placed < count && cellIndex < availableCells.length) {
-      const cell = availableCells[cellIndex];
+      const cell = availableCells[cellIndex]!;
       cellIndex++;
 
-      if (cell!.terrain !== 'shallow') {
+      const wasAlreadyUsed = cell.terrain !== 'sea';
+      if (wasAlreadyUsed) {
         continue;
       }
 
-      // Check if this cell is a valid candidate for placement
       if (this.isValidTerrainPlacement(cell!, grid)) {
         cell!.terrain = terrainType;
-
         placed++;
       }
     }
 
     if (placed < count) {
       console.warn(
-        `Could only place ${placed} of ${count} ${terrainType} cells even with relaxed constraints`,
+        `Could only place ${placed} of ${count} ${terrainType} cells`,
       );
     }
 
     return placed;
   }
 
-  /**
-   * Check if a cell is valid for terrain placement
-   * Currently uses a simple constraint: must have at least one sea or shallow neighbor
-   */
   private isValidTerrainPlacement(cell: HexCell, grid: HexGrid): boolean {
-    // For now, use a simple constraint: cell must have at least one sea or shallow neighbor
-    return this.hasShallowsOrSeaNeighbor(cell, grid);
-  }
-
-  /**
-   * Check if a cell has at least one neighbor that is shallows or sea
-   */
-  private hasShallowsOrSeaNeighbor(cell: HexCell, grid: HexGrid): boolean {
-    const neighbors = grid.getNeighborsOf(cell);
-    return neighbors.some((neighbor) =>
-      neighbor.terrain === 'shallow' || neighbor.terrain === 'sea'
-    );
-  }
-
-  /**
-   * Convert all remaining shallows to sea (100% conversion)
-   */
-  private convertAllShallowsToSea(grid: HexGrid): void {
-    grid.forEachCell((cell) => {
-      if (cell && cell.terrain === 'shallow') {
-        cell.terrain = 'sea';
-      }
-    });
+    return this.isEligibleToBeLandOrShallows(grid, cell);
   }
 
   private setColors(grid: HexGrid, terrainType: TerrainType): void {
@@ -285,7 +197,7 @@ export class TerrainPlacementManager {
       }
 
       // Check if this cell meets the constraints for conversion
-      if (this.isEligibleForSeaToShallowsConversion(grid, cell)) {
+      if (this.isEligibleToBeLandOrShallows(grid, cell)) {
         cell.terrain = 'shallow';
         cell.color = 'none'; // Reset color when converting to shallows
         conversions++;
@@ -296,21 +208,14 @@ export class TerrainPlacementManager {
   /**
    * Check if a sea cell is eligible for conversion to shallows
    */
-  private isEligibleForSeaToShallowsConversion(
+  private isEligibleToBeLandOrShallows(
     grid: HexGrid,
     cell: HexCell,
   ): boolean {
-    // Constraint 1: Should not have zeus as neighbor
     if (grid.hasNeighborOfType(cell, 'zeus')) {
       return false;
     }
 
-    // Constraint 2: Should not have city as neighbor
-    if (grid.hasNeighborOfType(cell, 'city')) {
-      return false;
-    }
-
-    // Constraint 3: Check all neighbors
     if (this.wouldBlockAccessToZeusIfShallow(grid, cell)) {
       return false;
     }
