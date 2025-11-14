@@ -202,11 +202,6 @@ export class TerrainPlacementManager {
       return;
     }
 
-    const availableCells = grid.getCellsOfType('shallow');
-
-    // Shuffle available cells for random placement
-    UtilityService.shuffleArray(availableCells);
-
     // Place terrain types with their required counts (excluding cities which are already placed)
     const terrainPlacements: [TerrainType, number][] = [
       ['cubes', 6],
