@@ -10,9 +10,6 @@ export class GameState {
     round: number,
     phase: 'setup' | 'action' | 'end',
     monsterStrength: number,
-    cubeHexes: CubeHex[],
-    monsterHexes: MonsterHex[],
-    cityHexes: CityHex[],
   ) {
     this.map = map;
     this.players = players;
@@ -20,9 +17,9 @@ export class GameState {
     this.round = round;
     this.phase = phase;
     this.monsterStrength = monsterStrength;
-    this.cubeHexes = cubeHexes;
-    this.monsterHexes = monsterHexes;
-    this.cityHexes = cityHexes;
+    this.cubeHexes = [];
+    this.monsterHexes = [];
+    this.cityHexes = [];
   }
 
   public deepCopy(): GameState {
@@ -48,17 +45,44 @@ export class GameState {
       newPlayer.usedOracleCardThisTurn = oldPlayer.usedOracleCardThisTurn;
       return newPlayer;
     });
-    return new GameState(
+    const newGameState = new GameState(
       JSON.parse(JSON.stringify(this.map)),
       copyOfPlayers,
       this.currentPlayerIndex,
       JSON.parse(JSON.stringify(this.round)),
       this.phase,
       this.monsterStrength,
-      JSON.parse(JSON.stringify(this.cubeHexes)),
-      JSON.parse(JSON.stringify(this.monsterHexes)),
-      JSON.parse(JSON.stringify(this.cityHexes)),
     );
+
+    newGameState.setCubeHexes(this.getCubeHexes());
+    newGameState.setMonsterHexes(this.getMonsterHexes());
+    newGameState.setCityHexes(this.getCityHexes());
+
+    return newGameState;
+  }
+
+  public getCubeHexes(): CubeHex[] {
+    return this.cubeHexes;
+  }
+
+  public setCubeHexes(hexes: CubeHex[]): void {
+    this.cubeHexes = hexes;
+  }
+
+  public getMonsterHexes(): MonsterHex[] {
+    return this.monsterHexes;
+  }
+
+  public setMonsterHexes(hexes: MonsterHex[]): void {
+    this.monsterHexes = hexes;
+  }
+
+  public getCityHexes(): CityHex[] {
+    return this.cityHexes;
+  }
+
+  public setCityHexes(hexes: CityHex[]): void {
+    this.cityHexes = hexes;
   }
 
   public map: HexMap;
@@ -67,7 +91,7 @@ export class GameState {
   public round: number;
   public phase: 'setup' | 'action' | 'end';
   public monsterStrength: number;
-  public cubeHexes: CubeHex[];
-  public monsterHexes: MonsterHex[];
-  public cityHexes: CityHex[];
+  private cubeHexes: CubeHex[];
+  private monsterHexes: MonsterHex[];
+  private cityHexes: CityHex[];
 }

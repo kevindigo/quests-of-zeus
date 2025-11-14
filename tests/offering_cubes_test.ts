@@ -6,7 +6,7 @@ Deno.test('offering cubes configuration', () => {
   const gameState = gameEngine.initializeGame();
 
   // Check that each cube hex has exactly playerCount cubes
-  const validCubeHexes = gameState.cubeHexes.filter((ch) =>
+  const validCubeHexes = gameState.getCubeHexes().filter((ch) =>
     ch.cubeColors.length === gameState.players.length
   );
 
@@ -17,7 +17,7 @@ Deno.test('offering cubes configuration', () => {
   );
 
   // Check that all 6 colors are represented (each color should appear playerCount times)
-  const allCubeColors = gameState.cubeHexes.flatMap((ch) => ch.cubeColors);
+  const allCubeColors = gameState.getCubeHexes().flatMap((ch) => ch.cubeColors);
   const colorCounts: Record<string, number> = {};
   allCubeColors.forEach((color) => {
     colorCounts[color] = (colorCounts[color] || 0) + 1;
@@ -35,7 +35,7 @@ Deno.test('offering cubes configuration', () => {
   );
 
   // Check that no color appears twice on the same hex
-  const hexesWithDuplicates = gameState.cubeHexes.filter((ch) => {
+  const hexesWithDuplicates = gameState.getCubeHexes().filter((ch) => {
     const uniqueColors = new Set(ch.cubeColors);
     return uniqueColors.size !== ch.cubeColors.length;
   });

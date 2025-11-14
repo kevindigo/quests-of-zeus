@@ -225,7 +225,7 @@ export class PlayerActions {
     }
 
     // Find the cube hex in our tracking
-    const cubeHex = this.state.cubeHexes.find((ch) =>
+    const cubeHex = this.state.getCubeHexes().find((ch) =>
       ch.q === currentCell.q && ch.r === currentCell.r
     );
 
@@ -266,7 +266,7 @@ export class PlayerActions {
     }
 
     // Find the monster hex in our tracking
-    const monsterHex = this.state.monsterHexes.find((mh) =>
+    const monsterHex = this.state.getMonsterHexes().find((mh) =>
       mh.q === currentCell.q && mh.r === currentCell.r
     );
 

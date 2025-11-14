@@ -49,17 +49,20 @@ export class GameInitializer {
 
     const cityHexes = this.initializeCities(map);
 
-    return new GameState(
+    const state = new GameState(
       map,
       players,
       0,
       1,
       'action', // Start directly in action phase since dice are already rolled
       3,
-      cubeHexes,
-      monsterHexes,
-      cityHexes,
     );
+
+    state.setCubeHexes(cubeHexes);
+    state.setMonsterHexes(monsterHexes);
+    state.setCityHexes(cityHexes);
+
+    return state;
   }
 
   /**

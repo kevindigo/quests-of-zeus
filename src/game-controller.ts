@@ -313,7 +313,7 @@ export class GameController {
 
     try {
       // Update the hex map SVG with cube hex data
-      const cityHexes = gameState.cityHexes || [];
+      const cityHexes = gameState.getCityHexes();
       // Debug: Log city hex details
       cityHexes.forEach((cityHex: CityHex, index: number) => {
         console.log(
@@ -322,7 +322,7 @@ export class GameController {
         );
       });
 
-      const cubeHexes: CubeHex[] = gameState.cubeHexes || [];
+      const cubeHexes: CubeHex[] = gameState.getCubeHexes();
       console.log('Cube hexes for rendering:', cubeHexes);
 
       // Debug: Log cube hex details
@@ -334,7 +334,7 @@ export class GameController {
       });
 
       // Update the hex map SVG with monster hex data
-      const monsterHexes: MonsterHex[] = gameState.monsterHexes || [];
+      const monsterHexes: MonsterHex[] = gameState.getMonsterHexes() || [];
       console.log('Monster hexes for rendering:', monsterHexes);
 
       // Debug: Log monster hex details

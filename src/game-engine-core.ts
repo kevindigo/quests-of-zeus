@@ -432,22 +432,22 @@ export class QuestsZeusGameEngine {
 
   public getCityHexes(): CityHex[] {
     this.ensureInitialized();
-    return this.state!.cityHexes;
+    return this.state!.getCityHexes();
   }
 
   public getCubeHexes(): CubeHex[] {
     this.ensureInitialized();
-    return this.state!.cubeHexes;
+    return this.state!.getCubeHexes();
   }
 
   public getMonsterHexes(): MonsterHex[] {
     this.ensureInitialized();
-    return this.state!.monsterHexes;
+    return this.state!.getMonsterHexes();
   }
 
   public getMonstersOnHex(q: number, r: number): HexColor[] {
     this.ensureInitialized();
-    const monsterHex = this.state!.monsterHexes.find((mh) =>
+    const monsterHex = this.state!.getMonsterHexes().find((mh) =>
       mh.q === q && mh.r === r
     );
     return monsterHex ? monsterHex.monsterColors : [];
