@@ -27,16 +27,13 @@ export class TerrainPlacementManager {
     const shallow: TerrainType = 'shallow';
     const grid = new HexGrid(radius, shallow);
 
-    // Place Zeus randomly in one of the neighbor hexes of the center
     this.placeZeus(grid);
-
-    // Place special terrain types randomly
+    this.placeCities(grid);
     this.placeSpecialTerrain(grid);
 
     this.setColors(grid, 'temple');
     this.setColors(grid, 'clouds');
 
-    // Convert some sea cells to shallows based on game constraints
     this.convertSeaToShallows(grid);
 
     return grid;
@@ -254,9 +251,6 @@ export class TerrainPlacementManager {
       console.error('placeSpecialTerrain: Invalid grid provided', grid);
       return;
     }
-
-    // Place cities first in the corners
-    this.placeCities(grid);
 
     const availableCells = grid.getCellsOfType('shallow');
 
