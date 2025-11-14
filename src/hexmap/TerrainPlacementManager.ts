@@ -216,36 +216,48 @@ export class TerrainPlacementManager {
       ['clouds', 12],
     ];
 
-    let cellIndex = 0;
-
     for (const [terrainType, count] of terrainPlacements) {
-      let placed = 0;
-
-      while (placed < count && cellIndex < availableCells.length) {
-        const cell = availableCells[cellIndex];
-        cellIndex++;
-
-        if (cell!.terrain !== 'shallow') {
-          continue;
-        }
-
-        // Check if this cell is a valid candidate for placement
-        if (this.isValidTerrainPlacement(cell!, grid)) {
-          cell!.terrain = terrainType;
-
-          placed++;
-        }
-      }
-
-      if (placed < count) {
-        console.warn(
-          `Could only place ${placed} of ${count} ${terrainType} cells even with relaxed constraints`,
-        );
-      }
+      this.placeTerrainOfType(grid, count, terrainType);
     }
 
     // Final step: Convert ALL remaining shallows to sea (100% conversion)
     this.convertShallowsToSea(grid);
+  }
+
+  private placeTerrainOfType(
+    grid: HexGrid,
+    count: number,
+    terrainType: TerrainType,
+  ): number {
+    let placed = 0;
+
+    const availableCells = grid.getCellsOfType('shallow');
+    UtilityService.shuffleArray(availableCells);
+
+    let cellIndex = 0;
+    while (placed < count && cellIndex < availableCells.length) {
+      const cell = availableCells[cellIndex];
+      cellIndex++;
+
+      if (cell!.terrain !== 'shallow') {
+        continue;
+      }
+
+      // Check if this cell is a valid candidate for placement
+      if (this.isValidTerrainPlacement(cell!, grid)) {
+        cell!.terrain = terrainType;
+
+        placed++;
+      }
+    }
+
+    if (placed < count) {
+      console.warn(
+        `Could only place ${placed} of ${count} ${terrainType} cells even with relaxed constraints`,
+      );
+    }
+
+    return placed;
   }
 
   /**
