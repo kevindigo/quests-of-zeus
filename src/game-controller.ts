@@ -418,7 +418,7 @@ export class GameController {
           playersAtPosition.forEach((player: Player, index: number) => {
             // Calculate position in one of the four quadrants of the hex
             // Use smaller offsets to position dots closer to the center
-            const quadrant = index % 4;
+            const quadrant = player.id;
             let offsetX = 0;
             let offsetY = 0;
 
