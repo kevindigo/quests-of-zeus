@@ -1,6 +1,6 @@
 import type { HexMap } from './hexmap/HexMap.ts';
 import { Player } from './Player.ts';
-import type { CityHex, CubeHex, MonsterHex } from './types.ts';
+import type { CityHex, CubeHex, MonsterHex, Phase } from './types.ts';
 
 export class GameState {
   public constructor(
@@ -8,7 +8,7 @@ export class GameState {
     players: Player[],
     currentPlayerIndex: number,
     round: number,
-    phase: 'setup' | 'action' | 'end',
+    phase: Phase,
   ) {
     this.map = map;
     this.players = players;
@@ -86,7 +86,7 @@ export class GameState {
   public players: Player[];
   public currentPlayerIndex: number;
   public round: number;
-  public phase: 'setup' | 'action' | 'end';
+  public phase: Phase;
   private cubeHexes: CubeHex[];
   private monsterHexes: MonsterHex[];
   private cityHexes: CityHex[];

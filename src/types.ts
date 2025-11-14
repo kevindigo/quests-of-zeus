@@ -145,3 +145,5 @@ export interface MoveShipResult {
     };
   };
 }
+
+export type Phase = 'setup' | 'action' | 'end';
