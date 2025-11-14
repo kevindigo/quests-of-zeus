@@ -17,6 +17,10 @@ export class HexCell {
     return { q: this.q, r: this.r };
   }
 
+  public isDryLand(): boolean {
+    return !(this.terrain === 'sea' || this.terrain === 'shallow');
+  }
+
   public readonly q: number; // Column coordinate
   public readonly r: number; // Row coordinate
   public terrain: TerrainType;
