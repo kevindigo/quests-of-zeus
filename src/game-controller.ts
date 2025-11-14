@@ -2,6 +2,7 @@
 // Manages the game UI and user interactions
 
 import { QuestsZeusGameEngine } from './game-engine-core.ts';
+import { GameState } from './GameState.ts';
 import { HexMapSVG } from './hexmap-svg.ts';
 import type { Player } from './Player.ts';
 import {
@@ -9,7 +10,6 @@ import {
   COLOR_WHEEL,
   type CoreColor,
   type CubeHex,
-  type GameState,
   type HexColor,
   type MonsterHex,
   type MoveShipResult,
@@ -125,20 +125,6 @@ export class GameController {
           <h3>Welcome to Quests of Zeus</h3>
           <p>A strategic board game of ancient Greece</p>
           <button id="startGame" class="action-btn">Start New Game</button>
-          <div class="game-info">
-            <h4>How to Play:</h4>
-            <ul>
-              <li>Oracle dice are rolled automatically at the end of each turn</li>
-              <li>Move your ship across the sea and land hexes using dice colors</li>
-              <li>Spend favor to extend your movement range (1 extra hex per favor spent)</li>
-              <li>Recolor dice and oracle cards by spending favor (1 favor per color advancement)</li>
-              <li>Collect cubes and statues, fight monsters, and build temples</li>
-              <li>Spend dice to draw oracle cards, then use them as dice (1 per turn)</li>
-              <li>Complete quests to win the game</li>
-              <li>First player to complete 3 of each quest type (Temple Offering, Monster, Foundation, Cloud) wins!</li>
-            </ul>
-          </div>
-        </div>
       `;
     }
 

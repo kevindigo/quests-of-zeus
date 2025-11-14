@@ -1,4 +1,5 @@
 // Game initialization and setup for Quests of Zeus
+import { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMap } from './hexmap/HexMap.ts';
@@ -8,7 +9,6 @@ import {
   COLOR_WHEEL,
   type CoreColor,
   CubeHex,
-  GameState,
   type HexColor,
   MonsterHex,
   PLAYER_COLORS,

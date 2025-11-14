@@ -4,10 +4,11 @@
 import { assert, assertEquals, assertGreater } from '@std/assert';
 import { GameController } from '../src/game-controller.ts';
 import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import type { GameState } from '../src/GameState.ts';
 import type { HexCell } from '../src/hexmap/HexCell.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { Player } from '../src/Player.ts';
-import type { CoreColor, GameState } from '../src/types.ts';
+import type { CoreColor } from '../src/types.ts';
 
 Deno.test('CombinedResourceSpending - select die for movement', () => {
   const engine = new QuestsZeusGameEngine();

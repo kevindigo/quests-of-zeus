@@ -1,4 +1,5 @@
 // Player action implementations for Quests of Zeus
+import type { GameState } from './GameState.ts';
 import type { MovementSystem } from './movement-system.ts';
 import type { OracleSystem } from './oracle-system.ts';
 import type { Player } from './Player.ts';
@@ -9,12 +10,7 @@ import {
   removeCubeFromStorage,
   removeStatueFromStorage,
 } from './storage-manager.ts';
-import type {
-  CoreColor,
-  GameState,
-  HexColor,
-  MoveShipResult,
-} from './types.ts';
+import type { CoreColor, HexColor, MoveShipResult } from './types.ts';
 import { COLOR_WHEEL } from './types.ts';
 
 export class PlayerActions {

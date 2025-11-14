@@ -2,6 +2,7 @@
 // High-level game management and orchestration
 
 import { GameInitializer } from './game-initializer.ts';
+import type { GameState } from './GameState.ts';
 import { MovementSystem } from './movement-system.ts';
 import { OracleSystem } from './oracle-system.ts';
 import { PlayerActions } from './player-actions.ts';
@@ -10,7 +11,6 @@ import type {
   CityHex,
   CoreColor,
   CubeHex,
-  GameState,
   HexColor,
   MonsterHex,
   MoveShipResult,
@@ -30,6 +30,9 @@ export class QuestsZeusGameEngine {
 
   public initializeGame(): GameState {
     this.state = this.gameInitializer.initializeGame();
+    if (!this.state) {
+      throw new Error('Initializer failed to create a game state');
+    }
     this.movementSystem = new MovementSystem(this.state.map);
     this.oracleSystem = new OracleSystem(
       this.gameInitializer.getOracleCardDeck(),
