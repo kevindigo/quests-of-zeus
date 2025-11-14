@@ -292,7 +292,6 @@ export class TerrainPlacementManager {
         UtilityService.shuffleArray(cloudColors);
       }
 
-      // First pass: try to place with landmass constraints
       while (placed < count && cellIndex < availableCells.length) {
         const cell = availableCells[cellIndex];
         cellIndex++;
@@ -303,7 +302,6 @@ export class TerrainPlacementManager {
 
         // Check if this cell is a valid candidate for placement
         if (this.isValidTerrainPlacement(cell!, grid)) {
-          // Only place if the cell is still shallows (not already taken by previous placement)
           cell!.terrain = terrainType;
 
           // Assign random color to temples, similar to cities
