@@ -32,19 +32,6 @@ export class TerrainPlacementManager {
     const shallow: TerrainType = 'shallow';
     const grid = new HexGrid(radius, shallow);
 
-    grid.forEachCell((cell) => {
-      // Calculate distance from center
-      const distanceFromCenter = HexGrid.hexDistance(
-        cell.q,
-        cell.r,
-        0,
-        0,
-      );
-
-      // Add special locations based on terrain and position
-      this.addSpecialLocations(cell, cell.q, cell.r, distanceFromCenter);
-    });
-
     // Place Zeus randomly in one of the neighbor hexes of the center
     this.placeZeus(grid);
 
@@ -52,20 +39,6 @@ export class TerrainPlacementManager {
     this.placeSpecialTerrain(grid);
 
     return grid;
-  }
-
-  /**
-   * Add special locations like oracles, ports, and sanctuaries
-   * Note: Special locations are now represented by terrain types
-   */
-  private addSpecialLocations(
-    _cell: HexCell,
-    _q: number,
-    _r: number,
-    _distanceFromCenter: number,
-  ): void {
-    // Special locations are now handled through terrain types
-    // oracles, ports, and sanctuaries are represented by their respective terrain types
   }
 
   /**
