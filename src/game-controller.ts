@@ -966,25 +966,41 @@ export class GameController {
   }
 
   private handleMoveWithDie(currentPlayer: Player, q: number, r: number): void {
-    if (!this.selectedDieColor) {
+    const selectedDieColor = this.selectedDieColor;
+    if (!selectedDieColor) {
       return;
     }
+    if (!currentPlayer.oracleDice.includes(selectedDieColor)) {
+      return;
+    }
+    let effectiveDieColor: CoreColor = selectedDieColor;
+    let recoloringCost = 0;
+    if (
+      currentPlayer.recoloredDice &&
+      currentPlayer.recoloredDice[selectedDieColor]
+    ) {
+      effectiveDieColor =
+        currentPlayer.recoloredDice[selectedDieColor].newColor;
+      recoloringCost = currentPlayer.recoloredDice[selectedDieColor].favorCost;
+    }
+    const availableFavor = currentPlayer.favor;
+    const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
     // Get available moves for the selected die color and available favor
-    const availableMoves = this.gameEngine.getAvailableMovesForDie(
-      currentPlayer.id,
-      this.selectedDieColor,
-      currentPlayer.favor,
+    const availableMoves = this.gameEngine.getAvailableMovesForColor(
+      currentPlayer,
+      effectiveDieColor,
+      maxFavorForMovement,
     );
 
     // Get the effective die color considering recoloring intention
-    let effectiveDieColor = this.selectedDieColor;
     const recoloredDice = currentPlayer.recoloredDice;
-    const selectedColor = this.selectedDieColor;
     if (
-      recoloredDice &&
-      recoloredDice[selectedColor]
+      recoloredDice
     ) {
-      effectiveDieColor = recoloredDice[selectedColor].newColor;
+      const recolor = recoloredDice[selectedDieColor];
+      if (recolor) {
+        effectiveDieColor = recolor.newColor;
+      }
     }
 
     const targetMove = availableMoves.find((
@@ -1006,22 +1022,10 @@ export class GameController {
             currentPlayer.id,
             q,
             r,
-            this.selectedDieColor,
+            effectiveDieColor,
             this.selectedFavorSpent,
           );
           if (moveResult.success) {
-            // Get the effective die color that was actually used
-            let effectiveDieColor = this.selectedDieColor;
-            const recoloredDice = currentPlayer.recoloredDice;
-            const selectedColor = this.selectedDieColor;
-            if (
-              recoloredDice &&
-              recoloredDice[selectedColor]
-            ) {
-              effectiveDieColor = recoloredDice[selectedColor]
-                .newColor;
-            }
-
             let message =
               `Ship moved to (${q}, ${r}) using ${effectiveDieColor} die`;
             if (this.selectedFavorSpent > 0) {
@@ -1067,19 +1071,18 @@ export class GameController {
         currentPlayer.id,
         q,
         r,
-        this.selectedDieColor,
+        selectedDieColor,
         this.selectedFavorSpent,
       );
       if (moveResult.success) {
         // Get the effective die color that was actually used
         let effectiveDieColor = this.selectedDieColor;
         const recoloredDice = currentPlayer.recoloredDice;
-        const selectedColor = this.selectedDieColor;
         if (
           recoloredDice &&
-          recoloredDice[selectedColor]
+          recoloredDice[selectedDieColor]
         ) {
-          effectiveDieColor = recoloredDice[selectedColor].newColor;
+          effectiveDieColor = recoloredDice[selectedDieColor].newColor;
         }
 
         let message =
