@@ -1,6 +1,9 @@
 == Short-term ==
 
-- Use GameEngine.moveShip for card movement
+- Clear selection after drawing oracle card
+- Draw oracle card should not spend recoloring favor
+- Overhaul recoloring system
+- (might be fixed by the overhaul) Clear recoloring after movement
 - Need to get all the map navigation in one place
 
 == Oracle cards ==
