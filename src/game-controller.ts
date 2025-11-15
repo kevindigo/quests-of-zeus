@@ -1111,6 +1111,7 @@ export class GameController {
         this.selectedDieColor,
       );
       if (success) {
+        this.clearResourceSelection();
         this.showMessage(
           `Spent ${this.selectedDieColor} die to draw an oracle card!`,
         );
@@ -1127,6 +1128,7 @@ export class GameController {
         this.selectedOracleCardColor,
       );
       if (success) {
+        this.clearResourceSelection();
         this.showMessage(
           `Spent ${this.selectedOracleCardColor} oracle card to draw a new oracle card!`,
         );
