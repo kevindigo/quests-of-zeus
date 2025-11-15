@@ -12,17 +12,16 @@ Deno.test('Simple recolor test', () => {
   player.favor = 3;
 
   // Clear any recoloring intentions that might exist from initialization
-  player.recoloredDice = {};
+  player.setRecolorIntention(0);
 
   // Check initial player state
   assertEquals(player.favor, 3);
   assertEquals(player.oracleDice, ['black', 'pink', 'blue']);
-  assertEquals(Object.keys(player.recoloredDice).length, 0);
+  assertEquals(player.getRecolorIntention(), 0);
 
   // Set a high recoloring cost that would make some moves unaffordable
   const highRecolorSuccess = gameEngine.setRecolorIntention(
     player.id,
-    'black',
     2,
   ); // 2 favor recoloring cost
   assert(highRecolorSuccess, 'Recoloring intention should be set successfully');

@@ -18,12 +18,6 @@ export type PlayerJson = {
   favor: number; // Player's favor resource
   shield: number; // Player's shield resource
   recolorIntention: number;
-  recoloredDice: {
-    [dieColor: string]: { newColor: CoreColor; favorCost: number };
-  }; // Track recoloring intentions for dice
-  recoloredCards: {
-    [cardColor: string]: { newColor: CoreColor; favorCost: number };
-  }; // Track recoloring intentions for oracle cards
   oracleCards: CoreColor[]; // Oracle cards held by player
   usedOracleCardThisTurn: boolean; // Track if player has used an oracle card this turn
 };
@@ -50,8 +44,6 @@ export class Player {
     this.oracleCards = [];
     this.oracleDice = [];
     this.recolorIntention = 0;
-    this.recoloredCards = {};
-    this.recoloredDice = {};
     this.favor = 0;
     this.shield = 0;
     this.usedOracleCardThisTurn = false;
@@ -70,8 +62,6 @@ export class Player {
     player.oracleCards = json.oracleCards;
     player.oracleDice = json.oracleDice;
     player.recolorIntention = json.recolorIntention;
-    player.recoloredCards = json.recoloredCards;
-    player.recoloredDice = json.recoloredDice;
     player.favor = json.favor;
     player.shield = json.shield;
     player.usedOracleCardThisTurn = json.usedOracleCardThisTurn;
@@ -91,8 +81,6 @@ export class Player {
       favor: this.favor,
       shield: this.shield,
       recolorIntention: this.recolorIntention,
-      recoloredDice: this.recoloredDice,
-      recoloredCards: this.recoloredCards,
       oracleCards: this.oracleCards,
       usedOracleCardThisTurn: this.usedOracleCardThisTurn,
     };
@@ -135,12 +123,6 @@ export class Player {
   public favor: number; // Player's favor resource
   public shield: number; // Player's shield resource
   private recolorIntention: number;
-  public recoloredDice: {
-    [dieColor: string]: { newColor: CoreColor; favorCost: number };
-  }; // Track recoloring intentions for dice
-  public recoloredCards: {
-    [cardColor: string]: { newColor: CoreColor; favorCost: number };
-  }; // Track recoloring intentions for oracle cards
   public oracleCards: CoreColor[]; // Oracle cards held by player
   public usedOracleCardThisTurn: boolean; // Track if player has used an oracle card this turn
 }

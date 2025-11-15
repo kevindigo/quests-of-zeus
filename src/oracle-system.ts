@@ -27,34 +27,14 @@ export class OracleSystem {
    */
   public setRecolorIntention(
     player: Player,
-    dieColor: CoreColor,
     favorSpent: number,
   ): boolean {
-    // Check if player has the specified die
-    if (!player.oracleDice.includes(dieColor)) {
-      return false;
-    }
-
     // Check if player has enough favor
     if (player.favor < favorSpent) {
       return false;
     }
 
-    // Find current color position
-    const currentIndex = COLOR_WHEEL.indexOf(dieColor);
-    if (currentIndex === -1) {
-      return false; // Invalid color
-    }
-
-    // Calculate new color position (wrapping around)
-    const newIndex = (currentIndex + favorSpent) % COLOR_WHEEL.length;
-    const newColor = COLOR_WHEEL[newIndex]!;
-
     // Store recoloring intention (favor is not spent yet)
-    player.recoloredDice[dieColor] = {
-      newColor,
-      favorCost: favorSpent,
-    };
     player.setRecolorIntention(favorSpent);
 
     return true;
@@ -68,35 +48,13 @@ export class OracleSystem {
    */
   public setRecolorIntentionForCard(
     player: Player,
-    cardColor: CoreColor,
     favorSpent: number,
   ): boolean {
-    // Check if player has the specified oracle card
-    if (!player.oracleCards.includes(cardColor)) {
-      return false;
-    }
-
     // Check if player has enough favor
     if (player.favor < favorSpent) {
       return false;
     }
 
-    // Find current color position
-    const currentIndex = COLOR_WHEEL.indexOf(cardColor);
-    if (currentIndex === -1) {
-      return false; // Invalid color
-    }
-
-    // Calculate new color position (wrapping around)
-    const newIndex = (currentIndex + favorSpent) % COLOR_WHEEL.length;
-    const newColor = COLOR_WHEEL[newIndex]!;
-
-    // Store recoloring intention (favor is not spent yet)
-    player.recoloredCards = player.recoloredCards || {};
-    player.recoloredCards[cardColor] = {
-      newColor,
-      favorCost: favorSpent,
-    };
     player.setRecolorIntention(favorSpent);
 
     return true;
@@ -105,8 +63,7 @@ export class OracleSystem {
   /**
    * Clear recoloring intention for a die
    */
-  public clearRecolorIntention(player: Player, dieColor: HexColor): boolean {
-    delete player.recoloredDice[dieColor];
+  public clearRecolorIntention(player: Player): boolean {
     player.setRecolorIntention(0);
 
     return true;
@@ -117,12 +74,8 @@ export class OracleSystem {
    */
   public clearRecolorIntentionForCard(
     player: Player,
-    cardColor: CoreColor,
   ): boolean {
-    if (player.recoloredCards) {
-      delete player.recoloredCards[cardColor];
-      player.setRecolorIntention(0);
-    }
+    player.setRecolorIntention(0);
     return true;
   }
 

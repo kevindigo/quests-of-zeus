@@ -160,41 +160,29 @@ export class QuestsZeusGameEngine {
 
   public setRecolorIntention(
     playerId: number,
-    dieColor: CoreColor,
     favorSpent: number,
   ): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
-    return this.oracleSystem!.setRecolorIntention(player, dieColor, favorSpent);
+    return this.oracleSystem!.setRecolorIntention(player, favorSpent);
   }
 
   public setRecolorIntentionForCard(
     playerId: number,
-    cardColor: CoreColor,
     favorSpent: number,
   ): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
     return this.oracleSystem!.setRecolorIntentionForCard(
       player,
-      cardColor,
       favorSpent,
     );
   }
 
-  public clearRecolorIntention(playerId: number, dieColor: HexColor): boolean {
+  public clearRecolorIntention(playerId: number): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
-    return this.oracleSystem!.clearRecolorIntention(player, dieColor);
-  }
-
-  public clearRecolorIntentionForCard(
-    playerId: number,
-    cardColor: CoreColor,
-  ): boolean {
-    this.ensureInitialized();
-    const player = this.getValidPlayer(playerId);
-    return this.oracleSystem!.clearRecolorIntentionForCard(player, cardColor);
+    return this.oracleSystem!.clearRecolorIntention(player);
   }
 
   public canPlaceStatueOnCity(_playerId: number): boolean {
@@ -229,8 +217,6 @@ export class QuestsZeusGameEngine {
     if (currentPlayer) {
       currentPlayer.usedOracleCardThisTurn = false;
       currentPlayer.setRecolorIntention(0);
-      currentPlayer.recoloredDice = {};
-      currentPlayer.recoloredCards = {};
       currentPlayer.oracleDice = newDice;
     }
 

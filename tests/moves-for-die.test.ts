@@ -15,7 +15,7 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  player.recoloredDice = {};
+  player.setRecolorIntention(0);
 
   // Test getting moves for a specific die color
   const movesForBlack = gameEngine.getAvailableMovesForDie(
@@ -113,12 +113,11 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  player.recoloredDice = {};
+  player.setRecolorIntention(0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
   const recoloringSuccess = gameEngine.setRecolorIntention(
     player.id,
-    'black',
     1,
   );
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
@@ -160,12 +159,11 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
   player.favor = 1; // Low favor
 
   // Clear any recoloring intentions that might exist from initialization
-  player.recoloredDice = {};
+  player.setRecolorIntention(0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
   const recoloringSuccess = gameEngine.setRecolorIntention(
     player.id,
-    'black',
     1,
   );
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
@@ -199,18 +197,17 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  player.recoloredDice = {};
+  player.setRecolorIntention(0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
   const recoloringSuccess = gameEngine.setRecolorIntention(
     player.id,
-    'black',
     1,
   );
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Clear recoloring intention
-  const clearSuccess = gameEngine.clearRecolorIntention(player.id, 'black');
+  const clearSuccess = gameEngine.clearRecolorIntention(player.id);
   assert(clearSuccess, 'Recoloring intention should be cleared successfully');
 
   // Get moves after clearing recoloring intention

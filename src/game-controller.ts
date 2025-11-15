@@ -9,7 +9,6 @@ import type { Player } from './Player.ts';
 import {
   type CityHex,
   COLOR_WHEEL,
-  CORE_COLORS,
   type CoreColor,
   type CubeHex,
   type HexColor,
@@ -554,15 +553,12 @@ export class GameController {
       );
 
       // Get the effective card color considering recoloring intention
-      let effectiveCardColor = this.selectedOracleCardColor;
-      const recoloredCards = currentPlayer.recoloredCards;
       const selectedColor = this.selectedOracleCardColor;
-      if (
-        recoloredCards &&
-        recoloredCards[selectedColor]
-      ) {
-        effectiveCardColor = recoloredCards[selectedColor].newColor;
-      }
+      const recoloringCost = currentPlayer.getRecolorIntention();
+      const effectiveCardColor = OracleSystem.applyRecolor(
+        selectedColor,
+        recoloringCost,
+      );
 
       availableMoves.forEach(
         (move: { q: number; r: number; favorCost: number }) => {
@@ -858,13 +854,12 @@ export class GameController {
     if (!currentPlayer.oracleCards.includes(selectedColor)) {
       return;
     }
-    const recoloring = currentPlayer.recoloredCards[selectedColor];
     this.handleMoveWithDieOrCard(
       currentPlayer,
       q,
       r,
       selectedColor,
-      recoloring,
+      currentPlayer.getRecolorIntention(),
     );
   }
 
@@ -876,17 +871,12 @@ export class GameController {
     if (!currentPlayer.oracleDice.includes(selectedColor)) {
       return;
     }
-    // const recoloring = currentPlayer.recoloredDice[selectedColor];
-    const recoloring = {
-      newColor: CORE_COLORS.BLUE,
-      favorCost: currentPlayer.getRecolorIntention(),
-    };
     this.handleMoveWithDieOrCard(
       currentPlayer,
       q,
       r,
       selectedColor,
-      recoloring,
+      currentPlayer.getRecolorIntention(),
     );
   }
 
@@ -895,9 +885,8 @@ export class GameController {
     q: number,
     r: number,
     selectedColor: CoreColor,
-    recoloring: { newColor: CoreColor; favorCost: number } | undefined,
+    recoloringCost: number,
   ): void {
-    const recoloringCost = recoloring ? recoloring.favorCost : 0;
     const effectiveColor = OracleSystem.applyRecolor(
       selectedColor,
       recoloringCost,
@@ -973,7 +962,6 @@ export class GameController {
         playerFavor: currentPlayer.favor,
         playerDice: currentPlayer.oracleDice,
         recolorIntention: currentPlayer.getRecolorIntention(),
-        recoloredDice: currentPlayer.recoloredDice,
         moveResult,
       });
     }
@@ -1163,12 +1151,10 @@ export class GameController {
       if (this.selectedDieColor) {
         success = this.gameEngine.clearRecolorIntention(
           currentPlayer.id,
-          selectedColor,
         );
       } else if (this.selectedOracleCardColor) {
-        success = this.gameEngine.clearRecolorIntentionForCard(
+        success = this.gameEngine.clearRecolorIntention(
           currentPlayer.id,
-          selectedColor,
         );
       }
 
@@ -1198,13 +1184,11 @@ export class GameController {
       if (this.selectedDieColor) {
         success = this.gameEngine.setRecolorIntention(
           currentPlayer.id,
-          selectedColor,
           favorCost,
         );
       } else if (this.selectedOracleCardColor) {
-        success = this.gameEngine.setRecolorIntentionForCard(
+        success = this.gameEngine.setRecolorIntention(
           currentPlayer.id,
-          selectedColor,
           favorCost,
         );
       }
@@ -1383,12 +1367,11 @@ export class GameController {
     }
 
     // Get the effective card color considering recoloring intention
-    let effectiveCardColor = cardColor;
-    let recoloringCost = 0;
-    if (player.recoloredCards && player.recoloredCards[cardColor]) {
-      effectiveCardColor = player.recoloredCards[cardColor].newColor;
-      recoloringCost = player.recoloredCards[cardColor].favorCost;
-    }
+    const recoloringCost = player.getRecolorIntention();
+    const effectiveCardColor = OracleSystem.applyRecolor(
+      cardColor,
+      recoloringCost,
+    );
 
     const currentPos = player.getShipPosition();
     const availableMoves: { q: number; r: number; favorCost: number }[] = [];
