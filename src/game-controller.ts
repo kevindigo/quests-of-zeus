@@ -4,6 +4,7 @@
 import { QuestsZeusGameEngine } from './game-engine-core.ts';
 import type { GameState } from './GameState.ts';
 import { HexMapSVG } from './hexmap-svg.ts';
+import { OracleSystem } from './oracle-system.ts';
 import type { Player } from './Player.ts';
 import {
   type CityHex,
@@ -973,16 +974,12 @@ export class GameController {
     if (!currentPlayer.oracleDice.includes(selectedDieColor)) {
       return;
     }
-    let effectiveDieColor: CoreColor = selectedDieColor;
-    let recoloringCost = 0;
-    if (
-      currentPlayer.recoloredDice &&
-      currentPlayer.recoloredDice[selectedDieColor]
-    ) {
-      effectiveDieColor =
-        currentPlayer.recoloredDice[selectedDieColor].newColor;
-      recoloringCost = currentPlayer.recoloredDice[selectedDieColor].favorCost;
-    }
+    const recoloring = currentPlayer.recoloredDice[selectedDieColor];
+    const recoloringCost = recoloring ? recoloring.favorCost : 0;
+    const effectiveDieColor = OracleSystem.applyRecolor(
+      selectedDieColor,
+      recoloringCost,
+    );
     const availableFavor = currentPlayer.favor;
     const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
     // Get available moves for the selected die color and available favor
@@ -991,17 +988,6 @@ export class GameController {
       effectiveDieColor,
       maxFavorForMovement,
     );
-
-    // Get the effective die color considering recoloring intention
-    const recoloredDice = currentPlayer.recoloredDice;
-    if (
-      recoloredDice
-    ) {
-      const recolor = recoloredDice[selectedDieColor];
-      if (recolor) {
-        effectiveDieColor = recolor.newColor;
-      }
-    }
 
     const targetMove = availableMoves.find((
       move: { q: number; r: number; favorCost: number },
@@ -1014,8 +1000,10 @@ export class GameController {
       return;
     }
 
-    // Check if this move requires favor spending
-    if (targetMove.favorCost > 0) {
+    const favorSpentForRange = targetMove.favorCost;
+
+    // Confirm spending favor, if necessary
+    if (favorSpentForRange > 0) {
       // Ask player if they want to spend favor
       const confirmSpend = confirm(
         `This move requires spending ${targetMove.favorCost} favor to reach using ${effectiveDieColor} die. Do you want to spend favor to move here?`,
@@ -1023,51 +1011,6 @@ export class GameController {
       if (!confirmSpend) {
         return;
       }
-      this.selectedFavorSpent = targetMove.favorCost;
-
-      // Execute the move immediately after confirmation
-      const moveResult = this.gameEngine.moveShip(
-        currentPlayer.id,
-        q,
-        r,
-        effectiveDieColor,
-        this.selectedFavorSpent,
-      );
-      if (moveResult.success) {
-        let message =
-          `Ship moved to (${q}, ${r}) using ${effectiveDieColor} die`;
-        if (this.selectedFavorSpent > 0) {
-          message += ` and ${this.selectedFavorSpent} favor`;
-        }
-        this.showMessage(message);
-        // Clear selections after successful move
-        this.selectedDieColor = null;
-        this.selectedFavorSpent = 0;
-        this.renderGameState();
-      } else {
-        // Use the detailed error information
-        const errorMessage = this.formatMoveErrorMessage(
-          moveResult.error,
-        );
-        this.showMessage(errorMessage);
-
-        // Debug: Log the failure details
-        console.log('Move failed with details:', {
-          playerId: currentPlayer.id,
-          targetQ: q,
-          targetR: r,
-          dieColor: this.selectedDieColor,
-          favorSpent: this.selectedFavorSpent,
-          playerFavor: currentPlayer.favor,
-          playerDice: currentPlayer.oracleDice,
-          recoloredDice: currentPlayer.recoloredDice,
-          moveResult,
-        });
-
-        // Reset favor spent if move failed
-        this.selectedFavorSpent = 0;
-      }
-      return;
     }
 
     // Use the selected die color and favor spent
@@ -1077,19 +1020,10 @@ export class GameController {
       q,
       r,
       selectedDieColor,
-      this.selectedFavorSpent,
+      recoloringCost,
+      favorSpentForRange,
     );
     if (moveResult.success) {
-      // Get the effective die color that was actually used
-      let effectiveDieColor = this.selectedDieColor;
-      const recoloredDice = currentPlayer.recoloredDice;
-      if (
-        recoloredDice &&
-        recoloredDice[selectedDieColor]
-      ) {
-        effectiveDieColor = recoloredDice[selectedDieColor].newColor;
-      }
-
       let message = `Ship moved to (${q}, ${r}) using ${effectiveDieColor} die`;
       if (this.selectedFavorSpent > 0) {
         message += ` and ${this.selectedFavorSpent} favor`;
@@ -1098,6 +1032,7 @@ export class GameController {
       // Clear selections after successful move
       this.selectedDieColor = null;
       this.selectedFavorSpent = 0;
+      this.clearResourceSelection();
       this.renderGameState();
     } else {
       // Use the detailed error information

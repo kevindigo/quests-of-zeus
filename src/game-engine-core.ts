@@ -56,7 +56,8 @@ export class QuestsZeusGameEngine {
     playerId: number,
     targetQ: number,
     targetR: number,
-    dieColor: CoreColor,
+    originalDieColor: CoreColor,
+    favorSpentToRecolor: number,
     favorSpentForRange: number,
   ): MoveShipResult {
     this.ensureInitialized();
@@ -65,9 +66,9 @@ export class QuestsZeusGameEngine {
     return this.playerActions!.attemptMoveShip(
       player,
       destinationCoordinates,
-      dieColor,
+      originalDieColor,
       undefined,
-      0,
+      favorSpentToRecolor,
       favorSpentForRange,
     );
   }
