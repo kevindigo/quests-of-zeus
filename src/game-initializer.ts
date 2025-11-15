@@ -131,7 +131,7 @@ export class GameInitializer {
     // and no color appears twice on the same hex
 
     // Create a base pattern that ensures each color appears once in each position
-    const basePattern: HexColor[][] = [];
+    const basePattern: CoreColor[][] = [];
 
     // Create a shuffled copy of colors for the first hex
     const shuffledColors = [...COLOR_WHEEL];
