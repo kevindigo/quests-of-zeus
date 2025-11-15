@@ -349,29 +349,27 @@ export class QuestsZeusGameEngine {
 
   public endTurn(): void {
     this.ensureInitialized();
+
+    const newDice: CoreColor[] = [];
+    for (let i = 0; i < 3; i++) {
+      const randomColor =
+        COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
+      if (randomColor) {
+        newDice.push(randomColor);
+      }
+    }
+
     const currentPlayer =
       this.state!.players[this.state!.getCurrentPlayerIndex()];
     if (currentPlayer) {
       currentPlayer.usedOracleCardThisTurn = false;
       currentPlayer.recoloredDice = {};
       currentPlayer.recoloredCards = {};
+      currentPlayer.oracleDice = newDice;
     }
 
     const nextPlayerIndex = (this.state!.getCurrentPlayerIndex() + 1) %
       this.state!.players.length;
-    const nextPlayer = this.state!.players[nextPlayerIndex];
-
-    const dice: CoreColor[] = [];
-    for (let i = 0; i < 3; i++) {
-      const randomColor =
-        COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
-      if (randomColor) {
-        dice.push(randomColor);
-      }
-    }
-    if (nextPlayer) {
-      nextPlayer.oracleDice = dice;
-    }
 
     this.state!.setCurrentPlayerIndex(nextPlayerIndex);
     if (this.state!.getCurrentPlayerIndex() === 0) {
@@ -407,7 +405,7 @@ export class QuestsZeusGameEngine {
   }
 
   // Public getters
-  public getGameState(): GameState {
+  public getGameStateSnapshot(): GameState {
     this.ensureInitialized();
     if (!this.state) {
       throw new Error(`Cannot getGameState because state is null`);
@@ -415,6 +413,14 @@ export class QuestsZeusGameEngine {
     const stateCopy = this.state.deepCopy();
     stateCopy.map = this.state!.map;
     return stateCopy;
+  }
+
+  public getGameState(): GameState {
+    this.ensureInitialized();
+    if (!this.state) {
+      throw new Error(`Cannot getGameState because state is null`);
+    }
+    return this.state;
   }
 
   public getCurrentPlayer(): Player {

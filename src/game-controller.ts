@@ -170,7 +170,7 @@ export class GameController {
       return;
     }
 
-    const gameState = this.gameEngine.getGameState();
+    const gameState = this.gameEngine.getGameStateSnapshot();
 
     // Update player info display
     this.updatePlayerInfo(gameState);
@@ -608,7 +608,7 @@ export class GameController {
   }
 
   private getPhaseActions(phase: string): string {
-    const gameState = this.gameEngine.getGameState();
+    const gameState = this.gameEngine.getGameStateSnapshot();
     const currentPlayer = gameState.getCurrentPlayer();
 
     switch (phase) {
@@ -744,7 +744,7 @@ export class GameController {
 
       const customEvent = event as CustomEvent<{ q: number; r: number }>;
       const { q, r } = customEvent.detail;
-      const gameState = this.gameEngine.getGameState();
+      const gameState = this.gameEngine.getGameStateSnapshot();
 
       if (gameState.getPhase() === 'action') {
         const currentPlayer = this.gameEngine.getCurrentPlayer();
@@ -944,7 +944,7 @@ export class GameController {
                     playerFavor: currentPlayer.favor,
                     playerDice: currentPlayer.oracleDice,
                     recoloredDice: currentPlayer.recoloredDice,
-                    targetCell: this.gameEngine.getGameState().map.getCell(
+                    targetCell: gameState.map.getCell(
                       { q, r },
                     ),
                     moveResult,
@@ -1007,7 +1007,7 @@ export class GameController {
                 playerFavor: currentPlayer.favor,
                 playerDice: currentPlayer.oracleDice,
                 recoloredDice: currentPlayer.recoloredDice,
-                targetCell: this.gameEngine.getGameState().map.getCell({
+                targetCell: gameState.map.getCell({
                   q,
                   r,
                 }),
@@ -1103,7 +1103,7 @@ export class GameController {
   }
 
   private collectOffering(): void {
-    const gameState = this.gameEngine.getGameState();
+    const gameState = this.gameEngine.getGameStateSnapshot();
     const currentPlayer = gameState.getCurrentPlayer();
     const position = currentPlayer.getShipPosition();
     const currentCell = gameState.map.getCell(
@@ -1261,7 +1261,7 @@ export class GameController {
   }
 
   private setRecolorIntention(favorCost: number): void {
-    const gameState = this.gameEngine.getGameState();
+    const gameState = this.gameEngine.getGameStateSnapshot();
     const currentPlayer = gameState.getCurrentPlayer();
 
     const selectedColor = this.selectedDieColor || this.selectedOracleCardColor;
@@ -1506,7 +1506,7 @@ export class GameController {
     if (!this.gameEngine.isGameInitialized()) {
       return [];
     }
-    const gameState = this.gameEngine.getGameState();
+    const gameState = this.gameEngine.getGameStateSnapshot();
     const player = gameState.getPlayer(playerId);
     if (!player || gameState.getPhase() !== 'action') {
       return [];
@@ -1586,7 +1586,7 @@ export class GameController {
       return [];
     }
 
-    const gameState = this.gameEngine.getGameState();
+    const gameState = this.gameEngine.getGameStateSnapshot();
     const reachableTiles: { q: number; r: number; color: HexColor }[] = [];
     const visited = new Set<string>();
     const queue: { q: number; r: number; steps: number }[] = [];
