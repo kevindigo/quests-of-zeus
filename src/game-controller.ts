@@ -1348,7 +1348,7 @@ export class GameController {
     this.gameEngine.endTurn();
 
     this.showMessage(
-      'Turn ended. Dice rolled for next player.',
+      'Turn ended. Dice re-rolled for the previous player.',
     );
 
     this.renderGameState();
