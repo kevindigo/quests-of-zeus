@@ -49,6 +49,7 @@ export class GameController {
     this.selectedDieColor = null;
     this.selectedOracleCardColor = null;
     this.selectedFavorSpent = 0;
+    this.setRecolorIntention(0);
   }
 
   public getSelectedDieColor(): CoreColor | null {
@@ -974,6 +975,15 @@ export class GameController {
     if (!currentPlayer.oracleDice.includes(selectedColor)) {
       return;
     }
+    this.handleMoveWithDieOrCard(currentPlayer, q, r, selectedColor);
+  }
+
+  private handleMoveWithDieOrCard(
+    currentPlayer: Player,
+    q: number,
+    r: number,
+    selectedColor: CoreColor,
+  ): void {
     const recoloring = currentPlayer.recoloredDice[selectedColor];
     const recoloringCost = recoloring ? recoloring.favorCost : 0;
     const effectiveColor = OracleSystem.applyRecolor(
