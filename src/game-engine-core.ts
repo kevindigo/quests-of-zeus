@@ -485,7 +485,7 @@ export class QuestsZeusGameEngine {
     const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
 
     for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
-      const movementRange = 3 + favorSpent;
+      const movementRange = player.getRange() + favorSpent;
       const reachableSeaTiles = this.movementSystem!.getReachableSeaTiles(
         player.getShipPosition(),
         movementRange,
