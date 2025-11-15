@@ -293,7 +293,6 @@ Deno.test('Action move ship with die success (no favor)', () => {
     0,
     0,
   );
-  console.log(result);
   assert(result.success);
   const toCoordinates = { q: to.q, r: to.r };
   assertEquals(player.getShipPosition(), toCoordinates);
@@ -324,7 +323,6 @@ Deno.test('Action move ship with card and favor range success', () => {
     0,
     1,
   );
-  console.log(result);
   assert(result.success);
   assertEquals(player.getShipPosition(), to);
   assertEquals(player.oracleCards.length, 1);
@@ -355,7 +353,6 @@ Deno.test('Action move ship with card and recolor success', () => {
     1,
     0,
   );
-  console.log(result);
   assert(result.success);
   assertEquals(player.getShipPosition(), to);
   assertEquals(player.oracleCards.length, 1);
