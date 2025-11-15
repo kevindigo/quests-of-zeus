@@ -967,17 +967,17 @@ export class GameController {
   }
 
   private handleMoveWithDie(currentPlayer: Player, q: number, r: number): void {
-    const selectedDieColor = this.selectedDieColor;
-    if (!selectedDieColor) {
+    const selectedColor = this.selectedDieColor;
+    if (!selectedColor) {
       return;
     }
-    if (!currentPlayer.oracleDice.includes(selectedDieColor)) {
+    if (!currentPlayer.oracleDice.includes(selectedColor)) {
       return;
     }
-    const recoloring = currentPlayer.recoloredDice[selectedDieColor];
+    const recoloring = currentPlayer.recoloredDice[selectedColor];
     const recoloringCost = recoloring ? recoloring.favorCost : 0;
-    const effectiveDieColor = OracleSystem.applyRecolor(
-      selectedDieColor,
+    const effectiveColor = OracleSystem.applyRecolor(
+      selectedColor,
       recoloringCost,
     );
     const availableFavor = currentPlayer.favor;
@@ -985,7 +985,7 @@ export class GameController {
     // Get available moves for the selected die color and available favor
     const availableMoves = this.gameEngine.getAvailableMovesForColor(
       currentPlayer,
-      effectiveDieColor,
+      effectiveColor,
       maxFavorForMovement,
     );
 
@@ -995,7 +995,7 @@ export class GameController {
 
     if (!targetMove) {
       this.showMessage(
-        `Cannot move to this hex using ${effectiveDieColor} die! Must be a sea hex within range of matching color.`,
+        `Cannot move to this hex using ${effectiveColor}! Must be a sea hex within range of matching color.`,
       );
       return;
     }
@@ -1006,7 +1006,7 @@ export class GameController {
     if (favorSpentForRange > 0) {
       // Ask player if they want to spend favor
       const confirmSpend = confirm(
-        `This move requires spending ${targetMove.favorCost} favor to reach using ${effectiveDieColor} die. Do you want to spend favor to move here?`,
+        `This move requires spending ${targetMove.favorCost} favor to reach. Do you want to spend favor to move here?`,
       );
       if (!confirmSpend) {
         return;
@@ -1019,19 +1019,20 @@ export class GameController {
       currentPlayer.id,
       q,
       r,
-      selectedDieColor,
+      selectedColor,
       recoloringCost,
       favorSpentForRange,
     );
     if (moveResult.success) {
-      let message = `Ship moved to (${q}, ${r}) using ${effectiveDieColor} die`;
+      let message = `Ship moved to (${q}, ${r}) using ${selectedColor}`;
+      if (recoloringCost > 0) {
+        message += ` recolored to ${effectiveColor}`;
+      }
       if (this.selectedFavorSpent > 0) {
         message += ` and ${this.selectedFavorSpent} favor`;
       }
       this.showMessage(message);
       // Clear selections after successful move
-      this.selectedDieColor = null;
-      this.selectedFavorSpent = 0;
       this.clearResourceSelection();
       this.renderGameState();
     } else {
