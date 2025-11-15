@@ -55,6 +55,7 @@ export class OracleSystem {
       newColor,
       favorCost: favorSpent,
     };
+    player.setRecolorIntention(favorSpent);
 
     return true;
   }
@@ -96,6 +97,7 @@ export class OracleSystem {
       newColor,
       favorCost: favorSpent,
     };
+    player.setRecolorIntention(favorSpent);
 
     return true;
   }
@@ -105,6 +107,8 @@ export class OracleSystem {
    */
   public clearRecolorIntention(player: Player, dieColor: HexColor): boolean {
     delete player.recoloredDice[dieColor];
+    player.setRecolorIntention(0);
+
     return true;
   }
 
@@ -117,84 +121,8 @@ export class OracleSystem {
   ): boolean {
     if (player.recoloredCards) {
       delete player.recoloredCards[cardColor];
+      player.setRecolorIntention(0);
     }
-    return true;
-  }
-
-  /**
-   * Apply recoloring when a die is used (e.g., for movement)
-   * This is where the favor is actually spent
-   */
-  public applyRecoloring(player: Player, dieColor: CoreColor): boolean {
-    const recoloring = player.recoloredDice[dieColor];
-    if (!recoloring) {
-      return false; // No recoloring intention for this die
-    }
-
-    // Check if player still has enough favor
-    if (player.favor < recoloring.favorCost) {
-      return false;
-    }
-
-    // Replace the die with the new color
-    const dieIndex = player.oracleDice.indexOf(dieColor);
-    if (dieIndex !== -1) {
-      player.oracleDice[dieIndex] = recoloring.newColor;
-    } else {
-      // This should not happen since we checked above, but log for debugging
-      console.warn(
-        `Attempted to apply recoloring to die ${dieColor} but it was not found in player's oracle dice: [${
-          player.oracleDice.join(', ')
-        }]`,
-      );
-      return false;
-    }
-
-    // Spend favor
-    player.favor -= recoloring.favorCost;
-
-    // Clear the recoloring intention
-    delete player.recoloredDice[dieColor];
-
-    return true;
-  }
-
-  /**
-   * Apply recoloring when an oracle card is used (e.g., for movement)
-   * This is where the favor is actually spent
-   */
-  public applyRecoloringForCard(player: Player, cardColor: CoreColor): boolean {
-    if (!player.recoloredCards || !player.recoloredCards[cardColor]) {
-      return false; // No recoloring intention for this card
-    }
-
-    const recoloring = player.recoloredCards[cardColor];
-
-    // Check if player still has enough favor
-    if (player.favor < recoloring.favorCost) {
-      return false;
-    }
-
-    // Replace the card with the new color
-    const cardIndex = player.oracleCards.indexOf(cardColor);
-    if (cardIndex !== -1) {
-      player.oracleCards[cardIndex] = recoloring.newColor;
-    } else {
-      // This should not happen since we checked above, but log for debugging
-      console.warn(
-        `Attempted to apply recoloring to oracle card ${cardColor} but it was not found in player's oracle cards: [${
-          player.oracleCards.join(', ')
-        }]`,
-      );
-      return false;
-    }
-
-    // Spend favor
-    player.favor -= recoloring.favorCost;
-
-    // Clear the recoloring intention
-    delete player.recoloredCards[cardColor];
-
     return true;
   }
 
@@ -210,15 +138,6 @@ export class OracleSystem {
     // Check if player has the specified die
     if (!player.oracleDice.includes(dieColor)) {
       return false;
-    }
-
-    // Apply recoloring if there's an intention for this die
-    const originalDieColor = dieColor;
-    if (player.recoloredDice && player.recoloredDice[dieColor]) {
-      const recoloringApplied = this.applyRecoloring(player, dieColor);
-      if (recoloringApplied) {
-        dieColor = player.recoloredDice[originalDieColor]?.newColor || dieColor;
-      }
     }
 
     // Consume the oracle die - use the current dieColor after recoloring
@@ -248,65 +167,6 @@ export class OracleSystem {
   }
 
   /**
-   * Spend an oracle card as if it were a die for movement
-   * Players can only use 1 oracle card per turn
-   */
-  public spendOracleCardForMovement(
-    player: Player,
-    _targetQ: number,
-    _targetR: number,
-    cardColor: CoreColor,
-    _favorSpent?: number,
-  ): { success: boolean; error?: string } {
-    // Check if player has already used an oracle card this turn
-    if (player.usedOracleCardThisTurn) {
-      return {
-        success: false,
-        error: 'You can only use 1 oracle card per turn',
-      };
-    }
-
-    // Check if player has the specified oracle card
-    if (!player.oracleCards.includes(cardColor)) {
-      return {
-        success: false,
-        error: `You don't have a ${cardColor} oracle card available`,
-      };
-    }
-
-    // Apply recoloring if there's an intention for this card
-    // const _originalCardColor = cardColor; // Unused variable removed
-    if (player.recoloredCards && player.recoloredCards[cardColor]) {
-      const recoloringApplied = this.applyRecoloringForCard(player, cardColor);
-      if (recoloringApplied) {
-        // Card color is updated in the player's oracleCards array
-      }
-    }
-
-    // Consume the oracle card - always consume the original card color
-    const cardIndex = player.oracleCards.indexOf(cardColor);
-    if (cardIndex !== -1) {
-      player.oracleCards.splice(cardIndex, 1);
-    } else {
-      // This should not happen since we checked above, but log for debugging
-      console.warn(
-        `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${
-          player.oracleCards.join(', ')
-        }]`,
-      );
-      return {
-        success: false,
-        error: 'Unexpected error: oracle card not found after validation',
-      };
-    }
-
-    // Mark that player has used an oracle card this turn
-    player.usedOracleCardThisTurn = true;
-
-    return { success: true };
-  }
-
-  /**
    * Spend an oracle card to gain 2 favor during the action phase
    * Players can only use 1 oracle card per turn
    */
@@ -322,15 +182,6 @@ export class OracleSystem {
     // Check if player has the specified oracle card
     if (!player.oracleCards.includes(cardColor)) {
       return false;
-    }
-
-    // Apply recoloring if there's an intention for this card
-    // const _originalCardColor = cardColor; // Unused variable removed
-    if (player.recoloredCards && player.recoloredCards[cardColor]) {
-      const recoloringApplied = this.applyRecoloringForCard(player, cardColor);
-      if (recoloringApplied) {
-        // Card color is updated in the player's oracleCards array
-      }
     }
 
     // Consume the oracle card - always consume the original card color
@@ -377,15 +228,6 @@ export class OracleSystem {
     // Check if oracle card deck has cards
     if (!this.oracleCardDeck || this.oracleCardDeck.length === 0) {
       return false;
-    }
-
-    // Apply recoloring if there's an intention for this card
-    // const _originalCardColor = cardColor; // Unused variable removed
-    if (player.recoloredCards && player.recoloredCards[cardColor]) {
-      const recoloringApplied = this.applyRecoloringForCard(player, cardColor);
-      if (recoloringApplied) {
-        // Card color is updated in the player's oracleCards array
-      }
     }
 
     // Consume the oracle card - always consume the original card color

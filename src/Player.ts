@@ -17,6 +17,7 @@ export type PlayerJson = {
   oracleDice: CoreColor[]; // Current oracle dice values
   favor: number; // Player's favor resource
   shield: number; // Player's shield resource
+  recolorIntention: number;
   recoloredDice: {
     [dieColor: string]: { newColor: CoreColor; favorCost: number };
   }; // Track recoloring intentions for dice
@@ -48,6 +49,7 @@ export class Player {
     };
     this.oracleCards = [];
     this.oracleDice = [];
+    this.recolorIntention = 0;
     this.recoloredCards = {};
     this.recoloredDice = {};
     this.favor = 0;
@@ -67,6 +69,7 @@ export class Player {
     player.completedQuestTypes = json.completedQuestTypes;
     player.oracleCards = json.oracleCards;
     player.oracleDice = json.oracleDice;
+    player.recolorIntention = json.recolorIntention;
     player.recoloredCards = json.recoloredCards;
     player.recoloredDice = json.recoloredDice;
     player.favor = json.favor;
@@ -87,6 +90,7 @@ export class Player {
       oracleDice: this.oracleDice,
       favor: this.favor,
       shield: this.shield,
+      recolorIntention: this.recolorIntention,
       recoloredDice: this.recoloredDice,
       recoloredCards: this.recoloredCards,
       oracleCards: this.oracleCards,
@@ -107,6 +111,14 @@ export class Player {
     return 3;
   }
 
+  public getRecolorIntention(): number {
+    return this.recolorIntention;
+  }
+
+  public setRecolorIntention(newIntention: number): void {
+    this.recolorIntention = newIntention;
+  }
+
   public readonly id: number;
   public readonly name: string;
   public readonly color: PlayerColorName;
@@ -122,6 +134,7 @@ export class Player {
   public oracleDice: CoreColor[]; // Current oracle dice values
   public favor: number; // Player's favor resource
   public shield: number; // Player's shield resource
+  private recolorIntention: number;
   public recoloredDice: {
     [dieColor: string]: { newColor: CoreColor; favorCost: number };
   }; // Track recoloring intentions for dice

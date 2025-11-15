@@ -1,9 +1,9 @@
 == Short-term ==
 
-- Clear selection after drawing oracle card
-- Draw oracle card should not spend recoloring favor
-- Overhaul recoloring system
-- (might be fixed by the overhaul) Clear recoloring after movement
+- Overhaul recoloring system, which might fix:
+  - Draw oracle card should not spend recoloring favor
+  - Clear recoloring after movement
+- Unify controller getAvailableMoves for die and card
 - Need to get all the map navigation in one place
 
 == Oracle cards ==

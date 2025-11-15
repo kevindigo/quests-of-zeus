@@ -3,7 +3,6 @@ import { GameState } from '../src/GameState.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { HexMap } from '../src/hexmap/HexMap.ts';
 import { MovementSystem } from '../src/movement-system.ts';
-import { OracleSystem } from '../src/oracle-system.ts';
 import { PlayerActions } from '../src/player-actions.ts';
 import { Player } from '../src/Player.ts';
 
@@ -16,8 +15,7 @@ function createPlayerActions(): PlayerActions {
   const state = new GameState(map, [player]);
   state.setPhase('action');
   const movementSystem = new MovementSystem(map);
-  const oracleSystem = new OracleSystem([]);
-  const playerActions = new PlayerActions(state, movementSystem, oracleSystem);
+  const playerActions = new PlayerActions(state, movementSystem);
   return playerActions;
 }
 

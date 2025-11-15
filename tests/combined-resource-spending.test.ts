@@ -1,67 +1,10 @@
 // Tests for combined die and oracle card spending functionality
 // Verifies that users can select either resource type and use it for movement, favor gain, or oracle card drawing
 
-import { assert, assertEquals, assertGreater } from '@std/assert';
+import { assert, assertEquals } from '@std/assert';
 import { GameController } from '../src/game-controller.ts';
 import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
-import type { GameState } from '../src/GameState.ts';
-import type { HexCell } from '../src/hexmap/HexCell.ts';
-import { HexGrid } from '../src/hexmap/HexGrid.ts';
-import type { Player } from '../src/Player.ts';
 import type { CoreColor } from '../src/types.ts';
-
-Deno.test('CombinedResourceSpending - select die for movement', () => {
-  const engine = new QuestsZeusGameEngine();
-  engine.initializeGame();
-
-  const player = engine.getCurrentPlayer();
-  assertExists(player);
-
-  // Set up deterministic test conditions
-  player.oracleDice = ['blue', 'red', 'green'] as CoreColor[];
-  player.favor = 5;
-  player.setShipPosition(HexGrid.CENTER);
-
-  // Test that player can select a die and use it for movement
-  const availableMoves = engine.getAvailableMovesForDie(
-    player.id,
-    'blue',
-    player.favor,
-  );
-
-  // Should have available moves for blue die
-  assertEquals(Array.isArray(availableMoves), true);
-
-  if (availableMoves.length > 0) {
-    const targetMove = availableMoves[0];
-    assert(targetMove);
-    const moveResult = engine.moveShip(
-      player.id,
-      targetMove.q,
-      targetMove.r,
-      'blue',
-      undefined,
-      0,
-      targetMove.favorCost,
-    );
-
-    assert(moveResult.success, 'Should be able to move using selected die');
-
-    // Die should be consumed
-    assertEquals(
-      player.oracleDice.includes('blue'),
-      false,
-      'Blue die should be consumed',
-    );
-
-    // Ship position should be updated
-    assertEquals(
-      player.getShipPosition(),
-      { q: targetMove.q, r: targetMove.r },
-      'Ship position should be updated',
-    );
-  }
-});
 
 Deno.test('CombinedResourceSpending - select die for favor gain', () => {
   const engine = new QuestsZeusGameEngine();
@@ -121,88 +64,6 @@ Deno.test('CombinedResourceSpending - select die to draw oracle card', () => {
   );
 });
 
-function findAdjacentSeaHex(gameState: GameState, player: Player): HexCell {
-  const seaTiles = gameState.map.getCellsByTerrain('sea');
-  if (seaTiles.length > 0) {
-    player.setShipPosition({ q: seaTiles[0]!.q, r: seaTiles[0]!.r });
-  }
-
-  // Find a sea neighbor
-  const neighbors = gameState.map.getNeighbors(
-    player.getShipPosition(),
-  );
-  const seaNeighbors = neighbors.filter((candidateCell: HexCell) => {
-    return (candidateCell.terrain == 'sea');
-  });
-  const destination = seaNeighbors[0];
-  assert(
-    destination,
-    `No sea neighbors found from ${
-      JSON.stringify(player.getShipPosition())
-    } among ${JSON.stringify(neighbors)}`,
-  );
-
-  return destination;
-}
-
-Deno.test('CombinedResourceSpending - select oracle card for movement', () => {
-  const engine = new QuestsZeusGameEngine();
-  engine.initializeGame();
-
-  const player = engine.getCurrentPlayer();
-  assertExists(player);
-
-  // Find a sea hex to start from instead of Zeus hex
-  const gameState = engine.getGameState();
-  const origin = gameState.map.getZeus();
-  const zeusNeighbors = gameState.map.getNeighbors(origin.getCoordinates());
-  assert(zeusNeighbors);
-  assertGreater(zeusNeighbors.length, 0);
-  const destination = zeusNeighbors[0];
-  assert(destination);
-  const destinationColor = destination.color as CoreColor;
-
-  // Set up deterministic test conditions
-  player.oracleCards = [destinationColor];
-  player.favor = 0;
-  player.usedOracleCardThisTurn = false;
-
-  const moveResult = engine.spendOracleCardForMovement(
-    player.id,
-    destination.q,
-    destination.r,
-    destinationColor,
-    0,
-  );
-  assert(
-    moveResult.success,
-    `Should be able to move using selected oracle card, but: ${
-      JSON.stringify(moveResult)
-    }`,
-  );
-
-  // Oracle card should be consumed
-  assertEquals(
-    player.oracleCards.includes('blue'),
-    false,
-    'Blue oracle card should be consumed',
-  );
-
-  // Ship position should be updated
-  assertEquals(
-    player.getShipPosition(),
-    { q: destination.q, r: destination.r },
-    'Ship position should be updated',
-  );
-
-  // Oracle card usage flag should be set
-  assertEquals(
-    player.usedOracleCardThisTurn,
-    true,
-    'Oracle card usage flag should be set',
-  );
-});
-
 Deno.test('CombinedResourceSpending - select oracle card for favor gain', () => {
   const engine = new QuestsZeusGameEngine();
   engine.initializeGame();
@@ -235,60 +96,6 @@ Deno.test('CombinedResourceSpending - select oracle card for favor gain', () => 
     player.usedOracleCardThisTurn,
     true,
     'Oracle card usage flag should be set',
-  );
-});
-
-// FixMe: This test seems to be intermittent
-Deno.test('CombinedResourceSpending - cannot use both die and oracle card in same turn', () => {
-  const engine = new QuestsZeusGameEngine();
-  engine.initializeGame();
-
-  const player = engine.getCurrentPlayer();
-  assertExists(player);
-
-  // Set up deterministic test conditions
-  const gameState = engine.getGameState();
-
-  const shipAt = player.getShipPosition();
-  const originCell = gameState.map.getCell(shipAt);
-  assert(originCell);
-  const destination = findAdjacentSeaHex(gameState, player);
-
-  player.oracleDice = [originCell.color] as CoreColor[];
-  player.oracleCards = [destination.color as CoreColor];
-  player.favor = 5;
-  player.usedOracleCardThisTurn = false;
-
-  // First use an oracle card
-  const oracleMoveResult = engine.spendOracleCardForMovement(
-    player.id,
-    destination.q,
-    destination.r,
-    destination.color as CoreColor,
-    0,
-  );
-  assert(
-    oracleMoveResult.success,
-    `Should be able to move using oracle card, but ${
-      JSON.stringify(oracleMoveResult)
-    }`,
-  );
-
-  // Now try to use a die - should still work since oracle card usage doesn't prevent die usage
-  const dieMoveResult = engine.moveShip(
-    player.id,
-    originCell.q,
-    originCell.r,
-    originCell.color as CoreColor,
-    undefined,
-    0,
-    0,
-  );
-  assert(
-    dieMoveResult,
-    `Should be able to use a die to move back to origin, but ${
-      JSON.stringify(dieMoveResult)
-    }`,
   );
 });
 

@@ -18,7 +18,6 @@ export class PlayerActions {
   constructor(
     private state: GameState,
     private movementSystem: MovementSystem,
-    private oracleSystem: OracleSystem,
   ) {}
 
   public getState(): GameState {
@@ -407,19 +406,6 @@ export class PlayerActions {
     // Check if player has the specified die
     if (!player.oracleDice.includes(dieColor)) {
       return false;
-    }
-
-    // Apply recoloring if there's an intention for this die
-    const originalDieColor = dieColor;
-    if (player.recoloredDice && player.recoloredDice[dieColor]) {
-      const recoloringApplied = this.oracleSystem.applyRecoloring(
-        player,
-        dieColor,
-      );
-      if (recoloringApplied) {
-        // Update dieColor to the recolored color for the rest of the logic
-        dieColor = player.recoloredDice[originalDieColor]?.newColor || dieColor;
-      }
     }
 
     // Consume the oracle die - use the current dieColor after recoloring
