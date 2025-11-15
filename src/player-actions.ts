@@ -1,7 +1,8 @@
 // Player action implementations for Quests of Zeus
 import type { GameState } from './GameState.ts';
+import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import type { MovementSystem } from './movement-system.ts';
-import type { OracleSystem } from './oracle-system.ts';
+import { OracleSystem } from './oracle-system.ts';
 import type { Player } from './Player.ts';
 import {
   addCubeToStorage,
@@ -20,6 +21,14 @@ export class PlayerActions {
     private oracleSystem: OracleSystem,
   ) {}
 
+  public getState(): GameState {
+    return this.state;
+  }
+
+  public getMovementSystem(): MovementSystem {
+    return this.movementSystem;
+  }
+
   /**
    * Roll oracle dice for a player
    */
@@ -34,6 +43,159 @@ export class PlayerActions {
 
     player.oracleDice = dice;
     return dice;
+  }
+
+  public attemptMoveShip(
+    player: Player,
+    destination: HexCoordinates,
+    dieSpent: CoreColor | undefined,
+    cardSpent: CoreColor | undefined,
+    favorSpentToRecolor: number,
+    favorSpentForRange: number,
+  ): MoveShipResult {
+    // validate state
+    if (this.state.getPhase() !== 'action') {
+      return {
+        success: false,
+        error: { type: 'wrong_phase', message: 'whatever' },
+      };
+    }
+    // validate player???
+    // validate destination coordinates
+    if (
+      JSON.stringify(destination) === JSON.stringify(player.getShipPosition())
+    ) {
+      return {
+        success: false,
+        error: { type: 'invalid_target', message: 'already there' },
+      };
+    }
+    const map = this.state.map;
+    const radius = map.getHexGrid().getRadius();
+    if (Math.abs(destination.q) > radius || Math.abs(destination.r) > radius) {
+      return {
+        success: false,
+        error: { type: 'invalid_target', message: 'off the map' },
+      };
+    }
+    // validate die OR card but not both
+    if (dieSpent && cardSpent) {
+      return {
+        success: false,
+        error: { type: 'no_die', message: 'cannot spend both die and card' },
+      };
+    }
+
+    const originalColor = dieSpent || cardSpent;
+    if (!originalColor) {
+      return {
+        success: false,
+        error: { type: 'no_die', message: 'must spend either die or card' },
+      };
+    }
+
+    // validate die (if spent)
+    if (dieSpent) {
+      if (player.oracleDice.indexOf(dieSpent) < 0) {
+        return {
+          success: false,
+          error: {
+            type: 'die_not_available',
+            message: `no ${dieSpent} die available in ${player.oracleDice}`,
+          },
+        };
+      }
+    }
+    // validate card (if spent)
+    if (cardSpent) {
+      if (player.oracleCards.indexOf(cardSpent) < 0) {
+        return {
+          success: false,
+          error: {
+            type: 'die_not_available',
+            message: `no ${cardSpent} card available in ${player.oracleCards}`,
+          },
+        };
+      }
+    }
+    // validate enough favor available
+    if (favorSpentForRange + favorSpentToRecolor > player.favor) {
+      return {
+        success: false,
+        error: {
+          type: 'not_enough_favor',
+          message:
+            `${favorSpentForRange} + ${favorSpentToRecolor} > ${player.favor}`,
+        },
+      };
+    }
+    // validate destination is sea
+    const destinationCell = map.getCell(destination);
+    if (destinationCell?.terrain !== 'sea') {
+      return {
+        success: false,
+        error: {
+          type: 'not_sea',
+          message: `Destination ${JSON.stringify(destinationCell)} not sea`,
+        },
+      };
+    }
+    // validate destination color matches effective color
+    const effectiveColor = OracleSystem.applyRecolor(
+      originalColor,
+      favorSpentToRecolor,
+    );
+    if (effectiveColor !== destinationCell.color) {
+      return {
+        success: false,
+        error: {
+          type: 'wrong_color',
+          message: `Used ${effectiveColor} to try to get to ${
+            JSON.stringify(destinationCell)
+          }`,
+        },
+      };
+    }
+    // validate destination is in range
+    const availableRange = player.getRange() + favorSpentForRange;
+    const validation = this.movementSystem.validateMove(
+      player.getShipPosition(),
+      destination.q,
+      destination.r,
+      effectiveColor,
+      availableRange,
+      destinationCell,
+    );
+    if (!validation.isValid) {
+      return {
+        success: false,
+        error: {
+          type: 'not_reachable',
+          message: validation.error || 'Unknown validation failure',
+        },
+      };
+    }
+    // move the ship, spend the favor, spend the die/card
+    player.setShipPosition(destination);
+    player.favor -= favorSpentForRange;
+    player.favor -= favorSpentToRecolor;
+    const resourceArray = dieSpent ? player.oracleDice : player.oracleCards;
+    const index = resourceArray.indexOf(originalColor);
+    if (index < 0) {
+      return {
+        success: false,
+        error: {
+          type: 'unknown',
+          message: `Could not remove ${originalColor} from ${resourceArray}`,
+        },
+      };
+    }
+    resourceArray.splice(index, 1);
+
+    // log and return results
+    return {
+      success: true,
+    };
   }
 
   /**
