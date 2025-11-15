@@ -55,6 +55,7 @@ Deno.test('Action move ship wrong phase', () => {
   assertFalse(result.success);
   assert(result.error);
   assertEquals(result.error.type, 'wrong_phase');
+  assertEquals(result.error.details?.phase, state.getPhase());
 });
 
 Deno.test('Action move ship invalid destination coordinates', () => {
@@ -63,9 +64,10 @@ Deno.test('Action move ship invalid destination coordinates', () => {
   const player = state.getCurrentPlayer();
 
   player.oracleDice = ['red'];
+  const destination = player.getShipPosition();
   const alreadyThere = playerActions.attemptMoveShip(
     player,
-    player.getShipPosition(),
+    destination,
     'red',
     undefined,
     0,
@@ -74,6 +76,8 @@ Deno.test('Action move ship invalid destination coordinates', () => {
   assertFalse(alreadyThere.success);
   assert(alreadyThere.error);
   assertEquals(alreadyThere.error.type, 'invalid_target');
+  assertEquals(alreadyThere.error.details?.targetQ, destination.q);
+  assertEquals(alreadyThere.error.details?.targetR, destination.r);
 
   const qIsOffMapCoordinates = {
     q: state.map.getHexGrid().getRadius() + 1,
@@ -90,6 +94,8 @@ Deno.test('Action move ship invalid destination coordinates', () => {
   assertFalse(offMap.success);
   assert(offMap.error);
   assertEquals(offMap.error.type, 'invalid_target');
+  assertEquals(offMap.error.details?.targetQ, qIsOffMapCoordinates.q);
+  assertEquals(offMap.error.details?.targetR, qIsOffMapCoordinates.r);
 
   const rIsOffMapCoordinates = {
     q: 0,
@@ -106,6 +112,8 @@ Deno.test('Action move ship invalid destination coordinates', () => {
   assertFalse(offMap2.success);
   assert(offMap2.error);
   assertEquals(offMap2.error.type, 'invalid_target');
+  assertEquals(offMap2.error.details?.targetQ, rIsOffMapCoordinates.q);
+  assertEquals(offMap2.error.details?.targetR, rIsOffMapCoordinates.r);
 });
 
 Deno.test('Action move ship use die or card not both', () => {
@@ -155,6 +163,8 @@ Deno.test('Action move ship use invalid die', () => {
   assertFalse(result.success);
   assert(result.error);
   assertEquals(result.error.type, 'die_not_available');
+  assertEquals(result.error.details?.dieColor, 'blue');
+  assertEquals(result.error.details?.availableDice?.length, 1);
 });
 
 Deno.test('Action move ship use invalid card', () => {
@@ -174,6 +184,8 @@ Deno.test('Action move ship use invalid card', () => {
   assertFalse(result.success);
   assert(result.error);
   assertEquals(result.error.type, 'die_not_available');
+  assertEquals(result.error.details?.dieColor, 'blue');
+  assertEquals(result.error.details?.availableDice?.length, 1);
 });
 
 Deno.test('Action move ship not enough favor', () => {
@@ -226,6 +238,7 @@ Deno.test('Action move ship to non-sea', () => {
   assertFalse(result.success);
   assert(result.error);
   assertEquals(result.error.type, 'not_sea');
+  assertEquals(result.error.details?.targetTerrain, 'shallow');
 });
 
 Deno.test('Action move ship to wrong color (no recoloring)', () => {

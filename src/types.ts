@@ -120,6 +120,7 @@ export interface MoveShipResult {
       | 'no_die_or_card'
       | 'both_die_and_card'
       | 'die_not_available'
+      | 'card_not_available'
       | 'wrong_color'
       | 'not_reachable'
       | 'not_enough_favor'

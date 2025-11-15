@@ -54,10 +54,11 @@ export class PlayerActions {
     favorSpentForRange: number,
   ): MoveShipResult {
     // validate state
-    if (this.state.getPhase() !== 'action') {
+    const phase = this.state.getPhase();
+    if (phase !== 'action') {
       return {
         success: false,
-        error: { type: 'wrong_phase', message: 'whatever' },
+        error: { type: 'wrong_phase', message: 'whatever', details: { phase } },
       };
     }
     // validate player
@@ -96,6 +97,10 @@ export class PlayerActions {
           error: {
             type: 'die_not_available',
             message: `no ${dieSpent} die available in ${player.oracleDice}`,
+            details: {
+              dieColor: originalColor,
+              availableDice: player.oracleDice,
+            },
           },
         };
       }
@@ -108,6 +113,10 @@ export class PlayerActions {
           error: {
             type: 'die_not_available',
             message: `no ${cardSpent} card available in ${player.oracleCards}`,
+            details: {
+              dieColor: originalColor,
+              availableDice: player.oracleCards,
+            },
           },
         };
       }
@@ -128,7 +137,11 @@ export class PlayerActions {
     ) {
       return {
         success: false,
-        error: { type: 'invalid_target', message: 'already there' },
+        error: {
+          type: 'invalid_target',
+          message: 'already there',
+          details: { targetQ: destination.q, targetR: destination.r },
+        },
       };
     }
     const map = this.state.map;
@@ -136,7 +149,11 @@ export class PlayerActions {
     if (Math.abs(destination.q) > radius || Math.abs(destination.r) > radius) {
       return {
         success: false,
-        error: { type: 'invalid_target', message: 'off the map' },
+        error: {
+          type: 'invalid_target',
+          message: 'off the map',
+          details: { targetQ: destination.q, targetR: destination.r },
+        },
       };
     }
     // validate enough favor available
@@ -152,12 +169,16 @@ export class PlayerActions {
     }
     // validate destination is sea
     const destinationCell = map.getCell(destination);
-    if (destinationCell?.terrain !== 'sea') {
+    const terrain = destinationCell?.terrain;
+    if (terrain !== 'sea') {
       return {
         success: false,
         error: {
           type: 'not_sea',
           message: `Destination ${JSON.stringify(destinationCell)} not sea`,
+          details: {
+            targetTerrain: terrain || 'unknown',
+          },
         },
       };
     }
@@ -166,7 +187,7 @@ export class PlayerActions {
       originalColor,
       favorSpentToRecolor,
     );
-    if (effectiveColor !== destinationCell.color) {
+    if (effectiveColor !== destinationCell?.color) {
       return {
         success: false,
         error: {
