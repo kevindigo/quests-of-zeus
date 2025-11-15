@@ -114,6 +114,7 @@ Deno.test('ResourceSelectionIntegration - resource availability after actions', 
       targetMove.q,
       targetMove.r,
       'blue',
+      undefined,
       0,
       targetMove.favorCost,
     );

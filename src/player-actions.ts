@@ -111,7 +111,7 @@ export class PlayerActions {
         return {
           success: false,
           error: {
-            type: 'die_not_available',
+            type: 'card_not_available',
             message: `no ${cardSpent} card available in ${player.oracleCards}`,
             details: {
               dieColor: originalColor,

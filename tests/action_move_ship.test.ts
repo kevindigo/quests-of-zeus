@@ -183,7 +183,7 @@ Deno.test('Action move ship use invalid card', () => {
   );
   assertFalse(result.success);
   assert(result.error);
-  assertEquals(result.error.type, 'die_not_available');
+  assertEquals(result.error.type, 'card_not_available');
   assertEquals(result.error.details?.dieColor, 'blue');
   assertEquals(result.error.details?.availableDice?.length, 1);
 });

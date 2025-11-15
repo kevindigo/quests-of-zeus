@@ -56,7 +56,8 @@ export class QuestsZeusGameEngine {
     playerId: number,
     targetQ: number,
     targetR: number,
-    originalDieColor: CoreColor,
+    originalDieColor: CoreColor | undefined,
+    originalCardColor: CoreColor | undefined,
     favorSpentToRecolor: number,
     favorSpentForRange: number,
   ): MoveShipResult {
@@ -67,7 +68,7 @@ export class QuestsZeusGameEngine {
       player,
       destinationCoordinates,
       originalDieColor,
-      undefined,
+      originalCardColor,
       favorSpentToRecolor,
       favorSpentForRange,
     );

@@ -49,7 +49,8 @@ export class GameController {
     this.selectedDieColor = null;
     this.selectedOracleCardColor = null;
     this.selectedFavorSpent = 0;
-    this.setRecolorIntention(0);
+    // FixMe: Need to clear the recoloring at this point, but not sure how
+    // this.setRecolorIntention(0);
   }
 
   public getSelectedDieColor(): CoreColor | null {
@@ -853,118 +854,21 @@ export class GameController {
     q: number,
     r: number,
   ): void {
-    if (!this.selectedOracleCardColor) {
+    const selectedColor = this.selectedOracleCardColor;
+    if (!selectedColor) {
       return;
     }
-    const availableMoves = this.getAvailableMovesForOracleCard(
-      currentPlayer.id,
-      this.selectedOracleCardColor,
-      currentPlayer.favor,
-    );
-
-    const targetMove = availableMoves.find((
-      move: { q: number; r: number; favorCost: number },
-    ) => move.q === q && move.r === r);
-
-    if (targetMove) {
-      // Get the effective card color considering recoloring intention
-      let effectiveCardColor = this.selectedOracleCardColor;
-      const recoloredCards = currentPlayer.recoloredCards;
-      const selectedColor = this.selectedOracleCardColor;
-      if (
-        recoloredCards &&
-        recoloredCards[selectedColor]
-      ) {
-        effectiveCardColor = recoloredCards[selectedColor]
-          .newColor;
-      }
-
-      // Check if this move requires favor spending
-      if (targetMove.favorCost > 0) {
-        // Ask player if they want to spend favor
-        const confirmSpend = confirm(
-          `This move requires spending ${targetMove.favorCost} favor to reach using ${effectiveCardColor} oracle card. Do you want to spend favor to move here?`,
-        );
-        if (confirmSpend) {
-          this.selectedFavorSpent = targetMove.favorCost;
-
-          // Execute the move immediately after confirmation
-          const moveResult = this.gameEngine.spendOracleCardForMovement(
-            currentPlayer.id,
-            q,
-            r,
-            this.selectedOracleCardColor,
-            this.selectedFavorSpent,
-          );
-          if (moveResult.success) {
-            let message =
-              `Ship moved to (${q}, ${r}) using ${effectiveCardColor} oracle card`;
-            if (this.selectedFavorSpent > 0) {
-              message += ` and ${this.selectedFavorSpent} favor`;
-            }
-            this.showMessage(message);
-            // Clear selections after successful move
-            this.selectedOracleCardColor = null;
-            this.selectedFavorSpent = 0;
-            this.renderGameState();
-          } else {
-            // Use the detailed error information
-            const errorMessage = this.formatMoveErrorMessage(
-              moveResult.error,
-            );
-            this.showMessage(errorMessage);
-
-            // Reset favor spent if move failed
-            this.selectedFavorSpent = 0;
-          }
-          return;
-        } else {
-          return; // Player declined
-        }
-      }
-
-      // Use the selected oracle card color and favor spent
-      const moveResult = this.gameEngine.spendOracleCardForMovement(
-        currentPlayer.id,
-        q,
-        r,
-        this.selectedOracleCardColor,
-        this.selectedFavorSpent,
-      );
-      if (moveResult.success) {
-        let message =
-          `Ship moved to (${q}, ${r}) using ${effectiveCardColor} oracle card`;
-        if (this.selectedFavorSpent > 0) {
-          message += ` and ${this.selectedFavorSpent} favor`;
-        }
-        this.showMessage(message);
-        // Clear selections after successful move
-        this.selectedOracleCardColor = null;
-        this.selectedFavorSpent = 0;
-        this.renderGameState();
-      } else {
-        // Use the detailed error information
-        const errorMessage = this.formatMoveErrorMessage(
-          moveResult.error,
-        );
-        this.showMessage(errorMessage);
-      }
-    } else {
-      // Get the effective card color for the error message
-      let effectiveCardColor = this.selectedOracleCardColor;
-      const recoloredCards = currentPlayer.recoloredCards;
-      const selectedColor = this.selectedOracleCardColor;
-      if (
-        recoloredCards &&
-        recoloredCards[selectedColor]
-      ) {
-        effectiveCardColor = recoloredCards[selectedColor]
-          .newColor;
-      }
-      this.showMessage(
-        `Cannot move to this hex using ${effectiveCardColor} oracle card! Must be a sea hex within range of matching color.`,
-      );
+    if (!currentPlayer.oracleCards.includes(selectedColor)) {
+      return;
     }
+    const recoloring = currentPlayer.recoloredCards[selectedColor];
+    this.handleMoveWithDieOrCard(
+      currentPlayer,
+      q,
+      r,
+      selectedColor,
+      recoloring,
+    );
   }
 
   private handleMoveWithDie(currentPlayer: Player, q: number, r: number): void {
@@ -975,7 +879,14 @@ export class GameController {
     if (!currentPlayer.oracleDice.includes(selectedColor)) {
       return;
     }
-    this.handleMoveWithDieOrCard(currentPlayer, q, r, selectedColor);
+    const recoloring = currentPlayer.recoloredDice[selectedColor];
+    this.handleMoveWithDieOrCard(
+      currentPlayer,
+      q,
+      r,
+      selectedColor,
+      recoloring,
+    );
   }
 
   private handleMoveWithDieOrCard(
@@ -983,8 +894,8 @@ export class GameController {
     q: number,
     r: number,
     selectedColor: CoreColor,
+    recoloring: { newColor: CoreColor; favorCost: number } | undefined,
   ): void {
-    const recoloring = currentPlayer.recoloredDice[selectedColor];
     const recoloringCost = recoloring ? recoloring.favorCost : 0;
     const effectiveColor = OracleSystem.applyRecolor(
       selectedColor,
@@ -992,7 +903,7 @@ export class GameController {
     );
     const availableFavor = currentPlayer.favor;
     const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
-    // Get available moves for the selected die color and available favor
+    // Get available moves for the selected color and available favor
     const availableMoves = this.gameEngine.getAvailableMovesForColor(
       currentPlayer,
       effectiveColor,
@@ -1023,13 +934,12 @@ export class GameController {
       }
     }
 
-    // Use the selected die color and favor spent
-    // The game engine will handle recoloring internally
     const moveResult = this.gameEngine.moveShip(
       currentPlayer.id,
       q,
       r,
-      selectedColor,
+      this.selectedDieColor || undefined,
+      this.selectedOracleCardColor || undefined,
       recoloringCost,
       favorSpentForRange,
     );
@@ -1631,6 +1541,11 @@ export class GameController {
 
       case 'die_not_available':
         return `You don't have a ${error.details?.dieColor} die! Available dice: ${
+          error.details?.availableDice?.join(', ') || 'none'
+        }.`;
+
+      case 'card_not_available':
+        return `You don't have a ${error.details?.dieColor} card! Available cards: ${
           error.details?.availableDice?.join(', ') || 'none'
         }.`;
 

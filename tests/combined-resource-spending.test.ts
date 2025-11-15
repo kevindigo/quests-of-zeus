@@ -40,6 +40,7 @@ Deno.test('CombinedResourceSpending - select die for movement', () => {
       targetMove.q,
       targetMove.r,
       'blue',
+      undefined,
       0,
       targetMove.favorCost,
     );
@@ -279,6 +280,7 @@ Deno.test('CombinedResourceSpending - cannot use both die and oracle card in sam
     originCell.q,
     originCell.r,
     originCell.color as CoreColor,
+    undefined,
     0,
     0,
   );
