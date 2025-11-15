@@ -61,23 +61,6 @@ export class PlayerActions {
       };
     }
     // validate player???
-    // validate destination coordinates
-    if (
-      JSON.stringify(destination) === JSON.stringify(player.getShipPosition())
-    ) {
-      return {
-        success: false,
-        error: { type: 'invalid_target', message: 'already there' },
-      };
-    }
-    const map = this.state.map;
-    const radius = map.getHexGrid().getRadius();
-    if (Math.abs(destination.q) > radius || Math.abs(destination.r) > radius) {
-      return {
-        success: false,
-        error: { type: 'invalid_target', message: 'off the map' },
-      };
-    }
     // validate die OR card but not both
     if (dieSpent && cardSpent) {
       return {
@@ -93,7 +76,6 @@ export class PlayerActions {
         error: { type: 'no_die', message: 'must spend either die or card' },
       };
     }
-
     // validate die (if spent)
     if (dieSpent) {
       if (player.oracleDice.indexOf(dieSpent) < 0) {
@@ -117,6 +99,33 @@ export class PlayerActions {
           },
         };
       }
+      if (player.usedOracleCardThisTurn) {
+        return {
+          success: false,
+          error: {
+            type: 'second_card',
+            message: 'Already used a card this turn',
+          },
+        };
+      }
+    }
+
+    // validate destination coordinates
+    if (
+      JSON.stringify(destination) === JSON.stringify(player.getShipPosition())
+    ) {
+      return {
+        success: false,
+        error: { type: 'invalid_target', message: 'already there' },
+      };
+    }
+    const map = this.state.map;
+    const radius = map.getHexGrid().getRadius();
+    if (Math.abs(destination.q) > radius || Math.abs(destination.r) > radius) {
+      return {
+        success: false,
+        error: { type: 'invalid_target', message: 'off the map' },
+      };
     }
     // validate enough favor available
     if (favorSpentForRange + favorSpentToRecolor > player.favor) {
@@ -179,6 +188,9 @@ export class PlayerActions {
     player.setShipPosition(destination);
     player.favor -= favorSpentForRange;
     player.favor -= favorSpentToRecolor;
+    if (cardSpent) {
+      player.usedOracleCardThisTurn = true;
+    }
     const resourceArray = dieSpent ? player.oracleDice : player.oracleCards;
     const index = resourceArray.indexOf(originalColor);
     if (index < 0) {

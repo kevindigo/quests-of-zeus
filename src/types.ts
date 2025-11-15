@@ -123,6 +123,7 @@ export interface MoveShipResult {
       | 'not_reachable'
       | 'not_enough_favor'
       | 'recoloring_failed'
+      | 'second_card'
       | 'unknown';
     message: string;
     details?: {

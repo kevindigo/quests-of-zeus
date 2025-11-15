@@ -45,10 +45,11 @@ Deno.test('Action move ship invalid destination coordinates', () => {
   const state = playerActions.getState();
   const player = state.getCurrentPlayer();
 
+  player.oracleDice = ['red'];
   const alreadyThere = playerActions.attemptMoveShip(
     player,
     player.getShipPosition(),
-    undefined,
+    'red',
     undefined,
     0,
     0,
@@ -64,7 +65,7 @@ Deno.test('Action move ship invalid destination coordinates', () => {
   const offMap = playerActions.attemptMoveShip(
     player,
     qIsOffMapCoordinates,
-    undefined,
+    'red',
     undefined,
     0,
     0,
@@ -80,7 +81,7 @@ Deno.test('Action move ship invalid destination coordinates', () => {
   const offMap2 = playerActions.attemptMoveShip(
     player,
     rIsOffMapCoordinates,
-    undefined,
+    'red',
     undefined,
     0,
     0,
@@ -357,4 +358,15 @@ Deno.test('Action move ship with card and recolor success', () => {
   assertEquals(player.getShipPosition(), to);
   assertEquals(player.oracleCards.length, 1);
   assertEquals(player.favor, 1);
+
+  const secondCardInOneTurn = playerActions.attemptMoveShip(
+    player,
+    to,
+    undefined,
+    'red',
+    1,
+    0,
+  );
+  assertFalse(secondCardInOneTurn.success);
+  assertEquals(secondCardInOneTurn.error?.type, 'second_card');
 });

@@ -1,7 +1,7 @@
 == Short-term ==
 
+- Use GameEngine.moveShip for card movement
 - Need to get all the map navigation in one place
-- Terrain placement is creating lakes and landlocked hexes
 
 == Oracle cards ==
 
