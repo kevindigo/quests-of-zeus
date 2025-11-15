@@ -129,7 +129,7 @@ export class PlayerActions {
     }
 
     // Calculate movement range (base 3 + 1 per favor spent)
-    const movementRange = 3 + (favorSpent || 0);
+    const movementRange = player.getRange() + (favorSpent || 0);
 
     // Validate the move
     const validation = this.movementSystem.validateMove(

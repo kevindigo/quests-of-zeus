@@ -633,7 +633,7 @@ export class GameController {
           // Movement is always available during action phase with a selected die
           actions += `<p>Click on highlighted hexes to move your ship:</p>
              <ul style="margin-left: 1rem;">
-               <li>White highlights: Normal range (3 hexes)</li>
+               <li>White highlights: Normal range (${currentPlayer.getRange()} hexes)</li>
                <li>Tan dashed highlights: Extended range (costs favor)</li>
              </ul>`;
 
@@ -685,7 +685,7 @@ export class GameController {
           // Movement is available during action phase with a selected oracle card
           actions += `<p>Click on highlighted hexes to move your ship:</p>
              <ul style="margin-left: 1rem;">
-               <li>Gold highlights: Normal range (3 hexes)</li>
+               <li>Gold highlights: Normal range (${currentPlayer.getRange()} hexes)</li>
                <li>Orange dashed highlights: Extended range (costs favor)</li>
              </ul>`;
 
@@ -1535,7 +1535,7 @@ export class GameController {
 
     // Check moves for each possible favor spending amount
     for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
-      const movementRange = 3 + favorSpent;
+      const movementRange = player.getRange() + favorSpent;
       const reachableSeaTiles = this.getReachableSeaTiles(
         currentPos.q,
         currentPos.r,
