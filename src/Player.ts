@@ -103,6 +103,10 @@ export class Player {
     this.shipPosition.r = newCoordinates.r;
   }
 
+  public getRange(): number {
+    return 3;
+  }
+
   public readonly id: number;
   public readonly name: string;
   public readonly color: PlayerColorName;
