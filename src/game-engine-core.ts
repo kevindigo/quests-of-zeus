@@ -56,19 +56,20 @@ export class QuestsZeusGameEngine {
     playerId: number,
     targetQ: number,
     targetR: number,
-    dieColor?: CoreColor,
-    favorSpent?: number,
+    dieColor: CoreColor,
+    favorSpentForRange: number,
   ): MoveShipResult {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
-    const result = this.playerActions!.moveShip(
+    const destinationCoordinates = { q: targetQ, r: targetR };
+    return this.playerActions!.attemptMoveShip(
       player,
-      targetQ,
-      targetR,
+      destinationCoordinates,
       dieColor,
-      favorSpent,
+      undefined,
+      0,
+      favorSpentForRange,
     );
-    return result;
   }
 
   public collectOffering(playerId: number, color: HexColor): boolean {
