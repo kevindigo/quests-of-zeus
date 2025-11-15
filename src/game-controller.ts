@@ -1020,55 +1020,54 @@ export class GameController {
       const confirmSpend = confirm(
         `This move requires spending ${targetMove.favorCost} favor to reach using ${effectiveDieColor} die. Do you want to spend favor to move here?`,
       );
-      if (confirmSpend) {
-        this.selectedFavorSpent = targetMove.favorCost;
-
-        // Execute the move immediately after confirmation
-        const moveResult = this.gameEngine.moveShip(
-          currentPlayer.id,
-          q,
-          r,
-          effectiveDieColor,
-          this.selectedFavorSpent,
-        );
-        if (moveResult.success) {
-          let message =
-            `Ship moved to (${q}, ${r}) using ${effectiveDieColor} die`;
-          if (this.selectedFavorSpent > 0) {
-            message += ` and ${this.selectedFavorSpent} favor`;
-          }
-          this.showMessage(message);
-          // Clear selections after successful move
-          this.selectedDieColor = null;
-          this.selectedFavorSpent = 0;
-          this.renderGameState();
-        } else {
-          // Use the detailed error information
-          const errorMessage = this.formatMoveErrorMessage(
-            moveResult.error,
-          );
-          this.showMessage(errorMessage);
-
-          // Debug: Log the failure details
-          console.log('Move failed with details:', {
-            playerId: currentPlayer.id,
-            targetQ: q,
-            targetR: r,
-            dieColor: this.selectedDieColor,
-            favorSpent: this.selectedFavorSpent,
-            playerFavor: currentPlayer.favor,
-            playerDice: currentPlayer.oracleDice,
-            recoloredDice: currentPlayer.recoloredDice,
-            moveResult,
-          });
-
-          // Reset favor spent if move failed
-          this.selectedFavorSpent = 0;
-        }
+      if (!confirmSpend) {
         return;
-      } else {
-        return; // Player declined
       }
+      this.selectedFavorSpent = targetMove.favorCost;
+
+      // Execute the move immediately after confirmation
+      const moveResult = this.gameEngine.moveShip(
+        currentPlayer.id,
+        q,
+        r,
+        effectiveDieColor,
+        this.selectedFavorSpent,
+      );
+      if (moveResult.success) {
+        let message =
+          `Ship moved to (${q}, ${r}) using ${effectiveDieColor} die`;
+        if (this.selectedFavorSpent > 0) {
+          message += ` and ${this.selectedFavorSpent} favor`;
+        }
+        this.showMessage(message);
+        // Clear selections after successful move
+        this.selectedDieColor = null;
+        this.selectedFavorSpent = 0;
+        this.renderGameState();
+      } else {
+        // Use the detailed error information
+        const errorMessage = this.formatMoveErrorMessage(
+          moveResult.error,
+        );
+        this.showMessage(errorMessage);
+
+        // Debug: Log the failure details
+        console.log('Move failed with details:', {
+          playerId: currentPlayer.id,
+          targetQ: q,
+          targetR: r,
+          dieColor: this.selectedDieColor,
+          favorSpent: this.selectedFavorSpent,
+          playerFavor: currentPlayer.favor,
+          playerDice: currentPlayer.oracleDice,
+          recoloredDice: currentPlayer.recoloredDice,
+          moveResult,
+        });
+
+        // Reset favor spent if move failed
+        this.selectedFavorSpent = 0;
+      }
+      return;
     }
 
     // Use the selected die color and favor spent
