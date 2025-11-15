@@ -143,7 +143,7 @@ export class GameControllerUnified {
     this.renderMap(gameState);
 
     // Update game phase display
-    this.updatePhaseDisplay(gameState.phase);
+    this.updatePhaseDisplay(gameState.getPhase());
 
     // Check for win condition
     const winCondition = this.gameEngine.checkWinCondition();
