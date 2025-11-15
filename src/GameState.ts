@@ -55,6 +55,18 @@ export class GameState {
     return newGameState;
   }
 
+  public getPlayer(index: number): Player {
+    const player = this.players[index];
+    if (!player) {
+      throw new Error(`GameState: Unable to get player ${index}`);
+    }
+    return player;
+  }
+
+  public getCurrentPlayer(): Player {
+    return this.getPlayer(this.getCurrentPlayerIndex());
+  }
+
   public getCurrentPlayerIndex(): number {
     return this.currentPlayerIndex;
   }
