@@ -188,12 +188,12 @@ export class GameController {
     }
   }
 
-  private updatePlayerInfo(_gameState: unknown): void {
+  private updatePlayerInfo(gameState: GameState): void {
     const playerInfoContainer = document.getElementById('playerInfo');
     if (!playerInfoContainer) return;
 
     // Get current player for display
-    const _currentPlayer = this.gameEngine.getCurrentPlayer();
+    const _currentPlayer = gameState.getCurrentPlayer();
 
     playerInfoContainer.innerHTML = `
       <div class="player-info">
@@ -381,7 +381,7 @@ export class GameController {
 
       // Highlight available moves
       if (gameState.getPhase() === 'action') {
-        this.highlightAvailableMoves();
+        this.highlightAvailableMoves(gameState);
       }
     } catch (error) {
       console.error('Error generating SVG:', error);
@@ -461,8 +461,8 @@ export class GameController {
     });
   }
 
-  private highlightAvailableMoves(): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
+  private highlightAvailableMoves(gameState: GameState): void {
+    const currentPlayer = gameState.getCurrentPlayer();
 
     // Clear previous highlights
     document.querySelectorAll('.available-move').forEach((cell) => {
@@ -608,12 +608,13 @@ export class GameController {
   }
 
   private getPhaseActions(phase: string): string {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const gameState = this.gameEngine.getGameState();
+    const currentPlayer = gameState.getCurrentPlayer();
 
     switch (phase) {
       case 'action': {
         const position = currentPlayer.getShipPosition();
-        const currentCell = this.gameEngine.getGameState().map.getCell(
+        const currentCell = gameState.map.getCell(
           position,
         );
 
@@ -1102,9 +1103,10 @@ export class GameController {
   }
 
   private collectOffering(): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const gameState = this.gameEngine.getGameState();
+    const currentPlayer = gameState.getCurrentPlayer();
     const position = currentPlayer.getShipPosition();
-    const currentCell = this.gameEngine.getGameState().map.getCell(
+    const currentCell = gameState.map.getCell(
       position,
     );
 
@@ -1259,7 +1261,8 @@ export class GameController {
   }
 
   private setRecolorIntention(favorCost: number): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const gameState = this.gameEngine.getGameState();
+    const currentPlayer = gameState.getCurrentPlayer();
 
     const selectedColor = this.selectedDieColor || this.selectedOracleCardColor;
     if (!selectedColor) {
@@ -1286,7 +1289,7 @@ export class GameController {
         this.showMessage('Recoloring intention cleared');
         this.renderGameState();
         // Update available moves since color intention changed
-        this.highlightAvailableMoves();
+        this.highlightAvailableMoves(gameState);
       } else {
         this.showMessage('Cannot clear recoloring intention');
       }
@@ -1328,7 +1331,7 @@ export class GameController {
         );
         this.renderGameState();
         // Update available moves since color intention changed
-        this.highlightAvailableMoves();
+        this.highlightAvailableMoves(gameState);
       } else {
         this.showMessage('Cannot set recoloring intention');
       }
@@ -1503,8 +1506,9 @@ export class GameController {
     if (!this.gameEngine.isGameInitialized()) {
       return [];
     }
-    const player = this.gameEngine.getPlayer(playerId);
-    if (!player || this.gameEngine.getGameState().getPhase() !== 'action') {
+    const gameState = this.gameEngine.getGameState();
+    const player = gameState.getPlayer(playerId);
+    if (!player || gameState.getPhase() !== 'action') {
       return [];
     }
 
@@ -1582,6 +1586,7 @@ export class GameController {
       return [];
     }
 
+    const gameState = this.gameEngine.getGameState();
     const reachableTiles: { q: number; r: number; color: HexColor }[] = [];
     const visited = new Set<string>();
     const queue: { q: number; r: number; steps: number }[] = [];
@@ -1600,7 +1605,7 @@ export class GameController {
         continue;
       }
 
-      const neighbors = this.gameEngine.getGameState().map.getNeighbors(
+      const neighbors = gameState.map.getNeighbors(
         { q: current.q, r: current.r },
       );
 
