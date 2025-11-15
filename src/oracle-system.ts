@@ -9,6 +9,16 @@ export class OracleSystem {
     this.oracleCardDeck = oracleCardDeck;
   }
 
+  public static applyRecolor(original: CoreColor, favor: number): CoreColor {
+    const originalIndex = COLOR_WHEEL.indexOf(original);
+    const newIndex = (originalIndex + favor) % COLOR_WHEEL.length;
+    const newColor = COLOR_WHEEL[newIndex];
+    if (!newColor) {
+      throw new Error(`Unable to recolor ${original} by ${favor}`);
+    }
+    return newColor;
+  }
+
   /**
    * Set recoloring intention for a die during the action phase
    * For each favor spent, advance the color one position along the color wheel
