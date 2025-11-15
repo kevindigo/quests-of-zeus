@@ -21,6 +21,23 @@ function createPlayerActions(): PlayerActions {
   return playerActions;
 }
 
+Deno.test('Action move ship not your turn', () => {
+  const playerActions = createPlayerActions();
+  const player = new Player(2, 'not current', 'yellow', HexGrid.CENTER);
+
+  const result = playerActions.attemptMoveShip(
+    player,
+    HexGrid.CENTER,
+    undefined,
+    undefined,
+    0,
+    0,
+  );
+  assertFalse(result.success);
+  assert(result.error);
+  assertEquals(result.error.type, 'invalid_player');
+});
+
 Deno.test('Action move ship wrong phase', () => {
   const playerActions = createPlayerActions();
   const state = playerActions.getState();

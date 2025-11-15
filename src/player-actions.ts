@@ -60,7 +60,13 @@ export class PlayerActions {
         error: { type: 'wrong_phase', message: 'whatever' },
       };
     }
-    // validate player???
+    // validate player
+    if (this.state.getCurrentPlayerIndex() !== player.id) {
+      return {
+        success: false,
+        error: { type: 'invalid_player', message: 'not current player' },
+      };
+    }
     // validate die OR card but not both
     if (dieSpent && cardSpent) {
       return {
