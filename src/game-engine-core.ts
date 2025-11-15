@@ -480,10 +480,20 @@ export class QuestsZeusGameEngine {
       effectiveDieColor = player.recoloredDice[dieColor].newColor;
       recoloringCost = player.recoloredDice[dieColor].favorCost;
     }
-
-    const availableMoves: { q: number; r: number; favorCost: number }[] = [];
     const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
+    return this.getAvailableMovesForColor(
+      player,
+      effectiveDieColor,
+      maxFavorForMovement,
+    );
+  }
 
+  public getAvailableMovesForColor(
+    player: Player,
+    effectiveColor: CoreColor,
+    maxFavorForMovement: number,
+  ): { q: number; r: number; favorCost: number }[] {
+    const availableMoves: { q: number; r: number; favorCost: number }[] = [];
     for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
       const movementRange = player.getRange() + favorSpent;
       const reachableSeaTiles = this.movementSystem!.getReachableSeaTiles(
@@ -493,12 +503,11 @@ export class QuestsZeusGameEngine {
 
       for (const seaTile of reachableSeaTiles) {
         if (
-          seaTile.color === effectiveDieColor &&
+          seaTile.color === effectiveColor &&
           !(seaTile.q === player.getShipPosition().q &&
             seaTile.r === player.getShipPosition().r)
         ) {
-          const totalFavorCost = favorSpent + recoloringCost;
-          if (totalFavorCost <= availableFavor) {
+          if (favorSpent <= maxFavorForMovement) {
             const existingMove = availableMoves.find((move) =>
               move.q === seaTile.q && move.r === seaTile.r
             );
