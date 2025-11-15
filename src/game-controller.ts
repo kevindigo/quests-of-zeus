@@ -9,6 +9,7 @@ import type { Player } from './Player.ts';
 import {
   type CityHex,
   COLOR_WHEEL,
+  CORE_COLORS,
   type CoreColor,
   type CubeHex,
   type HexColor,
@@ -486,16 +487,12 @@ export class GameController {
       );
 
       // Get the effective die color considering recoloring intention
-      let effectiveDieColor = this.selectedDieColor;
+      // let effectiveDieColor = this.selectedDieColor;
       const selectedColor = this.selectedDieColor;
-      const recoloredDice = currentPlayer.recoloredDice;
-      if (
-        recoloredDice &&
-        recoloredDice[selectedColor]
-      ) {
-        const recoloredDie = recoloredDice[selectedColor];
-        effectiveDieColor = recoloredDie.newColor;
-      }
+      const effectiveDieColor = OracleSystem.applyRecolor(
+        selectedColor,
+        currentPlayer.getRecolorIntention(),
+      );
 
       // Debug logging
       console.log(
@@ -879,7 +876,11 @@ export class GameController {
     if (!currentPlayer.oracleDice.includes(selectedColor)) {
       return;
     }
-    const recoloring = currentPlayer.recoloredDice[selectedColor];
+    // const recoloring = currentPlayer.recoloredDice[selectedColor];
+    const recoloring = {
+      newColor: CORE_COLORS.BLUE,
+      favorCost: currentPlayer.getRecolorIntention(),
+    };
     this.handleMoveWithDieOrCard(
       currentPlayer,
       q,
@@ -971,6 +972,7 @@ export class GameController {
         favorSpent: this.selectedFavorSpent,
         playerFavor: currentPlayer.favor,
         playerDice: currentPlayer.oracleDice,
+        recolorIntention: currentPlayer.getRecolorIntention(),
         recoloredDice: currentPlayer.recoloredDice,
         moveResult,
       });
@@ -1274,18 +1276,7 @@ export class GameController {
     `;
 
     // Add "No Recolor" option
-    let hasRecolorIntention = false;
-    if (
-      this.selectedDieColor && player.recoloredDice &&
-      player.recoloredDice[selectedColor]
-    ) {
-      hasRecolorIntention = true;
-    } else if (
-      this.selectedOracleCardColor && player.recoloredCards &&
-      player.recoloredCards[selectedColor]
-    ) {
-      hasRecolorIntention = true;
-    }
+    const hasRecolorIntention = player.getRecolorIntention() > 0;
 
     options += `
       <div class="recolor-option" style="margin-bottom: 0.5rem;">
@@ -1310,20 +1301,7 @@ export class GameController {
       const newIndex = (currentIndex + favorCost) % COLOR_WHEEL.length;
       const newColor = COLOR_WHEEL[newIndex]!;
 
-      let isSelected = false;
-      if (
-        this.selectedDieColor && player.recoloredDice &&
-        player.recoloredDice[selectedColor]
-      ) {
-        isSelected =
-          player.recoloredDice[selectedColor].favorCost === favorCost;
-      } else if (
-        this.selectedOracleCardColor && player.recoloredCards &&
-        player.recoloredCards[selectedColor]
-      ) {
-        isSelected =
-          player.recoloredCards[selectedColor].favorCost === favorCost;
-      }
+      const isSelected = player.getRecolorIntention() === favorCost;
 
       options += `
         <div class="recolor-option" style="margin-bottom: 0.5rem;">

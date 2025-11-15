@@ -228,6 +228,7 @@ export class QuestsZeusGameEngine {
       this.state!.players[this.state!.getCurrentPlayerIndex()];
     if (currentPlayer) {
       currentPlayer.usedOracleCardThisTurn = false;
+      currentPlayer.setRecolorIntention(0);
       currentPlayer.recoloredDice = {};
       currentPlayer.recoloredCards = {};
       currentPlayer.oracleDice = newDice;
@@ -339,12 +340,11 @@ export class QuestsZeusGameEngine {
       return [];
     }
 
-    let effectiveDieColor = dieColor;
-    let recoloringCost = 0;
-    if (player.recoloredDice && player.recoloredDice[dieColor]) {
-      effectiveDieColor = player.recoloredDice[dieColor].newColor;
-      recoloringCost = player.recoloredDice[dieColor].favorCost;
-    }
+    const recoloringCost = player.getRecolorIntention();
+    const effectiveDieColor = OracleSystem.applyRecolor(
+      dieColor,
+      recoloringCost,
+    );
     const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
     return this.getAvailableMovesForColor(
       player,
