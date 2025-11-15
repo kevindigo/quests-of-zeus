@@ -1,7 +1,17 @@
-import type { HexMap } from './hexmap/HexMap.ts';
-import { Player } from './Player.ts';
+import { HexMap, type HexMapJson } from './hexmap/HexMap.ts';
+import { Player, type PlayerJson } from './Player.ts';
 import type { CityHex, CubeHex, MonsterHex, Phase } from './types.ts';
 
+export type GameStateJson = {
+  map: HexMapJson;
+  players: PlayerJson[];
+  currentPlayerIndex: number;
+  round: number;
+  phase: Phase;
+  cubeHexes: CubeHex[];
+  monsterHexes: MonsterHex[];
+  cityHexes: CityHex[];
+};
 export class GameState {
   public constructor(
     map: HexMap,
@@ -17,42 +27,33 @@ export class GameState {
     this.cityHexes = [];
   }
 
-  public deepCopy(): GameState {
-    const copyOfPlayers = this.players.map((oldPlayer) => {
-      const newPlayer = new Player(
-        oldPlayer.id,
-        oldPlayer.name,
-        oldPlayer.color,
-        oldPlayer.getShipPosition(),
-      );
-      newPlayer.oracleCards = JSON.parse(JSON.stringify(oldPlayer.oracleCards));
-      newPlayer.oracleDice = JSON.parse(JSON.stringify(oldPlayer.oracleDice));
-      if (oldPlayer.recoloredCards) {
-        newPlayer.recoloredCards = JSON.parse(
-          JSON.stringify(oldPlayer.recoloredCards),
-        );
-      }
-      newPlayer.recoloredDice = JSON.parse(
-        JSON.stringify(oldPlayer.recoloredDice),
-      );
-      newPlayer.favor = oldPlayer.favor;
-      newPlayer.shield = oldPlayer.shield;
-      newPlayer.usedOracleCardThisTurn = oldPlayer.usedOracleCardThisTurn;
-      return newPlayer;
-    });
-    const newGameState = new GameState(
-      JSON.parse(JSON.stringify(this.map)),
-      copyOfPlayers,
-    );
+  public static fromJson(rawJson: unknown): GameState {
+    const json = rawJson as GameStateJson;
+    const map = HexMap.fromJson(json.map);
+    const players = json.players.map((player) => Player.fromJson(player));
+    const state = new GameState(map, players);
+    state.currentPlayerIndex = json.currentPlayerIndex;
+    state.round = json.round;
+    state.phase = json.phase;
+    state.cubeHexes = json.cubeHexes;
+    state.monsterHexes = json.monsterHexes;
+    state.cityHexes = json.cityHexes;
+    return state;
+  }
 
-    newGameState.setCurrentPlayerIndex(this.getCurrentPlayerIndex());
-    newGameState.setRound(this.getRound());
-    newGameState.setPhase(this.getPhase());
-    newGameState.setCubeHexes(this.getCubeHexes());
-    newGameState.setMonsterHexes(this.getMonsterHexes());
-    newGameState.setCityHexes(this.getCityHexes());
-
-    return newGameState;
+  public toJson(): GameStateJson {
+    return {
+      map: this.map.toJson(),
+      players: this.players.map((player) => {
+        return player.toJson();
+      }),
+      currentPlayerIndex: this.currentPlayerIndex,
+      round: this.round,
+      phase: this.phase,
+      cubeHexes: this.cubeHexes,
+      monsterHexes: this.monsterHexes,
+      cityHexes: this.cityHexes,
+    };
   }
 
   public getPlayer(index: number): Player {

@@ -1,6 +1,13 @@
 import type { HexColor, TerrainType } from '../types.ts';
 import type { HexCoordinates } from './HexGrid.ts';
 
+export type HexCellJson = {
+  q: number;
+  r: number;
+  terrain: TerrainType;
+  color: HexColor;
+};
+
 export class HexCell {
   public constructor(
     coordinates: HexCoordinates,
@@ -11,6 +18,25 @@ export class HexCell {
     this.r = coordinates.r;
     this.terrain = terrain;
     this.color = color || 'none';
+  }
+
+  public static fromJson(json: HexCellJson): HexCell {
+    const q = json.q;
+    const r = json.r;
+    return new HexCell(
+      { q, r },
+      json.terrain,
+      json.color,
+    );
+  }
+
+  public toJson(): HexCellJson {
+    return {
+      q: this.q,
+      r: this.r,
+      terrain: this.terrain,
+      color: this.color,
+    };
   }
 
   public getCoordinates(): HexCoordinates {

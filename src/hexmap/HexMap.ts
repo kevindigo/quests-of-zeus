@@ -2,11 +2,17 @@
 
 import type { HexColor, TerrainType } from '../types.ts';
 import type { HexCell } from './HexCell.ts';
-import type { HexCoordinates, HexGrid } from './HexGrid.ts';
+import { type HexCoordinates, HexGrid, type HexGridJson } from './HexGrid.ts';
 import { HexGridOperations } from './HexGridOperations.ts';
 import { PathfindingService } from './PathfindingService.ts';
 import { SeaColorManager } from './SeaColorManager.ts';
 import { TerrainPlacementManager } from './TerrainPlacementManager.ts';
+
+export type HexMapJson = {
+  grid: HexGridJson;
+  width: number;
+  height: number;
+};
 
 export class HexMap {
   constructor() {
@@ -19,6 +25,22 @@ export class HexMap {
     );
 
     this.grid = this.terrainPlacementManager.generateGrid();
+  }
+
+  public static fromJson(json: HexMapJson): HexMap {
+    const map = new HexMap();
+    // map.width = json.width;
+    // map.height = json.height;
+    map.grid = HexGrid.fromJson(json.grid);
+    return map;
+  }
+
+  public toJson(): HexMapJson {
+    return {
+      width: this.width,
+      height: this.height,
+      grid: this.grid.toJson(),
+    };
   }
 
   public getZeus(): HexCell {
@@ -87,9 +109,9 @@ export class HexMap {
     );
   }
 
-  private grid: HexGrid;
   readonly width: number = 13; // -6 to +6 inclusive
   readonly height: number = 13; // -6 to +6 inclusive
+  private grid: HexGrid;
 
   private terrainPlacementManager: TerrainPlacementManager;
   private seaColorManager: SeaColorManager;

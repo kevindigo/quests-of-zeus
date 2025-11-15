@@ -2,7 +2,7 @@
 // High-level game management and orchestration
 
 import { GameInitializer } from './game-initializer.ts';
-import type { GameState } from './GameState.ts';
+import { GameState } from './GameState.ts';
 import { MovementSystem } from './movement-system.ts';
 import { OracleSystem } from './oracle-system.ts';
 import { PlayerActions } from './player-actions.ts';
@@ -410,9 +410,9 @@ export class QuestsZeusGameEngine {
     if (!this.state) {
       throw new Error(`Cannot getGameState because state is null`);
     }
-    const stateCopy = this.state.deepCopy();
-    stateCopy.map = this.state!.map;
-    return stateCopy;
+    return GameState.fromJson(
+      JSON.parse(JSON.stringify(this.state.toJson())),
+    );
   }
 
   public getGameState(): GameState {
