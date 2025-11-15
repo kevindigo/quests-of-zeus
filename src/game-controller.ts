@@ -1615,7 +1615,7 @@ export class GameController {
       case 'not_sea':
         return `Cannot move to ${error.details?.targetTerrain} terrain! Ships can only move to sea hexes.`;
 
-      case 'no_die':
+      case 'no_die_or_card':
         return 'No die color specified for movement! Please select a die first.';
 
       case 'die_not_available':

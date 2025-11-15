@@ -106,7 +106,7 @@ Deno.test('Action move ship use die or card not both', () => {
   );
   assertFalse(noDieOrCard.success);
   assert(noDieOrCard.error);
-  assertEquals(noDieOrCard.error.type, 'no_die');
+  assertEquals(noDieOrCard.error.type, 'no_die_or_card');
 
   const bothDieAndCard = playerActions.attemptMoveShip(
     player,
@@ -118,7 +118,7 @@ Deno.test('Action move ship use die or card not both', () => {
   );
   assertFalse(bothDieAndCard.success);
   assert(bothDieAndCard.error);
-  assertEquals(bothDieAndCard.error.type, 'no_die');
+  assertEquals(bothDieAndCard.error.type, 'both_die_and_card');
 });
 
 Deno.test('Action move ship use invalid die', () => {

@@ -65,7 +65,10 @@ export class PlayerActions {
     if (dieSpent && cardSpent) {
       return {
         success: false,
-        error: { type: 'no_die', message: 'cannot spend both die and card' },
+        error: {
+          type: 'both_die_and_card',
+          message: 'cannot spend both die and card',
+        },
       };
     }
 
@@ -73,7 +76,10 @@ export class PlayerActions {
     if (!originalColor) {
       return {
         success: false,
-        error: { type: 'no_die', message: 'must spend either die or card' },
+        error: {
+          type: 'no_die_or_card',
+          message: 'must spend either die or card',
+        },
       };
     }
     // validate die (if spent)
