@@ -386,6 +386,7 @@ Deno.test('Action move ship with card and recolor success', () => {
   assertEquals(player.getShipPosition(), to);
   assertEquals(player.oracleCards.length, 1);
   assertEquals(player.favor, 1);
+  assertEquals(player.getRecolorIntention(), 0);
 
   const secondCardInOneTurn = playerActions.attemptMoveShip(
     player,
