@@ -4,6 +4,7 @@
 import { QuestsZeusGameEngine } from './game-engine-core.ts';
 import type { GameState } from './GameState.ts';
 import { HexMapSVG } from './hexmap-svg.ts';
+import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { OracleSystem } from './oracle-system.ts';
 import type { Player } from './Player.ts';
 import {
@@ -14,8 +15,6 @@ import {
   type MonsterHex,
   type MoveShipResult,
 } from './types.ts';
-
-// Type declarations for DOM APIs (for Deno type checking)
 
 export class GameController {
   private gameEngine: QuestsZeusGameEngine;
@@ -710,29 +709,42 @@ export class GameController {
 
     const currentPlayer = gameState.getCurrentPlayer();
 
-    // Check if moving with oracle card
+    const coordinates: HexCoordinates = { q, r };
+    const clickedCell = gameState.map.getCell(coordinates);
+    const cellType = clickedCell?.terrain;
+    if (cellType === 'sea') {
+      this.handleHexClickSea(currentPlayer, coordinates);
+      return;
+    }
+
+    this.showMessage(
+      `Non-move hex click at ${JSON.stringify(coordinates)} on ${cellType}`,
+    );
+  }
+
+  private handleHexClickSea(
+    currentPlayer: Player,
+    coordinates: HexCoordinates,
+  ): void {
     if (
       this.selectedOracleCardColor && !currentPlayer.usedOracleCardThisTurn
     ) {
       this.handleMoveWithCard(
         currentPlayer,
-        q,
-        r,
+        coordinates,
       );
-    } // Check if moving with die
-    else if (this.selectedDieColor) {
-      this.handleMoveWithDie(currentPlayer, q, r);
+    } else if (this.selectedDieColor) {
+      this.handleMoveWithDie(currentPlayer, coordinates);
     } else {
       this.showMessage(
-        'Please select a resource (die or oracle card) first!',
+        'Please select a resource (die or oracle card) first!!',
       );
     }
   }
 
   private handleMoveWithCard(
     currentPlayer: Player,
-    q: number,
-    r: number,
+    coordinates: HexCoordinates,
   ): void {
     const selectedColor = this.selectedOracleCardColor;
     if (!selectedColor) {
@@ -743,14 +755,16 @@ export class GameController {
     }
     this.handleMoveWithDieOrCard(
       currentPlayer,
-      q,
-      r,
+      coordinates,
       selectedColor,
       currentPlayer.getRecolorIntention(),
     );
   }
 
-  private handleMoveWithDie(currentPlayer: Player, q: number, r: number): void {
+  private handleMoveWithDie(
+    currentPlayer: Player,
+    coordinates: HexCoordinates,
+  ): void {
     const selectedColor = this.selectedDieColor;
     if (!selectedColor) {
       return;
@@ -760,8 +774,7 @@ export class GameController {
     }
     this.handleMoveWithDieOrCard(
       currentPlayer,
-      q,
-      r,
+      coordinates,
       selectedColor,
       currentPlayer.getRecolorIntention(),
     );
@@ -769,8 +782,7 @@ export class GameController {
 
   private handleMoveWithDieOrCard(
     currentPlayer: Player,
-    q: number,
-    r: number,
+    coordinates: HexCoordinates,
     selectedColor: CoreColor,
     recoloringCost: number,
   ): void {
@@ -787,6 +799,8 @@ export class GameController {
       maxFavorForMovement,
     );
 
+    const q = coordinates.q;
+    const r = coordinates.r;
     const targetMove = availableMoves.find((
       move: { q: number; r: number; favorCost: number },
     ) => move.q === q && move.r === r);

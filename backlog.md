@@ -1,5 +1,4 @@
 == Short-term ==
-  - setup: place shrine tiles
 
 == Cosmetic ==
 
