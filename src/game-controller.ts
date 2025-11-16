@@ -472,69 +472,7 @@ export class GameController {
 
     // Highlight moves for selected die
     if (this.selectedDieColor) {
-      // Get available moves for the selected die color and available favor
-      const availableMoves = this.gameEngine.getAvailableMovesForDie(
-        currentPlayer.id,
-        this.selectedDieColor,
-        currentPlayer.favor,
-      );
-
-      // Get the effective die color considering recoloring intention
-      // let effectiveDieColor = this.selectedDieColor;
-      const selectedColor = this.selectedDieColor;
-      const effectiveDieColor = OracleSystem.applyRecolor(
-        selectedColor,
-        currentPlayer.getRecolorIntention(),
-      );
-
-      // Debug logging
-      console.log(
-        `Highlighting moves for ${effectiveDieColor} die (original: ${this.selectedDieColor}):`,
-        {
-          availableMovesCount: availableMoves.length,
-          movesWithFavor: availableMoves.filter((move) =>
-            move.favorCost > 0
-          ).length,
-          movesWithoutFavor: availableMoves.filter((move) =>
-            move.favorCost === 0
-          ).length,
-          playerFavor: currentPlayer.favor,
-        },
-      );
-
-      availableMoves.forEach(
-        (move: { q: number; r: number; favorCost: number }) => {
-          // Highlight the new hex-highlight polygons (centered, won't cover colored border)
-          const highlightCell = document.querySelector(
-            `.hex-highlight[data-q="${move.q}"][data-r="${move.r}"]`,
-          );
-
-          if (highlightCell) {
-            if (move.favorCost > 0) {
-              highlightCell.classList.add('available-move-favor');
-              // Add tooltip to show required die color and favor cost
-              highlightCell.setAttribute(
-                'title',
-                `Move using ${effectiveDieColor} die (costs ${move.favorCost} favor)`,
-              );
-              console.log(
-                `Added favor highlight to (${move.q}, ${move.r}) with cost ${move.favorCost}`,
-              );
-            } else {
-              highlightCell.classList.add('available-move');
-              // Add tooltip to show required die color
-              highlightCell.setAttribute(
-                'title',
-                `Move using ${effectiveDieColor} die`,
-              );
-            }
-          } else {
-            console.warn(
-              `Could not find hex-highlight element for (${move.q}, ${move.r})`,
-            );
-          }
-        },
-      );
+      this.highlightMovesForSelectedDie(currentPlayer, this.selectedDieColor);
     }
 
     // Highlight moves for selected oracle card
@@ -581,6 +519,72 @@ export class GameController {
         },
       );
     }
+  }
+
+  private highlightMovesForSelectedDie(
+    currentPlayer: Player,
+    selectedColor: CoreColor,
+  ): void {
+    // Get available moves for the selected die color and available favor
+    const availableMoves = this.gameEngine.getAvailableMovesForDie(
+      currentPlayer.id,
+      selectedColor,
+      currentPlayer.favor,
+    );
+
+    // Get the effective die color considering recoloring intention
+    // let effectiveDieColor = this.selectedDieColor;
+    const effectiveDieColor = OracleSystem.applyRecolor(
+      selectedColor,
+      currentPlayer.getRecolorIntention(),
+    );
+
+    // Debug logging
+    console.log(
+      `Highlighting moves for ${effectiveDieColor} die (original: ${this.selectedDieColor}):`,
+      {
+        availableMovesCount: availableMoves.length,
+        movesWithFavor:
+          availableMoves.filter((move) => move.favorCost > 0).length,
+        movesWithoutFavor:
+          availableMoves.filter((move) => move.favorCost === 0).length,
+        playerFavor: currentPlayer.favor,
+      },
+    );
+
+    availableMoves.forEach(
+      (move: { q: number; r: number; favorCost: number }) => {
+        // Highlight the new hex-highlight polygons (centered, won't cover colored border)
+        const highlightCell = document.querySelector(
+          `.hex-highlight[data-q="${move.q}"][data-r="${move.r}"]`,
+        );
+
+        if (highlightCell) {
+          if (move.favorCost > 0) {
+            highlightCell.classList.add('available-move-favor');
+            // Add tooltip to show required die color and favor cost
+            highlightCell.setAttribute(
+              'title',
+              `Move using ${effectiveDieColor} die (costs ${move.favorCost} favor)`,
+            );
+            console.log(
+              `Added favor highlight to (${move.q}, ${move.r}) with cost ${move.favorCost}`,
+            );
+          } else {
+            highlightCell.classList.add('available-move');
+            // Add tooltip to show required die color
+            highlightCell.setAttribute(
+              'title',
+              `Move using ${effectiveDieColor} die`,
+            );
+          }
+        } else {
+          console.warn(
+            `Could not find hex-highlight element for (${move.q}, ${move.r})`,
+          );
+        }
+      },
+    );
   }
 
   private updatePhaseDisplay(phase: string): void {
