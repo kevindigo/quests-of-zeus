@@ -590,7 +590,7 @@ export class GameController {
           // Note: Recolor options are now displayed in the player info panel as radio buttons
           // The favor will be spent when the resource is actually used for movement or other actions
 
-          if (currentCell?.terrain === 'cubes') {
+          if (currentCell?.terrain === 'offerings') {
             actions +=
               `<button id="collectOffering" class="action-btn">Collect Offering</button>`;
           }
@@ -920,7 +920,7 @@ export class GameController {
       position,
     );
 
-    if (currentCell?.terrain === 'cubes' && currentCell.color !== 'none') {
+    if (currentCell?.terrain === 'offerings' && currentCell.color !== 'none') {
       const success = this.gameEngine.collectOffering(
         currentPlayer.id,
         currentCell.color,

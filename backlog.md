@@ -11,6 +11,7 @@
 
 == Other ==
 
+- Make monster triangles larger
 - Allow spending more than 5 favor to extend move range
 - Get all the map navigation in one place
 

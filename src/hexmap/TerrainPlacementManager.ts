@@ -28,7 +28,7 @@ export class TerrainPlacementManager {
 
     this.placeZeus(grid);
     this.placeCities(grid);
-    this.placeTerrainOfType(grid, 6, 'cubes');
+    this.placeTerrainOfType(grid, 6, 'offerings');
     this.placeTerrainOfType(grid, 6, 'temple');
     this.placeTerrainOfType(grid, 6, 'statue');
     this.placeTerrainOfType(grid, 9, 'monsters');

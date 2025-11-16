@@ -23,7 +23,7 @@ Deno.test('Terrain distribution - all expected terrains present', () => {
     'sea',
     'shallow',
     'monsters',
-    'cubes',
+    'offerings',
     'temple',
     'shrine',
     'city',

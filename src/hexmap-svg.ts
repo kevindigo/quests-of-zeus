@@ -6,8 +6,8 @@ import type { HexGrid } from './hexmap/HexGrid.ts';
 import {
   generateCityIcon,
   generateCloudsIcon,
-  generateCubesIcon,
   generateMonsterIcon,
+  generateOfferingsIcon,
   generateStatueBasesIcon,
   generateStatueIcons,
   generateTempleIcon,
@@ -247,8 +247,8 @@ export class HexMapSVG {
       });
     }
 
-    // Add cubes icon for cubes hexes
-    if (cell.terrain === 'cubes') {
+    // Add cubes icon for offerings hexes
+    if (cell.terrain === 'offerings') {
       try {
         const cubeHex = this.options.cubeHexes.find((ch) =>
           ch.q === cell.q && ch.r === cell.r
@@ -256,8 +256,8 @@ export class HexMapSVG {
 
         console.log(`Processing cube hex at (${cell.q}, ${cell.r}):`, cubeHex);
 
-        // Always show the line-drawn cubes icon as the base
-        cellContent += generateCubesIcon({ centerX, centerY, cellSize });
+        // Always show the line-drawn offerings icon as the base
+        cellContent += generateOfferingsIcon({ centerX, centerY, cellSize });
 
         // Then overlay colored cubes if present
         if (cubeHex && cubeHex.cubeColors.length > 0) {
@@ -277,7 +277,7 @@ export class HexMapSVG {
           error,
         );
         // Fallback to generic cube icon on error
-        cellContent += generateCubesIcon({ centerX, centerY, cellSize });
+        cellContent += generateOfferingsIcon({ centerX, centerY, cellSize });
       }
     }
 
@@ -364,7 +364,7 @@ export class HexMapSVG {
       sea: '#87ceeb', // Pale blue for sea
       shallow: '#333333', // Black for shallow water
       monsters: '#d4a574', // Light brown for monsters
-      cubes: '#e8c99b', // Darker yellow-tan for cubes (more visible)
+      offerings: '#e8c99b', // Darker yellow-tan for offerings (more visible)
       temple: '#f9d9a9', // Yellow-tan for temple
       shrine: '#f0f8ff', // Light blue-white for shrines
       city: '#b0b0b0', // Light gray for city
@@ -405,7 +405,7 @@ export class HexMapSVG {
       sea: 'Sea',
       shallow: 'Shallow',
       monsters: 'Monsters',
-      cubes: 'Cubes',
+      offerings: 'Offerings',
       temple: 'Temple',
       shrine: 'Shrine',
       city: 'City',

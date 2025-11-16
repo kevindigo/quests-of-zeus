@@ -254,7 +254,7 @@ export class PlayerActions {
     const currentCell = this.state.map.getCell(
       player.getShipPosition(),
     );
-    if (!currentCell || currentCell.terrain !== 'cubes') {
+    if (!currentCell || currentCell.terrain !== 'offerings') {
       return false;
     }
 

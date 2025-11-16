@@ -7,7 +7,7 @@ export type TerrainType =
   | 'sea' // Sea tiles
   | 'shallow' // Shallow water
   | 'monsters' // Monster locations
-  | 'cubes' // Cube locations
+  | 'offerings' // Offerings (cubes) locations
   | 'temple' // Temple locations
   | 'shrine' // Shrine locations
   | 'city' // City locations

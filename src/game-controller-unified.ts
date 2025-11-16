@@ -82,7 +82,7 @@ export class GameControllerUnified {
               <li>Move your ship across the sea and land hexes using dice colors</li>
               <li>Spend favor to extend your movement range (1 extra hex per favor spent)</li>
               <li>Recolor dice by spending favor (1 favor per color advancement)</li>
-              <li>Collect cubes and statues, fight monsters, and build temples</li>
+              <li>Collect offerings and statues, fight monsters, and build temples</li>
               <li>Spend dice to draw oracle cards, then use them as dice (1 per turn)</li>
               <li>Complete quests to win the game</li>
               <li>First player to complete 3 of each quest type (Temple Offering, Monster, Statue, Shrine) wins!</li>

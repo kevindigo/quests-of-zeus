@@ -119,7 +119,7 @@ export class GameInitializer {
     const cubeHexes: CubeHex[] = [];
 
     // Get all cube hexes from the map
-    const cubeCells = map.getCellsByTerrain('cubes');
+    const cubeCells = map.getCellsByTerrain('offerings');
 
     // We should have exactly 6 cube hexes
     if (cubeCells.length !== 6) {

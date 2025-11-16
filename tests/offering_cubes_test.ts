@@ -13,7 +13,7 @@ Deno.test('offering cubes configuration', () => {
   assertEquals(
     validCubeHexes.length,
     6,
-    `Expected all 6 cube hexes to have exactly ${gameState.players.length} cubes, but found ${validCubeHexes.length} valid hexes`,
+    `Expected all 6 offerings hexes to have exactly ${gameState.players.length} cubes, but found ${validCubeHexes.length} valid hexes`,
   );
 
   // Check that all 6 colors are represented (each color should appear playerCount times)

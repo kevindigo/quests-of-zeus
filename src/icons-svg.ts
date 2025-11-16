@@ -329,10 +329,10 @@ export function generateMonsterIcon(options: IconOptions): string {
 }
 
 /**
- * Generate a cubes icon with a 3D box and ribbon/bow on top like a present
+ * Generate an offerings icon with a 3D box and ribbon/bow on top like a present
  * Line drawing of a cube with perspective and decorative ribbon
  */
-export function generateCubesIcon(options: IconOptions): string {
+export function generateOfferingsIcon(options: IconOptions): string {
   const { centerX, centerY, cellSize } = options;
 
   // Scale the icon based on cell size - larger than other icons for better visibility
@@ -344,7 +344,7 @@ export function generateCubesIcon(options: IconOptions): string {
   const strokeWidth = 2.5 * scale; // Thick black lines
 
   return `
-    <g transform="translate(${centerX}, ${centerY})" class="cubes-icon">
+    <g transform="translate(${centerX}, ${centerY})" class="offerings-icon">
       <!-- 3D Cube - front face (larger and more prominent) -->
       <path d="
         M ${-size * 0.5} ${size * 0.3}
