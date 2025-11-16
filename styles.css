@@ -141,7 +141,7 @@ footer {
 }
 
 .hex-highlight.available-move-favor {
-  stroke: tan !important;
+  stroke: gray !important;
   stroke-width: 4px
     !important; /* Reduced from 8px to prevent covering interior */
   animation: pulse-silver 1.5s infinite !important;
