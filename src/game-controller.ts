@@ -14,6 +14,7 @@ import {
   type CubeHex,
   type MonsterHex,
   type MoveShipResult,
+  type TerrainType,
 } from './types.ts';
 
 export class GameController {
@@ -699,8 +700,10 @@ export class GameController {
   private handleHexCellClick(event: Event): void {
     if (!this.gameEngine.isGameInitialized()) return;
 
-    const customEvent = event as CustomEvent<{ q: number; r: number }>;
-    const { q, r } = customEvent.detail;
+    const customEvent = event as CustomEvent<
+      { q: number; r: number; terrain: TerrainType }
+    >;
+    const { q, r, terrain } = customEvent.detail;
     const gameState = this.gameEngine.getGameStateSnapshot();
 
     if (gameState.getPhase() !== 'action') {
@@ -710,15 +713,13 @@ export class GameController {
     const currentPlayer = gameState.getCurrentPlayer();
 
     const coordinates: HexCoordinates = { q, r };
-    const clickedCell = gameState.map.getCell(coordinates);
-    const cellType = clickedCell?.terrain;
-    if (cellType === 'sea') {
+    if (terrain === 'sea') {
       this.handleHexClickSea(currentPlayer, coordinates);
       return;
     }
 
     this.showMessage(
-      `Non-move hex click at ${JSON.stringify(coordinates)} on ${cellType}`,
+      `Non-move hex click at ${JSON.stringify(coordinates)} of ${terrain}`,
     );
   }
 
