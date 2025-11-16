@@ -564,24 +564,9 @@ export class GameController {
 
         let actions = '';
 
-        if (this.selectedDieColor) {
-          // Die is selected - show available actions
-          actions +=
-            `<p>Selected die: <span class="color-swatch" style="background-color: ${
-              this.getColorHex(this.selectedDieColor)
-            }"></span> ${this.selectedDieColor}</p>`;
-
-          // Show favor status
-          actions += `<p>Available favor: ${currentPlayer.favor}</p>`;
-
-          // Movement is always available during action phase with a selected die
-          actions += `<p>Click on highlighted hexes to move your ship:</p>
-             <ul style="margin-left: 1rem;">
-               <li>White highlights: Normal range (${currentPlayer.getRange()} hexes)</li>
-               <li>Tan dashed highlights: Extended range (costs favor)</li>
-             </ul>`;
-
-          // Unified resource spending actions
+        const selectedColor = this.selectedDieColor ||
+          this.selectedOracleCardColor;
+        if (selectedColor) {
           actions += `<div class="resource-actions" style="margin-top: 1rem;">
             <h4>Resource Actions</h4>
             <button id="spendResourceForFavor" class="action-btn">Spend for 2 Favor</button>
@@ -616,48 +601,10 @@ export class GameController {
           if (currentCell?.terrain === 'city') {
             // not implemented yet
           }
-        } else if (this.selectedOracleCardColor) {
-          // Oracle card is selected - show available actions
-          actions +=
-            `<p>Selected oracle card: <span class="color-swatch" style="background-color: ${
-              this.getColorHex(this.selectedOracleCardColor)
-            }"></span> ${this.selectedOracleCardColor}</p>`;
-
-          // Show favor status
-          actions += `<p>Available favor: ${currentPlayer.favor}</p>`;
-
-          // Movement is available during action phase with a selected oracle card
-          actions += `<p>Click on highlighted hexes to move your ship:</p>
-             <ul style="margin-left: 1rem;">
-               <li>Gold highlights: Normal range (${currentPlayer.getRange()} hexes)</li>
-               <li>Orange dashed highlights: Extended range (costs favor)</li>
-             </ul>`;
-
-          // Unified resource spending actions
-          actions += `<div class="resource-actions" style="margin-top: 1rem;">
-            <h4>Resource Actions</h4>
-            <button id="spendResourceForFavor" class="action-btn">Spend for 2 Favor</button>
-            <button id="drawOracleCard" class="action-btn">Draw Oracle Card</button>
-            <p style="font-size: 0.9rem; opacity: 0.8;">Spend selected resource for favor or to draw an oracle card</p>
-          </div>`;
-
-          // Note: Recolor options are now displayed in the player info panel as radio buttons
-        } else {
-          // No resource selected - show selection instructions
-          actions +=
-            `<p>Select a resource (die or oracle card) to perform actions</p>`;
-          actions += `<p>Available dice: ${
-            currentPlayer.oracleDice.join(', ')
-          }</p>`;
-          if (currentPlayer.oracleCards.length > 0) {
-            actions += `<p>Available oracle cards: ${
-              currentPlayer.oracleCards.join(', ')
-            }</p>`;
-          }
         }
 
         if (!actions) {
-          actions = '<p>No actions available at this location</p>';
+          actions = '<p>Select a die or card to take an action</p>';
         }
 
         actions +=

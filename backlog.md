@@ -16,6 +16,7 @@
 
 == Other ==
 
+- Better visual feedback when trying to use a second oracle card in a turn
 - Allow spending more than 5 favor to extend move range
 - Put all the map navigation in one place
 - Ideally sort cards by color
