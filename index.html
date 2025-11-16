@@ -22,7 +22,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>Quests of Zeus</h1>
+      <h2>Quests of Zeus</h2>
       <p class="subtitle">A Playable Board Game Implementation</p>
 
       <div class="game-message" id="gameMessage"></div>
@@ -36,6 +36,7 @@
 
         <!-- Center Panel: Game Map -->
         <div class="hex-map-container">
+          <div id="hexMapSVG"></div>
           <div class="svg-controls">
             <button id="toggleCoordinates">Show Coordinates</button>
             <button id="toggleLabels">Show Labels</button>
@@ -44,7 +45,6 @@
             <button id="resetZoom">Reset Zoom</button>
             <button id="newGame">New Game</button>
           </div>
-          <div id="hexMapSVG"></div>
         </div>
       </div>
 
