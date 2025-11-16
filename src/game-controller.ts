@@ -864,19 +864,7 @@ export class GameController {
 
     const favorSpentForRange = targetMove.favorCost;
 
-    // Confirm spending favor, if necessary
-    if (favorSpentForRange > 0) {
-      // Ask player if they want to spend favor
-      const confirmSpend = confirm(
-        `This move requires spending ${targetMove.favorCost} favor to reach. Do you want to spend favor to move here?`,
-      );
-      if (!confirmSpend) {
-        return {
-          success: false,
-          message: 'Canceled by player',
-        };
-      }
-    }
+    // Confirm spending favor?
 
     const moveResult = this.gameEngine.moveShip(
       currentPlayer.id,

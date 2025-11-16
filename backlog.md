@@ -1,7 +1,8 @@
 == Short-term ==
 
-== Cosmetic ==
+== Cosmetic/Usability ==
 
+- Can't click on anything on a hex (icon, cubes, monsters)
 - Make monster triangles larger
 - Make shallows transparent?
 - Make statue bar taller
