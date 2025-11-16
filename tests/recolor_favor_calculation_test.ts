@@ -52,10 +52,10 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Get available moves for black die with recoloring intention
-  const availableMoves = gameEngine.getAvailableMovesForDie(
-    player.id,
-    'black',
-    player.favor,
+  const availableMoves = gameEngine.getAvailableMovesForColor(
+    player,
+    'pink',
+    player.favor - 1,
   );
 
   // Should have moves that require pink sea tiles (since black die can be recolored to pink)
@@ -107,10 +107,10 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
     'High recoloring intention should be set successfully',
   );
 
-  const movesWithHighRecolor = gameEngine.getAvailableMovesForDie(
-    player.id,
-    'black',
-    player.favor,
+  const movesWithHighRecolor = gameEngine.getAvailableMovesForColor(
+    player,
+    'blue',
+    player.favor - 2,
   );
 
   // Verify that all returned moves are actually affordable
@@ -141,8 +141,8 @@ Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () =>
   // Clear any recoloring that might exist
   gameEngine.clearRecolorIntention(player.id);
 
-  const movesWithoutRecolor = gameEngine.getAvailableMovesForDie(
-    player.id,
+  const movesWithoutRecolor = gameEngine.getAvailableMovesForColor(
+    player,
     'black',
     player.favor,
   );

@@ -18,18 +18,18 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
   player.setRecolorIntention(0);
 
   // Test getting moves for a specific die color
-  const movesForBlack = gameEngine.getAvailableMovesForDie(
-    player.id,
+  const movesForBlack = gameEngine.getAvailableMovesForColor(
+    player,
     'black',
     player.favor,
   );
-  const movesForPink = gameEngine.getAvailableMovesForDie(
-    player.id,
+  const movesForPink = gameEngine.getAvailableMovesForColor(
+    player,
     'pink',
     player.favor,
   );
-  const movesForBlue = gameEngine.getAvailableMovesForDie(
-    player.id,
+  const movesForBlue = gameEngine.getAvailableMovesForColor(
+    player,
     'blue',
     player.favor,
   );
@@ -49,27 +49,6 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
   }
 });
 
-Deno.test('getAvailableMovesForDie - invalid die color', () => {
-  const gameEngine = new QuestsZeusGameEngine();
-  gameEngine.initializeGame();
-
-  const player = gameEngine.getCurrentPlayer();
-
-  // Set up deterministic test conditions
-  player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
-  player.favor = 5;
-
-  // Test getting moves for a die color the player doesn't have
-  const movesForRed = gameEngine.getAvailableMovesForDie(
-    player.id,
-    'red',
-    player.favor,
-  );
-
-  // Should return empty array when player doesn't have the specified die
-  assertEquals(movesForRed.length, 0);
-});
-
 Deno.test('getAvailableMovesForDie - favor spending', () => {
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
@@ -81,18 +60,18 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
   player.favor = 5;
 
   // Get moves with different favor amounts
-  const movesWithNoFavor = gameEngine.getAvailableMovesForDie(
-    player.id,
+  const movesWithNoFavor = gameEngine.getAvailableMovesForColor(
+    player,
     'black',
     0,
   );
-  const movesWithSomeFavor = gameEngine.getAvailableMovesForDie(
-    player.id,
+  const movesWithSomeFavor = gameEngine.getAvailableMovesForColor(
+    player,
     'black',
     2,
   );
-  const movesWithMaxFavor = gameEngine.getAvailableMovesForDie(
-    player.id,
+  const movesWithMaxFavor = gameEngine.getAvailableMovesForColor(
+    player,
     'black',
     5,
   );
@@ -123,9 +102,9 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Get moves for black die with recoloring intention
-  const movesWithRecolor = gameEngine.getAvailableMovesForDie(
-    player.id,
-    'black',
+  const movesWithRecolor = gameEngine.getAvailableMovesForColor(
+    player,
+    'pink',
     player.favor,
   );
 
@@ -169,10 +148,10 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Get moves for black die with recoloring intention but insufficient favor
-  const movesWithRecolor = gameEngine.getAvailableMovesForDie(
-    player.id,
-    'black',
-    player.favor,
+  const movesWithRecolor = gameEngine.getAvailableMovesForColor(
+    player,
+    'pink',
+    player.favor - 1,
   );
 
   // Should not have any moves that require additional favor spending for movement
@@ -211,8 +190,8 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   assert(clearSuccess, 'Recoloring intention should be cleared successfully');
 
   // Get moves after clearing recoloring intention
-  const movesAfterClear = gameEngine.getAvailableMovesForDie(
-    player.id,
+  const movesAfterClear = gameEngine.getAvailableMovesForColor(
+    player,
     'black',
     player.favor,
   );

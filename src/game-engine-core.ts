@@ -312,33 +312,6 @@ export class QuestsZeusGameEngine {
     return monsterHex ? monsterHex.monsterColors : [];
   }
 
-  public getAvailableMovesForDie(
-    playerId: number,
-    dieColor: CoreColor,
-    availableFavor: number,
-  ): { q: number; r: number; favorCost: number }[] {
-    this.ensureInitialized();
-    const player = this.state!.players.find((p) => p.id === playerId);
-    if (
-      !player || this.state!.getPhase() !== 'action' ||
-      !player.oracleDice.includes(dieColor)
-    ) {
-      return [];
-    }
-
-    const recoloringCost = player.getRecolorIntention();
-    const effectiveDieColor = OracleSystem.applyRecolor(
-      dieColor,
-      recoloringCost,
-    );
-    const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
-    return this.getAvailableMovesForColor(
-      player,
-      effectiveDieColor,
-      maxFavorForMovement,
-    );
-  }
-
   public getAvailableMovesForColor(
     player: Player,
     effectiveColor: CoreColor,

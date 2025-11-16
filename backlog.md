@@ -1,6 +1,5 @@
 == Short-term ==
 
-- Unify controller getAvailableMoves for die and card
 - Need to get all the map navigation in one place
 - Display statue bases
 
@@ -16,6 +15,7 @@
 
 - Remove the "how to play" contents from the setup page
 - Remove console output from tests
+- Allow spending more than 5 favor to extend move range
 
 == Quests ==
 
