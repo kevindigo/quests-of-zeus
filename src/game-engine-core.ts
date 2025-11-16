@@ -106,12 +106,12 @@ export class QuestsZeusGameEngine {
     return success;
   }
 
-  public buildFoundation(playerId: number): boolean {
+  public buildStatue(playerId: number): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
-    const success = this.playerActions!.buildFoundation(player);
+    const success = this.playerActions!.buildStatue(player);
     if (success) {
-      this.completeQuestType(playerId, 'foundation');
+      this.completeQuestType(playerId, 'statue');
       this.endTurn();
     }
     return success;
@@ -192,7 +192,7 @@ export class QuestsZeusGameEngine {
 
   private completeQuestType(
     playerId: number,
-    questType: 'temple_offering' | 'monster' | 'foundation' | 'shrine',
+    questType: 'temple_offering' | 'monster' | 'statue' | 'shrine',
   ): void {
     const player = this.state!.players.find((p) => p.id === playerId);
     if (!player) return;
@@ -355,7 +355,7 @@ export class QuestsZeusGameEngine {
     const winner = this.state!.players.find((p) =>
       p.completedQuestTypes.temple_offering >= 3 &&
       p.completedQuestTypes.monster >= 3 &&
-      p.completedQuestTypes.foundation >= 3 &&
+      p.completedQuestTypes.statue >= 3 &&
       p.completedQuestTypes.shrine >= 3
     );
     return {

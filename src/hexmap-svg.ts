@@ -7,8 +7,8 @@ import {
   generateCityIcon,
   generateCloudsIcon,
   generateCubesIcon,
-  generateFoundationsIcon,
   generateMonsterIcon,
+  generateStatueIcon,
   generateStatueIcons,
   generateTempleIcon,
   generateZeusIcon,
@@ -286,9 +286,9 @@ export class HexMapSVG {
       cellContent += generateCloudsIcon({ centerX, centerY, cellSize });
     }
 
-    // Add foundations icon for foundations hexes
-    if (cell.terrain === 'foundations') {
-      cellContent += generateFoundationsIcon({ centerX, centerY, cellSize });
+    // Add statue icon for statue hexes
+    if (cell.terrain === 'statue') {
+      cellContent += generateStatueIcon({ centerX, centerY, cellSize });
     }
 
     // Add coordinates if enabled
@@ -366,9 +366,9 @@ export class HexMapSVG {
       monsters: '#d4a574', // Light brown for monsters
       cubes: '#e8c99b', // Darker yellow-tan for cubes (more visible)
       temple: '#f9d9a9', // Yellow-tan for temple
-      shrine: '#f0f8ff', // Light blue-white for clouds
+      shrine: '#f0f8ff', // Light blue-white for shrines
       city: '#b0b0b0', // Light gray for city
-      foundations: '#b0b0b0', // Light gray for foundations
+      statue: '#b0b0b0', // Light gray for statues
     };
     return colors[terrain] || '#cccccc';
   }
@@ -409,7 +409,7 @@ export class HexMapSVG {
       temple: 'Temple',
       shrine: 'Shrine',
       city: 'City',
-      foundations: 'Foundations',
+      statue: 'Statue',
     };
     return labels[terrain] || terrain;
   }

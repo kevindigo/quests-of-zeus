@@ -69,7 +69,7 @@ and gain favor with the gods.
      - **Collect Cubes** from cube hexes (requires empty storage slot)
      - **Fight Monsters** on monster hexes
      - **Build Temples** on temple hexes (requires cube of matching color)
-     - **Build Foundations** on foundation hexes
+     - **Build Statues** on statue hexes
      - **Complete Cloud Quests** on cloud hexes (requires statue of matching
        color)
    - **Note**: You can change your selected die before making a move
@@ -77,7 +77,7 @@ and gain favor with the gods.
 ### Victory Condition
 
 The first player to complete **3 of each quest type** (temple_offering, monster,
-foundation, and cloud) wins the game!
+statue, and cloud) wins the game!
 
 ### Game Components
 
@@ -89,8 +89,8 @@ foundation, and cloud) wins the game!
 - **Statues**: Used for cloud quests and placed on cities
 - **Cities**: 6 cities, each with a unique color, can hold up to 3 statues of
   their color
-- **Quests**: 4 types (temple_offering, monster, foundation, cloud) - must
-  complete 3 of each type to win
+- **Quests**: 4 types (temple_offering, monster, statue, cloud) - must complete
+  3 of each type to win
 - **Map**: Hexagonal grid with sea, land, and special terrain
 
 ### Storage System
@@ -198,8 +198,8 @@ but has variations:
 - **Phases**: Oracle → Action
 - **Action Phase**: Two-step process - first select a die, then perform actions
 - **Movement**: Land hexes free, sea hexes require matching oracle dice
-- **Actions**: Collect cubes, fight monsters, build temples/foundations,
-  complete cloud quests
+- **Actions**: Collect cubes, fight monsters, build temples/statues, complete
+  cloud quests
 - **Victory**: First to complete 12 quests and return to Zeus wins
 
 ## Contributing

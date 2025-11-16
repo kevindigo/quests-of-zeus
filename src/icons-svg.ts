@@ -592,10 +592,10 @@ export function generateCloudsIcon(options: IconOptions): string {
 }
 
 /**
- * Generate a foundations icon with three parallelograms representing squares lying flat
+ * Generate a statue icon with three parallelograms representing squares lying flat
  * Three 3D perspective parallelograms in a staggered arrangement
  */
-export function generateFoundationsIcon(options: IconOptions): string {
+export function generateStatueIcon(options: IconOptions): string {
   const { centerX, centerY, cellSize } = options;
 
   // Scale the icon based on cell size - same scale as other icons
@@ -613,7 +613,7 @@ export function generateFoundationsIcon(options: IconOptions): string {
   const horizontalShift = verticalShift * 2; // Twice the vertical shift amount
 
   return `
-    <g transform="translate(${centerX}, ${centerY})" class="foundations-icon">
+    <g transform="translate(${centerX}, ${centerY})" class="statue-icon">
       <!-- Top parallelogram (near top of hex) - moved up by 50% of height -->
       <polygon points="
         ${-size * 0.1} ${-size * 0.6 - verticalShift},

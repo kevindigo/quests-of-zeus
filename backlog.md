@@ -27,8 +27,8 @@
 - Statues
   - action: statue pickup (slot open, not a repeat color)
   - action: temple dropoff
-  - setup: foundations
-  - action: foundations dropoff
+  - setup: statue bases
+  - action: statue dropoff
 - Monsters
   - setup: correct monster quests
   - action: monster fight

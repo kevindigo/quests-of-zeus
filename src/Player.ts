@@ -11,7 +11,7 @@ export type PlayerJson = {
   completedQuestTypes: {
     temple_offering: number;
     monster: number;
-    foundation: number;
+    statue: number;
     shrine: number;
   };
   oracleDice: CoreColor[]; // Current oracle dice values
@@ -38,7 +38,7 @@ export class Player {
     this.completedQuestTypes = {
       temple_offering: 0,
       monster: 0,
-      foundation: 0,
+      statue: 0,
       shrine: 0,
     };
     this.oracleCards = [];
@@ -116,7 +116,7 @@ export class Player {
   public completedQuestTypes: {
     temple_offering: number;
     monster: number;
-    foundation: number;
+    statue: number;
     shrine: number;
   };
   public oracleDice: CoreColor[]; // Current oracle dice values

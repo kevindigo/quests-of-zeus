@@ -350,18 +350,18 @@ export class PlayerActions {
   }
 
   /**
-   * Build a foundation
+   * Build a statue
    */
-  public buildFoundation(player: Player): boolean {
+  public buildStatue(player: Player): boolean {
     if (this.state.getPhase() !== 'action') {
       return false;
     }
 
-    // Check if player is on a foundation hex
+    // Check if player is on a statue hex
     const currentCell = this.state.map.getCell(
       player.getShipPosition(),
     );
-    if (!currentCell || currentCell.terrain !== 'foundations') {
+    if (!currentCell || currentCell.terrain !== 'statue') {
       return false;
     }
 

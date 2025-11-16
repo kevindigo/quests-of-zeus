@@ -222,7 +222,7 @@ export class GameController {
           <div class="quest-types">
             <div class="quest-type-item">Temple Offering: ${_currentPlayer.completedQuestTypes.temple_offering}/3</div>
             <div class="quest-type-item">Monster: ${_currentPlayer.completedQuestTypes.monster}/3</div>
-            <div class="quest-type-item">Foundation: ${_currentPlayer.completedQuestTypes.foundation}/3</div>
+            <div class="quest-type-item">Statue: ${_currentPlayer.completedQuestTypes.statue}/3</div>
             <div class="quest-type-item">Shrine: ${_currentPlayer.completedQuestTypes.shrine}/3</div>
           </div>
         </div>
@@ -602,9 +602,9 @@ export class GameController {
             actions +=
               `<button id="buildTemple" class="action-btn">Build Temple</button>`;
           }
-          if (currentCell?.terrain === 'foundations') {
+          if (currentCell?.terrain === 'statue') {
             actions +=
-              `<button id="buildFoundation" class="action-btn">Build Foundation</button>`;
+              `<button id="buildStatue" class="action-btn">Build Statue</button>`;
           }
           if (currentCell?.terrain === 'shrine') {
             actions +=
@@ -707,8 +707,8 @@ export class GameController {
       this.fightMonster();
     } else if (target.id === 'buildTemple') {
       this.buildTemple();
-    } else if (target.id === 'buildFoundation') {
-      this.buildFoundation();
+    } else if (target.id === 'buildStatue') {
+      this.buildStatue();
     } else if (target.id === 'completeShrineQuest') {
       this.completeShrineQuest();
     } else if (target.id === 'placeStatue') {
@@ -962,16 +962,16 @@ export class GameController {
     }
   }
 
-  private buildFoundation(): void {
+  private buildStatue(): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
-    const success = this.gameEngine.buildFoundation(currentPlayer.id);
+    const success = this.gameEngine.buildStatue(currentPlayer.id);
     if (success) {
-      this.showMessage('Foundation built! Quest completed!');
+      this.showMessage('Statue built! Quest completed!');
       // Clear selected die after successful action
       this.selectedDieColor = null;
       this.renderGameState();
     } else {
-      this.showMessage('Cannot build foundation here');
+      this.showMessage('Cannot build statue here');
     }
   }
 

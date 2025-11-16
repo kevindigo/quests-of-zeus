@@ -11,7 +11,7 @@ export type TerrainType =
   | 'temple' // Temple locations
   | 'shrine' // Shrine locations
   | 'city' // City locations
-  | 'foundations'; // Foundation locations
+  | 'statue'; // Statue base locations
 
 // Color types for hex cells
 export type CoreColor =
