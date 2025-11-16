@@ -1,4 +1,5 @@
 == Short-term ==
+  - setup: place shrine tiles
 
 == Cosmetic ==
 
@@ -26,7 +27,6 @@
 == Quests ==
 
 - Shrines
-  - setup: place shrine tiles
   - action: shrine flip (and place)
   - action: shrine flip (consolation prize)
 - Temples

@@ -12,6 +12,7 @@ import {
   type HexColor,
   MonsterHex,
   PLAYER_COLORS,
+  ShrineHex,
   StatueHex,
 } from './types.ts';
 import { UtilityService } from './UtilityService.ts';
@@ -56,6 +57,8 @@ export class GameInitializer {
     state.setCityHexes(cityHexes);
     const statueHexes = this.initializeStatues(map);
     state.setStatueHexes(statueHexes);
+    const shrineHexes = this.initializeShrines(map);
+    state.setShrineHexes(shrineHexes);
 
     state.setPhase('action');
 
@@ -298,6 +301,28 @@ export class GameInitializer {
     });
 
     return statueHexes;
+  }
+
+  private initializeShrines(map: HexMap): ShrineHex[] {
+    const shrineCells = map.getCellsByTerrain('shrine');
+    if (shrineCells.length !== 12) {
+      console.warn(`Expected 12 shrine hexes but found ${shrineCells.length}`);
+    }
+    UtilityService.shuffleArray(shrineCells);
+
+    const shrineHexes: ShrineHex[] = [];
+    for (let i = 0; i < 3; ++i) {
+      PLAYER_COLORS.forEach((color) => {
+        const thisCell = shrineCells[shrineHexes.length];
+        if (!thisCell) {
+          throw new Error(`Missing shrineCells[${shrineHexes.length}]`);
+        }
+        const hex = new ShrineHex(thisCell.getCoordinates(), color);
+        shrineHexes.push(hex);
+      });
+    }
+
+    return shrineHexes;
   }
 
   public static getModifiedIndex(

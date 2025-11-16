@@ -121,6 +121,21 @@ export class StatueHex {
   statueBaseColors: CoreColor[];
 }
 
+export type ShrineStatus = 'hidden' | 'visible' | 'filled';
+
+export class ShrineHex {
+  public constructor(coordinates: HexCoordinates, owner: PlayerColorName) {
+    this.q = coordinates.q;
+    this.r = coordinates.r;
+    this.status = 'hidden';
+    this.owner = owner;
+  }
+  q: number;
+  r: number;
+  status: ShrineStatus;
+  owner: PlayerColorName;
+}
+
 export interface MoveShipResult {
   success: boolean;
   error?: {

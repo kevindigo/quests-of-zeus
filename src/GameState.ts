@@ -5,6 +5,7 @@ import type {
   CubeHex,
   MonsterHex,
   Phase,
+  ShrineHex,
   StatueHex,
 } from './types.ts';
 
@@ -18,6 +19,7 @@ export type GameStateJson = {
   monsterHexes: MonsterHex[];
   cityHexes: CityHex[];
   statueHexes: StatueHex[];
+  shrineHexes: ShrineHex[];
 };
 
 export class GameState {
@@ -34,6 +36,7 @@ export class GameState {
     this.monsterHexes = [];
     this.cityHexes = [];
     this.statueHexes = [];
+    this.shrineHexes = [];
   }
 
   public static fromJson(rawJson: unknown): GameState {
@@ -48,6 +51,7 @@ export class GameState {
     state.monsterHexes = json.monsterHexes;
     state.cityHexes = json.cityHexes;
     state.statueHexes = json.statueHexes;
+    state.shrineHexes = json.shrineHexes;
     return state;
   }
 
@@ -64,6 +68,7 @@ export class GameState {
       monsterHexes: this.monsterHexes,
       cityHexes: this.cityHexes,
       statueHexes: this.statueHexes,
+      shrineHexes: this.shrineHexes,
     };
   }
 
@@ -139,6 +144,14 @@ export class GameState {
     this.statueHexes = hexes;
   }
 
+  public getShrineHexes(): ShrineHex[] {
+    return this.shrineHexes;
+  }
+
+  public setShrineHexes(hexes: ShrineHex[]): void {
+    this.shrineHexes = hexes;
+  }
+
   public map: HexMap;
   public players: Player[];
   private currentPlayerIndex: number;
@@ -148,4 +161,5 @@ export class GameState {
   private monsterHexes: MonsterHex[];
   private cityHexes: CityHex[];
   private statueHexes: StatueHex[];
+  private shrineHexes: ShrineHex[];
 }
