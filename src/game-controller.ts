@@ -713,12 +713,15 @@ export class GameController {
     terrain: TerrainType,
   ): void {
     const gameState = this.gameEngine.getGameStateSnapshot();
-
     if (gameState.getPhase() !== 'action') {
       return;
     }
 
     const currentPlayer = gameState.getCurrentPlayer();
+    if (this.selectedOracleCardColor && currentPlayer.usedOracleCardThisTurn) {
+      this.showMessage('Cannot use more than 1 oracle card per turn');
+      return;
+    }
 
     if (terrain === 'sea') {
       this.handleHexClickSea(currentPlayer, coordinates);
