@@ -362,10 +362,13 @@ export class GameController {
         'hexes',
       );
 
+      const statueHexes = gameState.getStatueHexes();
+
       this.hexMapSVG.setOptions({
         cityHexes: cityHexes,
         cubeHexes: cubeHexes,
         monsterHexes: monsterHexes,
+        statueHexes: statueHexes,
       });
 
       const { svg, script } = this.hexMapSVG.generateInteractiveSVG(grid);

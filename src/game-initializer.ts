@@ -43,21 +43,21 @@ export class GameInitializer {
     // Initialize the oracle card deck
     this.initializeOracleCardDeck();
 
-    const cubeHexes = this.initializeOfferingCubes(map, players.length);
-    const monsterHexes = this.initializeMonsters(map, players.length);
-    const cityHexes = this.initializeCities(map);
-    const statueHexes = this.initializeStatues(map);
-
     const state = new GameState(
       map,
       players,
     );
 
-    state.setPhase('action');
+    const cubeHexes = this.initializeOfferingCubes(map, players.length);
     state.setCubeHexes(cubeHexes);
+    const monsterHexes = this.initializeMonsters(map, players.length);
     state.setMonsterHexes(monsterHexes);
+    const cityHexes = this.initializeCities(map);
     state.setCityHexes(cityHexes);
+    const statueHexes = this.initializeStatues(map);
     state.setStatueHexes(statueHexes);
+
+    state.setPhase('action');
 
     return state;
   }
@@ -276,12 +276,51 @@ export class GameInitializer {
       console.warn(`Expected 6 statue hexes but found ${statueCells.length}`);
     }
 
+    const threeOfEach: CoreColor[] = [];
+    const shuffledColors = [...COLOR_WHEEL];
+    UtilityService.shuffleArray(shuffledColors);
+    for (let i = 0; i < 3; ++i) {
+      const rotateBy = Math.floor(Math.random() * 3);
+      UtilityService.rotateArray(shuffledColors, rotateBy);
+      threeOfEach.push(...shuffledColors);
+    }
+
     const statueHexes = statueCells.map((statueCell) => {
-      return new StatueHex(statueCell.getCoordinates());
+      const hex = new StatueHex(statueCell.getCoordinates());
+      for (let i = 0; i < 3; ++i) {
+        const thisStatueColor = threeOfEach.shift();
+        if (!thisStatueColor) {
+          throw new Error(`Ran out of statue colors to place!`);
+        }
+        hex.statueBaseColors.push(thisStatueColor);
+      }
+      return hex;
     });
 
     return statueHexes;
   }
+
+  public static getModifiedIndex(
+    parameters: {
+      threshold: number;
+      index: number;
+      shifts: number[];
+    },
+  ): number {
+    const threshold = parameters.threshold;
+    const index = parameters.index;
+    const shifts = parameters.shifts;
+
+    const chunk = index / threshold;
+    const offset = shifts[chunk];
+    if (!offset) {
+      throw new Error(
+        `index ${index} in chunk ${chunk} not found in ${shifts}`,
+      );
+    }
+    return (index + offset) % threshold;
+  }
+
   /**
    * Get the oracle card deck (for use by the main engine)
    */

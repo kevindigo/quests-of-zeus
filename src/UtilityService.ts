@@ -21,4 +21,14 @@ export class UtilityService {
       }
     }
   }
+
+  public static rotateArray<T>(array: T[], rotateBy: number): void {
+    for (let i = 0; i < rotateBy; ++i) {
+      const first = array.shift();
+      if (!first) {
+        throw new Error('Attempted to rotate an empty array');
+      }
+      array.push(first);
+    }
+  }
 }

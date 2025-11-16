@@ -15,9 +15,11 @@ import {
 } from './icons-svg.ts';
 import type {
   CityHex,
+  CoreColor,
   CubeHex,
   HexColor,
   MonsterHex,
+  StatueHex,
   TerrainType,
 } from './types.ts';
 
@@ -30,6 +32,7 @@ export interface HexMapSVGOptions {
   cityHexes?: CityHex[];
   cubeHexes?: CubeHex[];
   monsterHexes?: MonsterHex[];
+  statueHexes?: StatueHex[];
 }
 
 // Interface for icon generation options
@@ -52,6 +55,7 @@ export class HexMapSVG {
       cityHexes: options.cityHexes || [],
       cubeHexes: options.cubeHexes || [],
       monsterHexes: options.monsterHexes || [],
+      statueHexes: options.statueHexes || [],
     };
   }
 
@@ -288,7 +292,26 @@ export class HexMapSVG {
 
     // Add statue icon for statue hexes
     if (cell.terrain === 'statue') {
-      cellContent += generateStatueBasesIcon({ centerX, centerY, cellSize });
+      try {
+        cellContent += generateStatueBasesIcon({ centerX, centerY, cellSize });
+
+        const statueHex = this.options.statueHexes.find((sh) =>
+          sh.q === cell.q && sh.r === cell.r
+        );
+        const statueBaseColors = statueHex?.statueBaseColors || [];
+
+        cellContent += this.generateColoredStatueBases({
+          centerX,
+          centerY,
+          cellSize,
+        }, statueBaseColors);
+      } catch (error) {
+        console.error(
+          `Error rendering cube hex at (${cell.q}, ${cell.r}):`,
+          error,
+        );
+        cellContent += generateStatueBasesIcon({ centerX, centerY, cellSize });
+      }
     }
 
     // Add coordinates if enabled
@@ -526,6 +549,66 @@ export class HexMapSVG {
       });
 
       return monstersContent;
+    } catch (error) {
+      console.error('Error in generateColoredMonsters:', error);
+      // Return empty string on error - the fallback generic icon will be used
+      return '';
+    }
+  }
+
+  private generateColoredStatueBases(
+    options: IconOptions,
+    baseColors: CoreColor[],
+  ): string {
+    try {
+      const { centerX, centerY, cellSize } = options;
+      const scale = cellSize / 40;
+      // Use triangles
+      const triangleSize = 15 * scale;
+      const spacing = triangleSize * 2;
+
+      let statueBasesContent = '';
+
+      // Safety check: if no base colors, return empty string
+      if (baseColors.length === 0) {
+        return statueBasesContent;
+      }
+
+      // Position bases in a circular arrangement around the center
+      const angleStep = (2 * Math.PI) / baseColors.length;
+
+      baseColors.forEach((color, index) => {
+        const angle = index * angleStep;
+        const baseX = centerX + Math.cos(angle) * spacing;
+        const baseY = centerY + Math.sin(angle) * spacing;
+
+        const strokeColor = this.getStrokeColor(color);
+        const fillColor = this.getStrokeColor(color);
+
+        // Create downward-pointing equilateral triangle
+        // Equilateral triangle height = side * √3 / 2
+        const triangleHeight = triangleSize * Math.sqrt(3) / 2;
+
+        // Points for downward-pointing equilateral triangle:
+        // Top left, top right, bottom center
+        const points = [
+          `${baseX - triangleSize / 2},${baseY - triangleHeight / 2}`,
+          `${baseX + triangleSize / 2},${baseY - triangleHeight / 2}`,
+          `${baseX},${baseY + triangleHeight / 2}`,
+        ].join(' ');
+
+        statueBasesContent += `
+          <polygon 
+            points="${points}" 
+            fill="${fillColor}" 
+            stroke="${strokeColor}" 
+            stroke-width="${2 * scale}"
+            class="colored-monster monster-${color}"
+          />
+        `;
+      });
+
+      return statueBasesContent;
     } catch (error) {
       console.error('Error in generateColoredMonsters:', error);
       // Return empty string on error - the fallback generic icon will be used
