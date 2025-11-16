@@ -1011,12 +1011,10 @@ export class GameController {
       );
       if (success) {
         this.clearResourceSelection();
+        this.renderGameState();
         this.showMessage(
           `Spent ${this.selectedDieColor} die to draw an oracle card!`,
         );
-        // Don't clear selected die - player can continue using other dice
-        // The spent die will be automatically removed from the display
-        this.renderGameState();
       } else {
         this.showMessage('Cannot draw oracle card at this time');
       }
@@ -1028,12 +1026,10 @@ export class GameController {
       );
       if (success) {
         this.clearResourceSelection();
+        this.renderGameState();
         this.showMessage(
           `Spent ${this.selectedOracleCardColor} oracle card to draw a new oracle card!`,
         );
-        // Clear selected oracle card after successful spending
-        this.selectedOracleCardColor = null;
-        this.renderGameState();
       } else {
         this.showMessage(
           'Cannot spend oracle card to draw another oracle card at this time',
