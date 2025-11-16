@@ -1170,34 +1170,14 @@ export class GameController {
         this.showMessage('Cannot clear recoloring intention');
       }
     } else {
-      // Set recoloring intention
-      let success = false;
-      const colorWheel: HexColor[] = [
-        'black',
-        'pink',
-        'blue',
-        'yellow',
-        'green',
-        'red',
-      ];
-      const currentIndex = colorWheel.indexOf(selectedColor);
-      const newIndex = (currentIndex + favorCost) % colorWheel.length;
-      const newColor = colorWheel[newIndex];
-
-      if (this.selectedDieColor) {
-        success = this.gameEngine.setRecolorIntention(
-          currentPlayer.id,
-          favorCost,
-        );
-      } else if (this.selectedOracleCardColor) {
-        success = this.gameEngine.setRecolorIntention(
-          currentPlayer.id,
-          favorCost,
-        );
-      }
+      const success = this.gameEngine.setRecolorIntention(
+        currentPlayer.id,
+        favorCost,
+      );
 
       if (success) {
         const resourceType = this.selectedDieColor ? 'die' : 'oracle card';
+        const newColor = OracleSystem.applyRecolor(selectedColor, favorCost);
         this.showMessage(
           `${
             resourceType.charAt(0).toUpperCase() + resourceType.slice(1)
