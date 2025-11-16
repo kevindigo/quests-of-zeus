@@ -1,21 +1,18 @@
 == Short-term ==
 
-- Need to get all the map navigation in one place
 - Display statue bases
 
 == Oracle cards ==
 
 - action: spend oracle card
-  - Selecting die should clear selected card and vice versa
   - Ideally sort cards by color
   - Ideally only highlight the actual selected die/card
   - Ideally unselect (clear) a die/card by clicking it again
 
 == Other ==
 
-- Remove the "how to play" contents from the setup page
-- Remove console output from tests
 - Allow spending more than 5 favor to extend move range
+- Get all the map navigation in one place
 
 == Quests ==
 
@@ -45,33 +42,55 @@
 
 - action: peek at up to 2 cloud tiles
 
-== Wounds ==
+== Injuries ==
 
-- setup: initial wound
+- setup: initial injury
 - action: spend a die to heal
-- round: end of round, roll attack die
-- turn: if too wounded, skip and heal
+- round: end of round, roll Titan die
+- turn: if too many injuries, skip and heal
 
 == Gods ==
 
 - setup: gods
 - action: spend a die to advance god
-- free: god effects (new task for each specific god)
+- free: god effects:
+  - effect: Fully heal
+  - effect: Teleport
+  - effect: Defeat (adjacent) monster
+  - effect: Superturn
+  - effect: Grab non-adjacent statue (when adjacent to a city)
+  - effect: Flip any cloud
 
 == Equipment ==
 
 - setup: equipment
 - reward: equipment
 - free: equipment one-time gains (new task for each specific type)
+  - effect: take statue
+  - effect: take cube
+  - effect: advance any god to top
+  - effect: peek under 2 clouds; flip one and take reward
+  - effect: +3 favor & +oracle card & 2 god advances
 - effect: equipment ongoing (new task for each specific type)
+  - stat: +1 range
+  - stat: +1 storage
+  - stat: injury limit 8 & 4-same
+  - ability: skip over shallows
+  - ability: monster/cloud from 1 space away
+  - ability: statue load/drop from 1 space away
+  - ability: cube load/drop from 1 space away
+  - trigger: temple/statue/monster -> 1 god advance
+  - trigger (color): rolling a die matching this color -> +2 favor
+  - trigger (color): spend die -> +1 oracle card & +1 favor & +1 god
+  - free: 1x/turn, spend 3 favor to gain a wild action
 
 == Companions ==
 
 - setup: companion deck
 - reward: gain companion (non-functional)
-- effect: companion +move
-- effect: companion -wounds
-- effect: companion wild color
+  - effect: companion +move
+  - effect: companion -wounds
+  - effect: companion wild color
 
 == Ships ==
 
