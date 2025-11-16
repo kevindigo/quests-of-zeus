@@ -1090,12 +1090,8 @@ export class GameController {
   }
 
   private endTurn(): void {
-    // Clear selections when ending turn
-    this.selectedDieColor = null;
-    this.selectedFavorSpent = 0;
+    this.clearResourceSelection();
 
-    // Call the game engine's endTurn method to advance to the next player
-    // This will roll dice for the next player and advance the current player index
     this.gameEngine.endTurn();
 
     this.showMessage(
