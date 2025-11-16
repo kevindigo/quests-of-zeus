@@ -617,8 +617,8 @@ export function generateStatueBasesIcon(options: IconOptions): string {
       <!-- Top parallelogram (near top of hex) - moved up by 50% of height -->
       <polygon points="
         ${-size * 0.1} ${-size * 0.6 - verticalShift},
-        ${size * 0.5} ${-size * 0.6 - verticalShift},
-        ${size * 0.5 - perspectiveOffset} ${-size * 0.3 - verticalShift},
+        ${size * 0.7} ${-size * 0.6 - verticalShift},
+        ${size * 0.7 - perspectiveOffset} ${-size * 0.3 - verticalShift},
         ${-size * 0.1 - perspectiveOffset} ${-size * 0.3 - verticalShift}
       " 
         fill="none" 
