@@ -293,7 +293,8 @@ export class HexMapSVG {
     // Add statue icon for statue hexes
     if (cell.terrain === 'statue') {
       try {
-        cellContent += generateStatueBasesIcon({ centerX, centerY, cellSize });
+        // FixMe: If the icon stays hidden, stop generating it!
+        // cellContent += generateStatueBasesIcon({ centerX, centerY, cellSize });
 
         const statueHex = this.options.statueHexes.find((sh) =>
           sh.q === cell.q && sh.r === cell.r
@@ -563,9 +564,8 @@ export class HexMapSVG {
     try {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
-      // Use triangles
-      const triangleSize = 15 * scale;
-      const spacing = triangleSize * 2;
+      // Use horizontal bars
+      const barSize = 25 * scale;
 
       let statueBasesContent = '';
 
@@ -574,36 +574,32 @@ export class HexMapSVG {
         return statueBasesContent;
       }
 
-      // Position bases in a circular arrangement around the center
-      const angleStep = (2 * Math.PI) / baseColors.length;
+      const xValues = [
+        centerX - scale * 5,
+        centerX + scale * 18,
+        centerX - scale * 12,
+      ];
+      const yValues = [
+        centerY - scale * 10,
+        centerY + scale * 10,
+        centerY + scale * 22,
+      ];
 
       baseColors.forEach((color, index) => {
-        const angle = index * angleStep;
-        const baseX = centerX + Math.cos(angle) * spacing;
-        const baseY = centerY + Math.sin(angle) * spacing;
+        const baseX = xValues[index] || centerX;
+        const baseY = yValues[index] || centerY;
 
         const strokeColor = this.getStrokeColor(color);
-        const fillColor = this.getStrokeColor(color);
-
-        // Create downward-pointing equilateral triangle
-        // Equilateral triangle height = side * √3 / 2
-        const triangleHeight = triangleSize * Math.sqrt(3) / 2;
-
-        // Points for downward-pointing equilateral triangle:
-        // Top left, top right, bottom center
-        const points = [
-          `${baseX - triangleSize / 2},${baseY - triangleHeight / 2}`,
-          `${baseX + triangleSize / 2},${baseY - triangleHeight / 2}`,
-          `${baseX},${baseY + triangleHeight / 2}`,
-        ].join(' ');
 
         statueBasesContent += `
-          <polygon 
-            points="${points}" 
-            fill="${fillColor}" 
+          <line 
+            x1 = "${baseX - barSize / 2}"
+            y1 = "${baseY}"
+            x2 = "${baseX + barSize / 2}"
+            y2 = "${baseY}"
             stroke="${strokeColor}" 
-            stroke-width="${2 * scale}"
-            class="colored-monster monster-${color}"
+            stroke-width="${5 * scale}"
+            class="colored-statue-base statue-base-${color}"
           />
         `;
       });
