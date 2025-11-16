@@ -151,18 +151,6 @@ footer {
   paint-order: stroke; /* Ensure stroke is painted on top, not covering fill */
 }
 
-.hex-highlight.available-move-oracle-card {
-  stroke: gold !important;
-  stroke-width: 3px !important;
-  animation: pulse-gold 1.5s infinite;
-}
-
-.hex-highlight.available-move-oracle-card-favor {
-  stroke: #ffd700 !important;
-  stroke-width: 3px !important;
-  animation: pulse-gold 1.5s infinite;
-}
-
 /* Unified Resource Selection Styles */
 .resources-section {
   margin-top: 1.5rem;

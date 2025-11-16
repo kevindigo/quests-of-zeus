@@ -1,19 +1,26 @@
 == Short-term ==
 
-- Display statue bases
+== Cosmetic ==
 
-== Oracle cards ==
-
-- action: spend oracle card
-  - Ideally sort cards by color
-  - Ideally only highlight the actual selected die/card
-  - Ideally unselect (clear) a die/card by clicking it again
+- Make monster triangles larger
+- Make shallows transparent?
+- Make statue bar taller
+- Move city icon down slightly
+- Display symbols for accessibility: ⬟🌀♨️🔆🌱🩷 (the pentagon can be black)
+  - Black: Cloverleaf 🔲🔳 🌢 ➰ ⧇ ⬟ ⧉ ▣ ▩
+  - Blue: @ 🌀
+  - Red: Bell U 💢 📛 ♨️
+  - Pink: 8 / infinity / hourglass ∞ ⌛ Ꝏ 🌸 🩷
+  - Yellow: * 🔆
+  - Green: Leaf 🌱
 
 == Other ==
 
-- Make monster triangles larger
 - Allow spending more than 5 favor to extend move range
-- Get all the map navigation in one place
+- Put all the map navigation in one place
+- Ideally sort cards by color
+- Ideally only highlight the actual selected die/card
+- Ideally unselect (clear) a die/card by clicking it again
 
 == Quests ==
 
