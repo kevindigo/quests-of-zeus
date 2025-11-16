@@ -525,23 +525,21 @@ export class GameController {
     currentPlayer: Player,
     selectedColor: CoreColor,
   ): void {
-    // Get available moves for the selected die color and available favor
-    const availableMoves = this.gameEngine.getAvailableMovesForDie(
-      currentPlayer.id,
-      selectedColor,
-      currentPlayer.favor,
-    );
-
-    // Get the effective die color considering recoloring intention
-    // let effectiveDieColor = this.selectedDieColor;
-    const effectiveDieColor = OracleSystem.applyRecolor(
+    const effectiveColor = OracleSystem.applyRecolor(
       selectedColor,
       currentPlayer.getRecolorIntention(),
     );
 
+    // Get available moves for the selected die color and available favor
+    const availableMoves = this.gameEngine.getAvailableMovesForColor(
+      currentPlayer,
+      effectiveColor,
+      currentPlayer.favor,
+    );
+
     // Debug logging
     console.log(
-      `Highlighting moves for ${effectiveDieColor} die (original: ${this.selectedDieColor}):`,
+      `Highlighting moves for ${effectiveColor} (original: ${this.selectedDieColor}):`,
       {
         availableMovesCount: availableMoves.length,
         movesWithFavor:
@@ -565,7 +563,7 @@ export class GameController {
             // Add tooltip to show required die color and favor cost
             highlightCell.setAttribute(
               'title',
-              `Move using ${effectiveDieColor} die (costs ${move.favorCost} favor)`,
+              `Move using ${effectiveColor} (costs ${move.favorCost} favor)`,
             );
             console.log(
               `Added favor highlight to (${move.q}, ${move.r}) with cost ${move.favorCost}`,
@@ -575,7 +573,7 @@ export class GameController {
             // Add tooltip to show required die color
             highlightCell.setAttribute(
               'title',
-              `Move using ${effectiveDieColor} die`,
+              `Move using ${effectiveColor}`,
             );
           }
         } else {
