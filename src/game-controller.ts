@@ -972,10 +972,11 @@ export class GameController {
         this.selectedDieColor,
       );
       if (success) {
-        this.showMessage(`Spent ${this.selectedDieColor} die to gain 2 favor!`);
         // Don't clear selected die - player can continue using other dice
         // The spent die will be automatically removed from the display
+        this.clearResourceSelection();
         this.renderGameState();
+        this.showMessage(`Spent ${this.selectedDieColor} die to gain 2 favor!`);
       } else {
         this.showMessage('Cannot spend die for favor at this time');
       }
@@ -986,12 +987,11 @@ export class GameController {
         this.selectedOracleCardColor,
       );
       if (success) {
+        this.clearResourceSelection();
+        this.renderGameState();
         this.showMessage(
           `Spent ${this.selectedOracleCardColor} oracle card to gain 2 favor!`,
         );
-        // Clear selected oracle card after successful spending
-        this.selectedOracleCardColor = null;
-        this.renderGameState();
       } else {
         this.showMessage('Cannot spend oracle card for favor at this time');
       }
