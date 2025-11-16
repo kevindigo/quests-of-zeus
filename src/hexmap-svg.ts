@@ -282,7 +282,7 @@ export class HexMapSVG {
     }
 
     // Add clouds icon for clouds hexes
-    if (cell.terrain === 'clouds') {
+    if (cell.terrain === 'shrine') {
       cellContent += generateCloudsIcon({ centerX, centerY, cellSize });
     }
 
@@ -366,7 +366,7 @@ export class HexMapSVG {
       monsters: '#d4a574', // Light brown for monsters
       cubes: '#e8c99b', // Darker yellow-tan for cubes (more visible)
       temple: '#f9d9a9', // Yellow-tan for temple
-      clouds: '#f0f8ff', // Light blue-white for clouds
+      shrine: '#f0f8ff', // Light blue-white for clouds
       city: '#b0b0b0', // Light gray for city
       foundations: '#b0b0b0', // Light gray for foundations
     };
@@ -407,7 +407,7 @@ export class HexMapSVG {
       monsters: 'Monsters',
       cubes: 'Cubes',
       temple: 'Temple',
-      clouds: 'Clouds',
+      shrine: 'Shrine',
       city: 'City',
       foundations: 'Foundations',
     };

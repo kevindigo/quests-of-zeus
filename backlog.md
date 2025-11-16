@@ -16,10 +16,10 @@
 
 == Quests ==
 
-- Clouds
-  - setup: clouds
-  - action: cloud flip (success)
-  - action: cloud flip (consolation prize)
+- Shrines
+  - setup: place shrine tiles
+  - action: shrine flip (and place)
+  - action: shrine flip (consolation prize)
 - Temples
   - setup: correct cube quests
   - action: cube pickup (slot open, not a repeat color)
@@ -40,7 +40,7 @@
 
 == Peek ==
 
-- action: peek at up to 2 cloud tiles
+- action: peek at up to 2 shrine tiles
 
 == Injuries ==
 
@@ -59,7 +59,7 @@
   - effect: Defeat (adjacent) monster
   - effect: Superturn
   - effect: Grab non-adjacent statue (when adjacent to a city)
-  - effect: Flip any cloud
+  - effect: Flip any face-down shrine
 
 == Equipment ==
 
@@ -69,14 +69,14 @@
   - effect: take statue
   - effect: take cube
   - effect: advance any god to top
-  - effect: peek under 2 clouds; flip one and take reward
+  - effect: peek under 2 face-down shrines; flip one and take reward
   - effect: +3 favor & +oracle card & 2 god advances
 - effect: equipment ongoing (new task for each specific type)
   - stat: +1 range
   - stat: +1 storage
   - stat: injury limit 8 & 4-same
   - ability: skip over shallows
-  - ability: monster/cloud from 1 space away
+  - ability: monster/shrine from 1 space away
   - ability: statue load/drop from 1 space away
   - ability: cube load/drop from 1 space away
   - trigger: temple/statue/monster -> 1 god advance

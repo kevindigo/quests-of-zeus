@@ -12,7 +12,7 @@ export type PlayerJson = {
     temple_offering: number;
     monster: number;
     foundation: number;
-    cloud: number;
+    shrine: number;
   };
   oracleDice: CoreColor[]; // Current oracle dice values
   favor: number; // Player's favor resource
@@ -39,7 +39,7 @@ export class Player {
       temple_offering: 0,
       monster: 0,
       foundation: 0,
-      cloud: 0,
+      shrine: 0,
     };
     this.oracleCards = [];
     this.oracleDice = [];
@@ -117,7 +117,7 @@ export class Player {
     temple_offering: number;
     monster: number;
     foundation: number;
-    cloud: number;
+    shrine: number;
   };
   public oracleDice: CoreColor[]; // Current oracle dice values
   public favor: number; // Player's favor resource

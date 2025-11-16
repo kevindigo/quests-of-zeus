@@ -2,15 +2,15 @@ import { assertEquals } from '@std/assert';
 import { HexMap } from '../src/hexmap/HexMap.ts';
 import type { HexColor } from '../src/types.ts';
 
-Deno.test('Cloud hex color assignment', () => {
+Deno.test('Shrine hex color assignment', () => {
   const hexMap = new HexMap();
   const grid = hexMap.getHexGrid();
 
-  // Find all cloud hexes
-  const cloudHexes: { q: number; r: number; color: HexColor }[] = [];
+  // Find all shrine hexes
+  const shrineHexes: { q: number; r: number; color: HexColor }[] = [];
   grid.forEachCell((cell) => {
-    if (cell && cell.terrain === 'clouds') {
-      cloudHexes.push({
+    if (cell && cell.terrain === 'shrine') {
+      shrineHexes.push({
         q: cell.q,
         r: cell.r,
         color: cell.color,
@@ -29,12 +29,12 @@ Deno.test('Cloud hex color assignment', () => {
     'yellow': 0,
   };
 
-  for (const cloudHex of cloudHexes) {
-    colorCounts[cloudHex.color]++;
+  for (const shrineHex of shrineHexes) {
+    colorCounts[shrineHex.color]++;
   }
 
-  // Verify that we have exactly 12 cloud hexes
-  assertEquals(cloudHexes.length, 12, 'Should have exactly 12 cloud hexes');
+  // Verify that we have exactly 12 hrine hexes
+  assertEquals(shrineHexes.length, 12, 'Should have exactly 12 shrine hexes');
 
   // Verify that each color appears exactly twice (except "none")
   for (const [color, count] of Object.entries(colorCounts)) {
@@ -43,6 +43,10 @@ Deno.test('Cloud hex color assignment', () => {
     }
   }
 
-  // Verify that no cloud hex has "none" color
-  assertEquals(colorCounts['none'], 0, "No cloud hex should have 'none' color");
+  // Verify that no shrine hex has "none" color
+  assertEquals(
+    colorCounts['none'],
+    0,
+    "No shrine hex should have 'none' color",
+  );
 });

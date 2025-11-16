@@ -85,7 +85,7 @@ export class GameControllerUnified {
               <li>Collect cubes and statues, fight monsters, and build temples</li>
               <li>Spend dice to draw oracle cards, then use them as dice (1 per turn)</li>
               <li>Complete quests to win the game</li>
-              <li>First player to complete 3 of each quest type (Temple Offering, Monster, Foundation, Cloud) wins!</li>
+              <li>First player to complete 3 of each quest type (Temple Offering, Monster, Foundation, Shrine) wins!</li>
             </ul>
           </div>
         </div>
@@ -182,7 +182,7 @@ export class GameControllerUnified {
             <div class="quest-type-item">Temple Offering: ${_currentPlayer.completedQuestTypes.temple_offering}/3</div>
             <div class="quest-type-item">Monster: ${_currentPlayer.completedQuestTypes.monster}/3</div>
             <div class="quest-type-item">Foundation: ${_currentPlayer.completedQuestTypes.foundation}/3</div>
-            <div class="quest-type-item">Cloud: ${_currentPlayer.completedQuestTypes.cloud}/3</div>
+            <div class="quest-type-item">Shrine: ${_currentPlayer.completedQuestTypes.shrine}/3</div>
           </div>
         </div>
         <div class="storage">

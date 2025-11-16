@@ -223,7 +223,7 @@ export class GameController {
             <div class="quest-type-item">Temple Offering: ${_currentPlayer.completedQuestTypes.temple_offering}/3</div>
             <div class="quest-type-item">Monster: ${_currentPlayer.completedQuestTypes.monster}/3</div>
             <div class="quest-type-item">Foundation: ${_currentPlayer.completedQuestTypes.foundation}/3</div>
-            <div class="quest-type-item">Cloud: ${_currentPlayer.completedQuestTypes.cloud}/3</div>
+            <div class="quest-type-item">Shrine: ${_currentPlayer.completedQuestTypes.shrine}/3</div>
           </div>
         </div>
         <div class="storage">
@@ -606,9 +606,9 @@ export class GameController {
             actions +=
               `<button id="buildFoundation" class="action-btn">Build Foundation</button>`;
           }
-          if (currentCell?.terrain === 'clouds') {
+          if (currentCell?.terrain === 'shrine') {
             actions +=
-              `<button id="completeCloudQuest" class="action-btn">Complete Cloud Quest</button>`;
+              `<button id="completeShrineQuest" class="action-btn">Complete Shrine Quest</button>`;
           }
           if (currentCell?.terrain === 'city') {
             // not implemented yet
@@ -709,8 +709,8 @@ export class GameController {
       this.buildTemple();
     } else if (target.id === 'buildFoundation') {
       this.buildFoundation();
-    } else if (target.id === 'completeCloudQuest') {
-      this.completeCloudQuest();
+    } else if (target.id === 'completeShrineQuest') {
+      this.completeShrineQuest();
     } else if (target.id === 'placeStatue') {
       // this.placeStatueOnCity();
     } else if (target.id === 'spendResourceForFavor') {
@@ -975,17 +975,17 @@ export class GameController {
     }
   }
 
-  private completeCloudQuest(): void {
+  private completeShrineQuest(): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
-    const success = this.gameEngine.completeCloudQuest(currentPlayer.id);
+    const success = this.gameEngine.completeShrineQuest(currentPlayer.id);
     if (success) {
-      this.showMessage('Cloud quest completed!');
+      this.showMessage('Shrine quest completed!');
       // Clear selected die after successful action
       this.selectedDieColor = null;
       this.renderGameState();
     } else {
       this.showMessage(
-        'Cannot complete cloud quest here or missing required statue',
+        'Cannot complete shrine quest here or missing required statue',
       );
     }
   }

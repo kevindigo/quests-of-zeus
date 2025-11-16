@@ -32,13 +32,13 @@ export class TerrainPlacementManager {
     this.placeTerrainOfType(grid, 6, 'temple');
     this.placeTerrainOfType(grid, 6, 'foundations');
     this.placeTerrainOfType(grid, 9, 'monsters');
-    this.placeTerrainOfType(grid, 12, 'clouds');
+    this.placeTerrainOfType(grid, 12, 'shrine');
 
     this.convertEdgesToShallows(grid);
     this.convertSomeSeaToShallows(grid);
 
     this.setColors(grid, 'temple');
-    this.setColors(grid, 'clouds');
+    this.setColors(grid, 'shrine');
     this.seaColorManager.assignColorsToSeaHexes(grid);
     return grid;
   }

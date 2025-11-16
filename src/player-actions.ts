@@ -369,18 +369,18 @@ export class PlayerActions {
   }
 
   /**
-   * Complete a cloud quest
+   * Complete a shrine quest
    */
-  public completeCloudQuest(player: Player): boolean {
+  public completeShrineQuest(player: Player): boolean {
     if (this.state.getPhase() !== 'action') {
       return false;
     }
 
-    // Check if player is on a cloud hex
+    // Check if player is on a shrine hex
     const currentCell = this.state.map.getCell(
       player.getShipPosition(),
     );
-    if (!currentCell || currentCell.terrain !== 'clouds') {
+    if (!currentCell || currentCell.terrain !== 'shrine') {
       return false;
     }
 
@@ -390,7 +390,7 @@ export class PlayerActions {
       return false;
     }
 
-    // Consume statue and complete cloud quest
+    // Consume statue and complete shrine quest
     const success = removeStatueFromStorage(player, requiredColor);
     return success;
   }

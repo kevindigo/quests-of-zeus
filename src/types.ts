@@ -9,7 +9,7 @@ export type TerrainType =
   | 'monsters' // Monster locations
   | 'cubes' // Cube locations
   | 'temple' // Temple locations
-  | 'clouds' // Cloud locations
+  | 'shrine' // Shrine locations
   | 'city' // City locations
   | 'foundations'; // Foundation locations
 

@@ -117,12 +117,12 @@ export class QuestsZeusGameEngine {
     return success;
   }
 
-  public completeCloudQuest(playerId: number): boolean {
+  public completeShrineQuest(playerId: number): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
-    const success = this.playerActions!.completeCloudQuest(player);
+    const success = this.playerActions!.completeShrineQuest(player);
     if (success) {
-      this.completeQuestType(playerId, 'cloud');
+      this.completeQuestType(playerId, 'shrine');
       this.endTurn();
     }
     return success;
@@ -192,7 +192,7 @@ export class QuestsZeusGameEngine {
 
   private completeQuestType(
     playerId: number,
-    questType: 'temple_offering' | 'monster' | 'foundation' | 'cloud',
+    questType: 'temple_offering' | 'monster' | 'foundation' | 'shrine',
   ): void {
     const player = this.state!.players.find((p) => p.id === playerId);
     if (!player) return;
@@ -356,7 +356,7 @@ export class QuestsZeusGameEngine {
       p.completedQuestTypes.temple_offering >= 3 &&
       p.completedQuestTypes.monster >= 3 &&
       p.completedQuestTypes.foundation >= 3 &&
-      p.completedQuestTypes.cloud >= 3
+      p.completedQuestTypes.shrine >= 3
     );
     return {
       winner: winner || null,
