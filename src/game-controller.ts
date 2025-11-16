@@ -17,6 +17,11 @@ import {
   type TerrainType,
 } from './types.ts';
 
+export type HexClickResult = {
+  success: boolean;
+  message: string;
+};
+
 export class GameController {
   private gameEngine: QuestsZeusGameEngine;
   private hexMapSVG: HexMapSVG;
@@ -705,66 +710,91 @@ export class GameController {
     >;
     const { q, r, terrain } = customEvent.detail;
     const coordinates: HexCoordinates = { q, r };
-    this.handleHexClick(coordinates, terrain);
+    const result = this.handleHexClick(coordinates, terrain);
+    if (result.success) {
+      this.clearResourceSelection();
+      this.renderGameState();
+      if (result.message) {
+        this.showMessage(result.message);
+      }
+    } else {
+      this.showMessage(result.message);
+    }
   }
 
   private handleHexClick(
     coordinates: HexCoordinates,
     terrain: TerrainType,
-  ): void {
+  ): HexClickResult {
     const gameState = this.gameEngine.getGameStateSnapshot();
     if (gameState.getPhase() !== 'action') {
-      return;
+      return {
+        success: false,
+        message: `Cannot click hexes during the ${gameState.getPhase()} phase`,
+      };
     }
 
     const currentPlayer = gameState.getCurrentPlayer();
     if (this.selectedOracleCardColor && currentPlayer.usedOracleCardThisTurn) {
-      this.showMessage('Cannot use more than 1 oracle card per turn');
-      return;
+      return {
+        success: false,
+        message: 'Cannot use more than 1 oracle card per turn',
+      };
     }
 
     if (terrain === 'sea') {
-      this.handleHexClickSea(currentPlayer, coordinates);
-      return;
+      return this.handleHexClickSea(currentPlayer, coordinates);
     }
 
-    this.showMessage(
-      `Non-move hex click at ${JSON.stringify(coordinates)} of ${terrain}`,
-    );
+    return {
+      success: false,
+      message: `Non-move hex click at ${
+        JSON.stringify(coordinates)
+      } of ${terrain}`,
+    };
   }
 
   private handleHexClickSea(
     currentPlayer: Player,
     coordinates: HexCoordinates,
-  ): void {
+  ): HexClickResult {
     if (
       this.selectedOracleCardColor && !currentPlayer.usedOracleCardThisTurn
     ) {
-      this.handleMoveWithCard(
+      return this.handleMoveWithCard(
         currentPlayer,
         coordinates,
       );
     } else if (this.selectedDieColor) {
-      this.handleMoveWithDie(currentPlayer, coordinates);
+      return this.handleMoveWithDie(currentPlayer, coordinates);
     } else {
-      this.showMessage(
-        'Please select a resource (die or oracle card) first!!',
-      );
+      return {
+        success: false,
+        message: 'Please select a resource (die or oracle card) first!!',
+      };
     }
   }
 
   private handleMoveWithCard(
     currentPlayer: Player,
     coordinates: HexCoordinates,
-  ): void {
+  ): HexClickResult {
     const selectedColor = this.selectedOracleCardColor;
     if (!selectedColor) {
-      return;
+      return {
+        success: false,
+        message: 'No color was selected',
+      };
     }
     if (!currentPlayer.oracleCards.includes(selectedColor)) {
-      return;
+      return {
+        success: false,
+        message: `Color ${selectedColor} not in ${
+          JSON.stringify(currentPlayer.oracleCards)
+        }`,
+      };
     }
-    this.handleMoveWithDieOrCard(
+    return this.handleMoveWithDieOrCard(
       currentPlayer,
       coordinates,
       selectedColor,
@@ -775,15 +805,23 @@ export class GameController {
   private handleMoveWithDie(
     currentPlayer: Player,
     coordinates: HexCoordinates,
-  ): void {
+  ): HexClickResult {
     const selectedColor = this.selectedDieColor;
     if (!selectedColor) {
-      return;
+      return {
+        success: false,
+        message: 'No color was selected',
+      };
     }
     if (!currentPlayer.oracleDice.includes(selectedColor)) {
-      return;
+      return {
+        success: false,
+        message: `Color ${selectedColor} not in ${
+          JSON.stringify(currentPlayer.oracleDice)
+        }`,
+      };
     }
-    this.handleMoveWithDieOrCard(
+    return this.handleMoveWithDieOrCard(
       currentPlayer,
       coordinates,
       selectedColor,
@@ -796,7 +834,7 @@ export class GameController {
     coordinates: HexCoordinates,
     selectedColor: CoreColor,
     recoloringCost: number,
-  ): void {
+  ): HexClickResult {
     const effectiveColor = OracleSystem.applyRecolor(
       selectedColor,
       recoloringCost,
@@ -817,10 +855,11 @@ export class GameController {
     ) => move.q === q && move.r === r);
 
     if (!targetMove) {
-      this.showMessage(
-        `Cannot move to this hex using ${effectiveColor}! Must be a sea hex within range of matching color.`,
-      );
-      return;
+      return {
+        success: false,
+        message:
+          `Cannot move to this hex using ${effectiveColor}! Must be a sea hex within range of matching color.`,
+      };
     }
 
     const favorSpentForRange = targetMove.favorCost;
@@ -832,7 +871,10 @@ export class GameController {
         `This move requires spending ${targetMove.favorCost} favor to reach. Do you want to spend favor to move here?`,
       );
       if (!confirmSpend) {
-        return;
+        return {
+          success: false,
+          message: 'Canceled by player',
+        };
       }
     }
 
@@ -853,17 +895,11 @@ export class GameController {
       if (this.selectedFavorSpent > 0) {
         message += ` and ${this.selectedFavorSpent} favor`;
       }
-      this.showMessage(message);
-      // Clear selections after successful move
-      this.clearResourceSelection();
-      this.renderGameState();
+      return {
+        success: true,
+        message,
+      };
     } else {
-      // Use the detailed error information
-      const errorMessage = GameController.formatMoveErrorMessage(
-        moveResult.error,
-      );
-      this.showMessage(errorMessage);
-
       // Debug: Log the failure details
       console.log('Move failed with details:', {
         playerId: currentPlayer.id,
@@ -876,6 +912,13 @@ export class GameController {
         recolorIntention: currentPlayer.getRecolorIntention(),
         moveResult,
       });
+
+      return {
+        success: false,
+        message: GameController.formatMoveErrorMessage(
+          moveResult.error,
+        ),
+      };
     }
   }
 
