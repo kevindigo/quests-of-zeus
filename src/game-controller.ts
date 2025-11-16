@@ -631,7 +631,7 @@ export class GameController {
 
     // Hex cell click for movement
     document.addEventListener('hexCellClick', (event: Event) => {
-      this.handleHexCellClick(event);
+      this.handleHexCellClickEvent(event);
     });
 
     // Delegate phase action buttons
@@ -697,13 +697,21 @@ export class GameController {
     }
   }
 
-  private handleHexCellClick(event: Event): void {
+  private handleHexCellClickEvent(event: Event): void {
     if (!this.gameEngine.isGameInitialized()) return;
 
     const customEvent = event as CustomEvent<
       { q: number; r: number; terrain: TerrainType }
     >;
     const { q, r, terrain } = customEvent.detail;
+    const coordinates: HexCoordinates = { q, r };
+    this.handleHexCellClick(coordinates, terrain);
+  }
+
+  private handleHexCellClick(
+    coordinates: HexCoordinates,
+    terrain: TerrainType,
+  ): void {
     const gameState = this.gameEngine.getGameStateSnapshot();
 
     if (gameState.getPhase() !== 'action') {
@@ -712,7 +720,6 @@ export class GameController {
 
     const currentPlayer = gameState.getCurrentPlayer();
 
-    const coordinates: HexCoordinates = { q, r };
     if (terrain === 'sea') {
       this.handleHexClickSea(currentPlayer, coordinates);
       return;
