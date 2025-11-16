@@ -12,7 +12,9 @@ import {
   type HexColor,
   MonsterHex,
   PLAYER_COLORS,
+  StatueHex,
 } from './types.ts';
+import { UtilityService } from './UtilityService.ts';
 
 export function findZeus(map: HexMap): HexCell {
   const zeusCell = map.getCellsByTerrain('zeus')[0];
@@ -41,13 +43,10 @@ export class GameInitializer {
     // Initialize the oracle card deck
     this.initializeOracleCardDeck();
 
-    // Initialize cube hexes with Offering cubes
     const cubeHexes = this.initializeOfferingCubes(map, players.length);
-
-    // Initialize monster hexes with monster distribution
     const monsterHexes = this.initializeMonsters(map, players.length);
-
     const cityHexes = this.initializeCities(map);
+    const statueHexes = this.initializeStatues(map);
 
     const state = new GameState(
       map,
@@ -58,6 +57,7 @@ export class GameInitializer {
     state.setCubeHexes(cubeHexes);
     state.setMonsterHexes(monsterHexes);
     state.setCityHexes(cityHexes);
+    state.setStatueHexes(statueHexes);
 
     return state;
   }
@@ -107,7 +107,7 @@ export class GameInitializer {
     }
 
     // Shuffle the oracle card deck
-    this.shuffleArray(this.oracleCardDeck);
+    UtilityService.shuffleArray(this.oracleCardDeck);
   }
 
   /**
@@ -135,7 +135,7 @@ export class GameInitializer {
 
     // Create a shuffled copy of colors for the first hex
     const shuffledColors = [...COLOR_WHEEL];
-    this.shuffleArray(shuffledColors);
+    UtilityService.shuffleArray(shuffledColors);
 
     // For the first hex, use the shuffled colors
     basePattern.push([...shuffledColors]);
@@ -199,7 +199,7 @@ export class GameInitializer {
         `monsterCells expected 9 but have ${monsterCells.length}`,
       );
     }
-    this.shuffleArray(shuffledMonsterCells);
+    UtilityService.shuffleArray(shuffledMonsterCells);
     if (shuffledMonsterCells.length !== 9) {
       throw new Error(
         `shuffledMonsterCells expected 9 but have ${shuffledMonsterCells.length}`,
@@ -208,7 +208,7 @@ export class GameInitializer {
 
     // Create a shuffled list of all monster colors to place
     const monsterColors = [...COLOR_WHEEL];
-    this.shuffleArray(monsterColors);
+    UtilityService.shuffleArray(monsterColors);
 
     // We need playerCount copies of each color
     const monsterColorsToPlace: HexColor[] = [];
@@ -269,27 +269,19 @@ export class GameInitializer {
     return cityHexes;
   }
 
-  /**
-   * Shuffle array using Fisher-Yates algorithm
-   */
-  private shuffleArray<T>(array: T[]): void {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      if (!array[i]) {
-        throw new Error('Unable to shuffle missing elements');
-      }
-      const temp = array[i];
-      if (!array[j]) {
-        throw new Error('Unable to shuffle missing elements');
-      }
-      array[i] = array[j];
-      if (!temp) {
-        throw new Error('Unable to shuffle missing elements');
-      }
-      array[j] = temp;
-    }
-  }
+  private initializeStatues(map: HexMap): StatueHex[] {
+    const statueCells = map.getCellsByTerrain('statue');
 
+    if (statueCells.length !== 6) {
+      console.warn(`Expected 6 statue hexes but found ${statueCells.length}`);
+    }
+
+    const statueHexes = statueCells.map((statueCell) => {
+      return new StatueHex(statueCell.getCoordinates());
+    });
+
+    return statueHexes;
+  }
   /**
    * Get the oracle card deck (for use by the main engine)
    */

@@ -1,6 +1,12 @@
 import { HexMap, type HexMapJson } from './hexmap/HexMap.ts';
 import { Player, type PlayerJson } from './Player.ts';
-import type { CityHex, CubeHex, MonsterHex, Phase } from './types.ts';
+import type {
+  CityHex,
+  CubeHex,
+  MonsterHex,
+  Phase,
+  StatueHex,
+} from './types.ts';
 
 export type GameStateJson = {
   map: HexMapJson;
@@ -11,7 +17,9 @@ export type GameStateJson = {
   cubeHexes: CubeHex[];
   monsterHexes: MonsterHex[];
   cityHexes: CityHex[];
+  statueHexes: StatueHex[];
 };
+
 export class GameState {
   public constructor(
     map: HexMap,
@@ -25,6 +33,7 @@ export class GameState {
     this.cubeHexes = [];
     this.monsterHexes = [];
     this.cityHexes = [];
+    this.statueHexes = [];
   }
 
   public static fromJson(rawJson: unknown): GameState {
@@ -38,6 +47,7 @@ export class GameState {
     state.cubeHexes = json.cubeHexes;
     state.monsterHexes = json.monsterHexes;
     state.cityHexes = json.cityHexes;
+    state.statueHexes = json.statueHexes;
     return state;
   }
 
@@ -53,6 +63,7 @@ export class GameState {
       cubeHexes: this.cubeHexes,
       monsterHexes: this.monsterHexes,
       cityHexes: this.cityHexes,
+      statueHexes: this.statueHexes,
     };
   }
 
@@ -120,6 +131,14 @@ export class GameState {
     this.cityHexes = hexes;
   }
 
+  public getStatueHexes(): StatueHex[] {
+    return this.statueHexes;
+  }
+
+  public setStatueHexes(hexes: StatueHex[]): void {
+    this.statueHexes = hexes;
+  }
+
   public map: HexMap;
   public players: Player[];
   private currentPlayerIndex: number;
@@ -128,4 +147,5 @@ export class GameState {
   private cubeHexes: CubeHex[];
   private monsterHexes: MonsterHex[];
   private cityHexes: CityHex[];
+  private statueHexes: StatueHex[];
 }

@@ -109,6 +109,18 @@ export class CityHex {
   statues: number;
 }
 
+export class StatueHex {
+  public constructor(coordinates: HexCoordinates) {
+    this.q = coordinates.q;
+    this.r = coordinates.r;
+    this.statueBaseColors = [];
+  }
+
+  q: number;
+  r: number;
+  statueBaseColors: CoreColor[];
+}
+
 export interface MoveShipResult {
   success: boolean;
   error?: {
