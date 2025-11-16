@@ -49,8 +49,10 @@ export class GameController {
     this.selectedDieColor = null;
     this.selectedOracleCardColor = null;
     this.selectedFavorSpent = 0;
-    // FixMe: Need to clear the recoloring at this point, but not sure how
-    // this.setRecolorIntention(0);
+    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    if (currentPlayer) {
+      currentPlayer.setRecolorIntention(0);
+    }
   }
 
   public getSelectedDieColor(): CoreColor | null {
