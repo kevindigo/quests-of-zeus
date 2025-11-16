@@ -856,7 +856,7 @@ export class GameController {
       this.renderGameState();
     } else {
       // Use the detailed error information
-      const errorMessage = this.formatMoveErrorMessage(
+      const errorMessage = GameController.formatMoveErrorMessage(
         moveResult.error,
       );
       this.showMessage(errorMessage);
@@ -1222,7 +1222,9 @@ export class GameController {
   /**
    * Format a detailed error message from move ship result
    */
-  private formatMoveErrorMessage(error?: MoveShipResult['error']): string {
+  private static formatMoveErrorMessage(
+    error?: MoveShipResult['error'],
+  ): string {
     if (!error) {
       return 'Invalid move! Unknown error occurred.';
     }
