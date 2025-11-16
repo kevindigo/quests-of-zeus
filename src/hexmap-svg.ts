@@ -70,6 +70,8 @@ export class HexMapSVG {
     const terrainColor = this.getTerrainColor(cell.terrain);
     const strokeColor = this.getStrokeColor(cell.color);
 
+    const outlineColor = cell.terrain === 'shallow' ? 'none' : 'black';
+
     // Calculate hex center for labels
     const centerX = x + cellSize;
     const centerY = y + cellSize;
@@ -80,7 +82,7 @@ export class HexMapSVG {
       <polygon 
         points="${basicHexPoints}" 
         fill="${terrainColor}" 
-        stroke="#333333" 
+        stroke="${outlineColor}" 
         stroke-width="${strokeWidth}"
         stroke-linejoin="round"
         stroke-linecap="round"
@@ -386,7 +388,7 @@ export class HexMapSVG {
     const colors: Record<TerrainType, string> = {
       zeus: '#ffd700', // Yellow for Zeus
       sea: '#87ceeb', // Pale blue for sea
-      shallow: '#333333', // Black for shallow water
+      shallow: 'none', // Transparent for shallow water
       monsters: '#d4a574', // Light brown for monsters
       offerings: '#e8c99b', // Darker yellow-tan for offerings (more visible)
       temple: '#f9d9a9', // Yellow-tan for temple
