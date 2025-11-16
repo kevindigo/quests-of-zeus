@@ -1163,9 +1163,6 @@ export class GameController {
 
       if (success) {
         this.showMessage('Recoloring intention cleared');
-        this.renderGameState();
-        // Update available moves since color intention changed
-        this.highlightAvailableMoves(gameState);
       } else {
         this.showMessage('Cannot clear recoloring intention');
       }
@@ -1183,13 +1180,11 @@ export class GameController {
             resourceType.charAt(0).toUpperCase() + resourceType.slice(1)
           } will be recolored from ${selectedColor} to ${newColor} when used (${favorCost} favor will be spent)`,
         );
-        this.renderGameState();
-        // Update available moves since color intention changed
-        this.highlightAvailableMoves(gameState);
       } else {
         this.showMessage('Cannot set recoloring intention');
       }
     }
+    this.renderGameState();
   }
 
   private endTurn(): void {
