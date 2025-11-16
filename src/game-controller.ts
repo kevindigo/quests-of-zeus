@@ -783,14 +783,6 @@ export class GameController {
       this.clearResourceSelectionAndUpdateDisplay();
     } else if (target.id === 'clearOracleCardSelection') {
       this.clearResourceSelectionAndUpdateDisplay();
-    } else if (target.classList.contains('resource-item')) {
-      const resourceType = target.getAttribute('data-resource-type');
-      const resourceColor = target.getAttribute(
-        'data-resource-color',
-      ) as CoreColor;
-      if (resourceType && resourceColor) {
-        this.selectResource(resourceType, resourceColor);
-      }
     } else if (target.classList.contains('die')) {
       const dieColor = target.getAttribute('data-die-color') as CoreColor;
       if (dieColor) {
