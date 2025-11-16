@@ -11,7 +11,6 @@ import {
   COLOR_WHEEL,
   type CoreColor,
   type CubeHex,
-  type HexColor,
   type MonsterHex,
   type MoveShipResult,
 } from './types.ts';
@@ -470,61 +469,11 @@ export class GameController {
   private highlightAvailableMoves(gameState: GameState): void {
     const currentPlayer = gameState.getCurrentPlayer();
 
-    // Highlight moves for selected die
-    if (this.selectedDieColor) {
-      this.highlightMovesForSelectedDie(currentPlayer, this.selectedDieColor);
+    const selectedColor = this.selectedDieColor || this.selectedOracleCardColor;
+    if (!selectedColor) {
+      return;
     }
 
-    // Highlight moves for selected oracle card
-    if (this.selectedOracleCardColor && !currentPlayer.usedOracleCardThisTurn) {
-      // Get available moves for the selected oracle card color and available favor
-      const availableMoves = this.getAvailableMovesForOracleCard(
-        currentPlayer.id,
-        this.selectedOracleCardColor,
-        currentPlayer.favor,
-      );
-
-      // Get the effective card color considering recoloring intention
-      const selectedColor = this.selectedOracleCardColor;
-      const recoloringCost = currentPlayer.getRecolorIntention();
-      const effectiveCardColor = OracleSystem.applyRecolor(
-        selectedColor,
-        recoloringCost,
-      );
-
-      availableMoves.forEach(
-        (move: { q: number; r: number; favorCost: number }) => {
-          // Highlight the new hex-highlight polygons (centered, won't cover colored border)
-          const highlightCell = document.querySelector(
-            `.hex-highlight[data-q="${move.q}"][data-r="${move.r}"]`,
-          );
-
-          if (highlightCell) {
-            if (move.favorCost > 0) {
-              highlightCell.classList.add('available-move-oracle-card-favor');
-              // Add tooltip to show required oracle card color and favor cost
-              highlightCell.setAttribute(
-                'title',
-                `Move using ${effectiveCardColor} oracle card (costs ${move.favorCost} favor)`,
-              );
-            } else {
-              highlightCell.classList.add('available-move-oracle-card');
-              // Add tooltip to show required oracle card color
-              highlightCell.setAttribute(
-                'title',
-                `Move using ${effectiveCardColor} oracle card`,
-              );
-            }
-          }
-        },
-      );
-    }
-  }
-
-  private highlightMovesForSelectedDie(
-    currentPlayer: Player,
-    selectedColor: CoreColor,
-  ): void {
     const effectiveColor = OracleSystem.applyRecolor(
       selectedColor,
       currentPlayer.getRecolorIntention(),
@@ -1298,147 +1247,6 @@ export class GameController {
       yellow: '#ffff00',
     };
     return colors[color] || '#333333';
-  }
-
-  /**
-   * Get available moves for a specific oracle card color and available favor
-   * Returns moves that can be reached using the specified oracle card color
-   * @param playerId The player ID
-   * @param cardColor The oracle card color to use for movement
-   * @param availableFavor The available favor that can be spent
-   * @returns Array of reachable moves with favor cost information
-   */
-  private getAvailableMovesForOracleCard(
-    playerId: number,
-    cardColor: CoreColor,
-    availableFavor: number,
-  ): { q: number; r: number; favorCost: number }[] {
-    if (!this.gameEngine.isGameInitialized()) {
-      return [];
-    }
-    const gameState = this.gameEngine.getGameStateSnapshot();
-    const player = gameState.getPlayer(playerId);
-    if (!player || gameState.getPhase() !== 'action') {
-      return [];
-    }
-
-    // Check if player has the specified oracle card and hasn't used one this turn
-    if (
-      !player.oracleCards.includes(cardColor) || player.usedOracleCardThisTurn
-    ) {
-      return [];
-    }
-
-    // Get the effective card color considering recoloring intention
-    const recoloringCost = player.getRecolorIntention();
-    const effectiveCardColor = OracleSystem.applyRecolor(
-      cardColor,
-      recoloringCost,
-    );
-
-    const currentPos = player.getShipPosition();
-    const availableMoves: { q: number; r: number; favorCost: number }[] = [];
-
-    // Calculate maximum favor that can be spent for extra range moves
-    const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5); // Cap at 5 favor to prevent excessive computation
-
-    // Check moves for each possible favor spending amount
-    for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
-      const movementRange = player.getRange() + favorSpent;
-      const reachableSeaTiles = this.getReachableSeaTiles(
-        currentPos.q,
-        currentPos.r,
-        movementRange,
-      );
-
-      // Filter by the effective oracle card color and exclude current position
-      for (const seaTile of reachableSeaTiles) {
-        if (
-          seaTile.color !== 'none' &&
-          seaTile.color === effectiveCardColor &&
-          !(seaTile.q === currentPos.q && seaTile.r === currentPos.r)
-        ) {
-          // Only show moves that the player can actually afford
-          const totalFavorCost = favorSpent + recoloringCost;
-          if (totalFavorCost <= availableFavor) {
-            // Only add if this move isn't already available with less favor
-            const existingMove = availableMoves.find((move) =>
-              move.q === seaTile.q && move.r === seaTile.r
-            );
-            if (!existingMove) {
-              availableMoves.push({
-                q: seaTile.q,
-                r: seaTile.r,
-                favorCost: favorSpent,
-              });
-            }
-          }
-        }
-      }
-    }
-
-    return availableMoves;
-  }
-
-  /**
-   * Get all reachable sea tiles within movement range using BFS
-   * Ships can move up to <range> steps on sea tiles, starting from the current position
-   * Movement is only allowed through sea tiles (land blocks movement)
-   * Ships can start on non-sea tiles (like Zeus) and move to adjacent sea tiles
-   */
-  private getReachableSeaTiles(
-    startQ: number,
-    startR: number,
-    range: number,
-  ): { q: number; r: number; color: HexColor }[] {
-    if (!this.gameEngine.isGameInitialized()) {
-      return [];
-    }
-
-    const gameState = this.gameEngine.getGameStateSnapshot();
-    const reachableTiles: { q: number; r: number; color: HexColor }[] = [];
-    const visited = new Set<string>();
-    const queue: { q: number; r: number; steps: number }[] = [];
-
-    // Start BFS from the current position (step 0)
-    const startKey = `${startQ},${startR}`;
-    visited.add(startKey);
-    queue.push({ q: startQ, r: startR, steps: 0 });
-
-    // Continue BFS up to the movement range
-    while (queue.length > 0) {
-      const current = queue.shift()!;
-
-      // If we've reached the maximum range, don't explore further
-      if (current.steps >= range) {
-        continue;
-      }
-
-      const neighbors = gameState.map.getNeighbors(
-        { q: current.q, r: current.r },
-      );
-
-      for (const neighbor of neighbors) {
-        if (neighbor.terrain === 'sea') {
-          const key = `${neighbor.q},${neighbor.r}`;
-          if (!visited.has(key)) {
-            visited.add(key);
-            queue.push({
-              q: neighbor.q,
-              r: neighbor.r,
-              steps: current.steps + 1,
-            });
-            reachableTiles.push({
-              q: neighbor.q,
-              r: neighbor.r,
-              color: neighbor.color,
-            });
-          }
-        }
-      }
-    }
-
-    return reachableTiles;
   }
 
   /**
