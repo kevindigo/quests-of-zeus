@@ -231,6 +231,39 @@ export class GameController {
           <div class="storage-slots">
           </div>
         </div>
+        <div class="oracle-dice">
+          <h4>Oracle Dice</h4>
+          <div class="dice-container">
+            ${
+      _currentPlayer.oracleDice.map((color: string) => {
+        const isSelected = this.selectedDieColor === color;
+        return `<div class="die color-${color} ${
+          isSelected ? 'selected-die' : ''
+        }" 
+                     style="background-color: ${this.getColorHex(color)}"
+                     data-die-color="${color}">
+                ${color.charAt(0).toUpperCase()}
+              </div>`;
+      }).join('')
+    }
+            ${
+      _currentPlayer.oracleDice.length === 0
+        ? '<div class="no-dice">No dice rolled yet</div>'
+        : ''
+    }
+          </div>
+          ${
+      this.selectedDieColor && _currentPlayer.oracleDice.length > 0
+        ? `<div class="selected-die-info">
+             Selected: <span class="color-swatch" style="background-color: ${
+          this.getColorHex(this.selectedDieColor)
+        }"></span>
+             ${this.selectedDieColor}
+             <button id="clearDieSelection" class="action-btn secondary">Clear</button>
+           </div>`
+        : ''
+    }
+        </div>
         <div class="oracle-cards">
           <h4>Oracle Cards</h4>
           <div class="oracle-cards-container">
@@ -261,39 +294,6 @@ export class GameController {
         }"></span>
              ${this.selectedOracleCardColor}
              <button id="clearOracleCardSelection" class="action-btn secondary">Clear</button>
-           </div>`
-        : ''
-    }
-        </div>
-        <div class="oracle-dice">
-          <h4>Oracle Dice</h4>
-          <div class="dice-container">
-            ${
-      _currentPlayer.oracleDice.map((color: string) => {
-        const isSelected = this.selectedDieColor === color;
-        return `<div class="die color-${color} ${
-          isSelected ? 'selected-die' : ''
-        }" 
-                     style="background-color: ${this.getColorHex(color)}"
-                     data-die-color="${color}">
-                ${color.charAt(0).toUpperCase()}
-              </div>`;
-      }).join('')
-    }
-            ${
-      _currentPlayer.oracleDice.length === 0
-        ? '<div class="no-dice">No dice rolled yet</div>'
-        : ''
-    }
-          </div>
-          ${
-      this.selectedDieColor && _currentPlayer.oracleDice.length > 0
-        ? `<div class="selected-die-info">
-             Selected: <span class="color-swatch" style="background-color: ${
-          this.getColorHex(this.selectedDieColor)
-        }"></span>
-             ${this.selectedDieColor}
-             <button id="clearDieSelection" class="action-btn secondary">Clear</button>
            </div>`
         : ''
     }
@@ -1116,9 +1116,7 @@ export class GameController {
       <div class="recolor-section" style="margin-top: 1rem;">
         <h4>Recolor ${
       resourceType.charAt(0).toUpperCase() + resourceType.slice(1)
-    } (Favor will be spent when ${resourceType} is used)</h4>
-        <p style="font-size: 0.9rem; opacity: 0.8;">Color wheel: black → pink → blue → yellow → green → red → black</p>
-        <div class="recolor-options" style="margin-top: 0.5rem;">
+    } 
     `;
 
     // Add "No Recolor" option
