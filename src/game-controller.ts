@@ -470,15 +470,6 @@ export class GameController {
   private highlightAvailableMoves(gameState: GameState): void {
     const currentPlayer = gameState.getCurrentPlayer();
 
-    // Clear previous highlights
-    document.querySelectorAll('.available-move').forEach((cell) => {
-      cell.classList.remove('available-move');
-      cell.classList.remove('available-move-favor');
-      cell.classList.remove('available-move-oracle-card');
-      cell.classList.remove('available-move-oracle-card-favor');
-      cell.removeAttribute('title');
-    });
-
     // Highlight moves for selected die
     if (this.selectedDieColor) {
       // Get available moves for the selected die color and available favor
