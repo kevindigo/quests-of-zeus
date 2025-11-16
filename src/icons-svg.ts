@@ -595,7 +595,7 @@ export function generateCloudsIcon(options: IconOptions): string {
  * Generate a statue icon with three parallelograms representing squares lying flat
  * Three 3D perspective parallelograms in a staggered arrangement
  */
-export function generateStatueIcon(options: IconOptions): string {
+export function generateStatueBasesIcon(options: IconOptions): string {
   const { centerX, centerY, cellSize } = options;
 
   // Scale the icon based on cell size - same scale as other icons

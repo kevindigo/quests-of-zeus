@@ -8,7 +8,7 @@ import {
   generateCloudsIcon,
   generateCubesIcon,
   generateMonsterIcon,
-  generateStatueIcon,
+  generateStatueBasesIcon,
   generateStatueIcons,
   generateTempleIcon,
   generateZeusIcon,
@@ -288,7 +288,7 @@ export class HexMapSVG {
 
     // Add statue icon for statue hexes
     if (cell.terrain === 'statue') {
-      cellContent += generateStatueIcon({ centerX, centerY, cellSize });
+      cellContent += generateStatueBasesIcon({ centerX, centerY, cellSize });
     }
 
     // Add coordinates if enabled
