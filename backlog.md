@@ -1,15 +1,12 @@
 == Short-term ==
 
-- Overhaul recoloring system, which might fix:
-  - Draw oracle card should not spend recoloring favor
-  - Clear recoloring after movement
 - Unify controller getAvailableMoves for die and card
 - Need to get all the map navigation in one place
+- Display statue bases
 
 == Oracle cards ==
 
 - action: spend oracle card
-  - Should be able to recolor a card
   - Selecting die should clear selected card and vice versa
   - Ideally sort cards by color
   - Ideally only highlight the actual selected die/card
@@ -22,6 +19,10 @@
 
 == Quests ==
 
+- Clouds
+  - setup: clouds
+  - action: cloud flip (success)
+  - action: cloud flip (consolation prize)
 - Temples
   - setup: correct cube quests
   - action: cube pickup (slot open, not a repeat color)
@@ -31,10 +32,6 @@
   - action: temple dropoff
   - setup: foundations
   - action: foundations dropoff
-- Clouds
-  - setup: clouds
-  - action: cloud flip (success)
-  - action: cloud flip (consolation prize)
 - Monsters
   - setup: correct monster quests
   - action: monster fight
