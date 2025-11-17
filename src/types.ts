@@ -122,18 +122,31 @@ export class StatueHex {
 }
 
 export type ShrineStatus = 'hidden' | 'visible' | 'filled';
+export type ShrineReward = 'favor' | 'card' | 'god' | 'shield';
+export const SHRINE_REWARDS: ShrineReward[] = [
+  'favor',
+  'card',
+  'god',
+  'shield',
+];
 
 export class ShrineHex {
-  public constructor(coordinates: HexCoordinates, owner: PlayerColorName) {
+  public constructor(
+    coordinates: HexCoordinates,
+    owner: PlayerColorName,
+    reward: ShrineReward,
+  ) {
     this.q = coordinates.q;
     this.r = coordinates.r;
     this.status = 'hidden';
     this.owner = owner;
+    this.reward = reward;
   }
   q: number;
   r: number;
   status: ShrineStatus;
   owner: PlayerColorName;
+  reward: ShrineReward;
 }
 
 export interface MoveShipResult {

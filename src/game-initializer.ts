@@ -12,6 +12,8 @@ import {
   type HexColor,
   MonsterHex,
   PLAYER_COLORS,
+  type PlayerColorName,
+  SHRINE_REWARDS,
   ShrineHex,
   StatueHex,
 } from './types.ts';
@@ -310,17 +312,25 @@ export class GameInitializer {
     }
     UtilityService.shuffleArray(shrineCells);
 
+    const rewards = [...SHRINE_REWARDS];
+    UtilityService.shuffleArray(rewards);
+
+    const playerColors: PlayerColorName[] = [...PLAYER_COLORS];
+    UtilityService.shuffleArray(playerColors);
+
     const shrineHexes: ShrineHex[] = [];
-    for (let i = 0; i < 3; ++i) {
-      PLAYER_COLORS.forEach((color) => {
+    playerColors.forEach((color, playerIndex) => {
+      for (let rewardIndex = 0; rewardIndex < 3; ++rewardIndex) {
         const thisCell = shrineCells[shrineHexes.length];
         if (!thisCell) {
           throw new Error(`Missing shrineCells[${shrineHexes.length}]`);
         }
-        const hex = new ShrineHex(thisCell.getCoordinates(), color);
+        const nthTilePlaced = playerIndex * 3 + rewardIndex;
+        const reward = rewards[nthTilePlaced % rewards.length]!;
+        const hex = new ShrineHex(thisCell.getCoordinates(), color, reward);
         shrineHexes.push(hex);
-      });
-    }
+      }
+    });
 
     return shrineHexes;
   }
