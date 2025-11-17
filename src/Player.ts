@@ -7,12 +7,6 @@ export type PlayerJson = {
   color: PlayerColorName;
   shipPosition: HexCoordinates;
   storage: [StorageSlot, StorageSlot]; // 2 storage slots, each can hold 1 cube or 1 statue
-  completedQuestTypes: {
-    temple_offering: number;
-    monster: number;
-    statue: number;
-    shrine: number;
-  };
   oracleDice: CoreColor[]; // Current oracle dice values
   favor: number; // Player's favor resource
   shield: number; // Player's shield resource
@@ -55,7 +49,6 @@ export class Player {
       json.shipPosition,
     );
     player.storage = json.storage;
-    player.completedQuestTypes = json.completedQuestTypes;
     player.oracleCards = json.oracleCards;
     player.oracleDice = json.oracleDice;
     player.recolorIntention = json.recolorIntention;
@@ -72,7 +65,6 @@ export class Player {
       color: this.color,
       shipPosition: this.shipPosition,
       storage: this.storage,
-      completedQuestTypes: this.completedQuestTypes,
       oracleDice: this.oracleDice,
       favor: this.favor,
       shield: this.shield,
