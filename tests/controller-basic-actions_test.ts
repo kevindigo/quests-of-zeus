@@ -69,3 +69,11 @@ Deno.test('Buy favor - wrong card', () => {
   const result = handler.spendResourceForFavor(null, 'blue');
   assertFailureWithFragment(result, 'card');
 });
+
+Deno.test('Buy favor - second oracle card', () => {
+  setup();
+  currentPlayer.oracleCards = ['red'];
+  currentPlayer.usedOracleCardThisTurn = true;
+  const result = handler.spendResourceForFavor(null, 'blue');
+  assertFailureWithFragment(result, 'card');
+});
