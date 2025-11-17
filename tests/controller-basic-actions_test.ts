@@ -1,4 +1,9 @@
-import { assert, assertFalse, assertStringIncludes } from '@std/assert';
+import {
+  assert,
+  assertEquals,
+  assertFalse,
+  assertStringIncludes,
+} from '@std/assert';
 import { ControllerForBasicActions } from '../src/ControllerForBasicActions.ts';
 import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 import type { GameState } from '../src/GameState.ts';
@@ -34,19 +39,23 @@ Deno.test('Buy favor - no resource selected', () => {
 
 Deno.test('Buy favor - success with die', () => {
   setup();
+  currentPlayer.favor = 0;
   const firstDie = currentPlayer.oracleDice[0];
   assert(firstDie);
   const result = handler.spendResourceForFavor(firstDie, null);
   assert(result);
   assertStringIncludes(result.message, firstDie);
+  assertEquals(currentPlayer.favor, 2);
 });
 
 Deno.test('Buy favor - success with card', () => {
   setup();
+  currentPlayer.favor = 0;
   currentPlayer.oracleCards = ['red'];
   const result = handler.spendResourceForFavor(null, 'red');
   assert(result);
   assertStringIncludes(result.message, 'red');
+  assertEquals(currentPlayer.favor, 2);
 });
 
 Deno.test('Buy favor - wrong phase', () => {
@@ -70,10 +79,64 @@ Deno.test('Buy favor - wrong card', () => {
   assertFailureWithFragment(result, 'card');
 });
 
-Deno.test('Buy favor - second oracle card', () => {
+Deno.test('Buy favor - already used an oracle card', () => {
   setup();
   currentPlayer.oracleCards = ['red'];
   currentPlayer.usedOracleCardThisTurn = true;
   const result = handler.spendResourceForFavor(null, 'blue');
+  assertFailureWithFragment(result, 'card');
+});
+
+Deno.test('Buy oracle card - no resource selected', () => {
+  setup();
+  const result = handler.drawOracleCard(null, null);
+  assertFailureWithFragment(result, 'select');
+});
+
+Deno.test('Buy oracle card - success with die', () => {
+  setup();
+  const firstDie = currentPlayer.oracleDice[0];
+  assert(firstDie);
+  const result = handler.drawOracleCard(firstDie, null);
+  assert(result);
+  assertStringIncludes(result.message, firstDie);
+  assertEquals(currentPlayer.oracleCards.length, 1);
+});
+
+Deno.test('Buy oracle card - success with card', () => {
+  setup();
+  currentPlayer.oracleCards = ['red'];
+  const result = handler.drawOracleCard(null, 'red');
+  assert(result);
+  assertStringIncludes(result.message, 'red');
+  assertEquals(currentPlayer.oracleCards.length, 1);
+});
+
+Deno.test('Buy oracle card - wrong phase', () => {
+  setup();
+  state.setPhase('setup');
+  const result = handler.drawOracleCard('red', null);
+  assertFailureWithFragment(result, 'phase');
+});
+
+Deno.test('Buy oracle card - wrong die', () => {
+  setup();
+  currentPlayer.oracleDice = ['red'];
+  const result = handler.drawOracleCard('blue', null);
+  assertFailureWithFragment(result, 'die');
+});
+
+Deno.test('Buy oracle card - wrong card', () => {
+  setup();
+  currentPlayer.oracleCards = ['red'];
+  const result = handler.drawOracleCard(null, 'blue');
+  assertFailureWithFragment(result, 'card');
+});
+
+Deno.test('Buy oracle card - already used an oracle card', () => {
+  setup();
+  currentPlayer.oracleCards = ['red'];
+  currentPlayer.usedOracleCardThisTurn = true;
+  const result = handler.drawOracleCard(null, 'blue');
   assertFailureWithFragment(result, 'card');
 });

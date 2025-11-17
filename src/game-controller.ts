@@ -821,43 +821,16 @@ export class GameController {
   }
 
   private drawOracleCard(): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
-
-    // Check if a die is selected
-    if (this.selectedDieColor) {
-      const success = this.gameEngine.drawOracleCard(
-        currentPlayer.id,
-        this.selectedDieColor,
-      );
-      if (success) {
-        this.clearResourceSelection();
-        this.renderGameState();
-        this.showMessage(
-          `Spent ${this.selectedDieColor} die to draw an oracle card!`,
-        );
-      } else {
-        this.showMessage('Cannot draw oracle card at this time');
-      }
-    } // Check if an oracle card is selected
-    else if (this.selectedOracleCardColor) {
-      const success = this.gameEngine.spendOracleCardToDrawCard(
-        currentPlayer.id,
-        this.selectedOracleCardColor,
-      );
-      if (success) {
-        this.clearResourceSelection();
-        this.renderGameState();
-        this.showMessage(
-          `Spent ${this.selectedOracleCardColor} oracle card to draw a new oracle card!`,
-        );
-      } else {
-        this.showMessage(
-          'Cannot spend oracle card to draw another oracle card at this time',
-        );
-      }
-    } else {
-      this.showMessage('Please select a resource (die or oracle card) first!');
+    const handler = new ControllerForBasicActions(this.gameEngine);
+    const result = handler.drawOracleCard(
+      this.selectedDieColor,
+      this.selectedOracleCardColor,
+    );
+    if (result.success) {
+      this.clearResourceSelection();
+      this.renderGameState();
     }
+    this.showMessage(result.message);
   }
 
   private setRecolorIntention(favorCost: number): void {
