@@ -196,7 +196,6 @@ export class QuestsZeusGameEngine {
   ): void {
     const player = this.state!.players.find((p) => p.id === playerId);
     if (!player) return;
-    player.completedQuests++;
     player.completedQuestTypes[questType]++;
   }
 

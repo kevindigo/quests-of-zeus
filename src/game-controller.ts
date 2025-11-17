@@ -211,7 +211,6 @@ export class GameController {
       _currentPlayer.color.slice(1)
     }
           </div>
-          <div><strong>Completed Quests:</strong> ${_currentPlayer.completedQuests}/12</div>
           <div><strong>Favor:</strong> ${_currentPlayer.favor}</div>
           <div><strong>Shield:</strong> ${_currentPlayer.shield}</div>
         </div>
@@ -1030,11 +1029,11 @@ export class GameController {
   }
 
   private showGameOver(
-    winner: { name: string; color: string; completedQuests: number },
+    winner: { name: string; color: string },
   ): void {
     const message = `Game Over! ${winner.name} (${
       winner.color.charAt(0).toUpperCase() + winner.color.slice(1)
-    }) wins by completing ${winner.completedQuests} quests!`;
+    }) wins!`;
     this.showMessage(message);
 
     // Disable further actions

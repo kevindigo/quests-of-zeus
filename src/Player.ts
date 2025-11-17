@@ -7,7 +7,6 @@ export type PlayerJson = {
   color: PlayerColorName;
   shipPosition: HexCoordinates;
   storage: [StorageSlot, StorageSlot]; // 2 storage slots, each can hold 1 cube or 1 statue
-  completedQuests: number;
   completedQuestTypes: {
     temple_offering: number;
     monster: number;
@@ -34,7 +33,6 @@ export class Player {
     this.color = color;
     this.shipPosition = { q: shipPosition.q, r: shipPosition.r };
     this.storage = [{ type: 'empty' }, { type: 'empty' }];
-    this.completedQuests = 0;
     this.completedQuestTypes = {
       temple_offering: 0,
       monster: 0,
@@ -57,7 +55,6 @@ export class Player {
       json.shipPosition,
     );
     player.storage = json.storage;
-    player.completedQuests = json.completedQuests;
     player.completedQuestTypes = json.completedQuestTypes;
     player.oracleCards = json.oracleCards;
     player.oracleDice = json.oracleDice;
@@ -75,7 +72,6 @@ export class Player {
       color: this.color,
       shipPosition: this.shipPosition,
       storage: this.storage,
-      completedQuests: this.completedQuests,
       completedQuestTypes: this.completedQuestTypes,
       oracleDice: this.oracleDice,
       favor: this.favor,
@@ -112,7 +108,6 @@ export class Player {
   public readonly color: PlayerColorName;
   private shipPosition: HexCoordinates;
   public storage: [StorageSlot, StorageSlot]; // 2 storage slots, each can hold 1 cube or 1 statue
-  public completedQuests: number;
   public completedQuestTypes: {
     temple_offering: number;
     monster: number;
