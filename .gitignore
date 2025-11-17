@@ -1,6 +1,6 @@
 # Deno
 /.deno/
-.coverage
+/coverage/
 
 # OS generated files
 .DS_Store
