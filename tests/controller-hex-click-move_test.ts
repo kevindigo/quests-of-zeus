@@ -6,7 +6,7 @@ import {
 } from '@std/assert';
 import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 import type { GameState } from '../src/GameState.ts';
-import { ControllerForHexClicks } from '../src/HexClickHandlers.ts';
+import { ControllerForHexClicks } from '../src/ControllerForHexClicks.ts';
 import { type HexCoordinates, HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { Player } from '../src/Player.ts';
 import type { ControllerActionResult } from '../src/types.ts';

@@ -3,7 +3,7 @@
 
 import { QuestsZeusGameEngine } from './game-engine-core.ts';
 import type { GameState } from './GameState.ts';
-import { ControllerForHexClicks } from './HexClickHandlers.ts';
+import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
 import { HexMapSVG } from './hexmap-svg.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { OracleSystem } from './oracle-system.ts';
