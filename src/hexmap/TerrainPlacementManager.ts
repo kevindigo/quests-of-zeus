@@ -258,6 +258,10 @@ export class TerrainPlacementManager {
       return false;
     }
 
+    if (this.wouldLeaveCityWithoutEnoughSeaAccess(grid, cell)) {
+      return false;
+    }
+
     return true;
   }
 
@@ -295,6 +299,23 @@ export class TerrainPlacementManager {
     }
     return false;
   }
+
+  private wouldLeaveCityWithoutEnoughSeaAccess(
+    grid: HexGrid,
+    cell: HexCell,
+  ): boolean {
+    const cityNeighbors = grid.getNeighborsOfType(cell, 'city');
+    const city = cityNeighbors[0];
+    if (city) {
+      const seaNeighbors = grid.getNeighborsOfType(city, 'sea');
+      if (seaNeighbors.length < 3) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   private hexGridOperations: HexGridOperations;
   private seaColorManager: SeaColorManager;
 }
