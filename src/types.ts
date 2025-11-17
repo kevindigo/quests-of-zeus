@@ -149,6 +149,21 @@ export class ShrineHex {
   reward: ShrineReward;
 }
 
+export type QuestType = 'temple' | 'statue' | 'monster' | 'shrine';
+
+export class Quest {
+  public constructor(playerId: number, type: QuestType, color: HexColor) {
+    this.playerId = playerId;
+    this.type = type;
+    this.color = color;
+    this.isCompleted = false;
+  }
+  playerId: number;
+  type: QuestType;
+  color: HexColor;
+  isCompleted: boolean;
+}
+
 export interface MoveShipResult {
   success: boolean;
   error?: {

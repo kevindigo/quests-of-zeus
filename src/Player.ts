@@ -1,18 +1,24 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import type { CoreColor, PlayerColorName, StorageSlot } from './types.ts';
+import type {
+  CoreColor,
+  PlayerColorName,
+  Quest,
+  StorageSlot,
+} from './types.ts';
 
 export type PlayerJson = {
   id: number;
   name: string;
   color: PlayerColorName;
   shipPosition: HexCoordinates;
-  storage: [StorageSlot, StorageSlot]; // 2 storage slots, each can hold 1 cube or 1 statue
-  oracleDice: CoreColor[]; // Current oracle dice values
-  favor: number; // Player's favor resource
-  shield: number; // Player's shield resource
+  storage: [StorageSlot, StorageSlot];
+  oracleDice: CoreColor[];
+  favor: number;
+  shield: number;
   recolorIntention: number;
-  oracleCards: CoreColor[]; // Oracle cards held by player
-  usedOracleCardThisTurn: boolean; // Track if player has used an oracle card this turn
+  oracleCards: CoreColor[];
+  usedOracleCardThisTurn: boolean;
+  quests: Quest[];
 };
 
 export class Player {
@@ -39,6 +45,7 @@ export class Player {
     this.favor = 0;
     this.shield = 0;
     this.usedOracleCardThisTurn = false;
+    this.quests = [];
   }
 
   public static fromJson(json: PlayerJson): Player {
@@ -55,6 +62,7 @@ export class Player {
     player.favor = json.favor;
     player.shield = json.shield;
     player.usedOracleCardThisTurn = json.usedOracleCardThisTurn;
+    player.quests = json.quests;
     return player;
   }
 
@@ -71,6 +79,7 @@ export class Player {
       recolorIntention: this.recolorIntention,
       oracleCards: this.oracleCards,
       usedOracleCardThisTurn: this.usedOracleCardThisTurn,
+      quests: this.quests,
     };
   }
 
@@ -95,6 +104,10 @@ export class Player {
     this.recolorIntention = newIntention;
   }
 
+  public getQuests(): Quest[] {
+    return this.quests;
+  }
+
   public readonly id: number;
   public readonly name: string;
   public readonly color: PlayerColorName;
@@ -106,10 +119,11 @@ export class Player {
     statue: number;
     shrine: number;
   };
-  public oracleDice: CoreColor[]; // Current oracle dice values
-  public favor: number; // Player's favor resource
-  public shield: number; // Player's shield resource
+  public oracleDice: CoreColor[];
+  public favor: number;
+  public shield: number;
   private recolorIntention: number;
-  public oracleCards: CoreColor[]; // Oracle cards held by player
-  public usedOracleCardThisTurn: boolean; // Track if player has used an oracle card this turn
+  public oracleCards: CoreColor[];
+  public usedOracleCardThisTurn: boolean;
+  private quests: Quest[];
 }

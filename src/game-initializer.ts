@@ -74,28 +74,31 @@ export class GameInitializer {
     const players: Player[] = [];
 
     for (let i = 0; i < 2; i++) { // Start with 2 players for now
-      // Roll initial oracle dice for all players during setup
-      const initialDice: CoreColor[] = [];
-      for (let j = 0; j < 3; j++) {
-        const randomColor =
-          COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
-        if (randomColor) {
-          initialDice.push(randomColor);
-        }
-      }
-
       const player = new Player(
         i,
         `Player ${i + 1}`,
         PLAYER_COLORS[i]!,
         startPosition,
       );
-      player.oracleDice = initialDice, // All players start with dice already rolled
-        player.favor = 3 + i, // First player gets 3 favor, each subsequent gets 1 more
-        players.push(player);
+      player.favor = 3 + player.id;
+      this.rollInitialDice(player);
+      players.push(player);
+    }
+    return players;
+  }
+
+  private rollInitialDice(player: Player): void {
+    // Roll initial oracle dice for all players during setup
+    const initialDice: CoreColor[] = [];
+    for (let j = 0; j < 3; j++) {
+      const randomColor =
+        COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
+      if (randomColor) {
+        initialDice.push(randomColor);
+      }
     }
 
-    return players;
+    player.oracleDice = initialDice;
   }
 
   /**
