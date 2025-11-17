@@ -197,31 +197,31 @@ export class GameController {
     if (!playerInfoContainer) return;
 
     // Get current player for display
-    const _currentPlayer = gameState.getCurrentPlayer();
+    const currentPlayer = gameState.getCurrentPlayer();
 
     playerInfoContainer.innerHTML = `
       <div class="player-info">
-        <h3>Current Player: ${_currentPlayer.name}</h3>
+        <h3>Current Player: ${currentPlayer.name}</h3>
         <div class="player-stats">
           <div><strong>Color:</strong> 
             <span class="color-swatch" style="background-color: ${
-      this.getColorHex(_currentPlayer.color)
-    }"></span>
+      this.getColorHex(currentPlayer.color)
+    }">
             ${
-      _currentPlayer.color.charAt(0).toUpperCase() +
-      _currentPlayer.color.slice(1)
-    }
+      currentPlayer.color.charAt(0).toUpperCase() +
+      currentPlayer.color.slice(1)
+    }</span>
           </div>
-          <div><strong>Favor:</strong> ${_currentPlayer.favor}</div>
-          <div><strong>Shield:</strong> ${_currentPlayer.shield}</div>
+          <div><strong>Favor:</strong> ${currentPlayer.favor}</div>
+          <div><strong>Shield:</strong> ${currentPlayer.shield}</div>
         </div>
         <div class="quest-progress">
           <h4>Quest Progress</h4>
           <div class="quest-types">
-            <div class="quest-type-item">Temple Offering: ${_currentPlayer.completedQuestTypes.temple_offering}/3</div>
-            <div class="quest-type-item">Monster: ${_currentPlayer.completedQuestTypes.monster}/3</div>
-            <div class="quest-type-item">Statue: ${_currentPlayer.completedQuestTypes.statue}/3</div>
-            <div class="quest-type-item">Shrine: ${_currentPlayer.completedQuestTypes.shrine}/3</div>
+            <div class="quest-type-item">Temple Offering: ${currentPlayer.completedQuestTypes.temple_offering}/3</div>
+            <div class="quest-type-item">Monster: ${currentPlayer.completedQuestTypes.monster}/3</div>
+            <div class="quest-type-item">Statue: ${currentPlayer.completedQuestTypes.statue}/3</div>
+            <div class="quest-type-item">Shrine: ${currentPlayer.completedQuestTypes.shrine}/3</div>
           </div>
         </div>
         <div class="storage">
@@ -233,7 +233,7 @@ export class GameController {
           <h4>Oracle Dice</h4>
           <div class="dice-container">
             ${
-      _currentPlayer.oracleDice.map((color: string) => {
+      currentPlayer.oracleDice.map((color: string) => {
         const isSelected = this.selectedDieColor === color;
         return `<div class="die color-${color} ${
           isSelected ? 'selected-die' : ''
@@ -245,13 +245,13 @@ export class GameController {
       }).join('')
     }
             ${
-      _currentPlayer.oracleDice.length === 0
+      currentPlayer.oracleDice.length === 0
         ? '<div class="no-dice">No dice rolled yet</div>'
         : ''
     }
           </div>
           ${
-      this.selectedDieColor && _currentPlayer.oracleDice.length > 0
+      this.selectedDieColor && currentPlayer.oracleDice.length > 0
         ? `<div class="selected-die-info">
              Selected: <span class="color-swatch" style="background-color: ${
           this.getColorHex(this.selectedDieColor)
@@ -266,12 +266,12 @@ export class GameController {
           <h4>Oracle Cards</h4>
           <div class="oracle-cards-container">
             ${
-      _currentPlayer.oracleCards.length === 0
+      currentPlayer.oracleCards.length === 0
         ? '<div class="no-cards">No oracle cards</div>'
         : ''
     }
             ${
-      _currentPlayer.oracleCards.map((color: string) => {
+      currentPlayer.oracleCards.map((color: string) => {
         const isSelected = this.selectedOracleCardColor === color;
         return `<div class="oracle-card color-${color} ${
           isSelected ? 'selected-oracle-card' : ''
@@ -285,7 +285,7 @@ export class GameController {
     }
           </div>
           ${
-      this.selectedOracleCardColor && _currentPlayer.oracleCards.length > 0
+      this.selectedOracleCardColor && currentPlayer.oracleCards.length > 0
         ? `<div class="selected-oracle-card-info">
              Selected Oracle Card: <span class="color-swatch" style="background-color: ${
           this.getColorHex(this.selectedOracleCardColor)
@@ -298,8 +298,8 @@ export class GameController {
         </div>
         ${
       (this.selectedDieColor || this.selectedOracleCardColor) &&
-        _currentPlayer.favor > 0
-        ? this.renderRecolorOptions(_currentPlayer)
+        currentPlayer.favor > 0
+        ? this.renderRecolorOptions(currentPlayer)
         : ''
     }
       </div>
@@ -960,10 +960,9 @@ export class GameController {
             <input type="radio" name="recolorOption" value="${favorCost}" ${
         isSelected ? 'checked' : ''
       } data-recolor-favor="${favorCost}">
-            <span class="color-swatch" style="background-color: ${
+            ${favorCost} -&gt; <span class="color-swatch" style="background-color: ${
         this.getColorHex(newColor)
-      }"></span>
-            Recolor to ${newColor} (${favorCost} favor)
+      }">${newColor}</span>
           </label>
         </div>
       `;
@@ -994,12 +993,12 @@ export class GameController {
 
   private getColorHex(color: string): string {
     const colors: Record<string, string> = {
-      red: '#DC143C',
-      pink: '#ff69b4',
-      blue: '#0000ff',
-      black: '#000000',
-      green: '#008000',
-      yellow: '#ffff00',
+      'red': '#DC143C',
+      'pink': '#ff69b4',
+      'blue': '#0000ff',
+      'black': '#000000',
+      'green': '#008000',
+      'yellow': '#ffff00',
     };
     return colors[color] || '#333333';
   }
