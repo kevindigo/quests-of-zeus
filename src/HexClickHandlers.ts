@@ -9,7 +9,7 @@ import type {
   TerrainType,
 } from './types.ts';
 
-export class HexClickHandlers {
+export class ControllerForHexClicks {
   public constructor(engine: QuestsZeusGameEngine) {
     this.gameEngine = engine;
   }
@@ -208,7 +208,7 @@ export class HexClickHandlers {
 
       return {
         success: false,
-        message: HexClickHandlers.formatMoveErrorMessage(
+        message: ControllerForHexClicks.formatMoveErrorMessage(
           moveResult.error,
         ),
       };

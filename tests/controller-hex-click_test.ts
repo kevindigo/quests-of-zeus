@@ -1,7 +1,7 @@
 import { assertFalse, assertStringIncludes } from '@std/assert';
 import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 import type { GameState } from '../src/GameState.ts';
-import { HexClickHandlers } from '../src/HexClickHandlers.ts';
+import { ControllerForHexClicks } from '../src/HexClickHandlers.ts';
 import { type HexCoordinates, HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { Player } from '../src/Player.ts';
 import type { ControllerActionResult } from '../src/types.ts';
@@ -15,7 +15,7 @@ function assertFailureContains(
 }
 
 let engine: QuestsZeusGameEngine;
-let handler: HexClickHandlers;
+let handler: ControllerForHexClicks;
 let state: GameState;
 let center: HexCoordinates;
 let player: Player;
@@ -23,7 +23,7 @@ let player: Player;
 function setup(): void {
   engine = new QuestsZeusGameEngine();
   engine.initializeGame();
-  handler = new HexClickHandlers(engine);
+  handler = new ControllerForHexClicks(engine);
   state = engine.getGameState();
   center = HexGrid.CENTER;
   player = state.getCurrentPlayer();
