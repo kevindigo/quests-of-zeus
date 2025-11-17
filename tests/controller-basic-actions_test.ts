@@ -38,6 +38,7 @@ Deno.test('Buy favor - success with die', () => {
   assert(firstDie);
   const result = handler.spendResourceForFavor(firstDie, null);
   assert(result);
+  assertStringIncludes(result.message, firstDie);
 });
 
 Deno.test('Buy favor - success with card', () => {
@@ -45,6 +46,7 @@ Deno.test('Buy favor - success with card', () => {
   currentPlayer.oracleCards = ['red'];
   const result = handler.spendResourceForFavor(null, 'red');
   assert(result);
+  assertStringIncludes(result.message, 'red');
 });
 
 Deno.test('Buy favor - wrong phase', () => {

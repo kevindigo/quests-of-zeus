@@ -17,47 +17,34 @@ export class ControllerForBasicActions {
         message: `Cannot buy favor during the ${phase} phase`,
       };
     }
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
 
-    // Check if a die is selected
-    if (dieColor) {
-      const success = this.gameEngine.spendDieForFavor(
-        currentPlayer.id,
-        dieColor,
-      );
-      if (success) {
-        return {
-          success,
-          message: `Spent ${dieColor} die to gain 2 favor!`,
-        };
-      } else {
-        return {
-          success: false,
-          message: 'Cannot spend die for favor at this time',
-        };
-      }
-    } else if (cardColor) {
-      const success = this.gameEngine.spendOracleCardForFavor(
-        currentPlayer.id,
-        cardColor,
-      );
-      if (success) {
-        return {
-          success,
-          message: `Spent ${cardColor} oracle card to gain 2 favor!`,
-        };
-      } else {
-        return {
-          success: false,
-          message: 'Cannot spend oracle card for favor at this time',
-        };
-      }
-    } else {
+    const color = dieColor || cardColor;
+
+    if (!color) {
       return {
         success: false,
         message: 'Please select a resource (die or oracle card) first!',
       };
     }
+
+    const engine = this.gameEngine;
+    const currentPlayer = engine.getCurrentPlayer();
+    const resourceType = dieColor ? 'die' : 'card';
+    const fn = dieColor
+      ? engine.spendDieForFavor.bind(engine)
+      : engine.spendOracleCardForFavor.bind(engine);
+
+    if (fn(currentPlayer.id, color)) {
+      return {
+        success: true,
+        message: `Spent ${color} ${resourceType} to gain 2 favor!`,
+      };
+    }
+
+    return {
+      success: false,
+      message: `Cannot spend ${resourceType} for favor at this time`,
+    };
   }
 
   private gameEngine: QuestsZeusGameEngine;
