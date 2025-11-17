@@ -140,3 +140,47 @@ Deno.test('Buy oracle card - already used an oracle card', () => {
   const result = handler.drawOracleCard(null, 'blue');
   assertFailureWithFragment(result, 'card');
 });
+
+Deno.test('Recolor - no resource selected', () => {
+  setup();
+  const result = handler.setRecolorIntention(1, null, null);
+  assertFailureWithFragment(result, 'select');
+});
+
+Deno.test('Recolor - success clear die recoloring', () => {
+  setup();
+  const result = handler.setRecolorIntention(0, 'black', null);
+  assert(result.success);
+  assertStringIncludes(result.message, 'cleared');
+});
+
+Deno.test('Recolor - success clear card recoloring', () => {
+  setup();
+  const result = handler.setRecolorIntention(0, null, 'black');
+  assert(result.success);
+  assertStringIncludes(result.message, 'cleared');
+});
+
+Deno.test('Recolor - success recolor die', () => {
+  setup();
+  const result = handler.setRecolorIntention(1, 'black', null);
+  assert(result.success);
+  assertStringIncludes(result.message, 'pink');
+});
+
+Deno.test('Recolor - success recolor card', () => {
+  setup();
+  const result = handler.setRecolorIntention(1, null, 'black');
+  assert(result.success);
+  assertStringIncludes(result.message, 'pink');
+});
+
+Deno.test('Recolor - not enough favor', () => {
+  setup();
+  const result = handler.setRecolorIntention(
+    currentPlayer.favor + 1,
+    'red',
+    null,
+  );
+  assertFailureWithFragment(result, 'Failed');
+});

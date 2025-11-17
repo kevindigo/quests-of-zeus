@@ -179,10 +179,10 @@ export class QuestsZeusGameEngine {
     );
   }
 
-  public clearRecolorIntention(playerId: number): boolean {
+  public clearRecolorIntention(playerId: number): void {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
-    return this.oracleSystem!.clearRecolorIntention(player);
+    this.oracleSystem!.clearRecolorIntention(player);
   }
 
   public canPlaceStatueOnCity(_playerId: number): boolean {

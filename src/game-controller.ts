@@ -834,52 +834,16 @@ export class GameController {
   }
 
   private setRecolorIntention(favorCost: number): void {
-    const gameState = this.gameEngine.getGameStateSnapshot();
-    const currentPlayer = gameState.getCurrentPlayer();
-
-    const selectedColor = this.selectedDieColor || this.selectedOracleCardColor;
-    if (!selectedColor) {
-      this.showMessage('Please select a resource (die or oracle card) first!');
-      return;
+    const handler = new ControllerForBasicActions(this.gameEngine);
+    const result = handler.setRecolorIntention(
+      favorCost,
+      this.selectedDieColor,
+      this.selectedOracleCardColor,
+    );
+    if (result.success) {
+      this.renderGameState();
     }
-
-    if (favorCost === 0) {
-      // Clear recoloring intention
-      let success = false;
-      if (this.selectedDieColor) {
-        success = this.gameEngine.clearRecolorIntention(
-          currentPlayer.id,
-        );
-      } else if (this.selectedOracleCardColor) {
-        success = this.gameEngine.clearRecolorIntention(
-          currentPlayer.id,
-        );
-      }
-
-      if (success) {
-        this.showMessage('Recoloring intention cleared');
-      } else {
-        this.showMessage('Cannot clear recoloring intention');
-      }
-    } else {
-      const success = this.gameEngine.setRecolorIntention(
-        currentPlayer.id,
-        favorCost,
-      );
-
-      if (success) {
-        const resourceType = this.selectedDieColor ? 'die' : 'oracle card';
-        const newColor = OracleSystem.applyRecolor(selectedColor, favorCost);
-        this.showMessage(
-          `${
-            resourceType.charAt(0).toUpperCase() + resourceType.slice(1)
-          } will be recolored from ${selectedColor} to ${newColor} when used (${favorCost} favor will be spent)`,
-        );
-      } else {
-        this.showMessage('Cannot set recoloring intention');
-      }
-    }
-    this.renderGameState();
+    this.showMessage(result.message);
   }
 
   private endTurn(): void {

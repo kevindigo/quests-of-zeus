@@ -1,4 +1,5 @@
 import type { QuestsZeusGameEngine } from './game-engine-core.ts';
+import { OracleSystem } from './oracle-system.ts';
 import type { ControllerActionResult, CoreColor } from './types.ts';
 
 export class ControllerForBasicActions {
@@ -86,6 +87,51 @@ export class ControllerForBasicActions {
       success: false,
       message: `Cannot spend ${resourceType} for oracle card at this time`,
     };
+  }
+
+  public setRecolorIntention(
+    favorCost: number,
+    dieColor: CoreColor | null,
+    cardColor: CoreColor | null,
+  ): ControllerActionResult {
+    const selectedColor = dieColor || cardColor;
+    if (!selectedColor) {
+      return {
+        success: false,
+        message: 'Please select a resource (die or oracle card) first!',
+      };
+    }
+
+    const playerId = this.gameEngine.getCurrentPlayer().id;
+    if (favorCost === 0) {
+      this.gameEngine.clearRecolorIntention(playerId);
+
+      return {
+        success: true,
+        message: 'Recoloring intention cleared',
+      };
+    } else {
+      const success = this.gameEngine.setRecolorIntention(
+        playerId,
+        favorCost,
+      );
+
+      if (success) {
+        const resourceType = dieColor ? 'die' : 'oracle card';
+        const newColor = OracleSystem.applyRecolor(selectedColor, favorCost);
+        return {
+          success,
+          message: `${
+            resourceType.charAt(0).toUpperCase() + resourceType.slice(1)
+          } will be recolored from ${selectedColor} to ${newColor} when used (${favorCost} favor will be spent)`,
+        };
+      } else {
+        return {
+          success: false,
+          message: 'Failed to set recoloring intention',
+        };
+      }
+    }
   }
 
   private gameEngine: QuestsZeusGameEngine;

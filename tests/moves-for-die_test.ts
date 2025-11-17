@@ -186,8 +186,7 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Clear recoloring intention
-  const clearSuccess = gameEngine.clearRecolorIntention(player.id);
-  assert(clearSuccess, 'Recoloring intention should be cleared successfully');
+  gameEngine.clearRecolorIntention(player.id);
 
   // Get moves after clearing recoloring intention
   const movesAfterClear = gameEngine.getAvailableMovesForColor(

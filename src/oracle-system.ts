@@ -63,10 +63,8 @@ export class OracleSystem {
   /**
    * Clear recoloring intention for a die
    */
-  public clearRecolorIntention(player: Player): boolean {
+  public clearRecolorIntention(player: Player): void {
     player.setRecolorIntention(0);
-
-    return true;
   }
 
   /**
