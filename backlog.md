@@ -1,28 +1,30 @@
 == Short-term ==
 
+- Set up 12 quests
+  - Each shrine should have a type, in addition to the owner
+
 == Cosmetic/Usability ==
 
 - Can't click on anything on a hex (icon, cubes, monsters)
 - Make monster triangles larger
-- Make shallows transparent?
 - Make statue bar taller
 - Move city icon down slightly
-- Display symbols for accessibility: ⬟🌀♨️🔆🌱🩷 (the pentagon can be black)
+- Display symbols for accessibility: ⬟🌀♨️🔆🌱🌸 (the pentagon can be black)
   - Black: Cloverleaf 🔲🔳 🌢 ➰ ⧇ ⬟ ⧉ ▣ ▩
   - Blue: @ 🌀
   - Red: Bell U 💢 📛 ♨️
   - Pink: 8 / infinity / hourglass ∞ ⌛ Ꝏ 🌸 🩷
   - Yellow: * 🔆
   - Green: Leaf 🌱
-
-== Other ==
-
 - Better visual feedback when trying to use a second oracle card in a turn
-- Allow spending more than 5 favor to extend move range
-- Put all the map navigation in one place
 - Ideally sort cards by color
 - Ideally only highlight the actual selected die/card
 - Ideally unselect (clear) a die/card by clicking it again
+
+== Other ==
+
+- Allow spending more than 5 favor to extend move range
+- Put all the map navigation in one place
 
 == Quests ==
 
