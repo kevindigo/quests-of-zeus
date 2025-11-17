@@ -14,6 +14,10 @@ export class HexClickHandlers {
     this.gameEngine = engine;
   }
 
+  public getEngine(): QuestsZeusGameEngine {
+    return this.gameEngine;
+  }
+
   public handleHexClick(
     coordinates: HexCoordinates,
     terrain: TerrainType,
@@ -47,7 +51,7 @@ export class HexClickHandlers {
 
     return {
       success: false,
-      message: `Non-move hex click at ${
+      message: `Hex click not supported for ${
         JSON.stringify(coordinates)
       } of ${terrain}`,
     };
@@ -84,19 +88,12 @@ export class HexClickHandlers {
   private handleMoveWithCard(
     currentPlayer: Player,
     coordinates: HexCoordinates,
-    selectedOracleCardColor: CoreColor | null,
+    selectedColor: CoreColor,
   ): HexClickResult {
-    const selectedColor = selectedOracleCardColor;
-    if (!selectedColor) {
-      return {
-        success: false,
-        message: 'No color was selected',
-      };
-    }
     if (!currentPlayer.oracleCards.includes(selectedColor)) {
       return {
         success: false,
-        message: `Color ${selectedColor} not in ${
+        message: `Color ${selectedColor} not in cards ${
           JSON.stringify(currentPlayer.oracleCards)
         }`,
       };
@@ -105,7 +102,7 @@ export class HexClickHandlers {
       currentPlayer,
       coordinates,
       null,
-      selectedOracleCardColor,
+      selectedColor,
       selectedColor,
       currentPlayer.getRecolorIntention(),
     );
@@ -114,19 +111,12 @@ export class HexClickHandlers {
   private handleMoveWithDie(
     currentPlayer: Player,
     coordinates: HexCoordinates,
-    selectedDieColor: CoreColor | null,
+    selectedColor: CoreColor,
   ): HexClickResult {
-    const selectedColor = selectedDieColor;
-    if (!selectedColor) {
-      return {
-        success: false,
-        message: 'No color was selected',
-      };
-    }
     if (!currentPlayer.oracleDice.includes(selectedColor)) {
       return {
         success: false,
-        message: `Color ${selectedColor} not in ${
+        message: `Color ${selectedColor} not in dice ${
           JSON.stringify(currentPlayer.oracleDice)
         }`,
       };
@@ -134,7 +124,7 @@ export class HexClickHandlers {
     return this.handleMoveWithDieOrCard(
       currentPlayer,
       coordinates,
-      selectedDieColor,
+      selectedColor,
       null,
       selectedColor,
       currentPlayer.getRecolorIntention(),
