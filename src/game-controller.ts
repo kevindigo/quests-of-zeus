@@ -1,9 +1,10 @@
 // Game Controller for Quests of Zeus
 // Manages the game UI and user interactions
 
+import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
+import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
 import { QuestsZeusGameEngine } from './game-engine-core.ts';
 import type { GameState } from './GameState.ts';
-import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
 import { HexMapSVG } from './hexmap-svg.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { OracleSystem } from './oracle-system.ts';
@@ -807,41 +808,16 @@ export class GameController {
   }
 
   private spendResourceForFavor(): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
-
-    // Check if a die is selected
-    if (this.selectedDieColor) {
-      const success = this.gameEngine.spendDieForFavor(
-        currentPlayer.id,
-        this.selectedDieColor,
-      );
-      if (success) {
-        // Don't clear selected die - player can continue using other dice
-        // The spent die will be automatically removed from the display
-        this.clearResourceSelection();
-        this.renderGameState();
-        this.showMessage(`Spent ${this.selectedDieColor} die to gain 2 favor!`);
-      } else {
-        this.showMessage('Cannot spend die for favor at this time');
-      }
-    } // Check if an oracle card is selected
-    else if (this.selectedOracleCardColor) {
-      const success = this.gameEngine.spendOracleCardForFavor(
-        currentPlayer.id,
-        this.selectedOracleCardColor,
-      );
-      if (success) {
-        this.clearResourceSelection();
-        this.renderGameState();
-        this.showMessage(
-          `Spent ${this.selectedOracleCardColor} oracle card to gain 2 favor!`,
-        );
-      } else {
-        this.showMessage('Cannot spend oracle card for favor at this time');
-      }
-    } else {
-      this.showMessage('Please select a resource (die or oracle card) first!');
+    const handler = new ControllerForBasicActions(this.gameEngine);
+    const result = handler.spendResourceForFavor(
+      this.selectedDieColor,
+      this.selectedOracleCardColor,
+    );
+    if (result.success) {
+      this.clearResourceSelection();
+      this.renderGameState();
     }
+    this.showMessage(result.message);
   }
 
   private drawOracleCard(): void {
