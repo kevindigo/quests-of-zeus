@@ -1,14 +1,15 @@
 import { assertFalse, assertStringIncludes } from '@std/assert';
 import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 import type { GameState } from '../src/GameState.ts';
-import {
-  HexClickHandlers,
-  type HexClickResult,
-} from '../src/HexClickHandlers.ts';
+import { HexClickHandlers } from '../src/HexClickHandlers.ts';
 import { type HexCoordinates, HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { Player } from '../src/Player.ts';
+import type { ControllerActionResult } from '../src/types.ts';
 
-function assertFailureContains(result: HexClickResult, fragment: string): void {
+function assertFailureContains(
+  result: ControllerActionResult,
+  fragment: string,
+): void {
   assertFalse(result.success, 'Should not have succeeded');
   assertStringIncludes(result.message, fragment);
 }

@@ -2,12 +2,12 @@ import type { QuestsZeusGameEngine } from './game-engine-core.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { OracleSystem } from './oracle-system.ts';
 import type { Player } from './Player.ts';
-import type { CoreColor, MoveShipResult, TerrainType } from './types.ts';
-
-export type HexClickResult = {
-  success: boolean;
-  message: string;
-};
+import type {
+  ControllerActionResult,
+  CoreColor,
+  MoveShipResult,
+  TerrainType,
+} from './types.ts';
 
 export class HexClickHandlers {
   public constructor(engine: QuestsZeusGameEngine) {
@@ -23,7 +23,7 @@ export class HexClickHandlers {
     terrain: TerrainType,
     selectedDieColor: CoreColor | null,
     selectedOracleCardColor: CoreColor | null,
-  ): HexClickResult {
+  ): ControllerActionResult {
     const gameState = this.gameEngine.getGameStateSnapshot();
     if (gameState.getPhase() !== 'action') {
       return {
@@ -62,7 +62,7 @@ export class HexClickHandlers {
     coordinates: HexCoordinates,
     selectedDieColor: CoreColor | null,
     selectedOracleCardColor: CoreColor | null,
-  ): HexClickResult {
+  ): ControllerActionResult {
     if (
       selectedOracleCardColor && !currentPlayer.usedOracleCardThisTurn
     ) {
@@ -89,7 +89,7 @@ export class HexClickHandlers {
     currentPlayer: Player,
     coordinates: HexCoordinates,
     selectedColor: CoreColor,
-  ): HexClickResult {
+  ): ControllerActionResult {
     if (!currentPlayer.oracleCards.includes(selectedColor)) {
       return {
         success: false,
@@ -112,7 +112,7 @@ export class HexClickHandlers {
     currentPlayer: Player,
     coordinates: HexCoordinates,
     selectedColor: CoreColor,
-  ): HexClickResult {
+  ): ControllerActionResult {
     if (!currentPlayer.oracleDice.includes(selectedColor)) {
       return {
         success: false,
@@ -138,7 +138,7 @@ export class HexClickHandlers {
     selectedOracleCardColor: CoreColor | null,
     selectedColor: CoreColor,
     recoloringCost: number,
-  ): HexClickResult {
+  ): ControllerActionResult {
     const effectiveColor = OracleSystem.applyRecolor(
       selectedColor,
       recoloringCost,

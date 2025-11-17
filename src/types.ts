@@ -164,6 +164,11 @@ export class Quest {
   isCompleted: boolean;
 }
 
+export type ControllerActionResult = {
+  success: boolean;
+  message: string;
+};
+
 export interface MoveShipResult {
   success: boolean;
   error?: {
