@@ -1,6 +1,5 @@
 == Short-term ==
 
-
 == Cosmetic/Usability ==
 
 - Can't click on anything on a hex (icon, cubes, monsters)
@@ -27,20 +26,16 @@
 == Quests ==
 
 - Shrines
-  - setup: create 3 shrine quests
   - action: shrine flip (and place) (and complete the quest)
   - action: shrine flip (consolation prize)
 - Statues
-  - setup: create 3 statue quests
   - action: statue pickup (slot open, not a repeat color)
   - action: statue dropoff
 - Temples
-  - setup: create 3 temple quests
   - setup: correct cube quests
   - action: cube pickup (slot open, not a repeat color)
   - action: temple dropoff
 - Monsters
-  - setup: create 3 monster quests
   - setup: correct monster quests
   - action: monster fight
 

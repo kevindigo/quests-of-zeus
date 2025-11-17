@@ -13,6 +13,7 @@ import {
   MonsterHex,
   PLAYER_COLORS,
   type PlayerColorName,
+  type Quest,
   SHRINE_REWARDS,
   ShrineHex,
   StatueHex,
@@ -73,6 +74,13 @@ export class GameInitializer {
   private initializePlayers(startPosition: HexCoordinates): Player[] {
     const players: Player[] = [];
 
+    const templeAndMonsterColors: HexColor[] = [...COLOR_WHEEL];
+    UtilityService.shuffleArray(templeAndMonsterColors);
+    const templeColors = templeAndMonsterColors.splice(0, 2);
+    templeColors.push('none');
+    const monsterColors = templeAndMonsterColors.splice(0, 2);
+    monsterColors.push('none');
+
     for (let i = 0; i < 2; i++) { // Start with 2 players for now
       const player = new Player(
         i,
@@ -81,10 +89,51 @@ export class GameInitializer {
         startPosition,
       );
       player.favor = 3 + player.id;
+      this.createQuests(player, templeColors, monsterColors);
       this.rollInitialDice(player);
       players.push(player);
     }
     return players;
+  }
+
+  private createQuests(
+    player: Player,
+    templeColors: HexColor[],
+    monsterColors: HexColor[],
+  ): void {
+    for (let i = 0; i < 3; ++i) {
+      const shrineQuest: Quest = {
+        playerId: player.id,
+        type: 'shrine',
+        color: 'none',
+        isCompleted: false,
+      };
+      player.getQuests().push(shrineQuest);
+
+      const statueQuest: Quest = {
+        playerId: player.id,
+        type: 'statue',
+        color: 'none',
+        isCompleted: false,
+      };
+      player.getQuests().push(statueQuest);
+
+      const templeQuest: Quest = {
+        playerId: player.id,
+        type: 'temple',
+        color: templeColors[i]!,
+        isCompleted: false,
+      };
+      player.getQuests().push(templeQuest);
+
+      const monsterQuest: Quest = {
+        playerId: player.id,
+        type: 'monster',
+        color: monsterColors[i]!,
+        isCompleted: false,
+      };
+      player.getQuests().push(monsterQuest);
+    }
   }
 
   private rollInitialDice(player: Player): void {
