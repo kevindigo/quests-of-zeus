@@ -126,14 +126,12 @@ Deno.test('Quest - monster and temple quest colors should not overlap', () => {
     const templeQuests = player.getQuests().filter((quest) => {
       return quest.type === 'temple';
     });
-    console.log(`temple: ${JSON.stringify(templeQuests)}`);
     templeQuests.forEach((quest) => {
       colorsAcrossPlayers.add(quest.color);
     });
     const monsterQuests = player.getQuests().filter((quest) => {
       return quest.type === 'monster';
     });
-    console.log(`monster: ${JSON.stringify(monsterQuests)}`);
     monsterQuests.forEach((quest) => {
       colorsAcrossPlayers.add(quest.color);
     });
