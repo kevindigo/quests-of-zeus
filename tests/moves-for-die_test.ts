@@ -1,11 +1,11 @@
 // Tests for the new getAvailableMovesForDie method
 
 import { assert, assertEquals, assertGreater } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/game-engine-core.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('getAvailableMovesForDie - basic functionality', () => {
-  const gameEngine = new QuestsZeusGameEngine();
+  const gameEngine = new GameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();
@@ -50,7 +50,7 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
 });
 
 Deno.test('getAvailableMovesForDie - favor spending', () => {
-  const gameEngine = new QuestsZeusGameEngine();
+  const gameEngine = new GameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();
@@ -82,7 +82,7 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
 });
 
 Deno.test('getAvailableMovesForDie - recoloring intention', () => {
-  const gameEngine = new QuestsZeusGameEngine();
+  const gameEngine = new GameEngine();
   gameEngine.initializeGame();
   const gameState = gameEngine.getGameState();
   const player = gameEngine.getCurrentPlayer();
@@ -127,7 +127,7 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
 });
 
 Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
-  const gameEngine = new QuestsZeusGameEngine();
+  const gameEngine = new GameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();
@@ -165,7 +165,7 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
 });
 
 Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
-  const gameEngine = new QuestsZeusGameEngine();
+  const gameEngine = new GameEngine();
   gameEngine.initializeGame();
   const gameState = gameEngine.getGameState();
 

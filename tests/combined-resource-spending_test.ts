@@ -3,11 +3,11 @@
 
 import { assert, assertEquals } from '@std/assert';
 import { Controller } from '../src/Controller.ts';
-import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/game-engine-core.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('CombinedResourceSpending - select die for favor gain', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const player = engine.getCurrentPlayer();
@@ -34,7 +34,7 @@ Deno.test('CombinedResourceSpending - select die for favor gain', () => {
 });
 
 Deno.test('CombinedResourceSpending - select die to draw oracle card', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const player = engine.getCurrentPlayer();
@@ -65,7 +65,7 @@ Deno.test('CombinedResourceSpending - select die to draw oracle card', () => {
 });
 
 Deno.test('CombinedResourceSpending - select oracle card for favor gain', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const player = engine.getCurrentPlayer();
@@ -100,7 +100,7 @@ Deno.test('CombinedResourceSpending - select oracle card for favor gain', () => 
 });
 
 Deno.test('CombinedResourceSpending - resource selection clears when switching types', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   const controller = new Controller(engine);
   engine.initializeGame();
 
@@ -151,7 +151,7 @@ Deno.test('CombinedResourceSpending - resource selection clears when switching t
 });
 
 Deno.test('CombinedResourceSpending - favor spending with both resource types', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const player = engine.getCurrentPlayer();

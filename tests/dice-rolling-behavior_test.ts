@@ -1,11 +1,11 @@
 // Tests for the new dice rolling behavior (dice rolled at end of turn)
 
 import { assert, assertEquals, assertExists } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/game-engine-core.ts';
 import type { HexColor } from '../src/types.ts';
 
 Deno.test('DiceRolling - all players start with dice rolled', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
 
   // Initialize the game
   engine.initializeGame();
@@ -35,7 +35,7 @@ Deno.test('DiceRolling - all players start with dice rolled', () => {
 });
 
 Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const initialState = engine.getGameState();
@@ -79,7 +79,7 @@ Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
 });
 
 Deno.test('DiceRolling - recoloring intentions cleared at end of turn', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
   const gameState = engine.getGameState();
 
@@ -106,7 +106,7 @@ Deno.test('DiceRolling - recoloring intentions cleared at end of turn', () => {
 });
 
 Deno.test('DiceRolling - round advances when all players have taken turns', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const initialState = engine.getGameState();
@@ -139,7 +139,7 @@ Deno.test('DiceRolling - round advances when all players have taken turns', () =
 });
 
 Deno.test('DiceRolling - dice are valid colors after rolling', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const state = engine.getGameState();
@@ -183,7 +183,7 @@ Deno.test('DiceRolling - dice are valid colors after rolling', () => {
 });
 
 Deno.test('DiceRolling - next player always has dice ready', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   // Simulate multiple turns and verify next player always has dice

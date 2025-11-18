@@ -1,7 +1,7 @@
 // Tests for the two-step action phase implementation
 
 import { assert, assertEquals } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/game-engine-core.ts';
 
 Deno.test('Controller - die selection', () => {
   // Test that selectedDieColor starts as null
@@ -9,7 +9,7 @@ Deno.test('Controller - die selection', () => {
   // For now, we'll test the behavior through public methods
 
   // Initialize a game engine directly for testing
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   // Game now starts with dice already rolled

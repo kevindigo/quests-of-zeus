@@ -4,7 +4,7 @@
  */
 
 import { assert, assertEquals } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/game-engine-core.ts';
 import { COLOR_WHEEL } from '../src/types.ts';
 
 // Test algorithm performance and timing
@@ -14,7 +14,7 @@ Deno.test('MonsterDistribution - algorithm performance', () => {
   // Run multiple iterations to test performance
   const iterations = 50;
   for (let i = 0; i < iterations; i++) {
-    const engine = new QuestsZeusGameEngine();
+    const engine = new GameEngine();
     engine.initializeGame();
     const monsterHexes = engine.getMonsterHexes();
 
@@ -46,7 +46,7 @@ Deno.test('MonsterDistribution - always valid results', () => {
 
   for (let run = 0; run < testRuns; run++) {
     try {
-      const engine = new QuestsZeusGameEngine();
+      const engine = new GameEngine();
       engine.initializeGame();
       const monsterHexes = engine.getMonsterHexes();
 
@@ -118,7 +118,7 @@ Deno.test('MonsterDistribution - statistical analysis', () => {
   let totalMonstersAcrossRuns = 0;
 
   for (let run = 0; run < runs; run++) {
-    const engine = new QuestsZeusGameEngine();
+    const engine = new GameEngine();
     engine.initializeGame();
     const monsterHexes = engine.getMonsterHexes();
 
@@ -177,7 +177,7 @@ Deno.test('MonsterDistribution - statistical analysis', () => {
 Deno.test('MonsterDistribution - initialization robustness', () => {
   // Test multiple sequential initializations
   for (let i = 0; i < 10; i++) {
-    const engine = new QuestsZeusGameEngine();
+    const engine = new GameEngine();
     const state = engine.initializeGame();
 
     // Verify game state is properly initialized

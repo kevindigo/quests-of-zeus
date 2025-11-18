@@ -5,18 +5,18 @@ import {
   assertStringIncludes,
 } from '@std/assert';
 import { ControllerForBasicActions } from '../src/ControllerForBasicActions.ts';
-import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/game-engine-core.ts';
 import type { GameState } from '../src/GameState.ts';
 import type { Player } from '../src/Player.ts';
 import type { ControllerActionResult } from '../src/types.ts';
 
-let engine: QuestsZeusGameEngine;
+let engine: GameEngine;
 let state: GameState;
 let currentPlayer: Player;
 let handler: ControllerForBasicActions;
 
 function setup() {
-  engine = new QuestsZeusGameEngine();
+  engine = new GameEngine();
   engine.initializeGame();
   state = engine.getGameState();
   currentPlayer = engine.getCurrentPlayer();

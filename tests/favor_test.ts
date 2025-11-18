@@ -1,11 +1,11 @@
 // Test for the favor system in Quests of Zeus
 
 import { assert, assertEquals } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/game-engine-core.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('Favor System - player initialization', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   // Check that players have the correct favor values
@@ -23,7 +23,7 @@ Deno.test('Favor System - player initialization', () => {
 });
 
 Deno.test('Favor System - favor property exists', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const player1 = engine.getPlayer(1);
@@ -35,7 +35,7 @@ Deno.test('Favor System - favor property exists', () => {
 });
 
 Deno.test('Favor System - favor progression pattern', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   // Verify the favor progression pattern: 3, 4, 5, 6 for 4 players
@@ -55,7 +55,7 @@ Deno.test('Favor System - favor progression pattern', () => {
 });
 
 Deno.test('Spend Die for Favor - basic functionality', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const player1 = engine.getPlayer(0);
@@ -94,7 +94,7 @@ Deno.test('Spend Die for Favor - basic functionality', () => {
 });
 
 Deno.test('Spend Die for Favor - invalid scenarios', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const player1 = engine.getPlayer(0);
@@ -132,7 +132,7 @@ Deno.test('Spend Die for Favor - invalid scenarios', () => {
 });
 
 Deno.test('Spend Die for Favor - turn continues after spending', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const player1 = engine.getPlayer(0);

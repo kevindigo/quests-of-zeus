@@ -1,11 +1,11 @@
 import { assert } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
-import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/game-engine-core.ts';
 import type { HexColor } from '../src/types.ts';
 
 Deno.test('Quests - Each player has 12 quests, not yet completed', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
   const state = engine.getGameState();
 
@@ -19,7 +19,7 @@ Deno.test('Quests - Each player has 12 quests, not yet completed', () => {
 });
 
 Deno.test('Quests - Each player has 3 shrine quests', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
   const state = engine.getGameState();
 
@@ -37,7 +37,7 @@ Deno.test('Quests - Each player has 3 shrine quests', () => {
 });
 
 Deno.test('Quests - Each player has 3 statue quests', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
   const state = engine.getGameState();
 
@@ -55,7 +55,7 @@ Deno.test('Quests - Each player has 3 statue quests', () => {
 });
 
 Deno.test('Quests = Each player has 3 temple quests', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
   const state = engine.getGameState();
 
@@ -86,7 +86,7 @@ Deno.test('Quests = Each player has 3 temple quests', () => {
 });
 
 Deno.test('Quests = Each player has 3 monster quests', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
   const state = engine.getGameState();
 
@@ -117,7 +117,7 @@ Deno.test('Quests = Each player has 3 monster quests', () => {
 });
 
 Deno.test('Quest - monster and temple quest colors should not overlap', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
   const state = engine.getGameState();
 

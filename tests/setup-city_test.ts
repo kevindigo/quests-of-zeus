@@ -1,9 +1,9 @@
 import { assertGreaterOrEqual } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/game-engine-core.ts';
 
 // NOTE: This test is not deterministic, but if it ever fails, that's a problem
 Deno.test('Cities - must have 2 adjacent sea spaces', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
   const state = engine.getGameState();
   const map = state.map;

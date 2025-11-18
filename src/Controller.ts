@@ -3,7 +3,7 @@
 
 import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
-import { QuestsZeusGameEngine } from './game-engine-core.ts';
+import { GameEngine } from './game-engine-core.ts';
 import type { GameState } from './GameState.ts';
 import { HexMapSVG } from './hexmap-svg.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
@@ -19,13 +19,13 @@ import { ViewGame } from './ViewGame.ts';
 import { ViewWelcome } from './ViewWelcome.ts';
 
 export class Controller {
-  private gameEngine: QuestsZeusGameEngine;
+  private gameEngine: GameEngine;
   private hexMapSVG: HexMapSVG;
-  constructor(engine?: QuestsZeusGameEngine) {
+  constructor(engine?: GameEngine) {
     if (engine) {
       this.gameEngine = engine;
     } else {
-      this.gameEngine = new QuestsZeusGameEngine();
+      this.gameEngine = new GameEngine();
     }
 
     this.hexMapSVG = new HexMapSVG({

@@ -1,4 +1,4 @@
-import type { QuestsZeusGameEngine } from './game-engine-core.ts';
+import type { GameEngine } from './game-engine-core.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { OracleSystem } from './oracle-system.ts';
@@ -11,11 +11,11 @@ import type {
 } from './types.ts';
 
 export class ControllerForHexClicks {
-  public constructor(engine: QuestsZeusGameEngine) {
+  public constructor(engine: GameEngine) {
     this.gameEngine = engine;
   }
 
-  public getEngine(): QuestsZeusGameEngine {
+  public getEngine(): GameEngine {
     return this.gameEngine;
   }
 
@@ -274,5 +274,5 @@ export class ControllerForHexClicks {
     }
   }
 
-  private gameEngine: QuestsZeusGameEngine;
+  private gameEngine: GameEngine;
 }

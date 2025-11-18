@@ -17,7 +17,7 @@ import type {
 } from './types.ts';
 import { COLOR_WHEEL } from './types.ts';
 
-export class QuestsZeusGameEngine {
+export class GameEngine {
   private state: GameState | null = null;
   private gameInitializer: GameInitializer;
   private movementSystem: MovementSystem | null = null;

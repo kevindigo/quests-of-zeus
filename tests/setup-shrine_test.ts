@@ -1,5 +1,5 @@
 import { assertEquals } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/game-engine-core.ts';
 import { HexMap } from '../src/hexmap/HexMap.ts';
 import {
   type HexColor,
@@ -40,7 +40,7 @@ Deno.test('Shrine hex color assignment', () => {
 });
 
 Deno.test('Shrine hex - each has a unique face-down shrine foundation', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
   const state = engine.getGameState();
   const shrineHexes = state.getShrineHexes();
@@ -55,7 +55,7 @@ Deno.test('Shrine hex - each has a unique face-down shrine foundation', () => {
 });
 
 Deno.test('Shrine hex - 3 of each reward', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
   const state = engine.getGameState();
   const shrineHexes = state.getShrineHexes();
@@ -68,7 +68,7 @@ Deno.test('Shrine hex - 3 of each reward', () => {
 });
 
 Deno.test('Shrine hex - each player has no duplicate rewards', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
   const state = engine.getGameState();
   const shrineHexes = state.getShrineHexes();

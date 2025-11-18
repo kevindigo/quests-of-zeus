@@ -1,9 +1,9 @@
-import type { QuestsZeusGameEngine } from './game-engine-core.ts';
+import type { GameEngine } from './game-engine-core.ts';
 import { OracleSystem } from './oracle-system.ts';
 import type { ControllerActionResult, CoreColor } from './types.ts';
 
 export class ControllerForBasicActions {
-  public constructor(engine: QuestsZeusGameEngine) {
+  public constructor(engine: GameEngine) {
     this.gameEngine = engine;
   }
 
@@ -135,5 +135,5 @@ export class ControllerForBasicActions {
     }
   }
 
-  private gameEngine: QuestsZeusGameEngine;
+  private gameEngine: GameEngine;
 }

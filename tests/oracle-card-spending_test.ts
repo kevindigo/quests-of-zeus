@@ -1,10 +1,10 @@
 // Tests for oracle card spending functionality
 
 import { assert, assertEquals, assertFalse } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/game-engine-core.ts';
 
 Deno.test('OracleCardSpending - basic functionality', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const player = engine.getCurrentPlayer();
@@ -21,7 +21,7 @@ Deno.test('OracleCardSpending - basic functionality', () => {
 });
 
 Deno.test('OracleCardSpending - spend for favor', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const player = engine.getCurrentPlayer();
@@ -56,7 +56,7 @@ Deno.test('OracleCardSpending - spend for favor', () => {
 });
 
 Deno.test('OracleCardSpending - cannot use more than one oracle card per turn', () => {
-  const engine = new QuestsZeusGameEngine();
+  const engine = new GameEngine();
   engine.initializeGame();
 
   const player = engine.getCurrentPlayer();

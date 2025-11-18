@@ -1,8 +1,8 @@
 import { assert, assertEquals, assertExists } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/game-engine-core.ts';
 
 Deno.test('Shield resource - players start with 0 shield', () => {
-  const gameEngine = new QuestsZeusGameEngine();
+  const gameEngine = new GameEngine();
   gameEngine.initializeGame();
 
   const gameState = gameEngine.getGameState();
@@ -25,7 +25,7 @@ Deno.test('Shield resource - players start with 0 shield', () => {
 });
 
 Deno.test('Shield resource - shield is serialized in game state', () => {
-  const gameEngine = new QuestsZeusGameEngine();
+  const gameEngine = new GameEngine();
   gameEngine.initializeGame();
 
   const gameState = gameEngine.getGameState();
@@ -44,7 +44,7 @@ Deno.test('Shield resource - shield is serialized in game state', () => {
 });
 
 Deno.test('Shield resource - shield can be modified', () => {
-  const gameEngine = new QuestsZeusGameEngine();
+  const gameEngine = new GameEngine();
   gameEngine.initializeGame();
 
   const gameState = gameEngine.getGameState();

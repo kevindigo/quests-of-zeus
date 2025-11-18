@@ -1,11 +1,11 @@
 // Unit test for recoloring favor calculation in extra range moves
 
 import { assert, assertEquals } from '@std/assert';
-import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/game-engine-core.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
-  const gameEngine = new QuestsZeusGameEngine();
+  const gameEngine = new GameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();
@@ -32,7 +32,7 @@ Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
 });
 
 Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
-  const gameEngine = new QuestsZeusGameEngine();
+  const gameEngine = new GameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();
@@ -81,7 +81,7 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
 });
 
 Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
-  const gameEngine = new QuestsZeusGameEngine();
+  const gameEngine = new GameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();
@@ -125,7 +125,7 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
 });
 
 Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () => {
-  const gameEngine = new QuestsZeusGameEngine();
+  const gameEngine = new GameEngine();
   gameEngine.initializeGame();
 
   const player = gameEngine.getCurrentPlayer();
