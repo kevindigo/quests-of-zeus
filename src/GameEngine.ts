@@ -331,11 +331,7 @@ export class GameEngine {
     const availables = neighbors.filter((cell) => {
       switch (cell.terrain) {
         case 'shrine':
-          return this.isShrineAvailable(
-            player,
-            color,
-            cell,
-          );
+          return this.isShrineAvailable(cell);
         default:
           return false;
       }
@@ -344,11 +340,8 @@ export class GameEngine {
     return availables;
   }
 
-  private isShrineAvailable(
-    player: Player,
-    effectiveColor: CoreColor,
-    cell: HexCell,
-  ): boolean {
+  private isShrineAvailable(cell: HexCell): boolean {
+    const effectiveColor = this.getGameState().getEffectiveSelectedColor();
     if (cell.color !== effectiveColor) {
       return false;
     }
@@ -362,6 +355,7 @@ export class GameEngine {
       return true;
     }
 
+    const player = this.getCurrentPlayer();
     if (shrineHex?.status === 'visible' && shrineHex.owner == player.color) {
       return true;
     }
