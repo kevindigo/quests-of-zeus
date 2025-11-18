@@ -247,13 +247,7 @@ export class GameController {
       const svg = this.hexMapSVG.generateSVG(grid);
 
       hexMapContainer.innerHTML = svg;
-
-      // Execute the interaction script
-      try {
-        this.svgScript();
-      } catch (error) {
-        console.error('Error executing hex map script:', error);
-      }
+      this.addHandlersToSvg();
 
       // Add player markers to the map
       this.addPlayerMarkers(gameState.players);
@@ -272,7 +266,7 @@ export class GameController {
     }
   }
 
-  private svgScript(): void {
+  private addHandlersToSvg(): void {
     // Hex map interaction
     const svg = document.querySelector('.hex-map-svg');
     if (svg) {
