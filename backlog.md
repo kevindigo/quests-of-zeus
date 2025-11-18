@@ -1,7 +1,7 @@
 == Short-term ==
 
-- Split view out of controller
-  - Controller would know about view, but not vice versa
+- Move recolorIntention from Player to GameState
+- Move selectedDie and selectedCard from controller to GameState
 
 == Cosmetic/Usability ==
 

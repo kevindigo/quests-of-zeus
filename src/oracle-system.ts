@@ -41,26 +41,6 @@ export class OracleSystem {
   }
 
   /**
-   * Set recoloring intention for an oracle card during the action phase
-   * For each favor spent, advance the color one position along the color wheel
-   * Color wheel: black → pink → blue → yellow → green → red → black
-   * The favor is not spent until the card is actually used
-   */
-  public setRecolorIntentionForCard(
-    player: Player,
-    favorSpent: number,
-  ): boolean {
-    // Check if player has enough favor
-    if (player.favor < favorSpent) {
-      return false;
-    }
-
-    player.setRecolorIntention(favorSpent);
-
-    return true;
-  }
-
-  /**
    * Clear recoloring intention for a die
    */
   public clearRecolorIntention(player: Player): void {
