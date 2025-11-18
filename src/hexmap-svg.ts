@@ -641,7 +641,7 @@ export class HexMapSVG {
   /**
    * Generate complete SVG for the hex map
    */
-  generateSVG(grid: HexGrid): string {
+  public generateSVG(grid: HexGrid): string {
     const { cellSize } = this.options;
 
     // For hexagon with radius 6, the dimensions are fixed
@@ -699,54 +699,6 @@ export class HexMapSVG {
 
     console.log('SVG generation completed successfully');
     return svgContent;
-  }
-
-  /**
-   * Generate SVG with interactive JavaScript
-   */
-  generateInteractiveSVG(grid: HexGrid): { svg: string; script: string } {
-    const svg = this.generateSVG(grid);
-
-    const script = `
-// Hex map interaction
-const svg = document.querySelector('.hex-map-svg');
-if (svg) {
-  // Add click handlers to hex cells (only outer cells)
-  svg.addEventListener('click', (event) => {
-    const hexCell = event.target.closest('.hex-cell:not(.hex-cell-inner)');
-    if (hexCell) {
-      const q = parseInt(hexCell.dataset.q);
-      const r = parseInt(hexCell.dataset.r);
-      const terrain = hexCell.dataset.terrain;
-      
-      // Remove previous selection
-      document.querySelectorAll('.hex-cell.selected').forEach(cell => {
-        cell.classList.remove('selected');
-      });
-      
-      // Add selection to clicked cell
-      hexCell.classList.add('selected');
-      
-      // Dispatch custom event
-      const cellEvent = new CustomEvent('hexCellClick', {
-        detail: { q, r, terrain, element: hexCell }
-      });
-      document.dispatchEvent(cellEvent);
-      
-      console.log('Hex cell clicked:', { q, r, terrain });
-    }
-  });
-
-  // Add hover effects (only outer cells)
-  svg.addEventListener('mouseover', (event) => {
-    const hexCell = event.target.closest('.hex-cell:not(.hex-cell-inner)');
-    if (hexCell) {
-      hexCell.style.cursor = 'pointer';
-    }
-  });
-}`;
-
-    return { svg, script };
   }
 
   /**
