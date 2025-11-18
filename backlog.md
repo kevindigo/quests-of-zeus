@@ -7,7 +7,7 @@
 - Make monster triangles larger
 - Make statue bar taller
 - Move city icon down slightly
-- Display symbols for accessibility: ⬟🌀♨️🔆🌱🌸 (the pentagon can be black)
+- Display symbols for accessibility: ➰🌀♨️🔆🌱🌸 
   - Black: Cloverleaf 🔲🔳 🌢 ➰ ⧇ ⬟ ⧉ ▣ ▩
   - Blue: @ 🌀
   - Red: Bell U 💢 📛 ♨️

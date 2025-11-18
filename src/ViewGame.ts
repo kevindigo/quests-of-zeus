@@ -89,7 +89,7 @@ export class ViewGame {
             </div>
             <div class="oracle-cards">
               <h4>Oracle Cards</h4>
-              <div class="oracle-cards-container">
+              <div class="cards-container">
                 ${
       currentPlayer.oracleCards.length === 0
         ? '<div class="no-cards">No oracle cards</div>'
@@ -112,9 +112,10 @@ export class ViewGame {
               ${
       selectedCard && currentPlayer.oracleCards.length > 0
         ? `<div class="selected-oracle-card-info">
-                 Selected Oracle Card: <span class="color-swatch" style="background-color: ${
-          this.getColorHex(selectedCard)
-        }"></span>
+                Selected Card: 
+                <span class="color-swatch" 
+                  style="background-color: ${this.getColorHex(selectedCard)}">
+                </span>
                  ${selectedCard}
                  <button id="clearOracleCardSelection" class="action-btn secondary">Clear</button>
                </div>`
