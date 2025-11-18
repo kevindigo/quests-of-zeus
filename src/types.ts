@@ -164,6 +164,12 @@ export class Quest {
   isCompleted: boolean;
 }
 
+export type PossibleShipMove = {
+  q: number;
+  r: number;
+  favorCost: number;
+};
+
 export type ControllerActionResult = {
   success: boolean;
   message: string;

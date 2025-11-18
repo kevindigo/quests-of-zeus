@@ -159,9 +159,9 @@ export class ControllerForHexClicks {
 
     const q = coordinates.q;
     const r = coordinates.r;
-    const targetMove = availableMoves.find((
-      move: { q: number; r: number; favorCost: number },
-    ) => move.q === q && move.r === r);
+    const targetMove = availableMoves.find((move) =>
+      move.q === q && move.r === r
+    );
 
     if (!targetMove) {
       return {

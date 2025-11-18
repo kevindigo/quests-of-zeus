@@ -14,6 +14,7 @@ import type {
   HexColor,
   MonsterHex,
   MoveShipResult,
+  PossibleShipMove,
 } from './types.ts';
 import { COLOR_WHEEL } from './types.ts';
 
@@ -288,8 +289,8 @@ export class GameEngine {
     player: Player,
     effectiveColor: CoreColor,
     maxFavorForMovement: number,
-  ): { q: number; r: number; favorCost: number }[] {
-    const availableMoves: { q: number; r: number; favorCost: number }[] = [];
+  ): PossibleShipMove[] {
+    const availableMoves: PossibleShipMove[] = [];
     for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
       const movementRange = player.getRange() + favorSpent;
       const reachableSeaTiles = this.movementSystem!.getReachableSeaTiles(

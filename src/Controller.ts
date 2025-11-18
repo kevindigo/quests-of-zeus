@@ -354,7 +354,7 @@ export class Controller {
     );
 
     availableMoves.forEach(
-      (move: { q: number; r: number; favorCost: number }) => {
+      (move) => {
         // Highlight the new hex-highlight polygons (centered, won't cover colored border)
         const hexToHighlight = document.querySelector(
           `.hex-highlight[data-q="${move.q}"][data-r="${move.r}"]`,
