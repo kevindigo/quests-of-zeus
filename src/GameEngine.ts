@@ -3,6 +3,7 @@
 
 import { GameInitializer } from './GameInitializer.ts';
 import { GameState } from './GameState.ts';
+import type { HexCell } from './hexmap/HexCell.ts';
 import { MovementSystem } from './movement-system.ts';
 import { OracleSystem } from './oracle-system.ts';
 import { PlayerActions } from './player-actions.ts';
@@ -321,6 +322,51 @@ export class GameEngine {
     }
 
     return availableMoves;
+  }
+
+  public getAvailableLandInteractionsForColor(
+    player: Player,
+    effectiveColor: CoreColor,
+  ): HexCell[] {
+    const shipPosition = player.getShipPosition();
+    const map = this.getGameState().map;
+    const neighbors = map.getNeighbors(shipPosition);
+
+    const availables = neighbors.filter((cell) => {
+      switch (cell.terrain) {
+        case 'shrine':
+          return this.isShrineAvailable(player, effectiveColor, cell);
+        default:
+          return false;
+      }
+    });
+
+    return availables;
+  }
+
+  private isShrineAvailable(
+    player: Player,
+    effectiveColor: CoreColor,
+    cell: HexCell,
+  ): boolean {
+    if (cell.color !== effectiveColor) {
+      return false;
+    }
+
+    const shrineHexes = this.getGameState().getShrineHexes();
+    const shrineHex = shrineHexes.find((hex) => {
+      return hex.q === cell.q && hex.r === cell.r;
+    });
+
+    if (shrineHex?.status === 'hidden') {
+      return true;
+    }
+
+    if (shrineHex?.status === 'visible' && shrineHex.owner == player.color) {
+      return true;
+    }
+
+    return false;
   }
 
   public checkWinCondition(): { winner: Player | null; gameOver: boolean } {

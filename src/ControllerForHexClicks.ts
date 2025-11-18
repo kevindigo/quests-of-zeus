@@ -86,10 +86,11 @@ export class ControllerForHexClicks {
     }
 
     if (terrain === 'shrine') {
-      return {
-        success: false,
-        message: 'Hex click not supported for shrine yet',
-      };
+      return this.handleShrineWithDieOrCard(
+        currentPlayer,
+        coordinates,
+        selectedColor,
+      );
     }
 
     return {
@@ -182,6 +183,34 @@ export class ControllerForHexClicks {
         ),
       };
     }
+  }
+
+  private handleShrineWithDieOrCard(
+    player: Player,
+    coordinates: HexCoordinates,
+    color: CoreColor,
+  ): ControllerActionResult {
+    const cells = this.getEngine().getAvailableLandInteractionsForColor(
+      player,
+      color,
+    );
+    const thisShrine = cells.find((cell) => {
+      const isShrine = cell.terrain === 'shrine';
+      const isCorrectColor = cell.color === color;
+      const at = cell.getCoordinates();
+      const isCorrectPlace = at.q === coordinates.q && at.r === coordinates.r;
+      return (isShrine && isCorrectColor && isCorrectPlace);
+    });
+    if (!thisShrine) {
+      return {
+        success: false,
+        message: 'That shrine is not available',
+      };
+    }
+    return {
+      success: false,
+      message: 'Not implemented yet',
+    };
   }
 
   /**
