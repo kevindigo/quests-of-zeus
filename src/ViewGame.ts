@@ -244,15 +244,8 @@ export class ViewGame {
     selectedDie: CoreColor | null,
     selectedCard: CoreColor | null,
   ): string {
-    const currentPlayer = this.gameState.getCurrentPlayer();
-
     switch (this.gameState.getPhase()) {
       case 'action': {
-        const position = currentPlayer.getShipPosition();
-        const currentCell = this.gameState.map.getCell(
-          position,
-        );
-
         let actions = '';
 
         const selectedColor = selectedDie || selectedCard;
@@ -263,34 +256,6 @@ export class ViewGame {
             <button id="drawOracleCard" class="action-btn">Draw Oracle Card</button>
             <p style="font-size: 0.9rem; opacity: 0.8;">Spend selected resource for favor or to draw an oracle card</p>
           </div>`;
-
-          // Recolor options for selected resource
-          // Note: Recolor options are now displayed in the player info panel as radio buttons
-          // The favor will be spent when the resource is actually used for movement or other actions
-
-          if (currentCell?.terrain === 'offerings') {
-            actions +=
-              `<button id="collectOffering" class="action-btn">Collect Offering</button>`;
-          }
-          if (currentCell?.terrain === 'monsters') {
-            actions +=
-              `<button id="fightMonster" class="action-btn">Fight Monster</button>`;
-          }
-          if (currentCell?.terrain === 'temple') {
-            actions +=
-              `<button id="buildTemple" class="action-btn">Build Temple</button>`;
-          }
-          if (currentCell?.terrain === 'statue') {
-            actions +=
-              `<button id="buildStatue" class="action-btn">Build Statue</button>`;
-          }
-          if (currentCell?.terrain === 'shrine') {
-            actions +=
-              `<button id="completeShrineQuest" class="action-btn">Complete Shrine Quest</button>`;
-          }
-          if (currentCell?.terrain === 'city') {
-            // not implemented yet
-          }
         }
 
         if (!actions) {
