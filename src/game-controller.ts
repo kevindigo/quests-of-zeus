@@ -21,9 +21,6 @@ import { ViewWelcome } from './ViewWelcome.ts';
 export class GameController {
   private gameEngine: QuestsZeusGameEngine;
   private hexMapSVG: HexMapSVG;
-  private selectedDieColor: CoreColor | null = null;
-  private selectedOracleCardColor: CoreColor | null = null;
-
   constructor(engine?: QuestsZeusGameEngine) {
     if (engine) {
       this.gameEngine = engine;
@@ -672,5 +669,21 @@ export class GameController {
     actionButtons.forEach((button: Element) => {
       (button as HTMLButtonElement).disabled = true;
     });
+  }
+
+  private get selectedDieColor(): CoreColor | null {
+    return this.gameEngine.getGameState().getSelectedDieColor();
+  }
+
+  private set selectedDieColor(value: CoreColor | null) {
+    this.gameEngine.getGameState().setSelectedDieColor(value);
+  }
+
+  public get selectedOracleCardColor(): CoreColor | null {
+    return this.gameEngine.getGameState().getSelectedOracleCardColor();
+  }
+
+  public set selectedOracleCardColor(value: CoreColor | null) {
+    this.gameEngine.getGameState().setSelectedOracleCardColor(value);
   }
 }

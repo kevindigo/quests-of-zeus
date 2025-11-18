@@ -2,6 +2,7 @@ import { HexMap, type HexMapJson } from './hexmap/HexMap.ts';
 import { Player, type PlayerJson } from './Player.ts';
 import type {
   CityHex,
+  CoreColor,
   CubeHex,
   MonsterHex,
   Phase,
@@ -21,6 +22,8 @@ export type GameStateJson = {
   cityHexes: CityHex[];
   statueHexes: StatueHex[];
   shrineHexes: ShrineHex[];
+  selectedDieColor: CoreColor | null;
+  selectedOracleCardColor: CoreColor | null;
 };
 
 export class GameState {
@@ -41,6 +44,8 @@ export class GameState {
     this.cityHexes = [];
     this.statueHexes = [];
     this.shrineHexes = [];
+    this.selectedDieColor = null;
+    this.selectedOracleCardColor = null;
   }
 
   public static fromJson(rawJson: unknown): GameState {
@@ -57,6 +62,8 @@ export class GameState {
     state.cityHexes = json.cityHexes;
     state.statueHexes = json.statueHexes;
     state.shrineHexes = json.shrineHexes;
+    state.selectedDieColor = json.selectedDieColor;
+    state.selectedOracleCardColor = json.selectedOracleCardColor;
     return state;
   }
 
@@ -75,6 +82,8 @@ export class GameState {
       cityHexes: this.cityHexes,
       statueHexes: this.statueHexes,
       shrineHexes: this.shrineHexes,
+      selectedDieColor: this.selectedDieColor,
+      selectedOracleCardColor: this.selectedOracleCardColor,
     };
   }
 
@@ -179,6 +188,22 @@ export class GameState {
     this.recoloringIntentionByPlayerId[playerId] = 0;
   }
 
+  public getSelectedDieColor(): CoreColor | null {
+    return this.selectedDieColor;
+  }
+
+  public setSelectedDieColor(color: CoreColor | null): void {
+    this.selectedDieColor = color;
+  }
+
+  public getSelectedOracleCardColor(): CoreColor | null {
+    return this.selectedOracleCardColor;
+  }
+
+  public setSelectedOracleCardColor(color: CoreColor | null): void {
+    this.selectedOracleCardColor = color;
+  }
+
   public map: HexMap;
   public players: Player[];
   private currentPlayerIndex: number;
@@ -190,4 +215,6 @@ export class GameState {
   private cityHexes: CityHex[];
   private statueHexes: StatueHex[];
   private shrineHexes: ShrineHex[];
+  private selectedDieColor: CoreColor | null;
+  private selectedOracleCardColor: CoreColor | null;
 }

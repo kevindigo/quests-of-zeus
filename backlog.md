@@ -1,8 +1,5 @@
 == Short-term ==
 
-- Move recolorIntention from Player to GameState
-- Move selectedDie and selectedCard from controller to GameState
-
 == Cosmetic/Usability ==
 
 - Display colors for cube and monster quests
