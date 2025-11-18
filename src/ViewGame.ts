@@ -3,6 +3,10 @@ import type { Player } from './Player.ts';
 import { COLOR_WHEEL, type CoreColor } from './types.ts';
 
 export class ViewGame {
+  public constructor(gameState: GameState) {
+    this.gameState = gameState;
+  }
+
   public getPlayerPanelContents(
     currentPlayer: Player,
     selectedDie: CoreColor | null,
@@ -133,7 +137,8 @@ export class ViewGame {
         <h4>Recolor die or card`;
 
     // Add "No Recolor" option
-    const hasRecolorIntention = player.getRecolorIntention() > 0;
+    const hasRecolorIntention =
+      this.gameState.getRecolorIntention(player.id) > 0;
 
     options += `
       <div class="recolor-option" style="margin-bottom: 0.5rem;">
@@ -158,7 +163,8 @@ export class ViewGame {
       const newIndex = (currentIndex + favorCost) % COLOR_WHEEL.length;
       const newColor = COLOR_WHEEL[newIndex]!;
 
-      const isSelected = player.getRecolorIntention() === favorCost;
+      const isSelected =
+        this.gameState.getRecolorIntention(player.id) === favorCost;
 
       options += `
         <div class="recolor-option" style="margin-bottom: 0.5rem;">
@@ -183,31 +189,29 @@ export class ViewGame {
   }
 
   public getPhasePanelContents(
-    state: GameState,
     selectedDie: CoreColor | null,
     selectedCard: CoreColor | null,
   ): string {
     return `
       <div class="phase-info">
-        <h3>Current Phase: ${state.getPhase().toUpperCase()}</h3>
+        <h3>Current Phase: ${this.gameState.getPhase().toUpperCase()}</h3>
         <div class="phase-actions">
-          ${this.getPhaseActionsContents(state, selectedDie, selectedCard)}
+          ${this.getPhaseActionsContents(selectedDie, selectedCard)}
         </div>
       </div>
     `;
   }
 
   private getPhaseActionsContents(
-    gameState: GameState,
     selectedDie: CoreColor | null,
     selectedCard: CoreColor | null,
   ): string {
-    const currentPlayer = gameState.getCurrentPlayer();
+    const currentPlayer = this.gameState.getCurrentPlayer();
 
-    switch (gameState.getPhase()) {
+    switch (this.gameState.getPhase()) {
       case 'action': {
         const position = currentPlayer.getShipPosition();
-        const currentCell = gameState.map.getCell(
+        const currentCell = this.gameState.map.getCell(
           position,
         );
 
@@ -276,4 +280,6 @@ export class ViewGame {
     };
     return colors[color] || '#333333';
   }
+
+  private gameState: GameState;
 }

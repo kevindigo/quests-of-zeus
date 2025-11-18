@@ -1,4 +1,5 @@
 import type { QuestsZeusGameEngine } from './game-engine-core.ts';
+import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { OracleSystem } from './oracle-system.ts';
 import type { Player } from './Player.ts';
@@ -16,6 +17,10 @@ export class ControllerForHexClicks {
 
   public getEngine(): QuestsZeusGameEngine {
     return this.gameEngine;
+  }
+
+  private getState(): GameState {
+    return this.getEngine().getGameState();
   }
 
   public handleHexClick(
@@ -104,7 +109,7 @@ export class ControllerForHexClicks {
       null,
       selectedColor,
       selectedColor,
-      currentPlayer.getRecolorIntention(),
+      this.getState().getRecolorIntention(currentPlayer.id),
     );
   }
 
@@ -127,7 +132,7 @@ export class ControllerForHexClicks {
       selectedColor,
       null,
       selectedColor,
-      currentPlayer.getRecolorIntention(),
+      this.getState().getRecolorIntention(currentPlayer.id),
     );
   }
 
@@ -199,10 +204,10 @@ export class ControllerForHexClicks {
         targetQ: q,
         targetR: r,
         dieColor: selectedDieColor,
-        favorSpent: currentPlayer.getRecolorIntention(),
+        favorSpent: this.getState().getRecolorIntention(currentPlayer.id),
         playerFavor: currentPlayer.favor,
         playerDice: currentPlayer.oracleDice,
-        recolorIntention: currentPlayer.getRecolorIntention(),
+        recolorIntention: this.getState().getRecolorIntention(currentPlayer.id),
         moveResult,
       });
 

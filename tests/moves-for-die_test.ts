@@ -15,7 +15,7 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  player.setRecolorIntention(0);
+  gameEngine.getGameState().setRecolorIntention(player.id, 0);
 
   // Test getting moves for a specific die color
   const movesForBlack = gameEngine.getAvailableMovesForColor(
@@ -92,7 +92,7 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  player.setRecolorIntention(0);
+  gameState.setRecolorIntention(player.id, 0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
   const recoloringSuccess = gameState.setRecolorIntention(
@@ -137,7 +137,7 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
   player.favor = 1; // Low favor
 
   // Clear any recoloring intentions that might exist from initialization
-  player.setRecolorIntention(0);
+  gameEngine.getGameState().setRecolorIntention(player.id, 0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
   const recoloringSuccess = gameEngine.getGameState().setRecolorIntention(
@@ -176,7 +176,7 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  player.setRecolorIntention(0);
+  gameState.setRecolorIntention(player.id, 0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
   const recoloringSuccess = gameState.setRecolorIntention(

@@ -188,8 +188,8 @@ export class QuestsZeusGameEngine {
       this.state!.players[this.state!.getCurrentPlayerIndex()];
     if (currentPlayer) {
       currentPlayer.usedOracleCardThisTurn = false;
-      currentPlayer.setRecolorIntention(0);
       currentPlayer.oracleDice = newDice;
+      this.state!.clearRecolorIntention(currentPlayer.id);
     }
 
     const nextPlayerIndex = (this.state!.getCurrentPlayerIndex() + 1) %

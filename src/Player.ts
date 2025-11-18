@@ -15,7 +15,6 @@ export type PlayerJson = {
   oracleDice: CoreColor[];
   favor: number;
   shield: number;
-  recolorIntention: number;
   oracleCards: CoreColor[];
   usedOracleCardThisTurn: boolean;
   quests: Quest[];
@@ -41,7 +40,6 @@ export class Player {
     };
     this.oracleCards = [];
     this.oracleDice = [];
-    this.recolorIntention = 0;
     this.favor = 0;
     this.shield = 0;
     this.usedOracleCardThisTurn = false;
@@ -58,7 +56,6 @@ export class Player {
     player.storage = json.storage;
     player.oracleCards = json.oracleCards;
     player.oracleDice = json.oracleDice;
-    player.recolorIntention = json.recolorIntention;
     player.favor = json.favor;
     player.shield = json.shield;
     player.usedOracleCardThisTurn = json.usedOracleCardThisTurn;
@@ -76,7 +73,6 @@ export class Player {
       oracleDice: this.oracleDice,
       favor: this.favor,
       shield: this.shield,
-      recolorIntention: this.recolorIntention,
       oracleCards: this.oracleCards,
       usedOracleCardThisTurn: this.usedOracleCardThisTurn,
       quests: this.quests,
@@ -94,14 +90,6 @@ export class Player {
 
   public getRange(): number {
     return 3;
-  }
-
-  public getRecolorIntention(): number {
-    return this.recolorIntention;
-  }
-
-  public setRecolorIntention(newIntention: number): void {
-    this.recolorIntention = newIntention;
   }
 
   public getQuests(): Quest[] {
@@ -122,7 +110,6 @@ export class Player {
   public oracleDice: CoreColor[];
   public favor: number;
   public shield: number;
-  private recolorIntention: number;
   public oracleCards: CoreColor[];
   public usedOracleCardThisTurn: boolean;
   private quests: Quest[];

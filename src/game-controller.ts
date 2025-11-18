@@ -49,7 +49,7 @@ export class GameController {
     this.selectedOracleCardColor = null;
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     if (currentPlayer) {
-      currentPlayer.setRecolorIntention(0);
+      this.gameEngine.getGameState().clearRecolorIntention(currentPlayer.id);
     }
   }
 
@@ -93,7 +93,7 @@ export class GameController {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     console.log(`selectResource called: ${resourceType}, ${resourceColor}`);
 
-    currentPlayer.setRecolorIntention(0);
+    this.gameEngine.getGameState().clearRecolorIntention(currentPlayer.id);
     if (resourceType === 'die') {
       if (this.selectDieColor(resourceColor)) {
         this.showMessage(`Selected ${resourceColor} die`);
@@ -172,7 +172,7 @@ export class GameController {
     // Get current player for display
     const currentPlayer = gameState.getCurrentPlayer();
 
-    const view = new ViewGame();
+    const view = new ViewGame(gameState);
     playerInfoContainer.innerHTML = view.getPlayerPanelContents(
       currentPlayer,
       this.selectedDieColor,
@@ -331,7 +331,7 @@ export class GameController {
 
     const effectiveColor = OracleSystem.applyRecolor(
       selectedColor,
-      currentPlayer.getRecolorIntention(),
+      gameState.getRecolorIntention(currentPlayer.id),
     );
 
     // Get available moves for the selected die color and available favor
@@ -393,9 +393,8 @@ export class GameController {
     const phaseDisplay = document.getElementById('phaseDisplay');
     if (!phaseDisplay) return;
 
-    const view = new ViewGame();
+    const view = new ViewGame(state);
     phaseDisplay.innerHTML = view.getPhasePanelContents(
-      state,
       this.selectedDieColor,
       this.selectedOracleCardColor,
     );

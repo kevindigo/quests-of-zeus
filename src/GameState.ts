@@ -13,6 +13,7 @@ export type GameStateJson = {
   map: HexMapJson;
   players: PlayerJson[];
   currentPlayerIndex: number;
+  recoloringIntentionByPlayerId: number[];
   round: number;
   phase: Phase;
   cubeHexes: CubeHex[];
@@ -30,6 +31,9 @@ export class GameState {
     this.map = map;
     this.players = players;
     this.currentPlayerIndex = 0;
+    this.recoloringIntentionByPlayerId = players.map(() => {
+      return 0;
+    });
     this.round = 1;
     this.phase = 'setup';
     this.cubeHexes = [];
@@ -45,6 +49,7 @@ export class GameState {
     const players = json.players.map((player) => Player.fromJson(player));
     const state = new GameState(map, players);
     state.currentPlayerIndex = json.currentPlayerIndex;
+    state.recoloringIntentionByPlayerId = json.recoloringIntentionByPlayerId;
     state.round = json.round;
     state.phase = json.phase;
     state.cubeHexes = json.cubeHexes;
@@ -62,6 +67,7 @@ export class GameState {
         return player.toJson();
       }),
       currentPlayerIndex: this.currentPlayerIndex,
+      recoloringIntentionByPlayerId: this.recoloringIntentionByPlayerId,
       round: this.round,
       phase: this.phase,
       cubeHexes: this.cubeHexes,
@@ -152,6 +158,10 @@ export class GameState {
     this.shrineHexes = hexes;
   }
 
+  public getRecolorIntention(playerId: number): number {
+    return this.recoloringIntentionByPlayerId[playerId] || 0;
+  }
+
   public setRecolorIntention(
     playerId: number,
     favorSpent: number,
@@ -161,18 +171,18 @@ export class GameState {
       return false;
     }
 
-    player.setRecolorIntention(favorSpent);
+    this.recoloringIntentionByPlayerId[playerId] = favorSpent;
     return true;
   }
 
   public clearRecolorIntention(playerId: number): void {
-    const player = this.getPlayer(playerId);
-    player.setRecolorIntention(0);
+    this.recoloringIntentionByPlayerId[playerId] = 0;
   }
 
   public map: HexMap;
   public players: Player[];
   private currentPlayerIndex: number;
+  private recoloringIntentionByPlayerId: number[];
   private round: number;
   private phase: Phase;
   private cubeHexes: CubeHex[];

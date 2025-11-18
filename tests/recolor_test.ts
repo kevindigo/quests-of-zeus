@@ -15,7 +15,7 @@ Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  player.setRecolorIntention(0);
+  gameEngine.getGameState().setRecolorIntention(player.id, 0);
 
   // Test: Set recoloring intention for black die → pink (1 favor cost)
   const recoloringSuccess = gameEngine.getGameState().setRecolorIntention(
@@ -42,7 +42,7 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  player.setRecolorIntention(0);
+  gameEngine.getGameState().setRecolorIntention(player.id, 0);
 
   const gameState = gameEngine.getGameState();
   const recoloringSuccess = gameState.setRecolorIntention(
@@ -91,7 +91,7 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
   player.favor = 3; // Low favor
 
   // Clear any recoloring intentions that might exist from initialization
-  player.setRecolorIntention(0);
+  gameEngine.getGameState().setRecolorIntention(player.id, 0);
 
   // Set a high recoloring cost that would make some moves unaffordable
   // Player has 3 favor, recoloring black → blue costs 2 favor
@@ -135,7 +135,7 @@ Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () =>
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  player.setRecolorIntention(0);
+  gameEngine.getGameState().setRecolorIntention(player.id, 0);
 
   const gameState = gameEngine.getGameState();
   gameState.clearRecolorIntention(player.id);
