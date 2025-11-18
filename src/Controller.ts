@@ -3,7 +3,7 @@
 
 import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
-import { GameEngine } from './game-engine-core.ts';
+import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import { HexMapSVG } from './hexmap-svg.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';

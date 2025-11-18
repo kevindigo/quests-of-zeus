@@ -1,7 +1,7 @@
 // Tests for oracle card spending functionality
 
 import { assert, assertEquals, assertFalse } from '@std/assert';
-import { GameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 
 Deno.test('OracleCardSpending - basic functionality', () => {
   const engine = new GameEngine();

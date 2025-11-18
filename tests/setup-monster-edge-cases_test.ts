@@ -4,7 +4,7 @@
  */
 
 import { assert, assertEquals } from '@std/assert';
-import { GameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 import { COLOR_WHEEL } from '../src/types.ts';
 
 // Test algorithm performance and timing

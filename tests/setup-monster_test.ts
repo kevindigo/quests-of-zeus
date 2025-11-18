@@ -5,7 +5,7 @@
  */
 
 import { assert, assertEquals } from '@std/assert';
-import { GameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 import { COLOR_WHEEL } from '../src/types.ts';
 
 // Helper function to run distribution tests

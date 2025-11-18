@@ -1,7 +1,7 @@
 // Tests for the two-step action phase implementation
 
 import { assert, assertEquals } from '@std/assert';
-import { GameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 
 Deno.test('Controller - die selection', () => {
   // Test that selectedDieColor starts as null

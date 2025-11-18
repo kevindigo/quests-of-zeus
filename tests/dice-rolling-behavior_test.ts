@@ -1,7 +1,7 @@
 // Tests for the new dice rolling behavior (dice rolled at end of turn)
 
 import { assert, assertEquals, assertExists } from '@std/assert';
-import { GameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 import type { HexColor } from '../src/types.ts';
 
 Deno.test('DiceRolling - all players start with dice rolled', () => {

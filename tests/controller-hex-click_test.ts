@@ -1,6 +1,6 @@
 import { assertFalse, assertStringIncludes } from '@std/assert';
 import { ControllerForHexClicks } from '../src/ControllerForHexClicks.ts';
-import { GameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 import type { GameState } from '../src/GameState.ts';
 import { type HexCoordinates, HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { Player } from '../src/Player.ts';

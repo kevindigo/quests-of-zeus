@@ -1,4 +1,4 @@
-import type { GameEngine } from './game-engine-core.ts';
+import type { GameEngine } from './GameEngine.ts';
 import { OracleSystem } from './oracle-system.ts';
 import type { ControllerActionResult, CoreColor } from './types.ts';
 

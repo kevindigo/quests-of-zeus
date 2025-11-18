@@ -1,7 +1,7 @@
 import { assert } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
-import { GameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 import type { HexColor } from '../src/types.ts';
 
 Deno.test('Quests - Each player has 12 quests, not yet completed', () => {

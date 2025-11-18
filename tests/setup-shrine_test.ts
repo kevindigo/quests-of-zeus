@@ -1,5 +1,5 @@
 import { assertEquals } from '@std/assert';
-import { GameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 import { HexMap } from '../src/hexmap/HexMap.ts';
 import {
   type HexColor,

@@ -1,4 +1,4 @@
-import type { GameEngine } from './game-engine-core.ts';
+import type { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { OracleSystem } from './oracle-system.ts';

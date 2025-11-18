@@ -1,5 +1,5 @@
 import { assertEquals } from '@std/assert/equals';
-import { GameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 import { COLOR_WHEEL, type CoreColor } from '../src/types.ts';
 
 Deno.test('Statue base distribution - 6 with 3 on each', () => {

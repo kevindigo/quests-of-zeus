@@ -5,7 +5,7 @@ import {
   assertStringIncludes,
 } from '@std/assert';
 import { ControllerForBasicActions } from '../src/ControllerForBasicActions.ts';
-import { GameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 import type { GameState } from '../src/GameState.ts';
 import type { Player } from '../src/Player.ts';
 import type { ControllerActionResult } from '../src/types.ts';

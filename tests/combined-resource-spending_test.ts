@@ -3,7 +3,7 @@
 
 import { assert, assertEquals } from '@std/assert';
 import { Controller } from '../src/Controller.ts';
-import { GameEngine } from '../src/game-engine-core.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('CombinedResourceSpending - select die for favor gain', () => {
