@@ -405,7 +405,7 @@ export class GameEngine {
 
     if (shrineHex.status === 'hidden') {
       if (shrineHex.owner === player.color) {
-        return this.completeShrineQuest(player, shrineHex);
+        return this.completeShrineQuest(shrineHex);
       }
     }
 
@@ -416,9 +416,9 @@ export class GameEngine {
   }
 
   private completeShrineQuest(
-    player: Player,
     shrineHex: ShrineHex,
   ): ShrineResult {
+    const player = this.getCurrentPlayer();
     if (shrineHex.status !== 'hidden' || shrineHex.owner !== player.color) {
       return {
         success: false,
