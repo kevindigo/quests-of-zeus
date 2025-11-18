@@ -244,9 +244,7 @@ export class GameController {
         statueHexes: statueHexes,
       });
 
-      const svg = this.hexMapSVG.generateSVG(grid);
-
-      hexMapContainer.innerHTML = svg;
+      hexMapContainer.innerHTML = this.hexMapSVG.generateSVG(grid);
       this.addHandlersToSvg();
 
       // Add player markers to the map
