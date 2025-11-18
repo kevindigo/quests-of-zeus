@@ -356,28 +356,15 @@ export class Controller {
     availableMoves.forEach(
       (move: { q: number; r: number; favorCost: number }) => {
         // Highlight the new hex-highlight polygons (centered, won't cover colored border)
-        const highlightCell = document.querySelector(
+        const hexToHighlight = document.querySelector(
           `.hex-highlight[data-q="${move.q}"][data-r="${move.r}"]`,
         );
 
-        if (highlightCell) {
+        if (hexToHighlight) {
           if (move.favorCost > 0) {
-            highlightCell.classList.add('available-move-favor');
-            // Add tooltip to show required die color and favor cost
-            highlightCell.setAttribute(
-              'title',
-              `Move using ${effectiveColor} (costs ${move.favorCost} favor)`,
-            );
-            console.log(
-              `Added favor highlight to (${move.q}, ${move.r}) with cost ${move.favorCost}`,
-            );
+            hexToHighlight.classList.add('available-move-favor');
           } else {
-            highlightCell.classList.add('available-move');
-            // Add tooltip to show required die color
-            highlightCell.setAttribute(
-              'title',
-              `Move using ${effectiveColor}`,
-            );
+            hexToHighlight.classList.add('available-move');
           }
         } else {
           console.warn(
