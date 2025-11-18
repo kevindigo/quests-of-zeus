@@ -167,18 +167,6 @@ export class QuestsZeusGameEngine {
     return this.oracleSystem!.setRecolorIntention(player, favorSpent);
   }
 
-  public setRecolorIntentionForCard(
-    playerId: number,
-    favorSpent: number,
-  ): boolean {
-    this.ensureInitialized();
-    const player = this.getValidPlayer(playerId);
-    return this.oracleSystem!.setRecolorIntention(
-      player,
-      favorSpent,
-    );
-  }
-
   public clearRecolorIntention(playerId: number): void {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
