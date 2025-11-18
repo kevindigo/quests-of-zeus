@@ -164,13 +164,18 @@ export class QuestsZeusGameEngine {
   ): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
-    return this.oracleSystem!.setRecolorIntention(player, favorSpent);
+    if (player.favor < favorSpent) {
+      return false;
+    }
+
+    player.setRecolorIntention(favorSpent);
+    return true;
   }
 
   public clearRecolorIntention(playerId: number): void {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
-    this.oracleSystem!.clearRecolorIntention(player);
+    player.setRecolorIntention(0);
   }
 
   public canPlaceStatueOnCity(_playerId: number): boolean {
