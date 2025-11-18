@@ -2,7 +2,7 @@
 // Generates an SVG representation of the hex map
 
 import type { HexCell } from './hexmap/HexCell.ts';
-import type { HexGrid } from './hexmap/HexGrid.ts';
+import type { HexCoordinates, HexGrid } from './hexmap/HexGrid.ts';
 import {
   generateCityIcon,
   generateCloudsIcon,
@@ -13,6 +13,7 @@ import {
   generateTempleIcon,
   generateZeusIcon,
 } from './icons-svg.ts';
+import type { Player } from './Player.ts';
 import type {
   CityHex,
   CoreColor,
@@ -33,6 +34,7 @@ export interface HexMapSVGOptions {
   cubeHexes?: CubeHex[];
   monsterHexes?: MonsterHex[];
   statueHexes?: StatueHex[];
+  players?: Player[];
 }
 
 // Interface for icon generation options
@@ -56,6 +58,7 @@ export class HexMapSVG {
       cubeHexes: options.cubeHexes || [],
       monsterHexes: options.monsterHexes || [],
       statueHexes: options.statueHexes || [],
+      players: options.players || [],
     };
   }
 
@@ -316,6 +319,13 @@ export class HexMapSVG {
         cellContent += generateStatueBasesIcon({ centerX, centerY, cellSize });
       }
     }
+
+    cellContent += this.getPlayerMarkers(
+      cell.getCoordinates(),
+      centerX,
+      centerY,
+      cellSize,
+    );
 
     // Add coordinates if enabled
     if (showCoordinates) {
@@ -612,6 +622,43 @@ export class HexMapSVG {
       // Return empty string on error - the fallback generic icon will be used
       return '';
     }
+  }
+
+  private getPlayerMarkers(
+    cellCoordinates: HexCoordinates,
+    x: number,
+    y: number,
+    cellSize: number,
+  ): string {
+    const players = this.options.players;
+    let content = '';
+    if (!players) {
+      return content;
+    }
+
+    const radius = cellSize / 4;
+    players.forEach((player) => {
+      const position = player.getShipPosition();
+      if (
+        cellCoordinates.q === position.q && cellCoordinates.r === position.r
+      ) {
+        const id = player.id;
+        const horizontal = (id % 2) * 2 - 1;
+        const vertical = Math.floor(id / 2) * 2 - 1;
+        const cx = x + (horizontal * radius * 1.2);
+        const cy = y + (vertical * radius * 1.2);
+        content += `<circle 
+            cx = "${cx}"
+            cy = "${cy}"
+            r = "${radius}"
+            stroke="${'black'}" 
+            stroke-width="${1}"
+            fill="${player.color}"
+        />`;
+      }
+    });
+
+    return content;
   }
 
   /**

@@ -8,7 +8,6 @@ import type { GameState } from './GameState.ts';
 import { HexMapSVG } from './hexmap-svg.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { OracleSystem } from './oracle-system.ts';
-import type { Player } from './Player.ts';
 import type {
   CityHex,
   CoreColor,
@@ -242,13 +241,11 @@ export class GameController {
         cubeHexes: cubeHexes,
         monsterHexes: monsterHexes,
         statueHexes: statueHexes,
+        players: gameState.players,
       });
 
       hexMapContainer.innerHTML = this.hexMapSVG.generateSVG(grid);
       this.addHandlersToSvg();
-
-      // Add player markers to the map
-      this.addPlayerMarkers(gameState.players);
 
       // Highlight available moves
       if (gameState.getPhase() === 'action') {
@@ -322,74 +319,6 @@ export class GameController {
         }
       });
     }
-  }
-
-  private addPlayerMarkers(players: Player[]): void {
-    players.forEach((player) => {
-      const position = player.getShipPosition();
-      const q = position.q;
-      const r = position.r;
-      const cell = document.querySelector(`[data-q="${q}"][data-r="${r}"]`);
-      if (cell) {
-        const rect = cell.getBoundingClientRect();
-        const svg = cell.closest('svg');
-        if (svg) {
-          const point = svg.createSVGPoint();
-          const quadrant = player.id;
-          let offsetX = 0;
-          let offsetY = 0;
-
-          // Reduce the offset to move dots closer to center (from 1/4 to 1/6 of the width/height)
-          const offsetFactor = 6;
-
-          switch (quadrant) {
-            case 0: // Upper left
-              offsetX = -rect.width / offsetFactor;
-              offsetY = -rect.height / offsetFactor;
-              break;
-            case 1: // Upper right
-              offsetX = rect.width / offsetFactor;
-              offsetY = -rect.height / offsetFactor;
-              break;
-            case 2: // Lower left
-              offsetX = -rect.width / offsetFactor;
-              offsetY = rect.height / offsetFactor;
-              break;
-            case 3: // Lower right
-              offsetX = rect.width / offsetFactor;
-              offsetY = rect.height / offsetFactor;
-              break;
-          }
-
-          point.x = rect.left + rect.width / 2 + offsetX;
-          point.y = rect.top + rect.height / 2 + offsetY;
-          const svgPoint = point.matrixTransform(
-            svg.getScreenCTM()!.inverse(),
-          );
-
-          const marker = document.createElementNS(
-            'http://www.w3.org/2000/svg',
-            'circle',
-          );
-          marker.setAttribute('cx', svgPoint.x.toString());
-          marker.setAttribute('cy', svgPoint.y.toString());
-          marker.setAttribute('r', '8');
-          marker.setAttribute('fill', this.getColorHex(player.color));
-          marker.setAttribute('stroke', '#fff');
-          marker.setAttribute('stroke-width', '2');
-          marker.setAttribute('class', 'player-marker');
-          marker.setAttribute('data-player-id', player.id.toString());
-
-          svg.appendChild(marker);
-        } else {
-          console.warn(
-            `Could not find SVG container for players at (${q}, ${r})`,
-          );
-        }
-      } else {
-        console.warn(`Could not find cell for players at (${q}, ${r})`);
-      }
-    });
   }
 
   private highlightAvailableMoves(gameState: GameState): void {
@@ -812,17 +741,5 @@ export class GameController {
     actionButtons.forEach((button: Element) => {
       (button as HTMLButtonElement).disabled = true;
     });
-  }
-
-  private getColorHex(color: string): string {
-    const colors: Record<string, string> = {
-      'red': '#DC143C',
-      'pink': '#ff69b4',
-      'blue': '#0000ff',
-      'black': '#000000',
-      'green': '#008000',
-      'yellow': '#ffff00',
-    };
-    return colors[color] || '#333333';
   }
 }
