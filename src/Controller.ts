@@ -246,7 +246,7 @@ export class Controller {
 
       // Highlight available moves
       if (gameState.getPhase() === 'action') {
-        this.highlightAvailableMoves(gameState);
+        this.highlightAvailableHexElements(gameState);
       }
     } catch (error) {
       console.error('Error generating SVG:', error);
@@ -318,7 +318,7 @@ export class Controller {
     }
   }
 
-  private highlightAvailableMoves(gameState: GameState): void {
+  private highlightAvailableHexElements(gameState: GameState): void {
     const currentPlayer = gameState.getCurrentPlayer();
 
     const selectedColor = this.selectedDieColor || this.selectedOracleCardColor;
