@@ -19,12 +19,13 @@ export class ViewGame {
             <h3>Current Player: ${currentPlayer.name}</h3>
             <div class="player-stats">
               <div><strong>Color:</strong> 
-                <span class="color-swatch" style="background-color: ${playerColor}">
+                <span class="color-swatch" 
+                style="background-color: ${playerColor}">&nbsp;
                 ${
       currentPlayer.color.charAt(0).toUpperCase() +
       currentPlayer.color.slice(1)
     }
-                </span>
+                &nbsp;</span>
               </div>
               <div><strong>Favor:</strong> ${currentPlayer.favor}</div>
               <div><strong>Shield:</strong> ${currentPlayer.shield}</div>
@@ -62,7 +63,7 @@ export class ViewGame {
         }" 
                          style="background-color: ${this.getColorHex(color)}"
                          data-die-color="${color}">
-                    ${color.charAt(0).toUpperCase()}
+                    ${this.getSymbol(color)}
                   </div>`;
       }).join('')
     }
@@ -75,10 +76,12 @@ export class ViewGame {
               ${
       selectedDie && currentPlayer.oracleDice.length > 0
         ? `<div class="selected-die-info">
-                 Selected: <span class="color-swatch" style="background-color: ${
+                Selected: 
+                <span class="color-swatch" 
+                style="background-color: ${
           this.getColorHex(selectedDie)
-        }"></span>
-                 ${selectedDie}
+        }">      ${selectedDie}
+                </span>
                  <button id="clearDieSelection" class="action-btn secondary">Clear</button>
                </div>`
         : ''
@@ -101,7 +104,7 @@ export class ViewGame {
                            style="background-color: ${this.getColorHex(color)}" 
                            title="Oracle Card: ${color}"
                            data-oracle-card-color="${color}">
-                    ${color.charAt(0).toUpperCase()}
+                    ${this.getSymbol(color)}
                   </div>`;
       }).join('')
     }
@@ -139,12 +142,13 @@ export class ViewGame {
       return quest.isCompleted;
     });
     const completedCount = completed.length;
-    const colors = quests.map((quest) => {
-      return this.getSymbol(quest.color);
+    const questTexts = quests.map((quest) => {
+      const background = this.getColorHex(quest.color);
+      const symbol = this.getSymbol(quest.color);
+      return `<span style="background-color: ${background}">${symbol}</span>`;
     });
-    const details = `<span style="background-color: white;">${
-      colors.join('')
-    }</span>`;
+
+    const details = questTexts.join('&nbsp;');
     return `${completedCount}/3 ${details}`;
   }
 
@@ -168,16 +172,18 @@ export class ViewGame {
     const hasRecolorIntention =
       this.gameState.getRecolorIntention(player.id) > 0;
 
+    const originalColorBackground = this.getColorHex(selectedColor);
+    const symbol = this.getSymbol(selectedColor);
     options += `
       <div class="recolor-option" style="margin-bottom: 0.5rem;">
         <label style="display: flex; align-items: center; gap: 0.5rem;">
           <input type="radio" name="recolorOption" value="0" ${
       !hasRecolorIntention ? 'checked' : ''
     } data-recolor-favor="0">
-          <span class="color-swatch" style="background-color: ${
-      this.getColorHex(selectedColor)
-    }"></span>
-          Keep ${selectedColor} (0 favor)
+          0 -&gt;
+          <span class="color-swatch" style="background-color: ${originalColorBackground}">
+          ${symbol}
+          </span>
         </label>
       </div>
     `;
@@ -190,6 +196,8 @@ export class ViewGame {
     ) {
       const newIndex = (currentIndex + favorCost) % COLOR_WHEEL.length;
       const newColor = COLOR_WHEEL[newIndex]!;
+      const background = this.getColorHex(newColor);
+      const symbol = this.getSymbol(newColor);
 
       const isSelected =
         this.gameState.getRecolorIntention(player.id) === favorCost;
@@ -200,9 +208,10 @@ export class ViewGame {
             <input type="radio" name="recolorOption" value="${favorCost}" ${
         isSelected ? 'checked' : ''
       } data-recolor-favor="${favorCost}">
-            ${favorCost} -&gt; <span class="color-swatch" style="background-color: ${
-        this.getColorHex(newColor)
-      }">${newColor}</span>
+            ${favorCost} -&gt; 
+          <span class="color-swatch" style="background-color: ${background}">
+          ${symbol}
+          </span>
           </label>
         </div>
       `;
