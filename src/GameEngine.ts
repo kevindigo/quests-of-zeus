@@ -316,7 +316,7 @@ export class GameEngine {
     return availableMoves;
   }
 
-  public getAvailableLandInteractionsForColor(
+  public getAvailableLandInteractions(
     player: Player,
     effectiveColor: CoreColor,
   ): HexCell[] {
@@ -375,7 +375,7 @@ export class GameEngine {
     }
 
     const player = this.getCurrentPlayer();
-    const allLand = this.getAvailableLandInteractionsForColor(
+    const allLand = this.getAvailableLandInteractions(
       player,
       selectedColor,
     );

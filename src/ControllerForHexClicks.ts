@@ -206,7 +206,7 @@ export class ControllerForHexClicks {
     }
     // END DEBUGGING!!!
 
-    const cells = engine.getAvailableLandInteractionsForColor(
+    const cells = engine.getAvailableLandInteractions(
       player,
       color,
     );
