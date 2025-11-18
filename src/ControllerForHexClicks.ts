@@ -37,6 +37,14 @@ export class ControllerForHexClicks {
       };
     }
 
+    const selectedColor = selectedDieColor || selectedOracleCardColor;
+    if (!selectedColor) {
+      return {
+        success: false,
+        message: 'Please select a resource (die or oracle card) first!!',
+      };
+    }
+
     const currentPlayer = gameState.getCurrentPlayer();
     if (selectedOracleCardColor && currentPlayer.usedOracleCardThisTurn) {
       return {
@@ -67,11 +75,13 @@ export class ControllerForHexClicks {
     }
 
     if (terrain === 'sea') {
-      return this.handleHexClickSea(
+      return this.handleMoveWithDieOrCard(
         currentPlayer,
         coordinates,
         selectedDieColor,
         selectedOracleCardColor,
+        selectedColor,
+        gameState.getRecolorIntention(currentPlayer.id),
       );
     }
 
@@ -88,64 +98,6 @@ export class ControllerForHexClicks {
         JSON.stringify(coordinates)
       } of ${terrain}`,
     };
-  }
-
-  private handleHexClickSea(
-    currentPlayer: Player,
-    coordinates: HexCoordinates,
-    selectedDieColor: CoreColor | null,
-    selectedOracleCardColor: CoreColor | null,
-  ): ControllerActionResult {
-    if (
-      selectedOracleCardColor
-    ) {
-      return this.handleMoveWithCard(
-        currentPlayer,
-        coordinates,
-        selectedOracleCardColor,
-      );
-    } else if (selectedDieColor) {
-      return this.handleMoveWithDie(
-        currentPlayer,
-        coordinates,
-        selectedDieColor,
-      );
-    } else {
-      return {
-        success: false,
-        message: 'Please select a resource (die or oracle card) first!!',
-      };
-    }
-  }
-
-  private handleMoveWithCard(
-    currentPlayer: Player,
-    coordinates: HexCoordinates,
-    selectedColor: CoreColor,
-  ): ControllerActionResult {
-    return this.handleMoveWithDieOrCard(
-      currentPlayer,
-      coordinates,
-      null,
-      selectedColor,
-      selectedColor,
-      this.getState().getRecolorIntention(currentPlayer.id),
-    );
-  }
-
-  private handleMoveWithDie(
-    currentPlayer: Player,
-    coordinates: HexCoordinates,
-    selectedColor: CoreColor,
-  ): ControllerActionResult {
-    return this.handleMoveWithDieOrCard(
-      currentPlayer,
-      coordinates,
-      selectedColor,
-      null,
-      selectedColor,
-      this.getState().getRecolorIntention(currentPlayer.id),
-    );
   }
 
   private handleMoveWithDieOrCard(
