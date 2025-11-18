@@ -3,7 +3,7 @@
 import { assert, assertEquals } from '@std/assert';
 import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 
-Deno.test('GameController - die selection', () => {
+Deno.test('Controller - die selection', () => {
   // Test that selectedDieColor starts as null
   // Note: We need to access the private field through a test method or reflection
   // For now, we'll test the behavior through public methods
@@ -25,7 +25,7 @@ Deno.test('GameController - die selection', () => {
   );
 });
 
-Deno.test('GameController - die selection and clearing', () => {
+Deno.test('Controller - die selection and clearing', () => {
   // This test would verify the UI behavior of selecting and clearing dice
   // Since we can't easily test UI interactions, we'll document the expected behavior:
 

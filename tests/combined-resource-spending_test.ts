@@ -2,7 +2,7 @@
 // Verifies that users can select either resource type and use it for movement, favor gain, or oracle card drawing
 
 import { assert, assertEquals } from '@std/assert';
-import { GameController } from '../src/game-controller.ts';
+import { Controller } from '../src/game-controller.ts';
 import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 import type { CoreColor } from '../src/types.ts';
 
@@ -101,7 +101,7 @@ Deno.test('CombinedResourceSpending - select oracle card for favor gain', () => 
 
 Deno.test('CombinedResourceSpending - resource selection clears when switching types', () => {
   const engine = new QuestsZeusGameEngine();
-  const controller = new GameController(engine);
+  const controller = new Controller(engine);
   engine.initializeGame();
 
   const player = engine.getCurrentPlayer();

@@ -145,7 +145,7 @@ Each of the 6 cities on the map has a unique color and can hold up to 3 statues:
 
 1. **HexMap** - Procedural map generation terrain
 2. **GameEngine** - Core game mechanics, state management, and rules enforcement
-3. **GameController** - UI management, user interactions, and game flow
+3. **Controller** - UI management, user interactions, and game flow
 4. **HexMapSVG** - Interactive SVG visualization with player markers
 
 ### Key Features

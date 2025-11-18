@@ -18,7 +18,7 @@ import type {
 import { ViewGame } from './ViewGame.ts';
 import { ViewWelcome } from './ViewWelcome.ts';
 
-export class GameController {
+export class Controller {
   private gameEngine: QuestsZeusGameEngine;
   private hexMapSVG: HexMapSVG;
   constructor(engine?: QuestsZeusGameEngine) {
