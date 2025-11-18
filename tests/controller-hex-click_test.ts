@@ -51,8 +51,78 @@ Deno.test('Hex click - second oracle card', () => {
 
 Deno.test('Hex click - unsupported terrain', () => {
   setup();
+  player.oracleDice = ['red'];
   assertFailureContains(
     handler.handleHexClick(center, 'shallow', 'red', null),
     'shallow',
   );
 });
+
+// Deno.test('Hex click - shrine not adjacent', () => {
+//   setup();
+//   const grid = state.map.getHexGrid();
+//   const shrineCell = grid.getCellsOfType('shrine')[0];
+//   assert(shrineCell);
+//   shrineCell.color = 'red';
+//   const result = handler.handleHexClick(
+//     shrineCell.getCoordinates(),
+//     'shrine',
+//     shrineCell.color,
+//     null,
+//   );
+//   assertFailureContains(result, 'adjacent');
+// });
+
+// Deno.test('Hex click - shrine wrong die color', () => {
+//   setup();
+//   const grid = state.map.getHexGrid();
+//   const shrineCell = grid.getCellsOfType('shrine')[0];
+//   assert(shrineCell);
+//   const seaNeighbor = grid.getNeighborsOfType(shrineCell, 'sea')[0];
+//   assert(seaNeighbor);
+//   player.setShipPosition(seaNeighbor.getCoordinates());
+//   shrineCell.color = 'green';
+//   const result = handler.handleHexClick(
+//     shrineCell.getCoordinates(),
+//     'shrine',
+//     'red',
+//     null,
+//   );
+//   assertFailureContains(result, 'adjacent');
+// });
+
+// Deno.test('Hex click - shrine wrong card color', () => {
+//   setup();
+//   const grid = state.map.getHexGrid();
+//   const shrineCell = grid.getCellsOfType('shrine')[0];
+//   assert(shrineCell);
+//   const seaNeighbor = grid.getNeighborsOfType(shrineCell, 'sea')[0];
+//   assert(seaNeighbor);
+//   player.setShipPosition(seaNeighbor.getCoordinates());
+//   shrineCell.color = 'green';
+//   const result = handler.handleHexClick(
+//     shrineCell.getCoordinates(),
+//     'shrine',
+//     null,
+//     'red',
+//   );
+//   assertFailureContains(result, 'adjacent');
+// });
+
+// Deno.test('Hex click - available shrine (die)', () => {
+//   setup();
+//   const grid = state.map.getHexGrid();
+//   const shrineCell = grid.getCellsOfType('shrine')[0];
+//   assert(shrineCell);
+//   const seaNeighbor = grid.getNeighborsOfType(shrineCell, 'sea')[0];
+//   assert(seaNeighbor);
+//   player.setShipPosition(seaNeighbor.getCoordinates());
+//   shrineCell.color = 'red';
+//   const result = handler.handleHexClick(
+//     shrineCell.getCoordinates(),
+//     'shrine',
+//     shrineCell.color,
+//     null,
+//   );
+//   assert(result.success);
+// });

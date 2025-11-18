@@ -44,6 +44,27 @@ export class ControllerForHexClicks {
         message: 'Cannot use more than 1 oracle card per turn',
       };
     }
+    if (
+      selectedDieColor && !currentPlayer.oracleDice.includes(selectedDieColor)
+    ) {
+      return {
+        success: false,
+        message: `Color ${selectedDieColor} not in dice ${
+          JSON.stringify(currentPlayer.oracleDice)
+        }`,
+      };
+    }
+    if (
+      selectedOracleCardColor &&
+      !currentPlayer.oracleCards.includes(selectedOracleCardColor)
+    ) {
+      return {
+        success: false,
+        message: `Color ${selectedOracleCardColor} not in cards ${
+          JSON.stringify(currentPlayer.oracleCards)
+        }`,
+      };
+    }
 
     if (terrain === 'sea') {
       return this.handleHexClickSea(
@@ -52,6 +73,13 @@ export class ControllerForHexClicks {
         selectedDieColor,
         selectedOracleCardColor,
       );
+    }
+
+    if (terrain === 'shrine') {
+      return {
+        success: false,
+        message: 'Hex click not supported for shrine yet',
+      };
     }
 
     return {
@@ -69,7 +97,7 @@ export class ControllerForHexClicks {
     selectedOracleCardColor: CoreColor | null,
   ): ControllerActionResult {
     if (
-      selectedOracleCardColor && !currentPlayer.usedOracleCardThisTurn
+      selectedOracleCardColor
     ) {
       return this.handleMoveWithCard(
         currentPlayer,
@@ -95,14 +123,6 @@ export class ControllerForHexClicks {
     coordinates: HexCoordinates,
     selectedColor: CoreColor,
   ): ControllerActionResult {
-    if (!currentPlayer.oracleCards.includes(selectedColor)) {
-      return {
-        success: false,
-        message: `Color ${selectedColor} not in cards ${
-          JSON.stringify(currentPlayer.oracleCards)
-        }`,
-      };
-    }
     return this.handleMoveWithDieOrCard(
       currentPlayer,
       coordinates,
@@ -118,14 +138,6 @@ export class ControllerForHexClicks {
     coordinates: HexCoordinates,
     selectedColor: CoreColor,
   ): ControllerActionResult {
-    if (!currentPlayer.oracleDice.includes(selectedColor)) {
-      return {
-        success: false,
-        message: `Color ${selectedColor} not in dice ${
-          JSON.stringify(currentPlayer.oracleDice)
-        }`,
-      };
-    }
     return this.handleMoveWithDieOrCard(
       currentPlayer,
       coordinates,
