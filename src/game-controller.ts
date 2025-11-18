@@ -326,16 +326,18 @@ export class GameController {
       return;
     }
 
+    const favorForRecoloring = gameState.getRecolorIntention(currentPlayer.id);
     const effectiveColor = OracleSystem.applyRecolor(
       selectedColor,
-      gameState.getRecolorIntention(currentPlayer.id),
+      favorForRecoloring,
     );
+    const favorAvailableForRange = currentPlayer.favor - favorForRecoloring;
 
     // Get available moves for the selected die color and available favor
     const availableMoves = this.gameEngine.getAvailableMovesForColor(
       currentPlayer,
       effectiveColor,
-      currentPlayer.favor,
+      favorAvailableForRange,
     );
 
     // Debug logging
