@@ -81,7 +81,6 @@ Deno.test('Available land - nothing available from zeus', () => {
 
 Deno.test('Available land - shrine adjacent but wrong color', () => {
   setup();
-  const grid = state.map.getHexGrid();
   const color = player.oracleDice[0];
   assert(color);
   const shrineCell = findLandCell('shrine', color);
@@ -90,9 +89,8 @@ Deno.test('Available land - shrine adjacent but wrong color', () => {
 
   state.setSelectedDieColor(wrongColor);
   const positions = engine.getAvailableLandInteractions();
-  const shrines = positions.filter((position) => {
-    const cell = grid.getCell(position);
-    return cell?.terrain === 'shrine';
+  const shrines = positions.filter((cell) => {
+    return cell.q === shrineCell.q && cell.r === shrineCell.r;
   });
   assertEquals(shrines.length, 0);
 });
