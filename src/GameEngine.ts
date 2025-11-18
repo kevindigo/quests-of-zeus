@@ -316,18 +316,26 @@ export class GameEngine {
     return availableMoves;
   }
 
-  public getAvailableLandInteractions(
-    player: Player,
-    effectiveColor: CoreColor,
-  ): HexCell[] {
+  public getAvailableLandInteractions(): HexCell[] {
+    const player = this.getCurrentPlayer();
     const shipPosition = player.getShipPosition();
-    const map = this.getGameState().map;
+    const state = this.getGameState();
+    const color = state.getEffectiveSelectedColor();
+    if (!color) {
+      return [];
+    }
+
+    const map = state.map;
     const neighbors = map.getNeighbors(shipPosition);
 
     const availables = neighbors.filter((cell) => {
       switch (cell.terrain) {
         case 'shrine':
-          return this.isShrineAvailable(player, effectiveColor, cell);
+          return this.isShrineAvailable(
+            player,
+            color,
+            cell,
+          );
         default:
           return false;
       }
@@ -375,10 +383,7 @@ export class GameEngine {
     }
 
     const player = this.getCurrentPlayer();
-    const allLand = this.getAvailableLandInteractions(
-      player,
-      selectedColor,
-    );
+    const allLand = this.getAvailableLandInteractions();
     const shrineCell = allLand.find((cell) => {
       return cell.q === coordinates.q && cell.r === coordinates.r;
     });

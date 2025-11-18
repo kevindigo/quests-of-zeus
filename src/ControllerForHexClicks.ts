@@ -185,7 +185,6 @@ export class ControllerForHexClicks {
     coordinates: HexCoordinates,
   ): ControllerActionResult {
     const engine = this.getEngine();
-    const player = engine.getCurrentPlayer();
     const state = engine.getGameState();
     const color = state.getEffectiveSelectedColor();
     if (!color) {
@@ -206,10 +205,7 @@ export class ControllerForHexClicks {
     }
     // END DEBUGGING!!!
 
-    const cells = engine.getAvailableLandInteractions(
-      player,
-      color,
-    );
+    const cells = engine.getAvailableLandInteractions();
     const thisShrine = cells.find((cell) => {
       const isShrine = cell.terrain === 'shrine';
       const isCorrectColor = cell.color === color;
