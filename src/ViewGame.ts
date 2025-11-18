@@ -1,6 +1,6 @@
 import type { GameState } from './GameState.ts';
 import type { Player } from './Player.ts';
-import { COLOR_WHEEL, type CoreColor } from './types.ts';
+import { COLOR_WHEEL, type CoreColor, type QuestType } from './types.ts';
 
 export class ViewGame {
   public constructor(gameState: GameState) {
@@ -32,10 +32,18 @@ export class ViewGame {
             <div class="quest-progress">
               <h4>Quest Progress</h4>
               <div class="quest-types">
-                <div class="quest-type-item">Temple Offering: ${currentPlayer.completedQuestTypes.temple_offering}/3</div>
-                <div class="quest-type-item">Monster: ${currentPlayer.completedQuestTypes.monster}/3</div>
-                <div class="quest-type-item">Statue: ${currentPlayer.completedQuestTypes.statue}/3</div>
-                <div class="quest-type-item">Shrine: ${currentPlayer.completedQuestTypes.shrine}/3</div>
+                <div class="quest-type-item">Temple: 
+                ${this.getColoredQuestContents(currentPlayer, 'temple')}
+                </div>
+                <div class="quest-type-item">Monster:
+                 ${this.getColoredQuestContents(currentPlayer, 'monster')}
+                 </div>
+                <div class="quest-type-item">Statue:
+                 ${this.getColoredQuestContents(currentPlayer, 'statue')}
+                 </div>
+                <div class="quest-type-item">Shrine: 
+                 ${this.getColoredQuestContents(currentPlayer, 'shrine')}
+                </div>
               </div>
             </div>
             <div class="storage">
@@ -118,6 +126,26 @@ export class ViewGame {
     }
           </div>
         `;
+  }
+
+  private getColoredQuestContents(
+    currentPlayer: Player,
+    questType: QuestType,
+  ): string {
+    const quests = currentPlayer.getQuests().filter((quest) => {
+      return quest.type === questType;
+    });
+    const completed = quests.filter((quest) => {
+      return quest.isCompleted;
+    });
+    const completedCount = completed.length;
+    const colors = quests.map((quest) => {
+      return this.getSymbol(quest.color);
+    });
+    const details = `<span style="background-color: white;">${
+      colors.join('')
+    }</span>`;
+    return `${completedCount}/3 ${details}`;
   }
 
   private getRecolorOptionsContent(
@@ -269,8 +297,22 @@ export class ViewGame {
     }
   }
 
+  private getSymbol(color: string): string {
+    const symbols: Record<string, string> = {
+      'none': '🌈',
+      'red': '♨️',
+      'pink': '🌸',
+      'blue': '🌀',
+      'black': '➰',
+      'green': '🌱',
+      'yellow': '🔆',
+    };
+    return symbols[color] || '?';
+  }
+
   private getColorHex(color: string): string {
     const colors: Record<string, string> = {
+      'none': 'white',
       'red': '#DC143C',
       'pink': '#ff69b4',
       'blue': '#0000ff',
