@@ -4,6 +4,7 @@
 import { GameInitializer } from './GameInitializer.ts';
 import { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
+import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './movement-system.ts';
 import { OracleSystem } from './oracle-system.ts';
 import { PlayerActions } from './player-actions.ts';
@@ -16,6 +17,8 @@ import type {
   MonsterHex,
   MoveShipResult,
   PossibleShipMove,
+  ShrineHex,
+  ShrineResult,
 } from './types.ts';
 import { COLOR_WHEEL } from './types.ts';
 
@@ -114,17 +117,6 @@ export class GameEngine {
     const success = this.playerActions!.buildStatue(player);
     if (success) {
       this.completeQuestType(playerId, 'statue');
-      this.endTurn();
-    }
-    return success;
-  }
-
-  public completeShrineQuest(playerId: number): boolean {
-    this.ensureInitialized();
-    const player = this.getValidPlayer(playerId);
-    const success = this.playerActions!.completeShrineQuest(player);
-    if (success) {
-      this.completeQuestType(playerId, 'shrine');
       this.endTurn();
     }
     return success;
@@ -367,6 +359,86 @@ export class GameEngine {
     }
 
     return false;
+  }
+
+  public activateShrine(
+    coordinates: HexCoordinates,
+  ): ShrineResult {
+    const selectedDie = this.getGameState().getSelectedDieColor();
+    const selectedCard = this.getGameState().getSelectedOracleCardColor();
+    const selectedColor = selectedDie || selectedCard;
+    if (!selectedColor) {
+      return {
+        success: false,
+        message: 'Must select a die or card',
+      };
+    }
+
+    const player = this.getCurrentPlayer();
+    const allLand = this.getAvailableLandInteractionsForColor(
+      player,
+      selectedColor,
+    );
+    const shrineCell = allLand.find((cell) => {
+      return cell.q === coordinates.q && cell.r === coordinates.r;
+    });
+    if (!shrineCell) {
+      return {
+        success: false,
+        message: 'That shrine is not available',
+      };
+    }
+    const shrineHex = this.getGameState().getShrineHexes().find((hex) => {
+      return hex.q === coordinates.q && hex.r === coordinates.r;
+    });
+    if (!shrineHex) {
+      return {
+        success: false,
+        message: 'Impossible: ShrineHex not found at those coordinates',
+      };
+    }
+
+    if (shrineHex.status === 'hidden') {
+      if (shrineHex.owner === player.color) {
+        return this.completeShrineQuest(player, shrineHex);
+      }
+    }
+
+    return {
+      success: false,
+      message: 'activateShrine not implemented yet',
+    };
+  }
+
+  private completeShrineQuest(
+    player: Player,
+    shrineHex: ShrineHex,
+  ): ShrineResult {
+    if (shrineHex.status !== 'hidden' || shrineHex.owner !== player.color) {
+      return {
+        success: false,
+        message: 'Impossible: wrong owner or already flipped',
+      };
+    }
+
+    const quests = player.getQuests();
+    const quest = quests.find((quest) => {
+      return quest.type === 'shrine' &&
+        quest.playerId === player.id &&
+        !quest.isCompleted;
+    });
+    if (!quest) {
+      return {
+        success: false,
+        message: 'Impossible: no remaining incomplete shrine quests',
+      };
+    }
+    shrineHex.status = 'filled';
+    quest.isCompleted = true;
+    return {
+      success: true,
+      message: 'Flipped by the owner - QUEST REWARD NOT GRANTED!',
+    };
   }
 
   public checkWinCondition(): { winner: Player | null; gameOver: boolean } {

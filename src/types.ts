@@ -215,4 +215,14 @@ export interface MoveShipResult {
   };
 }
 
+export type GeneralResult = {
+  success: boolean;
+  message: string;
+};
+
+export type ShrineResult = {
+  success: boolean;
+  message: string;
+};
+
 export type Phase = 'setup' | 'action' | 'end';

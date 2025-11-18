@@ -87,9 +87,7 @@ export class ControllerForHexClicks {
 
     if (terrain === 'shrine') {
       return this.handleShrineWithDieOrCard(
-        currentPlayer,
         coordinates,
-        selectedColor,
       );
     }
 
@@ -186,11 +184,31 @@ export class ControllerForHexClicks {
   }
 
   private handleShrineWithDieOrCard(
-    player: Player,
     coordinates: HexCoordinates,
-    color: CoreColor,
   ): ControllerActionResult {
-    const cells = this.getEngine().getAvailableLandInteractionsForColor(
+    const engine = this.getEngine();
+    const player = engine.getCurrentPlayer();
+    const state = engine.getGameState();
+    const color = state.getEffectiveSelectedColor();
+    if (!color) {
+      return {
+        success: false,
+        message: 'Handler needs a selected color',
+      };
+    }
+
+    // DEBUGGING!!!
+    {
+      const shrineHex = engine.getGameState().getShrineHexes().find((sh) => {
+        return sh.q === coordinates.q && sh.r === coordinates.r;
+      });
+      console.log(
+        `handleShrineWithDieOrCard click on ${JSON.stringify(shrineHex)}`,
+      );
+    }
+    // END DEBUGGING!!!
+
+    const cells = engine.getAvailableLandInteractionsForColor(
       player,
       color,
     );
@@ -207,10 +225,7 @@ export class ControllerForHexClicks {
         message: 'That shrine is not available',
       };
     }
-    return {
-      success: false,
-      message: 'Not implemented yet',
-    };
+    return this.getEngine().activateShrine(coordinates);
   }
 
   /**

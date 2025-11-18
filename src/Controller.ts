@@ -458,8 +458,6 @@ export class Controller {
       this.buildTemple();
     } else if (target.id === 'buildStatue') {
       this.buildStatue();
-    } else if (target.id === 'completeShrineQuest') {
-      this.completeShrineQuest();
     } else if (target.id === 'placeStatue') {
       // this.placeStatueOnCity();
     } else if (target.id === 'spendResourceForFavor') {
@@ -590,21 +588,6 @@ export class Controller {
       this.renderGameState();
     } else {
       this.showMessage('Cannot build statue here');
-    }
-  }
-
-  private completeShrineQuest(): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
-    const success = this.gameEngine.completeShrineQuest(currentPlayer.id);
-    if (success) {
-      this.showMessage('Shrine quest completed!');
-      // Clear selected die after successful action
-      this.selectedDieColor = null;
-      this.renderGameState();
-    } else {
-      this.showMessage(
-        'Cannot complete shrine quest here or missing required statue',
-      );
     }
   }
 

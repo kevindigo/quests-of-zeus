@@ -1,13 +1,31 @@
-import { assert, assertNotEquals } from '@std/assert';
+import {
+  assert,
+  assertFalse,
+  assertNotEquals,
+  assertStringIncludes,
+} from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
 import { GameEngine } from '../src/GameEngine.ts';
 import type { GameState } from '../src/GameState.ts';
 import type { Player } from '../src/Player.ts';
-import type { HexCell } from '../src/hexmap/HexCell.ts';
-import type { HexGrid } from '../src/hexmap/HexGrid.ts';
+import { HexCell } from '../src/hexmap/HexCell.ts';
+import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { HexMap } from '../src/hexmap/HexMap.ts';
 import { OracleSystem } from '../src/oracle-system.ts';
-import type { HexColor, TerrainType } from '../src/types.ts';
+import type {
+  GeneralResult,
+  HexColor,
+  ShrineHex,
+  TerrainType,
+} from '../src/types.ts';
+
+function assertFailureContains(
+  result: GeneralResult,
+  fragment: string,
+): void {
+  assertFalse(result.success, 'Should not have succeeded');
+  assertStringIncludes(result.message, fragment);
+}
 
 let engine: GameEngine;
 let state: GameState;
@@ -22,6 +40,20 @@ function setup(): void {
   map = state.map;
   grid = map.getHexGrid();
   player = state.getCurrentPlayer();
+}
+
+function setupWithReadyShrineHex(): ShrineHex {
+  setup();
+  const color = player.oracleDice[0];
+  assert(color);
+  const shrineCell = findLandCell('shrine', color);
+  putPlayerNextTo(shrineCell);
+
+  const shrineHex = state.getShrineHexes().find((hex) => {
+    return hex.q === shrineCell.q && hex.r === shrineCell.r;
+  });
+  assert(shrineHex);
+  return shrineHex;
 }
 
 function putPlayerNextTo(cell: HexCell): void {
@@ -40,13 +72,13 @@ function findLandCell(terrain: TerrainType, color: HexColor): HexCell {
   return matchingCell;
 }
 
-Deno.test('Land - nothing available from zeus', () => {
+Deno.test('Available land - nothing available from zeus', () => {
   setup();
   const positions = engine.getAvailableLandInteractionsForColor(player, 'red');
   assertEquals(positions.length, 0);
 });
 
-Deno.test('Land - shrine adjacent but wrong color', () => {
+Deno.test('Available land - shrine adjacent but wrong color', () => {
   setup();
   const grid = state.map.getHexGrid();
   const color = player.oracleDice[0];
@@ -66,7 +98,7 @@ Deno.test('Land - shrine adjacent but wrong color', () => {
   assertEquals(shrines.length, 0);
 });
 
-Deno.test('Land - shrine adjacent correct color', () => {
+Deno.test('Available land - shrine adjacent correct color', () => {
   setup();
   const grid = state.map.getHexGrid();
   const color = player.oracleDice[0];
@@ -83,7 +115,7 @@ Deno.test('Land - shrine adjacent correct color', () => {
   assertEquals(shrines[0], shrineCell);
 });
 
-Deno.test('Land - shrine already completed', () => {
+Deno.test('Available land - shrine already completed', () => {
   setup();
   const grid = state.map.getHexGrid();
   const color = player.oracleDice[0];
@@ -108,7 +140,7 @@ Deno.test('Land - shrine already completed', () => {
   assertEquals(shrines.length, 0);
 });
 
-Deno.test('Land - shrine flipped and not ours', () => {
+Deno.test('Available land - shrine already flipped and not ours', () => {
   setup();
   const grid = state.map.getHexGrid();
   const color = player.oracleDice[0];
@@ -124,13 +156,44 @@ Deno.test('Land - shrine flipped and not ours', () => {
   shrineHex.owner = 'yellow';
   assertNotEquals(shrineHex.owner, player.color);
 
-  const positions = engine.getAvailableLandInteractionsForColor(
+  const cells = engine.getAvailableLandInteractionsForColor(
     player,
     color,
   );
-  const shrines = positions.filter((position) => {
-    const cell = grid.getCell(position);
-    return cell?.terrain === 'shrine';
+  const thisShrine = cells.find((cell) => {
+    return cell.q === shrineHex.q && cell.r === shrineHex.r;
   });
-  assertEquals(shrines.length, 0);
+  assert(!thisShrine, JSON.stringify(cells));
+});
+
+Deno.test('click land - shrine no selected color', () => {
+  setupWithReadyShrineHex();
+  const result = engine.activateShrine(HexGrid.CENTER);
+  assertFailureContains(result, 'Must select');
+});
+
+Deno.test('click land - shrine not valid option', () => {
+  setup();
+  state.setSelectedDieColor('red');
+  const result = engine.activateShrine({ q: 0, r: -1 });
+  assertFailureContains(result, 'available');
+});
+
+Deno.test('Click land - shrine hidden and ours', () => {
+  const shrineHex = setupWithReadyShrineHex();
+  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  assert(shrineCell);
+  assert(shrineCell.color !== 'none');
+
+  state.setSelectedDieColor(shrineCell.color);
+  shrineHex.owner = player.color;
+  shrineHex.reward = 'favor';
+  const originalFavor = player.favor;
+  const result = engine.activateShrine(
+    shrineCell.getCoordinates(),
+  );
+
+  assert(result.success, result.message);
+  assertEquals(shrineHex.status, 'filled');
+  assertEquals(player.favor, originalFavor);
 });

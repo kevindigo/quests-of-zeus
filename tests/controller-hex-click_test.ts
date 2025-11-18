@@ -65,6 +65,7 @@ Deno.test('Hex click - shrine not adjacent', () => {
   assert(shrineCell);
   shrineCell.color = 'red';
   player.oracleDice = [shrineCell.color];
+  state.setSelectedDieColor(shrineCell.color);
   const result = handler.handleHexClick(
     shrineCell.getCoordinates(),
     'shrine',
@@ -87,6 +88,7 @@ Deno.test('Hex click - next to good color, but click elsewhere', () => {
   assert(seaNeighbor);
   player.setShipPosition(seaNeighbor.getCoordinates());
   player.oracleDice = [adjacentShrineCell.color, 'green'];
+  state.setSelectedDieColor(adjacentShrineCell.color);
   const result = handler.handleHexClick(
     otherShrineCell.getCoordinates(),
     'shrine',
@@ -106,6 +108,7 @@ Deno.test('Hex click - next to good color, but different color', () => {
   assert(seaNeighbor);
   player.setShipPosition(seaNeighbor.getCoordinates());
   player.oracleDice = [shrineCell.color, 'green'];
+  state.setSelectedDieColor('green');
   const result = handler.handleHexClick(
     shrineCell.getCoordinates(),
     'shrine',
@@ -115,23 +118,32 @@ Deno.test('Hex click - next to good color, but different color', () => {
   assertFailureContains(result, 'not available');
 });
 
-// Deno.test('Hex click - available shrine (die)', () => {
-//   setup();
-//   const color = player.oracleDice[0]!;
-//   const grid = state.map.getHexGrid();
-//   const shrineCells = grid.getCellsOfType('shrine');
-//   const shrineCell = shrineCells.find((cell) => {
-//     return cell.color === color;
-//   });
-//   assert(shrineCell);
-//   const seaNeighbor = grid.getNeighborsOfType(shrineCell, 'sea')[0];
-//   assert(seaNeighbor);
-//   player.setShipPosition(seaNeighbor.getCoordinates());
-//   const result = handler.handleHexClick(
-//     shrineCell.getCoordinates(),
-//     'shrine',
-//     color,
-//     null,
-//   );
-//   // assert(result.success, `Should have succeeded, but ${result.message}`);
-// });
+Deno.test('Hex click - available my hidden shrine (die)', () => {
+  setup();
+  const color = player.oracleDice[0]!;
+  const grid = state.map.getHexGrid();
+  const shrineCells = grid.getCellsOfType('shrine');
+  const shrineCell = shrineCells.find((cell) => {
+    return cell.color === color;
+  });
+  assert(shrineCell);
+
+  const seaNeighbor = grid.getNeighborsOfType(shrineCell, 'sea')[0];
+  assert(seaNeighbor);
+  player.setShipPosition(seaNeighbor.getCoordinates());
+
+  const shrineHex = state.getShrineHexes().find((hex) => {
+    return hex.q === shrineCell.q && hex.r === shrineCell.r;
+  });
+  assert(shrineHex);
+  shrineHex.owner = player.color;
+
+  state.setSelectedDieColor(color);
+  const result = handler.handleHexClick(
+    shrineCell.getCoordinates(),
+    'shrine',
+    color,
+    null,
+  );
+  assert(result.success, `Should have succeeded, but ${result.message}`);
+});

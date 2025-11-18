@@ -1,4 +1,5 @@
 import { HexMap, type HexMapJson } from './hexmap/HexMap.ts';
+import { OracleSystem } from './oracle-system.ts';
 import { Player, type PlayerJson } from './Player.ts';
 import type {
   CityHex,
@@ -202,6 +203,21 @@ export class GameState {
 
   public setSelectedOracleCardColor(color: CoreColor | null): void {
     this.selectedOracleCardColor = color;
+  }
+
+  public getEffectiveSelectedColor(): CoreColor | null {
+    const selectedColor = this.getSelectedDieColor() ||
+      this.getSelectedOracleCardColor();
+    if (!selectedColor) {
+      return null;
+    }
+    const currentPlayer = this.getCurrentPlayer();
+    const favorForRecoloring = this.getRecolorIntention(currentPlayer.id);
+    const effectiveColor = OracleSystem.applyRecolor(
+      selectedColor,
+      favorForRecoloring,
+    );
+    return effectiveColor;
   }
 
   public map: HexMap;
