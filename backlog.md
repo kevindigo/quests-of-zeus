@@ -1,7 +1,11 @@
 == Short-term ==
 
+- Split view out of controller
+  - Controller would know about view, but not vice versa
+
 == Cosmetic/Usability ==
 
+- Display colors for cube and monster quests
 - Can't click on anything on a hex (icon, cubes, monsters)
 - Make monster triangles larger
 - Make statue bar taller
