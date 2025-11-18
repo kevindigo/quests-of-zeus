@@ -1,7 +1,7 @@
 // Quests of Zeus Game Engine - Core Orchestration
 // High-level game management and orchestration
 
-import { GameInitializer } from './game-initializer.ts';
+import { GameInitializer } from './GameInitializer.ts';
 import { GameState } from './GameState.ts';
 import { MovementSystem } from './movement-system.ts';
 import { OracleSystem } from './oracle-system.ts';

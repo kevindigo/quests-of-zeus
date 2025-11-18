@@ -2,12 +2,16 @@
 
 == Cosmetic/Usability ==
 
-- Display colors for cube and monster quests
 - Can't click on anything on a hex (icon, cubes, monsters)
 - Make monster triangles larger
 - Make statue bar taller
 - Move city icon down slightly
-- Display symbols for accessibility: ➰🌀♨️🔆🌱🌸 
+- Display icons for quests:
+  - Temple offering 🛕 🫴
+  - Statue 🪦 ⛏️ ⛲ 🗿
+  - Monster 💀 ⚔️
+  - Shrine ☁️ ⛩️
+- Display symbols for accessibility: ➰🌀♨️🔆🌱🌸
   - Black: Cloverleaf 🔲🔳 🌢 ➰ ⧇ ⬟ ⧉ ▣ ▩
   - Blue: @ 🌀
   - Red: Bell U 💢 📛 ♨️
@@ -19,9 +23,12 @@
 - Ideally only highlight the actual selected die/card
 - Ideally unselect (clear) a die/card by clicking it again
 
-== Other ==
+== Features/bugs ==
 
 - Allow spending more than 5 favor to extend move range
+
+== Code improvement ==
+
 - Put all the map navigation in one place
 
 == Quests ==
