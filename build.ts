@@ -38,7 +38,7 @@ async function build() {
     const result = await esbuild.build({
       entryPoints: [
         'src/hexmap-svg.ts',
-        'src/game-controller.ts',
+        'src/Controller.ts',
       ],
       bundle: true,
       outdir: 'dist',

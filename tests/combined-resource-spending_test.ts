@@ -2,7 +2,7 @@
 // Verifies that users can select either resource type and use it for movement, favor gain, or oracle card drawing
 
 import { assert, assertEquals } from '@std/assert';
-import { Controller } from '../src/game-controller.ts';
+import { Controller } from '../src/Controller.ts';
 import { QuestsZeusGameEngine } from '../src/game-engine-core.ts';
 import type { CoreColor } from '../src/types.ts';
 
