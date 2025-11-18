@@ -1,3 +1,4 @@
+import type { GameState } from './GameState.ts';
 import type { Player } from './Player.ts';
 import { COLOR_WHEEL, type CoreColor } from './types.ts';
 
@@ -179,6 +180,89 @@ export class ViewGame {
     `;
 
     return options;
+  }
+
+  public getPhasePanelContents(
+    state: GameState,
+    selectedDie: CoreColor | null,
+    selectedCard: CoreColor | null,
+  ): string {
+    return `
+      <div class="phase-info">
+        <h3>Current Phase: ${state.getPhase().toUpperCase()}</h3>
+        <div class="phase-actions">
+          ${this.getPhaseActionsContents(state, selectedDie, selectedCard)}
+        </div>
+      </div>
+    `;
+  }
+
+  private getPhaseActionsContents(
+    gameState: GameState,
+    selectedDie: CoreColor | null,
+    selectedCard: CoreColor | null,
+  ): string {
+    const currentPlayer = gameState.getCurrentPlayer();
+
+    switch (gameState.getPhase()) {
+      case 'action': {
+        const position = currentPlayer.getShipPosition();
+        const currentCell = gameState.map.getCell(
+          position,
+        );
+
+        let actions = '';
+
+        const selectedColor = selectedDie || selectedCard;
+        if (selectedColor) {
+          actions += `<div class="resource-actions" style="margin-top: 1rem;">
+            <h4>Resource Actions</h4>
+            <button id="spendResourceForFavor" class="action-btn">Spend for 2 Favor</button>
+            <button id="drawOracleCard" class="action-btn">Draw Oracle Card</button>
+            <p style="font-size: 0.9rem; opacity: 0.8;">Spend selected resource for favor or to draw an oracle card</p>
+          </div>`;
+
+          // Recolor options for selected resource
+          // Note: Recolor options are now displayed in the player info panel as radio buttons
+          // The favor will be spent when the resource is actually used for movement or other actions
+
+          if (currentCell?.terrain === 'offerings') {
+            actions +=
+              `<button id="collectOffering" class="action-btn">Collect Offering</button>`;
+          }
+          if (currentCell?.terrain === 'monsters') {
+            actions +=
+              `<button id="fightMonster" class="action-btn">Fight Monster</button>`;
+          }
+          if (currentCell?.terrain === 'temple') {
+            actions +=
+              `<button id="buildTemple" class="action-btn">Build Temple</button>`;
+          }
+          if (currentCell?.terrain === 'statue') {
+            actions +=
+              `<button id="buildStatue" class="action-btn">Build Statue</button>`;
+          }
+          if (currentCell?.terrain === 'shrine') {
+            actions +=
+              `<button id="completeShrineQuest" class="action-btn">Complete Shrine Quest</button>`;
+          }
+          if (currentCell?.terrain === 'city') {
+            // not implemented yet
+          }
+        }
+
+        if (!actions) {
+          actions = '<p>Select a die or card to take an action</p>';
+        }
+
+        actions +=
+          `<button id="endTurn" class="action-btn secondary">End Turn</button>`;
+        return actions;
+      }
+      default: {
+        return '<p>Game phase not recognized</p>';
+      }
+    }
   }
 
   private getColorHex(color: string): string {

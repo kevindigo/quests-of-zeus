@@ -156,7 +156,7 @@ export class GameController {
     this.renderMap(gameState);
 
     // Update game phase display
-    this.updatePhaseDisplay(gameState.getPhase());
+    this.updatePhaseDisplay(gameState);
 
     // Check for win condition
     const winCondition = this.gameEngine.checkWinCondition();
@@ -389,84 +389,16 @@ export class GameController {
     );
   }
 
-  private updatePhaseDisplay(phase: string): void {
+  private updatePhaseDisplay(state: GameState): void {
     const phaseDisplay = document.getElementById('phaseDisplay');
     if (!phaseDisplay) return;
 
-    phaseDisplay.innerHTML = `
-      <div class="phase-info">
-        <h3>Current Phase: ${phase.toUpperCase()}</h3>
-        <div class="phase-actions">
-          ${this.getPhaseActions(phase)}
-        </div>
-      </div>
-    `;
-  }
-
-  private getPhaseActions(phase: string): string {
-    const gameState = this.gameEngine.getGameStateSnapshot();
-    const currentPlayer = gameState.getCurrentPlayer();
-
-    switch (phase) {
-      case 'action': {
-        const position = currentPlayer.getShipPosition();
-        const currentCell = gameState.map.getCell(
-          position,
-        );
-
-        let actions = '';
-
-        const selectedColor = this.selectedDieColor ||
-          this.selectedOracleCardColor;
-        if (selectedColor) {
-          actions += `<div class="resource-actions" style="margin-top: 1rem;">
-            <h4>Resource Actions</h4>
-            <button id="spendResourceForFavor" class="action-btn">Spend for 2 Favor</button>
-            <button id="drawOracleCard" class="action-btn">Draw Oracle Card</button>
-            <p style="font-size: 0.9rem; opacity: 0.8;">Spend selected resource for favor or to draw an oracle card</p>
-          </div>`;
-
-          // Recolor options for selected resource
-          // Note: Recolor options are now displayed in the player info panel as radio buttons
-          // The favor will be spent when the resource is actually used for movement or other actions
-
-          if (currentCell?.terrain === 'offerings') {
-            actions +=
-              `<button id="collectOffering" class="action-btn">Collect Offering</button>`;
-          }
-          if (currentCell?.terrain === 'monsters') {
-            actions +=
-              `<button id="fightMonster" class="action-btn">Fight Monster</button>`;
-          }
-          if (currentCell?.terrain === 'temple') {
-            actions +=
-              `<button id="buildTemple" class="action-btn">Build Temple</button>`;
-          }
-          if (currentCell?.terrain === 'statue') {
-            actions +=
-              `<button id="buildStatue" class="action-btn">Build Statue</button>`;
-          }
-          if (currentCell?.terrain === 'shrine') {
-            actions +=
-              `<button id="completeShrineQuest" class="action-btn">Complete Shrine Quest</button>`;
-          }
-          if (currentCell?.terrain === 'city') {
-            // not implemented yet
-          }
-        }
-
-        if (!actions) {
-          actions = '<p>Select a die or card to take an action</p>';
-        }
-
-        actions +=
-          `<button id="endTurn" class="action-btn secondary">End Turn</button>`;
-        return actions;
-      }
-      default: {
-        return '<p>Game phase not recognized</p>';
-      }
-    }
+    const view = new ViewGame();
+    phaseDisplay.innerHTML = view.getPhasePanelContents(
+      state,
+      this.selectedDieColor,
+      this.selectedOracleCardColor,
+    );
   }
 
   private setupEventListeners(): void {
