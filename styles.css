@@ -156,6 +156,12 @@ footer {
   paint-order: stroke; /* Ensure stroke is painted on top, not covering fill */
 }
 
+.hex-highlight.available-shrine {
+  stroke: black !important;
+  stroke-width: 3px !important;
+  animation: pulse-white 1.5s infinite;
+}
+
 /* Unified Resource Selection Styles */
 .resources-section {
   margin-top: 1.5rem;

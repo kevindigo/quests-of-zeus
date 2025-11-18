@@ -8,6 +8,7 @@ import type { GameState } from './GameState.ts';
 import { HexMapSVG } from './hexmap-svg.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { OracleSystem } from './oracle-system.ts';
+import type { Player } from './Player.ts';
 import type {
   CityHex,
   CoreColor,
@@ -325,12 +326,22 @@ export class Controller {
     if (!selectedColor) {
       return;
     }
-
     const favorForRecoloring = gameState.getRecolorIntention(currentPlayer.id);
     const effectiveColor = OracleSystem.applyRecolor(
       selectedColor,
       favorForRecoloring,
     );
+
+    this.highlightAvailableShipMoves(gameState, currentPlayer, effectiveColor);
+    this.highlightAvailableShrines(gameState, currentPlayer, effectiveColor);
+  }
+
+  private highlightAvailableShipMoves(
+    gameState: GameState,
+    currentPlayer: Player,
+    effectiveColor: CoreColor,
+  ): void {
+    const favorForRecoloring = gameState.getRecolorIntention(currentPlayer.id);
     const favorAvailableForRange = currentPlayer.favor - favorForRecoloring;
 
     // Get available moves for the selected die color and available favor
@@ -338,19 +349,6 @@ export class Controller {
       currentPlayer,
       effectiveColor,
       favorAvailableForRange,
-    );
-
-    // Debug logging
-    console.log(
-      `Highlighting moves for ${effectiveColor} (original: ${this.selectedDieColor}):`,
-      {
-        availableMovesCount: availableMoves.length,
-        movesWithFavor:
-          availableMoves.filter((move) => move.favorCost > 0).length,
-        movesWithoutFavor:
-          availableMoves.filter((move) => move.favorCost === 0).length,
-        playerFavor: currentPlayer.favor,
-      },
     );
 
     availableMoves.forEach(
@@ -369,6 +367,38 @@ export class Controller {
         } else {
           console.warn(
             `Could not find hex-highlight element for (${move.q}, ${move.r})`,
+          );
+        }
+      },
+    );
+  }
+
+  private highlightAvailableShrines(
+    gameState: GameState,
+    currentPlayer: Player,
+    selectedColor: CoreColor,
+  ): void {
+    const shipPosition = currentPlayer.getShipPosition();
+    const grid = gameState.map.getHexGrid();
+    const shipCell = grid.getCell(shipPosition);
+    if (!shipCell) {
+      return;
+    }
+    const shrineNeighbors = grid.getNeighborsOfType(shipCell, 'shrine');
+    const availableShrines = shrineNeighbors.filter((shrineCell) => {
+      return shrineCell.color === selectedColor;
+    });
+    availableShrines.forEach(
+      (shrineCell) => {
+        const hexToHighlight = document.querySelector(
+          `.hex-highlight[data-q="${shrineCell.q}"][data-r="${shrineCell.r}"]`,
+        );
+
+        if (hexToHighlight) {
+          hexToHighlight.classList.add('available-shrine');
+        } else {
+          console.warn(
+            `Could not find hex-highlight element for (${shrineCell.q}, ${shrineCell.r})`,
           );
         }
       },
