@@ -115,8 +115,6 @@ export class ControllerForHexClicks {
     const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
     // Get available moves for the selected color and available favor
     const availableMoves = this.gameEngine.getAvailableMovesForColor(
-      currentPlayer,
-      effectiveColor,
       maxFavorForMovement,
     );
 

@@ -8,7 +8,7 @@ import { assertEquals } from '@std/assert/equals';
 import { GameEngine } from '../src/GameEngine.ts';
 import type { GameState } from '../src/GameState.ts';
 import type { Player } from '../src/Player.ts';
-import { HexCell } from '../src/hexmap/HexCell.ts';
+import type { HexCell } from '../src/hexmap/HexCell.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { HexMap } from '../src/hexmap/HexMap.ts';
 import { OracleSystem } from '../src/oracle-system.ts';
@@ -129,6 +129,7 @@ Deno.test('Available land - shrine already completed', () => {
   assert(shrineHex);
   shrineHex.status = 'filled';
 
+  state.setSelectedDieColor(color);
   const positions = engine.getAvailableLandInteractionsForColor(
     player,
     color,
@@ -142,7 +143,6 @@ Deno.test('Available land - shrine already completed', () => {
 
 Deno.test('Available land - shrine already flipped and not ours', () => {
   setup();
-  const grid = state.map.getHexGrid();
   const color = player.oracleDice[0];
   assert(color);
   const shrineCell = findLandCell('shrine', color);

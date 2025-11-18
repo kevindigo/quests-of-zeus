@@ -279,10 +279,10 @@ export class GameEngine {
   }
 
   public getAvailableMovesForColor(
-    player: Player,
-    effectiveColor: CoreColor,
     maxFavorForMovement: number,
   ): PossibleShipMove[] {
+    const player = this.getCurrentPlayer();
+    const effectiveColor = this.getGameState().getEffectiveSelectedColor();
     const availableMoves: PossibleShipMove[] = [];
     for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
       const movementRange = player.getRange() + favorSpent;

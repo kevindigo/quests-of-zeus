@@ -73,14 +73,11 @@ Deno.test('Hex click move - unlisted but otherwise legal', () => {
   setup();
   const firstDie = player.oracleDice[0];
   assert(firstDie);
+  state.setSelectedDieColor(firstDie);
   const noFavorMovesJson = JSON.stringify(
-    engine.getAvailableMovesForColor(player, firstDie, 0),
+    engine.getAvailableMovesForColor(0),
   );
-  const upToFiveFavorMoves = engine.getAvailableMovesForColor(
-    player,
-    firstDie,
-    5,
-  );
+  const upToFiveFavorMoves = engine.getAvailableMovesForColor(5);
   const onlyOneFavorMoves = upToFiveFavorMoves.filter((move) => {
     return !noFavorMovesJson.includes(JSON.stringify(move));
   });
@@ -99,11 +96,8 @@ Deno.test('Hex click move - legal move but failed', () => {
   setup();
   const firstDie = player.oracleDice[0];
   assert(firstDie);
-  const availableMoves = engine.getAvailableMovesForColor(
-    player,
-    firstDie,
-    player.favor,
-  );
+  state.setSelectedDieColor(firstDie);
+  const availableMoves = engine.getAvailableMovesForColor(player.favor);
   const moveNeedingFavor = availableMoves.find((move) => {
     return move.favorCost > 0;
   });
@@ -122,11 +116,8 @@ Deno.test('Hex click move - successful', () => {
   setup();
   const firstDie = player.oracleDice[0];
   assert(firstDie);
-  const availableMoves = engine.getAvailableMovesForColor(
-    player,
-    firstDie,
-    player.favor,
-  );
+  state.setSelectedDieColor(firstDie);
+  const availableMoves = engine.getAvailableMovesForColor(player.favor);
   const move = availableMoves[0];
   assert(move);
   const result = handler.handleHexClick(

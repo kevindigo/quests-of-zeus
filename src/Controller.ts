@@ -332,22 +332,19 @@ export class Controller {
       favorForRecoloring,
     );
 
-    this.highlightAvailableShipMoves(gameState, currentPlayer, effectiveColor);
+    this.highlightAvailableShipMoves(gameState, currentPlayer);
     this.highlightAvailableShrines(gameState, currentPlayer, effectiveColor);
   }
 
   private highlightAvailableShipMoves(
     gameState: GameState,
     currentPlayer: Player,
-    effectiveColor: CoreColor,
   ): void {
     const favorForRecoloring = gameState.getRecolorIntention(currentPlayer.id);
     const favorAvailableForRange = currentPlayer.favor - favorForRecoloring;
 
     // Get available moves for the selected die color and available favor
     const availableMoves = this.gameEngine.getAvailableMovesForColor(
-      currentPlayer,
-      effectiveColor,
       favorAvailableForRange,
     );
 
