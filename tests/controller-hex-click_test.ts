@@ -1,4 +1,9 @@
-import { assert, assertFalse, assertStringIncludes } from '@std/assert';
+import {
+  assert,
+  assertFalse,
+  assertNotEquals,
+  assertStringIncludes,
+} from '@std/assert';
 import { ControllerForHexClicks } from '../src/ControllerForHexClicks.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import type { GameState } from '../src/GameState.ts';
@@ -81,18 +86,22 @@ Deno.test('Hex click - next to good color, but click elsewhere', () => {
   const shrineCells = grid.getCellsOfType('shrine');
   const adjacentShrineCell = shrineCells[0];
   assert(adjacentShrineCell);
+  const adjacentColor = adjacentShrineCell.color;
+  if (adjacentColor === 'none') {
+    throw new Error('Impossible: a shrine had no color');
+  }
+  assertNotEquals(adjacentColor, 'none');
   const otherShrineCell = shrineCells[1];
   assert(otherShrineCell);
-  adjacentShrineCell.color = 'red';
   const seaNeighbor = grid.getNeighborsOfType(adjacentShrineCell, 'sea')[0];
   assert(seaNeighbor);
   player.setShipPosition(seaNeighbor.getCoordinates());
-  player.oracleDice = [adjacentShrineCell.color, 'green'];
-  state.setSelectedDieColor(adjacentShrineCell.color);
+  player.oracleDice = [adjacentColor, 'green'];
+  state.setSelectedDieColor(adjacentColor);
   const result = handler.handleHexClick(
     otherShrineCell.getCoordinates(),
     'shrine',
-    adjacentShrineCell.color,
+    adjacentColor,
     null,
   );
   assertFailureContains(result, 'not available');
