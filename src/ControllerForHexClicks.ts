@@ -1,11 +1,8 @@
 import type { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import { OracleSystem } from './oracle-system.ts';
-import type { Player } from './Player.ts';
 import type {
   ControllerActionResult,
-  CoreColor,
   MoveShipResult,
   TerrainType,
 } from './types.ts';
@@ -26,8 +23,6 @@ export class ControllerForHexClicks {
   public handleHexClick(
     coordinates: HexCoordinates,
     terrain: TerrainType,
-    selectedDieColor: CoreColor | null,
-    selectedOracleCardColor: CoreColor | null,
   ): ControllerActionResult {
     const gameState = this.gameEngine.getGameStateSnapshot();
     if (gameState.getPhase() !== 'action') {
@@ -37,8 +32,8 @@ export class ControllerForHexClicks {
       };
     }
 
-    const selectedColor = selectedDieColor || selectedOracleCardColor;
-    if (!selectedColor) {
+    const effectiveColor = this.getState().getEffectiveSelectedColor();
+    if (!effectiveColor) {
       return {
         success: false,
         message: 'Please select a resource (die or oracle card) first!!',
@@ -46,6 +41,9 @@ export class ControllerForHexClicks {
     }
 
     const currentPlayer = gameState.getCurrentPlayer();
+    const selectedOracleCardColor = gameState.getSelectedOracleCardColor();
+    const selectedDieColor = gameState.getSelectedDieColor();
+
     if (selectedOracleCardColor && currentPlayer.usedOracleCardThisTurn) {
       return {
         success: false,
@@ -75,14 +73,7 @@ export class ControllerForHexClicks {
     }
 
     if (terrain === 'sea') {
-      return this.handleMoveWithDieOrCard(
-        currentPlayer,
-        coordinates,
-        selectedDieColor,
-        selectedOracleCardColor,
-        selectedColor,
-        gameState.getRecolorIntention(currentPlayer.id),
-      );
+      return this.handleMoveWithDieOrCard(coordinates);
     }
 
     if (terrain === 'shrine') {
@@ -100,17 +91,12 @@ export class ControllerForHexClicks {
   }
 
   private handleMoveWithDieOrCard(
-    currentPlayer: Player,
     coordinates: HexCoordinates,
-    selectedDieColor: CoreColor | null,
-    selectedOracleCardColor: CoreColor | null,
-    selectedColor: CoreColor,
-    recoloringCost: number,
   ): ControllerActionResult {
-    const effectiveColor = OracleSystem.applyRecolor(
-      selectedColor,
-      recoloringCost,
-    );
+    const state = this.getState();
+    const currentPlayer = state.getCurrentPlayer();
+    const effectiveColor = state.getEffectiveSelectedColor();
+    const recoloringCost = state.getRecolorIntention(currentPlayer.id);
     const availableFavor = currentPlayer.favor;
     const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
     // Get available moves for the selected color and available favor
@@ -134,8 +120,8 @@ export class ControllerForHexClicks {
 
     const favorSpentForRange = targetMove.favorCost;
 
-    // Confirm spending favor?
-
+    const selectedDieColor = state.getSelectedDieColor();
+    const selectedOracleCardColor = state.getSelectedOracleCardColor();
     const moveResult = this.gameEngine.moveShip(
       currentPlayer.id,
       q,
@@ -146,6 +132,7 @@ export class ControllerForHexClicks {
       favorSpentForRange,
     );
     if (moveResult.success) {
+      const selectedColor = selectedDieColor || selectedOracleCardColor;
       let message = `Ship moved to (${q}, ${r}) using ${selectedColor}`;
       if (recoloringCost > 0) {
         message +=

@@ -39,7 +39,7 @@ Deno.test('Hex click - wrong phase', () => {
 
   state.setPhase('setup');
   assertFailureContains(
-    handler.handleHexClick(center, 'sea', null, null),
+    handler.handleHexClick(center, 'sea'),
     'phase',
   );
 });
@@ -48,8 +48,9 @@ Deno.test('Hex click - second oracle card', () => {
   setup();
 
   player.usedOracleCardThisTurn = true;
+  state.setSelectedOracleCardColor('red');
   assertFailureContains(
-    handler.handleHexClick(center, 'sea', null, 'red'),
+    handler.handleHexClick(center, 'sea'),
     'per turn',
   );
 });
@@ -57,8 +58,9 @@ Deno.test('Hex click - second oracle card', () => {
 Deno.test('Hex click - unsupported terrain', () => {
   setup();
   player.oracleDice = ['red'];
+  state.setSelectedDieColor('red');
   assertFailureContains(
-    handler.handleHexClick(center, 'shallow', 'red', null),
+    handler.handleHexClick(center, 'shallow'),
     'shallow',
   );
 });
@@ -74,8 +76,6 @@ Deno.test('Hex click - shrine not adjacent', () => {
   const result = handler.handleHexClick(
     shrineCell.getCoordinates(),
     'shrine',
-    shrineCell.color,
-    null,
   );
   assertFailureContains(result, 'not available');
 });
@@ -101,8 +101,6 @@ Deno.test('Hex click - next to good color, but click elsewhere', () => {
   const result = handler.handleHexClick(
     otherShrineCell.getCoordinates(),
     'shrine',
-    adjacentColor,
-    null,
   );
   assertFailureContains(result, 'not available');
 });
@@ -121,8 +119,6 @@ Deno.test('Hex click - next to good color, but different color', () => {
   const result = handler.handleHexClick(
     shrineCell.getCoordinates(),
     'shrine',
-    'green',
-    null,
   );
   assertFailureContains(result, 'not available');
 });
@@ -151,8 +147,6 @@ Deno.test('Hex click - available my hidden shrine (die)', () => {
   const result = handler.handleHexClick(
     shrineCell.getCoordinates(),
     'shrine',
-    color,
-    null,
   );
   assert(result.success, `Should have succeeded, but ${result.message}`);
 });

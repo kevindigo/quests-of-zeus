@@ -503,8 +503,6 @@ export class Controller {
     const result = handlers.handleHexClick(
       coordinates,
       terrain,
-      this.selectedDieColor,
-      this.selectedOracleCardColor,
     );
     if (result.success) {
       this.clearResourceSelection();
