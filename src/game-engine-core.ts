@@ -158,26 +158,6 @@ export class QuestsZeusGameEngine {
     return this.oracleSystem!.drawOracleCard(player, dieColor);
   }
 
-  public setRecolorIntention(
-    playerId: number,
-    favorSpent: number,
-  ): boolean {
-    this.ensureInitialized();
-    const player = this.getValidPlayer(playerId);
-    if (player.favor < favorSpent) {
-      return false;
-    }
-
-    player.setRecolorIntention(favorSpent);
-    return true;
-  }
-
-  public clearRecolorIntention(playerId: number): void {
-    this.ensureInitialized();
-    const player = this.getValidPlayer(playerId);
-    player.setRecolorIntention(0);
-  }
-
   public canPlaceStatueOnCity(_playerId: number): boolean {
     this.ensureInitialized();
     return false;

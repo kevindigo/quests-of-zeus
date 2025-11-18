@@ -152,6 +152,24 @@ export class GameState {
     this.shrineHexes = hexes;
   }
 
+  public setRecolorIntention(
+    playerId: number,
+    favorSpent: number,
+  ): boolean {
+    const player = this.getPlayer(playerId);
+    if (player.favor < favorSpent) {
+      return false;
+    }
+
+    player.setRecolorIntention(favorSpent);
+    return true;
+  }
+
+  public clearRecolorIntention(playerId: number): void {
+    const player = this.getPlayer(playerId);
+    player.setRecolorIntention(0);
+  }
+
   public map: HexMap;
   public players: Player[];
   private currentPlayerIndex: number;

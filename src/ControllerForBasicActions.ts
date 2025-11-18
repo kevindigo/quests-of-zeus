@@ -102,16 +102,17 @@ export class ControllerForBasicActions {
       };
     }
 
+    const state = this.gameEngine.getGameState();
     const playerId = this.gameEngine.getCurrentPlayer().id;
     if (favorCost === 0) {
-      this.gameEngine.clearRecolorIntention(playerId);
+      state.clearRecolorIntention(playerId);
 
       return {
         success: true,
         message: 'Recoloring intention cleared',
       };
     } else {
-      const success = this.gameEngine.setRecolorIntention(
+      const success = state.setRecolorIntention(
         playerId,
         favorCost,
       );

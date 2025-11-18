@@ -18,7 +18,7 @@ Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
   player.setRecolorIntention(0);
 
   // Test: Set recoloring intention for black die → pink (1 favor cost)
-  const recoloringSuccess = gameEngine.setRecolorIntention(
+  const recoloringSuccess = gameEngine.getGameState().setRecolorIntention(
     player.id,
     1,
   );
@@ -44,8 +44,8 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   // Clear any recoloring intentions that might exist from initialization
   player.setRecolorIntention(0);
 
-  // Set recoloring intention for black die → pink (1 favor cost)
-  const recoloringSuccess = gameEngine.setRecolorIntention(
+  const gameState = gameEngine.getGameState();
+  const recoloringSuccess = gameState.setRecolorIntention(
     player.id,
     1,
   );
@@ -59,7 +59,6 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   );
 
   // Should have moves that require pink sea tiles (since black die can be recolored to pink)
-  const gameState = gameEngine.getGameState();
   const movesToPinkTiles = availableMoves.filter((move) => {
     const cell = gameState.map.getCell({ q: move.q, r: move.r });
     return cell && cell.color === 'pink';
@@ -97,7 +96,7 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
   // Set a high recoloring cost that would make some moves unaffordable
   // Player has 3 favor, recoloring black → blue costs 2 favor
   // This means any blue move that requires additional favor for movement would be unaffordable
-  const highRecolorSuccess = gameEngine.setRecolorIntention(
+  const highRecolorSuccess = gameEngine.getGameState().setRecolorIntention(
     player.id,
     2,
   ); // black → blue (2 favor recoloring cost)
@@ -138,8 +137,8 @@ Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () =>
   // Clear any recoloring intentions that might exist from initialization
   player.setRecolorIntention(0);
 
-  // Clear any recoloring that might exist
-  gameEngine.clearRecolorIntention(player.id);
+  const gameState = gameEngine.getGameState();
+  gameState.clearRecolorIntention(player.id);
 
   const movesWithoutRecolor = gameEngine.getAvailableMovesForColor(
     player,
@@ -148,7 +147,6 @@ Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () =>
   );
 
   // Should only have moves to black sea tiles
-  const gameState = gameEngine.getGameState();
   const movesToBlackTiles = movesWithoutRecolor.filter((move) => {
     const cell = gameState.map.getCell({ q: move.q, r: move.r });
     return cell && cell.color === 'black';

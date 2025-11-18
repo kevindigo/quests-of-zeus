@@ -84,7 +84,7 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
 Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
-
+  const gameState = gameEngine.getGameState();
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
@@ -95,7 +95,7 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   player.setRecolorIntention(0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
-  const recoloringSuccess = gameEngine.setRecolorIntention(
+  const recoloringSuccess = gameState.setRecolorIntention(
     player.id,
     1,
   );
@@ -109,7 +109,6 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   );
 
   // Should have moves that require pink sea tiles (since black die can be recolored to pink)
-  const gameState = gameEngine.getGameState();
   const pinkSeaTiles = gameState.map.getCellsByTerrain('sea').filter((cell) =>
     cell.color === 'pink'
   );
@@ -141,7 +140,7 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
   player.setRecolorIntention(0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
-  const recoloringSuccess = gameEngine.setRecolorIntention(
+  const recoloringSuccess = gameEngine.getGameState().setRecolorIntention(
     player.id,
     1,
   );
@@ -168,6 +167,7 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
 Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   const gameEngine = new QuestsZeusGameEngine();
   gameEngine.initializeGame();
+  const gameState = gameEngine.getGameState();
 
   const player = gameEngine.getCurrentPlayer();
 
@@ -179,14 +179,14 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   player.setRecolorIntention(0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
-  const recoloringSuccess = gameEngine.setRecolorIntention(
+  const recoloringSuccess = gameState.setRecolorIntention(
     player.id,
     1,
   );
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Clear recoloring intention
-  gameEngine.clearRecolorIntention(player.id);
+  gameState.clearRecolorIntention(player.id);
 
   // Get moves after clearing recoloring intention
   const movesAfterClear = gameEngine.getAvailableMovesForColor(
@@ -196,7 +196,6 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   );
 
   // Should only have moves to black sea tiles now
-  const gameState = gameEngine.getGameState();
   const movesToBlackTiles = movesAfterClear.filter((move) => {
     const cell = gameState.map.getCell({ q: move.q, r: move.r });
     return cell && cell.color === 'black';
