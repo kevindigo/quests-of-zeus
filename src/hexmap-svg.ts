@@ -86,36 +86,21 @@ export class HexMapSVG {
   ): string {
     const { showCoordinates, showTerrainLabels } = this.options;
 
-    const strokeWidth = 1;
-    // Get terrain color
+    let cellContent = this.getBasicHexPolygon(
+      cell,
+      x,
+      y,
+      cellSize,
+    );
+
     const terrainColor = this.getTerrainColor(cell.terrain);
     const strokeColor = this.getStrokeColor(cell.color);
-
-    const outlineColor = cell.terrain === 'shallow' ? 'none' : 'black';
-
-    // Calculate hex center for labels
     const centerX = x + cellSize;
     const centerY = y + cellSize;
 
-    // Always start with the basic black outline
-    const basicHexPoints = this.calculateHexPoints(x, y, cellSize);
-    let cellContent = `
-      <polygon 
-        points="${basicHexPoints}" 
-        fill="${terrainColor}" 
-        stroke="${outlineColor}" 
-        stroke-width="${strokeWidth}"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        data-q="${cell.q}" 
-        data-r="${cell.r}"
-        data-terrain="${cell.terrain}"
-        class="hex-cell ${this.getTerrainClass(cell.terrain)}"
-      />`;
-
     // For colored hexes, add an inner polygon with thick colored outline
     if (cell.color !== 'none') {
-      const effectiveStrokeWidth = strokeWidth * 3;
+      const effectiveStrokeWidth = 3;
       // Inset the polygon to make room for the thick border inside the basic outline
       const insetAmount = (effectiveStrokeWidth / 2) + 1;
       const innerHexPoints = this.calculateHexPoints(
@@ -735,5 +720,30 @@ export class HexMapSVG {
         user-select: none;
       }
     </style></defs>`;
+  }
+
+  private getBasicHexPolygon(
+    cell: HexCell,
+    x: number,
+    y: number,
+    cellSize: number,
+  ): string {
+    const basicHexPoints = this.calculateHexPoints(x, y, cellSize);
+    const outlineColor = cell.terrain === 'shallow' ? 'none' : 'black';
+    const terrainColor = this.getTerrainColor(cell.terrain);
+
+    return `
+      <polygon 
+        points="${basicHexPoints}" 
+        fill="${terrainColor}" 
+        stroke="${outlineColor}" 
+        stroke-width="1"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        data-q="${cell.q}" 
+        data-r="${cell.r}"
+        data-terrain="${cell.terrain}"
+        class="hex-cell ${this.getTerrainClass(cell.terrain)}"
+      />`;
   }
 }
