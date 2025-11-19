@@ -26,7 +26,6 @@ import type {
 
 export interface HexMapSVGOptions {
   cellSize?: number;
-  strokeWidth?: number;
   showCoordinates?: boolean;
   showTerrainLabels?: boolean;
   interactive?: boolean;
@@ -50,7 +49,6 @@ export class HexMapSVG {
   constructor(options: HexMapSVGOptions = {}) {
     this.options = {
       cellSize: options.cellSize || 40,
-      strokeWidth: options.strokeWidth || 1,
       showCoordinates: options.showCoordinates ?? false,
       showTerrainLabels: options.showTerrainLabels ?? false,
       interactive: options.interactive ?? true,
@@ -66,9 +64,9 @@ export class HexMapSVG {
    * Generate SVG for a single hex cell
    */
   public generateHexCell(cell: HexCell, x: number, y: number): string {
-    const { cellSize, strokeWidth, showCoordinates, showTerrainLabels } =
-      this.options;
+    const { cellSize, showCoordinates, showTerrainLabels } = this.options;
 
+    const strokeWidth = 1;
     // Get terrain color
     const terrainColor = this.getTerrainColor(cell.terrain);
     const strokeColor = this.getStrokeColor(cell.color);
