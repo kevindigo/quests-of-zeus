@@ -103,12 +103,13 @@ Deno.test('Hex click move - legal move but failed', () => {
   const moveNeedingFavor = availableMoves.find((move) => {
     return move.favorCost > 0;
   });
-  assert(moveNeedingFavor);
+  assert(moveNeedingFavor, JSON.stringify(availableMoves));
   player.favor = 0;
   const result = handler.handleHexClick(
     { q: moveNeedingFavor.q, r: moveNeedingFavor.r },
     'sea',
   );
+  assert(!result.success, result.message);
   assertFailureContains(result, 'range');
 });
 
