@@ -105,43 +105,6 @@ export class HexMapSVG {
       cellSize,
     );
 
-    // Add monster icon for monster hexes
-    if (cell.terrain === 'monsters') {
-      try {
-        const monsterHex = gameState.getMonsterHexes().find((mh) =>
-          mh.q === cell.q && mh.r === cell.r
-        );
-
-        console.log(
-          `Processing monster hex at (${cell.q}, ${cell.r}):`,
-          monsterHex,
-        );
-
-        // Always show the line-drawn monster icon as the base
-        cellContent += generateMonsterIcon({ centerX, centerY, cellSize });
-
-        // Then overlay colored monsters if present
-        if (monsterHex && monsterHex.monsterColors.length > 0) {
-          console.log(
-            `Generating colored monsters for (${cell.q}, ${cell.r}) with colors:`,
-            monsterHex.monsterColors,
-          );
-          cellContent += this.generateColoredMonsters({
-            centerX,
-            centerY,
-            cellSize,
-          }, monsterHex.monsterColors);
-        }
-      } catch (error) {
-        console.error(
-          `Error rendering monster hex at (${cell.q}, ${cell.r}):`,
-          error,
-        );
-        // Fallback to generic monster icon on error
-        cellContent += generateMonsterIcon({ centerX, centerY, cellSize });
-      }
-    }
-
     // Add temple icon for temple hexes
     if (cell.terrain === 'temple') {
       cellContent += generateTempleIcon({
@@ -720,6 +683,14 @@ export class HexMapSVG {
           centerY,
           cellSize,
         );
+      case 'monsters':
+        return this.createHexMonsterSvg(
+          gameState,
+          cell,
+          centerX,
+          centerY,
+          cellSize,
+        );
       default:
         return '';
     }
@@ -761,6 +732,35 @@ export class HexMapSVG {
         cellSize,
         hexColor: this.getStrokeColor(cell.color),
       }, cityHex.statues);
+    }
+
+    return cellContent;
+  }
+
+  private createHexMonsterSvg(
+    gameState: GameState,
+    cell: HexCell,
+    centerX: number,
+    centerY: number,
+    cellSize: number,
+  ): string {
+    let cellContent = generateMonsterIcon({ centerX, centerY, cellSize });
+
+    const monsterHex = gameState.getMonsterHexes().find((mh) =>
+      mh.q === cell.q && mh.r === cell.r
+    );
+
+    // Then overlay colored monsters if present
+    if (monsterHex && monsterHex.monsterColors.length > 0) {
+      console.log(
+        `Generating colored monsters for (${cell.q}, ${cell.r}) with colors:`,
+        monsterHex.monsterColors,
+      );
+      cellContent += this.generateColoredMonsters({
+        centerX,
+        centerY,
+        cellSize,
+      }, monsterHex.monsterColors);
     }
 
     return cellContent;
