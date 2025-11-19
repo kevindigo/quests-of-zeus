@@ -105,14 +105,14 @@ export class ControllerForBasicActions {
     const state = this.gameEngine.getGameState();
     const playerId = this.gameEngine.getCurrentPlayer().id;
     if (favorCost === 0) {
-      state.clearRecolorIntention(playerId);
+      state.clearSelectedRecoloring(playerId);
 
       return {
         success: true,
         message: 'Recoloring intention cleared',
       };
     } else {
-      const success = state.setRecolorIntention(
+      const success = state.setSelectedRecoloring(
         playerId,
         favorCost,
       );

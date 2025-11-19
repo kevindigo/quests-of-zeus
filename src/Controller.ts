@@ -47,7 +47,7 @@ export class Controller {
     this.selectedOracleCardColor = null;
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     if (currentPlayer) {
-      this.gameEngine.getGameState().clearRecolorIntention();
+      this.gameEngine.getGameState().clearSelectedRecoloring();
     }
   }
 
@@ -91,7 +91,7 @@ export class Controller {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     console.log(`selectResource called: ${resourceType}, ${resourceColor}`);
 
-    this.gameEngine.getGameState().clearRecolorIntention();
+    this.gameEngine.getGameState().clearSelectedRecoloring();
     if (resourceType === 'die') {
       if (this.selectDieColor(resourceColor)) {
         this.showMessage(`Selected ${resourceColor} die`);
@@ -326,7 +326,7 @@ export class Controller {
     if (!selectedColor) {
       return;
     }
-    const favorForRecoloring = gameState.getRecolorIntention();
+    const favorForRecoloring = gameState.getSelectedRecoloring();
     const effectiveColor = OracleSystem.applyRecolor(
       selectedColor,
       favorForRecoloring,
@@ -340,7 +340,7 @@ export class Controller {
     gameState: GameState,
     currentPlayer: Player,
   ): void {
-    const favorForRecoloring = gameState.getRecolorIntention();
+    const favorForRecoloring = gameState.getSelectedRecoloring();
     const favorAvailableForRange = currentPlayer.favor - favorForRecoloring;
 
     // Get available moves for the selected die color and available favor

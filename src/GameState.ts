@@ -166,11 +166,11 @@ export class GameState {
     this.shrineHexes = hexes;
   }
 
-  public getRecolorIntention(): number {
+  public getSelectedRecoloring(): number {
     return this.selectedRecoloring || 0;
   }
 
-  public setRecolorIntention(
+  public setSelectedRecoloring(
     playerId: number,
     favorSpent: number,
   ): boolean {
@@ -183,7 +183,7 @@ export class GameState {
     return true;
   }
 
-  public clearRecolorIntention(): void {
+  public clearSelectedRecoloring(): void {
     this.selectedRecoloring = 0;
   }
 
@@ -209,7 +209,7 @@ export class GameState {
     if (!selectedColor) {
       return null;
     }
-    const favorForRecoloring = this.getRecolorIntention();
+    const favorForRecoloring = this.getSelectedRecoloring();
     const effectiveColor = OracleSystem.applyRecolor(
       selectedColor,
       favorForRecoloring,
@@ -218,7 +218,7 @@ export class GameState {
   }
 
   public clearResourceSelection(): void {
-    this.clearRecolorIntention();
+    this.clearSelectedRecoloring();
     this.setSelectedDieColor(null);
     this.setSelectedOracleCardColor(null);
   }

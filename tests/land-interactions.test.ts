@@ -203,7 +203,7 @@ Deno.test('Click land - shrine hidden and ours (recolored die)', () => {
   const preRecoloredColor = OracleSystem.applyRecolor(shrineCell.color, 1);
   player.oracleDice = [preRecoloredColor];
   state.setSelectedDieColor(preRecoloredColor);
-  state.setRecolorIntention(player.id, 5);
+  state.setSelectedRecoloring(player.id, 5);
   shrineHex.owner = player.color;
   shrineHex.reward = 'favor';
   const result = engine.activateShrine(

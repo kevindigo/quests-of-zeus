@@ -96,7 +96,7 @@ export class ControllerForHexClicks {
     const state = this.getState();
     const currentPlayer = state.getCurrentPlayer();
     const effectiveColor = state.getEffectiveSelectedColor();
-    const recoloringCost = state.getRecolorIntention();
+    const recoloringCost = state.getSelectedRecoloring();
     const availableFavor = currentPlayer.favor;
     const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
     // Get available moves for the selected color and available favor
@@ -152,10 +152,10 @@ export class ControllerForHexClicks {
         targetQ: q,
         targetR: r,
         dieColor: selectedDieColor,
-        favorSpent: this.getState().getRecolorIntention(),
+        favorSpent: this.getState().getSelectedRecoloring(),
         playerFavor: currentPlayer.favor,
         playerDice: currentPlayer.oracleDice,
-        recolorIntention: this.getState().getRecolorIntention(),
+        recolorIntention: this.getState().getSelectedRecoloring(),
         moveResult,
       });
 

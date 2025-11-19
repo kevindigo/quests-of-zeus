@@ -183,7 +183,7 @@ export class GameEngine {
     if (currentPlayer) {
       currentPlayer.usedOracleCardThisTurn = false;
       currentPlayer.oracleDice = newDice;
-      this.state!.clearRecolorIntention();
+      this.state!.clearSelectedRecoloring();
     }
 
     const nextPlayerIndex = (this.state!.getCurrentPlayerIndex() + 1) %
@@ -442,7 +442,7 @@ export class GameEngine {
   public spendDieOrCard(): void {
     const player = this.getCurrentPlayer();
     const state = this.getGameState();
-    const favorSpentToRecolor = state.getRecolorIntention();
+    const favorSpentToRecolor = state.getSelectedRecoloring();
     const die = state.getSelectedDieColor();
     const card = state.getSelectedOracleCardColor();
     const selectedColor = die || card;

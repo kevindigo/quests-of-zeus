@@ -51,8 +51,9 @@
   - setup: correct monster quests
   - action: monster fight
 
-== Game end ==
+== Round end/Game end ==
 
+- effect: free god advance for other players' rolls
 - effect: ability to move to zeus after 12 quests completed
 - round: detect end of game and determine winner
 

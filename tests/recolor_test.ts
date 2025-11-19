@@ -15,10 +15,10 @@ Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  gameEngine.getGameState().setRecolorIntention(player.id, 0);
+  gameEngine.getGameState().setSelectedRecoloring(player.id, 0);
 
   // Test: Set recoloring intention for black die → pink (1 favor cost)
-  const recoloringSuccess = gameEngine.getGameState().setRecolorIntention(
+  const recoloringSuccess = gameEngine.getGameState().setSelectedRecoloring(
     player.id,
     1,
   );
@@ -42,10 +42,10 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  gameEngine.getGameState().setRecolorIntention(player.id, 0);
+  gameEngine.getGameState().setSelectedRecoloring(player.id, 0);
 
   const gameState = gameEngine.getGameState();
-  const recoloringSuccess = gameState.setRecolorIntention(
+  const recoloringSuccess = gameState.setSelectedRecoloring(
     player.id,
     1,
   );
@@ -88,12 +88,12 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
   player.favor = 3; // Low favor
 
   // Clear any recoloring intentions that might exist from initialization
-  gameEngine.getGameState().setRecolorIntention(player.id, 0);
+  gameEngine.getGameState().setSelectedRecoloring(player.id, 0);
 
   // Set a high recoloring cost that would make some moves unaffordable
   // Player has 3 favor, recoloring black → blue costs 2 favor
   // This means any blue move that requires additional favor for movement would be unaffordable
-  const highRecolorSuccess = gameEngine.getGameState().setRecolorIntention(
+  const highRecolorSuccess = gameEngine.getGameState().setSelectedRecoloring(
     player.id,
     2,
   ); // black → blue (2 favor recoloring cost)
@@ -131,10 +131,10 @@ Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () =>
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  gameEngine.getGameState().setRecolorIntention(player.id, 0);
+  gameEngine.getGameState().setSelectedRecoloring(player.id, 0);
 
   const gameState = gameEngine.getGameState();
-  gameState.clearRecolorIntention(player.id);
+  gameState.clearSelectedRecoloring(player.id);
 
   gameState.setSelectedDieColor('black');
   const movesWithoutRecolor = gameEngine.getAvailableMovesForColor(
