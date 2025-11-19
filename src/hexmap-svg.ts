@@ -66,11 +66,7 @@ export class HexMapSVG {
     let svgContent = `<g class="hex-grid">`;
 
     grid.forEachCell((cell) => {
-      console.log(
-        `Generating cell (${cell.q}, ${cell.r}) of terrain: ${cell.terrain}`,
-      );
-      const { x, y } = this.calculateCellPosition(cell.q, cell.r, cellSize);
-      svgContent += this.generateHexCell(gameState, cell, x, y, cellSize);
+      svgContent += this.generateHexCell(gameState, cell, cellSize);
     });
 
     svgContent += `</g>`;
@@ -80,11 +76,10 @@ export class HexMapSVG {
   private generateHexCell(
     gameState: GameState,
     cell: HexCell,
-    x: number,
-    y: number,
     cellSize: number,
   ): string {
     const { showCoordinates, showTerrainLabels } = this.options;
+    const { x, y } = this.calculateCellPosition(cell.q, cell.r, cellSize);
 
     let cellContent = this.getBasicHexPolygon(
       cell,
