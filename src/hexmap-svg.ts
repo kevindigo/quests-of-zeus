@@ -88,36 +88,10 @@ export class HexMapSVG {
       cellSize,
     );
 
-    const terrainColor = this.getTerrainColor(cell.terrain);
-
-    // For colored hexes, add an inner polygon with thick colored outline
     if (cell.color !== 'none') {
-      const effectiveStrokeWidth = 4;
-      // Inset the polygon to make room for the thick border inside the basic outline
-      const strokeColor = this.getStrokeColor(cell.color);
-      const insetAmount = (effectiveStrokeWidth / 2) + 1;
-      const innerHexPoints = this.calculateHexPoints(
-        x + insetAmount,
-        y + insetAmount,
-        cellSize - insetAmount,
-      );
-
-      cellContent += `
-      <polygon 
-        class="hex-cell-inner ${this.getTerrainClass(cell.terrain)}"
-        points="${innerHexPoints}" 
-        fill="${terrainColor}" 
-        stroke="${strokeColor}" 
-        stroke-width="${effectiveStrokeWidth}"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        data-q="${cell.q}" 
-        data-r="${cell.r}"
-        data-terrain="${cell.terrain}"
-      />`;
+      cellContent += this.createHexColorBorderSvg(cell, x, y, cellSize);
     }
 
-    // For uncolored hexes, add a highlight polygon at the same inset as colored hexes
     const highlightInsetAmount = 8;
     const highlightHexPoints = this.calculateHexPoints(
       x + highlightInsetAmount,
@@ -706,6 +680,37 @@ export class HexMapSVG {
         data-r="${cell.r}"
         data-terrain="${cell.terrain}"
         class="hex-cell ${this.getTerrainClass(cell.terrain)}"
+      />`;
+  }
+
+  private createHexColorBorderSvg(
+    cell: HexCell,
+    x: number,
+    y: number,
+    cellSize: number,
+  ): string {
+    const terrainColor = this.getTerrainColor(cell.terrain);
+    const effectiveStrokeWidth = 4;
+    const strokeColor = this.getStrokeColor(cell.color);
+    const insetAmount = (effectiveStrokeWidth / 2) + 1;
+    const innerHexPoints = this.calculateHexPoints(
+      x + insetAmount,
+      y + insetAmount,
+      cellSize - insetAmount,
+    );
+
+    return `
+      <polygon 
+        class="hex-cell-inner ${this.getTerrainClass(cell.terrain)}"
+        points="${innerHexPoints}" 
+        fill="${terrainColor}" 
+        stroke="${strokeColor}" 
+        stroke-width="${effectiveStrokeWidth}"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        data-q="${cell.q}" 
+        data-r="${cell.r}"
+        data-terrain="${cell.terrain}"
       />`;
   }
 }
