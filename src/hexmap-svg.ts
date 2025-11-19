@@ -240,7 +240,7 @@ export class HexMapSVG {
       }
     }
 
-    cellContent += this.getPlayerMarkers(
+    cellContent += this.createPlayerMarkersSvg(
       gameState,
       cell.getCoordinates(),
       centerX,
@@ -544,7 +544,7 @@ export class HexMapSVG {
     }
   }
 
-  private getPlayerMarkers(
+  private createPlayerMarkersSvg(
     gameState: GameState,
     cellCoordinates: HexCoordinates,
     x: number,
