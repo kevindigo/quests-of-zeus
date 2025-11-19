@@ -282,41 +282,55 @@ export class GameEngine {
     maxFavorForMovement: number,
   ): PossibleShipMove[] {
     const player = this.getCurrentPlayer();
+    const origin = player.getShipPosition();
     const effectiveColor = this.getGameState().getEffectiveSelectedColor();
+
     const availableMoves: PossibleShipMove[] = [];
     for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
       const movementRange = player.getRange() + favorSpent;
-      const reachableSeaTiles = this.movementSystem!.getReachableSeaTiles(
-        player.getShipPosition(),
+      const reachableSeaCells = this.movementSystem!.getReachableSeaTiles(
+        origin,
         movementRange,
       );
 
-      for (const seaTile of reachableSeaTiles) {
-        if (seaTile.color !== effectiveColor) {
-          continue;
+      const relevantCells = reachableSeaCells.filter((cell) => {
+        if (this.isSameLocation(cell, origin)) {
+          return false;
         }
-        if (
-          seaTile.q === player.getShipPosition().q &&
-          seaTile.r === player.getShipPosition().r
-        ) {
-          continue;
+        if (cell.color !== effectiveColor) {
+          return false;
         }
-        const existingMove = availableMoves.find((move) =>
-          move.q === seaTile.q && move.r === seaTile.r
-        );
-        if (existingMove) {
-          continue;
+        return true;
+      });
+
+      relevantCells.forEach((cell) => {
+        const possibleMove = { q: cell.q, r: cell.r, favorCost: favorSpent };
+
+        if (!this.alreadyContainsMove(availableMoves, possibleMove)) {
+          availableMoves.push(possibleMove);
         }
-        const move = {
-          q: seaTile.q,
-          r: seaTile.r,
-          favorCost: favorSpent,
-        };
-        availableMoves.push(move);
-      }
+      });
     }
 
     return availableMoves;
+  }
+
+  private alreadyContainsMove(
+    availableMoves: PossibleShipMove[],
+    candidateMove: PossibleShipMove,
+  ): boolean {
+    const found = availableMoves.find((move) => {
+      return this.isSameLocation(move, candidateMove);
+    });
+    return found ? true : false;
+  }
+
+  private isSameLocation(
+    coordinates1: HexCoordinates,
+    coordinates2: HexCoordinates,
+  ): boolean {
+    return coordinates1.q === coordinates2.q &&
+      coordinates1.r === coordinates2.r;
   }
 
   public getAvailableLandInteractions(): HexCell[] {
