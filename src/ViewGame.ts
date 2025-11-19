@@ -170,8 +170,7 @@ export class ViewGame {
         <h4>Recolor die or card`;
 
     // Add "No Recolor" option
-    const hasRecolorIntention =
-      this.gameState.getRecolorIntention(player.id) > 0;
+    const hasRecolorIntention = this.gameState.getRecolorIntention() > 0;
 
     const originalColorBackground = this.getColorHex(selectedColor);
     const symbol = this.getSymbol(selectedColor);
@@ -200,8 +199,7 @@ export class ViewGame {
       const background = this.getColorHex(newColor);
       const symbol = this.getSymbol(newColor);
 
-      const isSelected =
-        this.gameState.getRecolorIntention(player.id) === favorCost;
+      const isSelected = this.gameState.getRecolorIntention() === favorCost;
 
       options += `
         <div class="recolor-option" style="margin-bottom: 0.5rem;">

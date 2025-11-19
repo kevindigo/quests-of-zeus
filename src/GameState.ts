@@ -15,7 +15,7 @@ export type GameStateJson = {
   map: HexMapJson;
   players: PlayerJson[];
   currentPlayerIndex: number;
-  recoloringIntentionByPlayerId: number[];
+  favorToRecolor: number;
   round: number;
   phase: Phase;
   cubeHexes: CubeHex[];
@@ -35,9 +35,7 @@ export class GameState {
     this.map = map;
     this.players = players;
     this.currentPlayerIndex = 0;
-    this.recoloringIntentionByPlayerId = players.map(() => {
-      return 0;
-    });
+    this.favorToRecolor = 0;
     this.round = 1;
     this.phase = 'setup';
     this.cubeHexes = [];
@@ -55,7 +53,7 @@ export class GameState {
     const players = json.players.map((player) => Player.fromJson(player));
     const state = new GameState(map, players);
     state.currentPlayerIndex = json.currentPlayerIndex;
-    state.recoloringIntentionByPlayerId = json.recoloringIntentionByPlayerId;
+    state.favorToRecolor = json.favorToRecolor;
     state.round = json.round;
     state.phase = json.phase;
     state.cubeHexes = json.cubeHexes;
@@ -75,7 +73,7 @@ export class GameState {
         return player.toJson();
       }),
       currentPlayerIndex: this.currentPlayerIndex,
-      recoloringIntentionByPlayerId: this.recoloringIntentionByPlayerId,
+      favorToRecolor: this.favorToRecolor,
       round: this.round,
       phase: this.phase,
       cubeHexes: this.cubeHexes,
@@ -168,8 +166,8 @@ export class GameState {
     this.shrineHexes = hexes;
   }
 
-  public getRecolorIntention(playerId: number): number {
-    return this.recoloringIntentionByPlayerId[playerId] || 0;
+  public getRecolorIntention(): number {
+    return this.favorToRecolor || 0;
   }
 
   public setRecolorIntention(
@@ -181,12 +179,12 @@ export class GameState {
       return false;
     }
 
-    this.recoloringIntentionByPlayerId[playerId] = favorSpent;
+    this.favorToRecolor = favorSpent;
     return true;
   }
 
-  public clearRecolorIntention(playerId: number): void {
-    this.recoloringIntentionByPlayerId[playerId] = 0;
+  public clearRecolorIntention(): void {
+    this.favorToRecolor = 0;
   }
 
   public getSelectedDieColor(): CoreColor | null {
@@ -211,8 +209,7 @@ export class GameState {
     if (!selectedColor) {
       return null;
     }
-    const currentPlayer = this.getCurrentPlayer();
-    const favorForRecoloring = this.getRecolorIntention(currentPlayer.id);
+    const favorForRecoloring = this.getRecolorIntention();
     const effectiveColor = OracleSystem.applyRecolor(
       selectedColor,
       favorForRecoloring,
@@ -220,8 +217,8 @@ export class GameState {
     return effectiveColor;
   }
 
-  public clearResourceSelection(playerId: number): void {
-    this.clearRecolorIntention(playerId);
+  public clearResourceSelection(): void {
+    this.clearRecolorIntention();
     this.setSelectedDieColor(null);
     this.setSelectedOracleCardColor(null);
   }
@@ -229,7 +226,7 @@ export class GameState {
   public map: HexMap;
   public players: Player[];
   private currentPlayerIndex: number;
-  private recoloringIntentionByPlayerId: number[];
+  private favorToRecolor: number;
   private round: number;
   private phase: Phase;
   private cubeHexes: CubeHex[];
