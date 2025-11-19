@@ -105,11 +105,6 @@ export class HexMapSVG {
       cellSize,
     );
 
-    // Add clouds icon for clouds hexes
-    if (cell.terrain === 'shrine') {
-      cellContent += generateCloudsIcon({ centerX, centerY, cellSize });
-    }
-
     // Add statue icon for statue hexes
     if (cell.terrain === 'statue') {
       try {
@@ -657,6 +652,8 @@ export class HexMapSVG {
           centerY,
           cellSize,
         );
+      case 'shrine':
+        return this.createHexShrineSvg(centerX, centerY, cellSize);
       default:
         return '';
     }
@@ -770,5 +767,13 @@ export class HexMapSVG {
       }, cubeHex.cubeColors);
     }
     return cellContent;
+  }
+
+  private createHexShrineSvg(
+    centerX: number,
+    centerY: number,
+    cellSize: number,
+  ): string {
+    return generateCloudsIcon({ centerX, centerY, cellSize });
   }
 }
