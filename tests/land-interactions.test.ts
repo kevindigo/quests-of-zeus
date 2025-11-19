@@ -1,9 +1,4 @@
-import {
-  assert,
-  assertFalse,
-  assertNotEquals,
-  assertStringIncludes,
-} from '@std/assert';
+import { assert, assertFalse, assertStringIncludes } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
 import { GameEngine } from '../src/GameEngine.ts';
 import type { GameState } from '../src/GameState.ts';
@@ -129,18 +124,19 @@ Deno.test('Available land - shrine already completed', () => {
 
 Deno.test('Available land - shrine already flipped and not ours', () => {
   setup();
-  const color = player.oracleDice[0];
-  assert(color);
-  const shrineCell = findLandCell('shrine', color);
-  putPlayerNextTo(shrineCell);
-
-  const shrineHex = state.findShrineHexAt(shrineCell.getCoordinates());
+  const shrineHex = state.getShrineHexes().find((sh) => {
+    return sh.owner !== player.color;
+  });
   assert(shrineHex);
-  shrineHex.status = 'visible';
-  shrineHex.owner = 'yellow';
-  assertNotEquals(shrineHex.owner, player.color);
+  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  assert(shrineCell);
+  assert(shrineCell.color !== 'none');
 
-  state.setSelectedDieColor(color);
+  shrineHex.status = 'visible';
+  putPlayerNextTo(shrineCell);
+  player.oracleDice = [shrineCell.color];
+  state.setSelectedDieColor(shrineCell.color);
+
   const cells = engine.getAvailableLandInteractions();
   const thisShrine = cells.find((cell) => {
     return cell.q === shrineHex.q && cell.r === shrineHex.r;
