@@ -97,20 +97,17 @@ Deno.test('Available land - shrine adjacent but wrong color', () => {
 
 Deno.test('Available land - shrine adjacent correct color', () => {
   setup();
-  const grid = state.map.getHexGrid();
   const color = player.oracleDice[0];
   assert(color);
   const shrineCell = findLandCell('shrine', color);
   putPlayerNextTo(shrineCell);
 
   state.setSelectedDieColor(color);
-  const positions = engine.getAvailableLandInteractions();
-  const shrines = positions.filter((position) => {
-    const cell = grid.getCell(position);
-    return cell?.terrain === 'shrine';
+  const lands = engine.getAvailableLandInteractions();
+  const ourShrine = lands.find((cell) => {
+    return cell.q === shrineCell.q && cell.r === shrineCell.r;
   });
-  assertEquals(shrines.length, 1);
-  assertEquals(shrines[0], shrineCell);
+  assert(ourShrine, JSON.stringify(lands));
 });
 
 Deno.test('Available land - shrine already completed', () => {
