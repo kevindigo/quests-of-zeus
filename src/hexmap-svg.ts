@@ -22,7 +22,7 @@ export interface IconOptions {
   cellSize: number;
 }
 
-export class HexMapSVG {
+export class HexMapSvgGenerator {
   constructor() {
   }
 

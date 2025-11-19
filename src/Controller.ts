@@ -5,7 +5,7 @@ import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
-import { HexMapSVG } from './hexmap-svg.ts';
+import { HexMapSvgGenerator } from './hexmap-svg.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { OracleSystem } from './oracle-system.ts';
 import type { Player } from './Player.ts';
@@ -21,7 +21,7 @@ import { ViewWelcome } from './ViewWelcome.ts';
 
 export class Controller {
   private gameEngine: GameEngine;
-  private hexMapSVG: HexMapSVG;
+  private hexMapSVG: HexMapSvgGenerator;
   constructor(engine?: GameEngine) {
     if (engine) {
       this.gameEngine = engine;
@@ -29,7 +29,7 @@ export class Controller {
       this.gameEngine = new GameEngine();
     }
 
-    this.hexMapSVG = new HexMapSVG();
+    this.hexMapSVG = new HexMapSvgGenerator();
   }
 
   public initializeGameUI(): void {
