@@ -692,10 +692,13 @@ export class HexMapSvgGenerator {
     if (shrineHex) {
       if (shrineHex.status === 'filled') {
         return '';
+      } else if (shrineHex.status === 'visible') {
+        const hexColor = this.getSvgColorForHexColor(shrineHex.owner);
+        return generateCloudsIcon({ centerX, centerY, cellSize, hexColor });
       }
     }
 
-    return generateCloudsIcon({ centerX, centerY, cellSize });
+    return generateCloudsIcon({ centerX, centerY, cellSize, hexColor: 'none' });
   }
 
   private createHexStatueSvg(

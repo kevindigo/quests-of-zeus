@@ -546,7 +546,7 @@ export function generateStatueIcons(
  * Simplified version with clean, minimal cloud shape
  */
 export function generateCloudsIcon(options: IconOptions): string {
-  const { centerX, centerY, cellSize } = options;
+  const { centerX, centerY, cellSize, hexColor } = options;
 
   // Scale the icon based on cell size - same scale as other icons
   const scale = cellSize / 40; // Base scale on default cell size of 40
@@ -581,7 +581,7 @@ export function generateCloudsIcon(options: IconOptions): string {
   } ${-size * 0.1}
         Z
       " 
-        fill="none" 
+        fill="${hexColor}" 
         stroke="${strokeColor}" 
         stroke-width="${strokeWidth}" 
         stroke-linecap="round"
