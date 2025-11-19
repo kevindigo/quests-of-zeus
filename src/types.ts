@@ -215,12 +215,7 @@ export interface MoveShipResult {
   };
 }
 
-export type GeneralResult = {
-  success: boolean;
-  message: string;
-};
-
-export type ShrineResult = {
+export type ResultWithMessage = {
   success: boolean;
   message: string;
 };

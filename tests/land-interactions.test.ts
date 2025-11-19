@@ -8,14 +8,14 @@ import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { HexMap } from '../src/hexmap/HexMap.ts';
 import { OracleSystem } from '../src/oracle-system.ts';
 import type {
-  GeneralResult,
   HexColor,
+  ResultWithMessage,
   ShrineHex,
   TerrainType,
 } from '../src/types.ts';
 
 function assertFailureContains(
-  result: GeneralResult,
+  result: ResultWithMessage,
   fragment: string,
 ): void {
   assertFalse(result.success, 'Should not have succeeded');

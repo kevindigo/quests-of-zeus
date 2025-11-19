@@ -17,8 +17,8 @@ import type {
   MonsterHex,
   MoveShipResult,
   PossibleShipMove,
+  ResultWithMessage,
   ShrineHex,
-  ShrineResult,
 } from './types.ts';
 import { COLOR_WHEEL } from './types.ts';
 
@@ -380,7 +380,7 @@ export class GameEngine {
 
   public activateShrine(
     coordinates: HexCoordinates,
-  ): ShrineResult {
+  ): ResultWithMessage {
     const effectiveColor = this.getGameState().getEffectiveSelectedColor();
     if (!effectiveColor) {
       return {
@@ -429,7 +429,7 @@ export class GameEngine {
 
   private completeShrineQuest(
     shrineHex: ShrineHex,
-  ): ShrineResult {
+  ): ResultWithMessage {
     const player = this.getCurrentPlayer();
     if (shrineHex.owner !== player.color) {
       return {
@@ -466,7 +466,7 @@ export class GameEngine {
     };
   }
 
-  private flipShrine(player: Player, shrineHex: ShrineHex): ShrineResult {
+  private flipShrine(player: Player, shrineHex: ShrineHex): ResultWithMessage {
     let message: string | undefined = undefined;
     switch (shrineHex.reward) {
       case 'favor':
