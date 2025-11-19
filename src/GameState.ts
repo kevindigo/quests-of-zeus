@@ -15,7 +15,6 @@ export type GameStateJson = {
   map: HexMapJson;
   players: PlayerJson[];
   currentPlayerIndex: number;
-  favorToRecolor: number;
   round: number;
   phase: Phase;
   cubeHexes: CubeHex[];
@@ -25,6 +24,7 @@ export type GameStateJson = {
   shrineHexes: ShrineHex[];
   selectedDieColor: CoreColor | null;
   selectedOracleCardColor: CoreColor | null;
+  selectedRecoloring: number;
 };
 
 export class GameState {
@@ -35,7 +35,7 @@ export class GameState {
     this.map = map;
     this.players = players;
     this.currentPlayerIndex = 0;
-    this.favorToRecolor = 0;
+    this.selectedRecoloring = 0;
     this.round = 1;
     this.phase = 'setup';
     this.cubeHexes = [];
@@ -53,7 +53,7 @@ export class GameState {
     const players = json.players.map((player) => Player.fromJson(player));
     const state = new GameState(map, players);
     state.currentPlayerIndex = json.currentPlayerIndex;
-    state.favorToRecolor = json.favorToRecolor;
+    state.selectedRecoloring = json.selectedRecoloring;
     state.round = json.round;
     state.phase = json.phase;
     state.cubeHexes = json.cubeHexes;
@@ -73,7 +73,7 @@ export class GameState {
         return player.toJson();
       }),
       currentPlayerIndex: this.currentPlayerIndex,
-      favorToRecolor: this.favorToRecolor,
+      selectedRecoloring: this.selectedRecoloring,
       round: this.round,
       phase: this.phase,
       cubeHexes: this.cubeHexes,
@@ -167,7 +167,7 @@ export class GameState {
   }
 
   public getRecolorIntention(): number {
-    return this.favorToRecolor || 0;
+    return this.selectedRecoloring || 0;
   }
 
   public setRecolorIntention(
@@ -179,12 +179,12 @@ export class GameState {
       return false;
     }
 
-    this.favorToRecolor = favorSpent;
+    this.selectedRecoloring = favorSpent;
     return true;
   }
 
   public clearRecolorIntention(): void {
-    this.favorToRecolor = 0;
+    this.selectedRecoloring = 0;
   }
 
   public getSelectedDieColor(): CoreColor | null {
@@ -226,7 +226,6 @@ export class GameState {
   public map: HexMap;
   public players: Player[];
   private currentPlayerIndex: number;
-  private favorToRecolor: number;
   private round: number;
   private phase: Phase;
   private cubeHexes: CubeHex[];
@@ -236,4 +235,5 @@ export class GameState {
   private shrineHexes: ShrineHex[];
   private selectedDieColor: CoreColor | null;
   private selectedOracleCardColor: CoreColor | null;
+  private selectedRecoloring: number;
 }
