@@ -95,7 +95,7 @@ export class HexMapSVG {
 
     // For colored hexes, add an inner polygon with thick colored outline
     if (cell.color !== 'none') {
-      const effectiveStrokeWidth = 3;
+      const effectiveStrokeWidth = 4;
       // Inset the polygon to make room for the thick border inside the basic outline
       const insetAmount = (effectiveStrokeWidth / 2) + 1;
       const innerHexPoints = this.calculateHexPoints(
@@ -106,6 +106,7 @@ export class HexMapSVG {
 
       cellContent += `
       <polygon 
+        class="hex-cell-inner ${this.getTerrainClass(cell.terrain)}"
         points="${innerHexPoints}" 
         fill="${terrainColor}" 
         stroke="${strokeColor}" 
@@ -115,65 +116,30 @@ export class HexMapSVG {
         data-q="${cell.q}" 
         data-r="${cell.r}"
         data-terrain="${cell.terrain}"
-        class="hex-cell-inner ${this.getTerrainClass(cell.terrain)}"
       />`;
-
-      // Add an even more inset polygon for highlighting (won't cover the colored border)
-      const highlightInsetAmount = insetAmount + effectiveStrokeWidth + 4; // Increased for smaller highlights
-      const highlightHexPoints = this.calculateHexPoints(
-        x + highlightInsetAmount,
-        y + highlightInsetAmount,
-        cellSize - highlightInsetAmount,
-      );
-
-      cellContent += `
-      <polygon 
-        points="${highlightHexPoints}" 
-        fill="none" 
-        stroke="transparent" 
-        stroke-width="2"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        data-q="${cell.q}" 
-        data-r="${cell.r}"
-        data-terrain="${cell.terrain}"
-        class="hex-highlight ${this.getTerrainClass(cell.terrain)}"
-        style="pointer-events: none;"
-      />`;
-
-      // Debug: Log hex-highlight creation for colored hexes
-      console.log(
-        `Created hex-highlight for colored hex at (${cell.q}, ${cell.r})`,
-      );
-    } else {
-      // For uncolored hexes, add a highlight polygon at the same inset as colored hexes
-      const highlightInsetAmount = 16; // Increased from 10 to 16 for smaller highlights (consistent with colored hexes)
-      const highlightHexPoints = this.calculateHexPoints(
-        x + highlightInsetAmount,
-        y + highlightInsetAmount,
-        cellSize - highlightInsetAmount,
-      );
-
-      cellContent += `
-      <polygon 
-        points="${highlightHexPoints}" 
-        fill="none" 
-        stroke="transparent" 
-        stroke-width="2"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        data-q="${cell.q}" 
-        data-r="${cell.r}"
-        data-terrain="${cell.terrain}"
-        class="hex-highlight ${this.getTerrainClass(cell.terrain)}"
-        style="pointer-events: none;"
-      />`;
-
-      // Debug: Log hex-highlight creation for uncolored hexes
-      console.log(
-        `Created hex-highlight for uncolored hex at (${cell.q}, ${cell.r})`,
-      );
     }
+
+    // For uncolored hexes, add a highlight polygon at the same inset as colored hexes
+    const highlightInsetAmount = 8;
+    const highlightHexPoints = this.calculateHexPoints(
+      x + highlightInsetAmount,
+      y + highlightInsetAmount,
+      cellSize - highlightInsetAmount,
+    );
+
+    cellContent += `
+      <polygon 
+        class="hex-highlight ${this.getTerrainClass(cell.terrain)}"
+        points="${highlightHexPoints}" 
+        fill="none" 
+        stroke="transparent" 
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        data-q="${cell.q}" 
+        data-r="${cell.r}"
+        data-terrain="${cell.terrain}"
+        style="pointer-events: none;"
+      />`;
 
     // Add Greek god head icon for Zeus hex
     if (cell.terrain === 'zeus') {
