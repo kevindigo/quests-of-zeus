@@ -230,17 +230,7 @@ export class Controller {
         'hexes',
       );
 
-      const statueHexes = gameState.getStatueHexes();
-
-      this.hexMapSVG.setOptions({
-        cityHexes: cityHexes,
-        cubeHexes: cubeHexes,
-        monsterHexes: monsterHexes,
-        statueHexes: statueHexes,
-        players: gameState.players,
-      });
-
-      hexMapContainer.innerHTML = this.hexMapSVG.generateSVG(grid);
+      hexMapContainer.innerHTML = this.hexMapSVG.generateSVG(grid, gameState);
       this.addHandlersToSvg();
 
       // Highlight available moves

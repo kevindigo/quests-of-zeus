@@ -1,6 +1,7 @@
 // SVG Hex Map Generator for Quests of Zeus
 // Generates an SVG representation of the hex map
 
+import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates, HexGrid } from './hexmap/HexGrid.ts';
 import {
@@ -13,25 +14,11 @@ import {
   generateTempleIcon,
   generateZeusIcon,
 } from './icons-svg.ts';
-import type { Player } from './Player.ts';
-import type {
-  CityHex,
-  CoreColor,
-  CubeHex,
-  HexColor,
-  MonsterHex,
-  StatueHex,
-  TerrainType,
-} from './types.ts';
+import type { CoreColor, HexColor, TerrainType } from './types.ts';
 
 export interface HexMapSVGOptions {
   showCoordinates?: boolean;
   showTerrainLabels?: boolean;
-  cityHexes?: CityHex[];
-  cubeHexes?: CubeHex[];
-  monsterHexes?: MonsterHex[];
-  statueHexes?: StatueHex[];
-  players?: Player[];
 }
 
 // Interface for icon generation options
@@ -48,11 +35,6 @@ export class HexMapSVG {
     this.options = {
       showCoordinates: options.showCoordinates ?? false,
       showTerrainLabels: options.showTerrainLabels ?? false,
-      cityHexes: options.cityHexes || [],
-      cubeHexes: options.cubeHexes || [],
-      monsterHexes: options.monsterHexes || [],
-      statueHexes: options.statueHexes || [],
-      players: options.players || [],
     };
   }
 
@@ -60,6 +42,7 @@ export class HexMapSVG {
    * Generate SVG for a single hex cell
    */
   public generateHexCell(
+    gameState: GameState,
     cell: HexCell,
     x: number,
     y: number,
@@ -183,7 +166,7 @@ export class HexMapSVG {
 
     // Add city icon for city hexes
     if (cell.terrain === 'city') {
-      const cityHex = this.options.cityHexes?.find((ch) =>
+      const cityHex = gameState.getCityHexes().find((ch) =>
         ch.q === cell.q && ch.r === cell.r
       );
 
@@ -211,7 +194,7 @@ export class HexMapSVG {
     // Add monster icon for monster hexes
     if (cell.terrain === 'monsters') {
       try {
-        const monsterHex = this.options.monsterHexes?.find((mh) =>
+        const monsterHex = gameState.getMonsterHexes().find((mh) =>
           mh.q === cell.q && mh.r === cell.r
         );
 
@@ -258,7 +241,7 @@ export class HexMapSVG {
     // Add cubes icon for offerings hexes
     if (cell.terrain === 'offerings') {
       try {
-        const cubeHex = this.options.cubeHexes.find((ch) =>
+        const cubeHex = gameState.getCubeHexes().find((ch) =>
           ch.q === cell.q && ch.r === cell.r
         );
 
@@ -300,7 +283,7 @@ export class HexMapSVG {
         // FixMe: If the icon stays hidden, stop generating it!
         // cellContent += generateStatueBasesIcon({ centerX, centerY, cellSize });
 
-        const statueHex = this.options.statueHexes.find((sh) =>
+        const statueHex = gameState.getStatueHexes().find((sh) =>
           sh.q === cell.q && sh.r === cell.r
         );
         const statueBaseColors = statueHex?.statueBaseColors || [];
@@ -320,6 +303,7 @@ export class HexMapSVG {
     }
 
     cellContent += this.getPlayerMarkers(
+      gameState,
       cell.getCoordinates(),
       centerX,
       centerY,
@@ -623,12 +607,13 @@ export class HexMapSVG {
   }
 
   private getPlayerMarkers(
+    gameState: GameState,
     cellCoordinates: HexCoordinates,
     x: number,
     y: number,
     cellSize: number,
   ): string {
-    const players = this.options.players;
+    const players = gameState.players;
     let content = '';
     if (!players) {
       return content;
@@ -686,7 +671,7 @@ export class HexMapSVG {
   /**
    * Generate complete SVG for the hex map
    */
-  public generateSVG(grid: HexGrid): string {
+  public generateSVG(grid: HexGrid, gameState: GameState): string {
     const cellSize = 30;
 
     const radius = grid.getRadius();
@@ -699,7 +684,7 @@ export class HexMapSVG {
       xmlns="http://www.w3.org/2000/svg" 
       class="hex-map-svg">`;
     svgContent += this.getStyleSection();
-    svgContent += this.getHexGridContent(grid, cellSize);
+    svgContent += this.getHexGridContent(grid, gameState, cellSize);
     svgContent += `</svg>`;
 
     console.log('SVG generation completed successfully');
@@ -742,7 +727,11 @@ export class HexMapSVG {
     </style></defs>`;
   }
 
-  private getHexGridContent(grid: HexGrid, cellSize: number): string {
+  private getHexGridContent(
+    grid: HexGrid,
+    gameState: GameState,
+    cellSize: number,
+  ): string {
     let svgContent = `<g class="hex-grid">`;
 
     // Generate all hex cells
@@ -752,7 +741,7 @@ export class HexMapSVG {
           `Generating hex cell at (${cell.q}, ${cell.r}) with terrain: ${cell.terrain}`,
         );
         const { x, y } = this.calculateCellPosition(cell.q, cell.r, cellSize);
-        svgContent += this.generateHexCell(cell, x, y, cellSize);
+        svgContent += this.generateHexCell(gameState, cell, x, y, cellSize);
       }
     });
 
