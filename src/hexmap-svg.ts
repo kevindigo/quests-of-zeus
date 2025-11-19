@@ -27,7 +27,6 @@ import type {
 export interface HexMapSVGOptions {
   showCoordinates?: boolean;
   showTerrainLabels?: boolean;
-  interactive?: boolean;
   cityHexes?: CityHex[];
   cubeHexes?: CubeHex[];
   monsterHexes?: MonsterHex[];
@@ -49,7 +48,6 @@ export class HexMapSVG {
     this.options = {
       showCoordinates: options.showCoordinates ?? false,
       showTerrainLabels: options.showTerrainLabels ?? false,
-      interactive: options.interactive ?? true,
       cityHexes: options.cityHexes || [],
       cubeHexes: options.cubeHexes || [],
       monsterHexes: options.monsterHexes || [],

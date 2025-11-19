@@ -32,7 +32,6 @@ export class Controller {
     this.hexMapSVG = new HexMapSVG({
       showCoordinates: false,
       showTerrainLabels: false,
-      interactive: true,
     });
   }
 
