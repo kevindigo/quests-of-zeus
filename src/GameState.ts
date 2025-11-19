@@ -220,6 +220,12 @@ export class GameState {
     return effectiveColor;
   }
 
+  public clearResourceSelection(playerId: number): void {
+    this.clearRecolorIntention(playerId);
+    this.setSelectedDieColor(null);
+    this.setSelectedOracleCardColor(null);
+  }
+
   public map: HexMap;
   public players: Player[];
   private currentPlayerIndex: number;

@@ -366,17 +366,14 @@ export class GameEngine {
   public activateShrine(
     coordinates: HexCoordinates,
   ): ShrineResult {
-    const selectedDie = this.getGameState().getSelectedDieColor();
-    const selectedCard = this.getGameState().getSelectedOracleCardColor();
-    const selectedColor = selectedDie || selectedCard;
-    if (!selectedColor) {
+    const effectiveColor = this.getGameState().getEffectiveSelectedColor();
+    if (!effectiveColor) {
       return {
         success: false,
         message: 'Must select a die or card',
       };
     }
 
-    const player = this.getCurrentPlayer();
     const allLand = this.getAvailableLandInteractions();
     const shrineCell = allLand.find((cell) => {
       return cell.q === coordinates.q && cell.r === coordinates.r;
@@ -397,6 +394,7 @@ export class GameEngine {
       };
     }
 
+    const player = this.getCurrentPlayer();
     if (shrineHex.status === 'hidden') {
       if (shrineHex.owner === player.color) {
         return this.completeShrineQuest(shrineHex);
@@ -432,12 +430,41 @@ export class GameEngine {
         message: 'Impossible: no remaining incomplete shrine quests',
       };
     }
+    this.spendDieOrCard();
     shrineHex.status = 'filled';
     quest.isCompleted = true;
     return {
       success: true,
       message: 'Flipped by the owner - QUEST REWARD NOT GRANTED!',
     };
+  }
+
+  public spendDieOrCard(): void {
+    const player = this.getCurrentPlayer();
+    const state = this.getGameState();
+    const favorSpentToRecolor = state.getRecolorIntention(player.id);
+    const die = state.getSelectedDieColor();
+    const card = state.getSelectedOracleCardColor();
+    const selectedColor = die || card;
+
+    state.clearResourceSelection(player.id);
+    if (!selectedColor) {
+      return;
+    }
+
+    const array = die ? player.oracleDice : card ? player.oracleCards : null;
+    if (array) {
+      const at = array.indexOf(selectedColor);
+      if (at >= 0) {
+        array.splice(at, 1);
+      }
+    }
+
+    player.favor -= favorSpentToRecolor;
+
+    if (card) {
+      player.usedOracleCardThisTurn = true;
+    }
   }
 
   public checkWinCondition(): { winner: Player | null; gameOver: boolean } {

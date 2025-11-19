@@ -182,6 +182,7 @@ Deno.test('Click land - shrine hidden and ours', () => {
   shrineHex.owner = player.color;
   shrineHex.reward = 'favor';
   const originalFavor = player.favor;
+  const originalDiceCount = player.oracleDice.length;
   const result = engine.activateShrine(
     shrineCell.getCoordinates(),
   );
@@ -189,4 +190,51 @@ Deno.test('Click land - shrine hidden and ours', () => {
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'filled');
   assertEquals(player.favor, originalFavor);
+  assertEquals(player.oracleDice.length, originalDiceCount - 1);
+});
+
+Deno.test('Click land - shrine hidden and ours (recolored die)', () => {
+  const shrineHex = setupWithReadyShrineHex();
+  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  assert(shrineCell);
+  assert(shrineCell.color !== 'none');
+
+  player.favor = 5;
+  const preRecoloredColor = OracleSystem.applyRecolor(shrineCell.color, 1);
+  player.oracleDice = [preRecoloredColor];
+  state.setSelectedDieColor(preRecoloredColor);
+  state.setRecolorIntention(player.id, 5);
+  shrineHex.owner = player.color;
+  shrineHex.reward = 'favor';
+  const result = engine.activateShrine(
+    shrineCell.getCoordinates(),
+  );
+
+  assert(result.success, result.message);
+  assertEquals(shrineHex.status, 'filled');
+  assertEquals(player.favor, 0);
+  assertEquals(player.oracleDice.length, 0);
+});
+
+Deno.test('Click land - shrine hidden and ours (card)', () => {
+  const shrineHex = setupWithReadyShrineHex();
+  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  assert(shrineCell);
+  assert(shrineCell.color !== 'none');
+
+  player.oracleCards = [shrineCell.color];
+  state.setSelectedOracleCardColor(shrineCell.color);
+  shrineHex.owner = player.color;
+  shrineHex.reward = 'favor';
+  const originalFavor = player.favor;
+  const originalCardCount = player.oracleCards.length;
+  const result = engine.activateShrine(
+    shrineCell.getCoordinates(),
+  );
+
+  assert(result.success, result.message);
+  assertEquals(shrineHex.status, 'filled');
+  assertEquals(player.favor, originalFavor);
+  assertEquals(player.oracleCards.length, originalCardCount - 1);
+  assert(player.usedOracleCardThisTurn);
 });

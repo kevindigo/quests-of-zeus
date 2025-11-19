@@ -1,5 +1,9 @@
 == Short-term ==
 
+- Add ShrineHex dump to "not implemented"
+- Visually indicate filled shrine hexes
+- Look for more handlers where we shouldn't pass player and colors
+
 == Cosmetic/Usability ==
 
 - Can't click on anything on a hex (icon, cubes, monsters)

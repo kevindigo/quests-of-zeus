@@ -1,5 +1,6 @@
 import {
   assert,
+  assertEquals,
   assertFalse,
   assertNotEquals,
   assertStringIncludes,
@@ -149,4 +150,7 @@ Deno.test('Hex click - available my hidden shrine (die)', () => {
     'shrine',
   );
   assert(result.success, `Should have succeeded, but ${result.message}`);
+  assertEquals(shrineHex.status, 'filled');
+  assertEquals(state.getEffectiveSelectedColor(), null);
+  assertEquals(state.getRecolorIntention(player.id), 0);
 });
