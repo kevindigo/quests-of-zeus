@@ -134,7 +134,7 @@ Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () =>
   gameEngine.getGameState().setSelectedRecoloring(player.id, 0);
 
   const gameState = gameEngine.getGameState();
-  gameState.clearSelectedRecoloring(player.id);
+  gameState.clearSelectedRecoloring();
 
   gameState.setSelectedDieColor('black');
   const movesWithoutRecolor = gameEngine.getAvailableMovesForColor(

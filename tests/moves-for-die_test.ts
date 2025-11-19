@@ -159,7 +159,7 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Clear recoloring intention
-  gameState.clearSelectedRecoloring(player.id);
+  gameState.clearSelectedRecoloring();
 
   // Get moves after clearing recoloring intention
   gameState.setSelectedDieColor('black');

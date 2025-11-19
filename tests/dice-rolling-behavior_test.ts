@@ -90,7 +90,7 @@ Deno.test('DiceRolling - recoloring intentions cleared at end of turn', () => {
   assert(success, 'Should be able to set recoloring intention');
 
   // Verify recoloring intention was set
-  assertEquals(gameState.getSelectedRecoloring(player1.id), 1);
+  assertEquals(gameState.getSelectedRecoloring(), 1);
 
   // End Player 1's turn
   engine.endTurn();
@@ -99,7 +99,7 @@ Deno.test('DiceRolling - recoloring intentions cleared at end of turn', () => {
   const player1AfterTurn = engine.getPlayer(1);
   assertExists(player1AfterTurn);
   assertEquals(
-    gameState.getSelectedRecoloring(player1AfterTurn.id),
+    gameState.getSelectedRecoloring(),
     0,
     "Player 1's recoloring intentions should be cleared at end of turn",
   );

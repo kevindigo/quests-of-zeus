@@ -154,3 +154,4 @@ Deno.test('Hex click - available my hidden shrine (die)', () => {
   assertEquals(state.getEffectiveSelectedColor(), null);
   assertEquals(state.getSelectedRecoloring(), 0);
 });
+
