@@ -105,33 +105,6 @@ export class HexMapSVG {
       cellSize,
     );
 
-    // Add city icon for city hexes
-    if (cell.terrain === 'city') {
-      const cityHex = gameState.getCityHexes().find((ch) =>
-        ch.q === cell.q && ch.r === cell.r
-      );
-
-      cellContent += generateCityIcon({
-        centerX,
-        centerY,
-        cellSize,
-        hexColor: this.getStrokeColor(cell.color),
-      });
-
-      // Add statue icons if there are statues on this city
-      if (cityHex && cityHex.statues && cityHex.statues > 0) {
-        console.log(
-          `City at (${cell.q}, ${cell.r}): statues = ${cityHex.statues}, color = ${cell.color}`,
-        );
-        cellContent += generateStatueIcons({
-          centerX,
-          centerY,
-          cellSize,
-          hexColor: this.getStrokeColor(cell.color),
-        }, cityHex.statues);
-      }
-    }
-
     // Add monster icon for monster hexes
     if (cell.terrain === 'monsters') {
       try {
@@ -727,7 +700,7 @@ export class HexMapSVG {
   }
 
   private createHexTerrainSpecificSvg(
-    _gameState: GameState,
+    gameState: GameState,
     cell: HexCell,
     x: number,
     y: number,
@@ -739,6 +712,14 @@ export class HexMapSVG {
     switch (cell.terrain) {
       case 'zeus':
         return this.createHexZeusSvg(centerX, centerY, cellSize);
+      case 'city':
+        return this.createHexCitySvg(
+          gameState,
+          cell,
+          centerX,
+          centerY,
+          cellSize,
+        );
       default:
         return '';
     }
@@ -750,5 +731,38 @@ export class HexMapSVG {
     cellSize: number,
   ): string {
     return generateZeusIcon({ centerX, centerY, cellSize });
+  }
+
+  private createHexCitySvg(
+    gameState: GameState,
+    cell: HexCell,
+    centerX: number,
+    centerY: number,
+    cellSize: number,
+  ): string {
+    let cellContent = generateCityIcon({
+      centerX,
+      centerY,
+      cellSize,
+      hexColor: this.getStrokeColor(cell.color),
+    });
+
+    const cityHex = gameState.getCityHexes().find((ch) =>
+      ch.q === cell.q && ch.r === cell.r
+    );
+
+    if (cityHex && cityHex.statues && cityHex.statues > 0) {
+      console.log(
+        `City at (${cell.q}, ${cell.r}): statues = ${cityHex.statues}, color = ${cell.color}`,
+      );
+      cellContent += generateStatueIcons({
+        centerX,
+        centerY,
+        cellSize,
+        hexColor: this.getStrokeColor(cell.color),
+      }, cityHex.statues);
+    }
+
+    return cellContent;
   }
 }
