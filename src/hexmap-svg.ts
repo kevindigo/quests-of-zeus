@@ -25,7 +25,6 @@ import type {
 } from './types.ts';
 
 export interface HexMapSVGOptions {
-  cellSize?: number;
   showCoordinates?: boolean;
   showTerrainLabels?: boolean;
   interactive?: boolean;
@@ -48,7 +47,6 @@ export class HexMapSVG {
 
   constructor(options: HexMapSVGOptions = {}) {
     this.options = {
-      cellSize: options.cellSize || 40,
       showCoordinates: options.showCoordinates ?? false,
       showTerrainLabels: options.showTerrainLabels ?? false,
       interactive: options.interactive ?? true,
@@ -63,8 +61,13 @@ export class HexMapSVG {
   /**
    * Generate SVG for a single hex cell
    */
-  public generateHexCell(cell: HexCell, x: number, y: number): string {
-    const { cellSize, showCoordinates, showTerrainLabels } = this.options;
+  public generateHexCell(
+    cell: HexCell,
+    x: number,
+    y: number,
+    cellSize: number,
+  ): string {
+    const { showCoordinates, showTerrainLabels } = this.options;
 
     const strokeWidth = 1;
     // Get terrain color
@@ -78,7 +81,7 @@ export class HexMapSVG {
     const centerY = y + cellSize;
 
     // Always start with the basic black outline
-    const basicHexPoints = this.calculateHexPoints(x, y);
+    const basicHexPoints = this.calculateHexPoints(x, y, cellSize);
     let cellContent = `
       <polygon 
         points="${basicHexPoints}" 
@@ -358,8 +361,7 @@ export class HexMapSVG {
   /**
    * Calculate the six points of a hexagon
    */
-  public calculateHexPoints(x: number, y: number, size?: number): string {
-    const cellSize = size ?? this.options.cellSize;
+  public calculateHexPoints(x: number, y: number, cellSize: number): string {
     const points: string[] = [];
 
     for (let i = 0; i < 6; i++) {
@@ -378,8 +380,8 @@ export class HexMapSVG {
   private calculateCellPosition(
     q: number,
     r: number,
+    cellSize: number,
   ): { x: number; y: number } {
-    const { cellSize } = this.options;
     // Add offset to center the hexagon
     const offsetX = cellSize * 1.5 * 6; // Center at q=0
     const offsetY = cellSize * Math.sqrt(3) * 6; // Center at r=0
@@ -687,7 +689,7 @@ export class HexMapSVG {
    * Generate complete SVG for the hex map
    */
   public generateSVG(grid: HexGrid): string {
-    const { cellSize } = this.options;
+    const cellSize = 30;
 
     const radius = grid.getRadius();
     const svgWidth = cellSize * 2 + cellSize * 1.5 * (radius * 2);
@@ -699,7 +701,7 @@ export class HexMapSVG {
       xmlns="http://www.w3.org/2000/svg" 
       class="hex-map-svg">`;
     svgContent += this.getStyleSection();
-    svgContent += this.getHexGridContent(grid);
+    svgContent += this.getHexGridContent(grid, cellSize);
     svgContent += `</svg>`;
 
     console.log('SVG generation completed successfully');
@@ -742,7 +744,7 @@ export class HexMapSVG {
     </style></defs>`;
   }
 
-  private getHexGridContent(grid: HexGrid): string {
+  private getHexGridContent(grid: HexGrid, cellSize: number): string {
     let svgContent = `<g class="hex-grid">`;
 
     // Generate all hex cells
@@ -751,8 +753,8 @@ export class HexMapSVG {
         console.log(
           `Generating hex cell at (${cell.q}, ${cell.r}) with terrain: ${cell.terrain}`,
         );
-        const { x, y } = this.calculateCellPosition(cell.q, cell.r);
-        svgContent += this.generateHexCell(cell, x, y);
+        const { x, y } = this.calculateCellPosition(cell.q, cell.r, cellSize);
+        svgContent += this.generateHexCell(cell, x, y, cellSize);
       }
     });
 

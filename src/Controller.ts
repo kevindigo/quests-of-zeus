@@ -30,7 +30,6 @@ export class Controller {
     }
 
     this.hexMapSVG = new HexMapSVG({
-      cellSize: 30,
       showCoordinates: false,
       showTerrainLabels: false,
       interactive: true,
