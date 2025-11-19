@@ -183,9 +183,7 @@ export class ControllerForHexClicks {
 
     // DEBUGGING!!!
     {
-      const shrineHex = engine.getGameState().getShrineHexes().find((sh) => {
-        return sh.q === coordinates.q && sh.r === coordinates.r;
-      });
+      const shrineHex = engine.getGameState().findShrineHexAt(coordinates);
       console.log(
         `handleShrineWithDieOrCard click on ${JSON.stringify(shrineHex)}`,
       );

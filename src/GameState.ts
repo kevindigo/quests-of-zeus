@@ -1,3 +1,4 @@
+import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMap, type HexMapJson } from './hexmap/HexMap.ts';
 import { OracleSystem } from './oracle-system.ts';
 import { Player, type PlayerJson } from './Player.ts';
@@ -164,6 +165,12 @@ export class GameState {
 
   public setShrineHexes(hexes: ShrineHex[]): void {
     this.shrineHexes = hexes;
+  }
+
+  public findShrineHexAt(coordinates: HexCoordinates): ShrineHex | undefined {
+    return this.getShrineHexes().find((sh) => {
+      return sh.q === coordinates.q && sh.r === coordinates.r;
+    });
   }
 
   public getSelectedRecoloring(): number {

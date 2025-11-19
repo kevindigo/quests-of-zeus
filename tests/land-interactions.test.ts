@@ -49,10 +49,8 @@ function setupWithReadyShrineHex(): ShrineHex {
   const shrineCell = findLandCell('shrine', color);
   putPlayerNextTo(shrineCell);
 
-  const shrineHex = state.getShrineHexes().find((hex) => {
-    return hex.q === shrineCell.q && hex.r === shrineCell.r;
-  });
-  assert(shrineHex);
+  const shrineHex = state.findShrineHexAt(shrineCell.getCoordinates());
+  assert(shrineHex, 'Failed to find our ShrineHex');
   return shrineHex;
 }
 
@@ -117,9 +115,7 @@ Deno.test('Available land - shrine already completed', () => {
   const shrineCell = findLandCell('shrine', color);
   putPlayerNextTo(shrineCell);
 
-  const shrineHex = state.getShrineHexes().find((hex) => {
-    return hex.q === shrineCell.q && hex.r === shrineCell.r;
-  });
+  const shrineHex = state.findShrineHexAt(shrineCell.getCoordinates());
   assert(shrineHex);
   shrineHex.status = 'filled';
 
@@ -138,9 +134,7 @@ Deno.test('Available land - shrine already flipped and not ours', () => {
   const shrineCell = findLandCell('shrine', color);
   putPlayerNextTo(shrineCell);
 
-  const shrineHex = state.getShrineHexes().find((hex) => {
-    return hex.q === shrineCell.q && hex.r === shrineCell.r;
-  });
+  const shrineHex = state.findShrineHexAt(shrineCell.getCoordinates());
   assert(shrineHex);
   shrineHex.status = 'visible';
   shrineHex.owner = 'yellow';

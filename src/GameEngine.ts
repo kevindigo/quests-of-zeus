@@ -346,11 +346,9 @@ export class GameEngine {
       return false;
     }
 
-    const shrineHexes = this.getGameState().getShrineHexes();
-    const shrineHex = shrineHexes.find((hex) => {
-      return hex.q === cell.q && hex.r === cell.r;
-    });
-
+    const shrineHex = this.getGameState().findShrineHexAt(
+      cell.getCoordinates(),
+    );
     if (shrineHex?.status === 'hidden') {
       return true;
     }
@@ -384,9 +382,7 @@ export class GameEngine {
         message: 'That shrine is not available',
       };
     }
-    const shrineHex = this.getGameState().getShrineHexes().find((hex) => {
-      return hex.q === coordinates.q && hex.r === coordinates.r;
-    });
+    const shrineHex = this.getGameState().findShrineHexAt(coordinates);
     if (!shrineHex) {
       return {
         success: false,
