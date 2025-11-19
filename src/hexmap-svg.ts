@@ -105,16 +105,6 @@ export class HexMapSVG {
       cellSize,
     );
 
-    // Add temple icon for temple hexes
-    if (cell.terrain === 'temple') {
-      cellContent += generateTempleIcon({
-        centerX,
-        centerY,
-        cellSize,
-        hexColor: this.getStrokeColor(cell.color),
-      });
-    }
-
     // Add cubes icon for offerings hexes
     if (cell.terrain === 'offerings') {
       try {
@@ -691,6 +681,8 @@ export class HexMapSVG {
           centerY,
           cellSize,
         );
+      case 'temple':
+        return this.createHexTempleSvg(cell, centerX, centerY, cellSize);
       default:
         return '';
     }
@@ -764,5 +756,19 @@ export class HexMapSVG {
     }
 
     return cellContent;
+  }
+
+  private createHexTempleSvg(
+    cell: HexCell,
+    centerX: number,
+    centerY: number,
+    cellSize: number,
+  ): string {
+    return generateTempleIcon({
+      centerX,
+      centerY,
+      cellSize,
+      hexColor: this.getStrokeColor(cell.color),
+    });
   }
 }
