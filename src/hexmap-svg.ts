@@ -9,7 +9,6 @@ import {
   generateCloudsIcon,
   generateMonsterIcon,
   generateOfferingsIcon,
-  generateStatueBasesIcon,
   generateStatueIcons,
   generateTempleIcon,
   generateZeusIcon,
@@ -104,31 +103,6 @@ export class HexMapSVG {
       y,
       cellSize,
     );
-
-    // Add statue icon for statue hexes
-    if (cell.terrain === 'statue') {
-      try {
-        // FixMe: If the icon stays hidden, stop generating it!
-        // cellContent += generateStatueBasesIcon({ centerX, centerY, cellSize });
-
-        const statueHex = gameState.getStatueHexes().find((sh) =>
-          sh.q === cell.q && sh.r === cell.r
-        );
-        const statueBaseColors = statueHex?.statueBaseColors || [];
-
-        cellContent += this.generateColoredStatueBases({
-          centerX,
-          centerY,
-          cellSize,
-        }, statueBaseColors);
-      } catch (error) {
-        console.error(
-          `Error rendering cube hex at (${cell.q}, ${cell.r}):`,
-          error,
-        );
-        cellContent += generateStatueBasesIcon({ centerX, centerY, cellSize });
-      }
-    }
 
     cellContent += this.createPlayerMarkersSvg(
       gameState,
@@ -654,6 +628,14 @@ export class HexMapSVG {
         );
       case 'shrine':
         return this.createHexShrineSvg(centerX, centerY, cellSize);
+      case 'statue':
+        return this.createHexStatueSvg(
+          gameState,
+          cell,
+          centerX,
+          centerY,
+          cellSize,
+        );
       default:
         return '';
     }
@@ -775,5 +757,27 @@ export class HexMapSVG {
     cellSize: number,
   ): string {
     return generateCloudsIcon({ centerX, centerY, cellSize });
+  }
+
+  private createHexStatueSvg(
+    gameState: GameState,
+    cell: HexCell,
+    centerX: number,
+    centerY: number,
+    cellSize: number,
+  ): string {
+    // FixMe: If the icon stays hidden, stop generating it!
+    // cellContent += generateStatueBasesIcon({ centerX, centerY, cellSize });
+
+    const statueHex = gameState.getStatueHexes().find((sh) =>
+      sh.q === cell.q && sh.r === cell.r
+    );
+    const statueBaseColors = statueHex?.statueBaseColors || [];
+
+    return this.generateColoredStatueBases({
+      centerX,
+      centerY,
+      cellSize,
+    }, statueBaseColors);
   }
 }
