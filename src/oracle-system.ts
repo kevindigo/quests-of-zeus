@@ -19,6 +19,13 @@ export class OracleSystem {
     return newColor;
   }
 
+  public takeOracleCardFromDeck(): CoreColor | undefined {
+    if (!this.oracleCardDeck || this.oracleCardDeck.length === 0) {
+      return undefined;
+    }
+    return this.oracleCardDeck.pop();
+  }
+
   /**
    * Draw an oracle card by spending any die during the action phase
    * The oracle card is drawn from the deck and added to the player's hand
