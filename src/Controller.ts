@@ -5,9 +5,8 @@ import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
-import { HexMapSvgGenerator } from './HexMapSvgGenerator.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import { OracleSystem } from './oracle-system.ts';
+import { HexMapSvgGenerator } from './HexMapSvgGenerator.ts';
 import type { Player } from './Player.ts';
 import type {
   CityHex,
@@ -311,14 +310,9 @@ export class Controller {
     if (!selectedColor) {
       return;
     }
-    const favorForRecoloring = gameState.getSelectedRecoloring();
-    const effectiveColor = OracleSystem.applyRecolor(
-      selectedColor,
-      favorForRecoloring,
-    );
 
     this.highlightAvailableShipMoves(gameState, currentPlayer);
-    this.highlightAvailableShrines(gameState, currentPlayer, effectiveColor);
+    this.highlightAvailableShrines();
   }
 
   private highlightAvailableShipMoves(
@@ -355,36 +349,25 @@ export class Controller {
     );
   }
 
-  private highlightAvailableShrines(
-    gameState: GameState,
-    currentPlayer: Player,
-    selectedColor: CoreColor,
-  ): void {
-    const shipPosition = currentPlayer.getShipPosition();
-    const grid = gameState.map.getHexGrid();
-    const shipCell = grid.getCell(shipPosition);
-    if (!shipCell) {
-      return;
-    }
-    const shrineNeighbors = grid.getNeighborsOfType(shipCell, 'shrine');
-    const availableShrines = shrineNeighbors.filter((shrineCell) => {
-      return shrineCell.color === selectedColor;
-    });
-    availableShrines.forEach(
-      (shrineCell) => {
-        const hexToHighlight = document.querySelector(
-          `.hex-highlight[data-q="${shrineCell.q}"][data-r="${shrineCell.r}"]`,
-        );
-
-        if (hexToHighlight) {
-          hexToHighlight.classList.add('available-shrine');
-        } else {
-          console.warn(
-            `Could not find hex-highlight element for (${shrineCell.q}, ${shrineCell.r})`,
-          );
-        }
+  private highlightAvailableShrines(): void {
+    const lands = this.gameEngine.getAvailableLandInteractions().filter(
+      (cell) => {
+        return cell.terrain === 'shrine';
       },
     );
+    lands.forEach((shrineCell) => {
+      const hexToHighlight = document.querySelector(
+        `.hex-highlight[data-q="${shrineCell.q}"][data-r="${shrineCell.r}"]`,
+      );
+
+      if (hexToHighlight) {
+        hexToHighlight.classList.add('available-shrine');
+      } else {
+        console.warn(
+          `Could not find hex-highlight element for (${shrineCell.q}, ${shrineCell.r})`,
+        );
+      }
+    });
   }
 
   private updatePhaseDisplay(state: GameState): void {
