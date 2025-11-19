@@ -34,6 +34,17 @@ export class ControllerForHexClicks {
 
     const effectiveColor = this.getState().getEffectiveSelectedColor();
     if (!effectiveColor) {
+      // DEBUGGING!!!
+      {
+        const shrineHex = gameState.findShrineHexAt(coordinates);
+        if (shrineHex) {
+          console.log(
+            `handleHexClick on ${JSON.stringify(shrineHex)}`,
+          );
+        }
+      }
+      // END DEBUGGING!!!
+
       return {
         success: false,
         message: 'Please select a resource (die or oracle card) first!!',
@@ -180,15 +191,6 @@ export class ControllerForHexClicks {
         message: 'Handler needs a selected color',
       };
     }
-
-    // DEBUGGING!!!
-    {
-      const shrineHex = engine.getGameState().findShrineHexAt(coordinates);
-      console.log(
-        `handleShrineWithDieOrCard click on ${JSON.stringify(shrineHex)}`,
-      );
-    }
-    // END DEBUGGING!!!
 
     const cells = engine.getAvailableLandInteractions();
     const thisShrine = cells.find((cell) => {

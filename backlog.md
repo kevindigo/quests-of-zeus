@@ -1,7 +1,6 @@
 == Short-term ==
 
-- Add ShrineHex dump to "not implemented"
-- Visually indicate filled shrine hexes
+- Implement more shrine functionality
 - Look for more handlers where we shouldn't pass player and colors
 
 == Cosmetic/Usability ==
