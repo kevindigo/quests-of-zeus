@@ -15,11 +15,6 @@ import {
 } from './icons-svg.ts';
 import type { CoreColor, HexColor, TerrainType } from './types.ts';
 
-export interface HexMapSVGOptions {
-  showCoordinates?: boolean;
-  showTerrainLabels?: boolean;
-}
-
 // Interface for icon generation options
 export interface IconOptions {
   centerX: number;
@@ -28,13 +23,7 @@ export interface IconOptions {
 }
 
 export class HexMapSVG {
-  private options: Required<HexMapSVGOptions>;
-
-  constructor(options: HexMapSVGOptions = {}) {
-    this.options = {
-      showCoordinates: options.showCoordinates ?? false,
-      showTerrainLabels: options.showTerrainLabels ?? false,
-    };
+  constructor() {
   }
 
   public generateSVG(grid: HexGrid, gameState: GameState): string {
@@ -77,7 +66,6 @@ export class HexMapSVG {
     cell: HexCell,
     cellSize: number,
   ): string {
-    const { showCoordinates, showTerrainLabels } = this.options;
     const { x, y } = this.calculateCellPosition(cell.q, cell.r, cellSize);
 
     let cellContent = this.createBasicHexPolygonSvg(
@@ -111,33 +99,6 @@ export class HexMapSVG {
       centerY,
       cellSize,
     );
-
-    // Add coordinates if enabled
-    if (showCoordinates) {
-      cellContent += `
-        <text 
-          x="${centerX}" 
-          y="${centerY - 5}" 
-          text-anchor="middle" 
-          font-size="10" 
-          fill="rgba(0,0,0,0.7)"
-          class="hex-coord"
-        >${cell.q},${cell.r}</text>`;
-    }
-
-    // Add terrain label if enabled
-    if (showTerrainLabels) {
-      const terrainLabel = this.getTerrainLabel(cell.terrain);
-      cellContent += `
-        <text 
-          x="${centerX}" 
-          y="${centerY + 8}" 
-          text-anchor="middle" 
-          font-size="8" 
-          fill="rgba(0,0,0,0.6)"
-          class="hex-terrain-label"
-        >${terrainLabel}</text>`;
-    }
 
     return cellContent;
   }
@@ -214,24 +175,6 @@ export class HexMapSVG {
    */
   private getTerrainClass(terrain: TerrainType): string {
     return `terrain-${terrain}`;
-  }
-
-  /**
-   * Get abbreviated terrain label
-   */
-  private getTerrainLabel(terrain: TerrainType): string {
-    const labels: Record<TerrainType, string> = {
-      zeus: 'Zeus',
-      sea: 'Sea',
-      shallow: 'Shallow',
-      monsters: 'Monsters',
-      offerings: 'Offerings',
-      temple: 'Temple',
-      shrine: 'Shrine',
-      city: 'City',
-      statue: 'Statue',
-    };
-    return labels[terrain] || terrain;
   }
 
   /**
@@ -468,10 +411,6 @@ export class HexMapSVG {
   private getMonsterFillColor(color: HexColor): string {
     // Use the same vibrant colors as cubes for consistency
     return this.getCubeFillColor(color);
-  }
-
-  public setOptions(newOptions: HexMapSVGOptions): void {
-    this.options = { ...this.options, ...newOptions };
   }
 
   private createStyleSheetSvg(): string {

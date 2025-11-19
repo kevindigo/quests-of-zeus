@@ -29,10 +29,7 @@ export class Controller {
       this.gameEngine = new GameEngine();
     }
 
-    this.hexMapSVG = new HexMapSVG({
-      showCoordinates: false,
-      showTerrainLabels: false,
-    });
+    this.hexMapSVG = new HexMapSVG();
   }
 
   public initializeGameUI(): void {
