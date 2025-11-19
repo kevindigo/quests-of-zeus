@@ -161,7 +161,7 @@ Deno.test('click land - shrine not valid option', () => {
   assertFailureContains(result, 'available');
 });
 
-Deno.test('Click land - shrine hidden and ours', () => {
+Deno.test('Click land - shrine hidden and ours (die)', () => {
   const shrineHex = setupWithReadyShrineHex();
   const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
   assert(shrineCell);
@@ -226,4 +226,33 @@ Deno.test('Click land - shrine hidden and ours (card)', () => {
   assertEquals(player.favor, originalFavor);
   assertEquals(player.oracleCards.length, originalCardCount - 1);
   assert(player.usedOracleCardThisTurn);
+});
+
+Deno.test('Click land - shrine hidden and favor reward (die)', () => {
+  setup();
+  const shrineHexes = state.getShrineHexes();
+  const shrineHex = shrineHexes.find((sh) => {
+    return sh.owner !== player.color && sh.reward === 'favor';
+  });
+  assert(shrineHex, `Did not find a favor shrine`);
+  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  assert(shrineCell);
+  assert(shrineCell.color !== 'none');
+
+  const adjacentSeaCell = grid.getNeighborsOfType(shrineCell, 'sea')[0];
+  assert(adjacentSeaCell);
+  player.setShipPosition(adjacentSeaCell.getCoordinates());
+
+  player.oracleDice = [shrineCell.color];
+  state.setSelectedDieColor(shrineCell.color);
+  const originalFavor = player.favor;
+  const originalDiceCount = player.oracleDice.length;
+  const result = engine.activateShrine(
+    shrineCell.getCoordinates(),
+  );
+
+  assert(result.success, result.message);
+  assertEquals(shrineHex.status, 'visible');
+  assertEquals(player.favor, originalFavor + 4);
+  assertEquals(player.oracleDice.length, originalDiceCount - 1);
 });

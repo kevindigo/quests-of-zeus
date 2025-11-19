@@ -395,6 +395,9 @@ export class GameEngine {
       if (shrineHex.owner === player.color) {
         return this.completeShrineQuest(shrineHex);
       }
+
+      shrineHex.status = 'visible';
+      return this.flipShrine(player, shrineHex);
     }
 
     return {
@@ -432,6 +435,25 @@ export class GameEngine {
     return {
       success: true,
       message: 'Flipped by the owner - QUEST REWARD NOT GRANTED!',
+    };
+  }
+
+  private flipShrine(player: Player, shrineHex: ShrineHex): ShrineResult {
+    switch (shrineHex.reward) {
+      case 'favor':
+        player.favor += 4;
+        break;
+      default:
+        return {
+          success: false,
+          message: `Shrine reward ${shrineHex.reward} not implemented yet`,
+        };
+    }
+
+    this.spendDieOrCard();
+    return {
+      success: true,
+      message: 'flipped but no reward granted',
     };
   }
 
