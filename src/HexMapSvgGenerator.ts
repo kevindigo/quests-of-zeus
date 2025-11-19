@@ -1,5 +1,6 @@
 // SVG Hex Map Generator for Quests of Zeus
 // Generates an SVG representation of the hex map
+// This should represent everything that would appear on a physical board
 
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
@@ -15,7 +16,6 @@ import {
 } from './icons-svg.ts';
 import type { CoreColor, HexColor, TerrainType } from './types.ts';
 
-// Interface for icon generation options
 export interface IconOptions {
   centerX: number;
   centerY: number;
@@ -103,9 +103,6 @@ export class HexMapSvgGenerator {
     return cellContent;
   }
 
-  /**
-   * Calculate the six points of a hexagon
-   */
   public calculateHexPoints(x: number, y: number, cellSize: number): string {
     const points: string[] = [];
 
@@ -136,27 +133,21 @@ export class HexMapSvgGenerator {
     return { x, y };
   }
 
-  /**
-   * Get terrain-specific color
-   */
   private getTerrainColor(terrain: TerrainType): string {
     const colors: Record<TerrainType, string> = {
-      zeus: 'none', // Yellow for Zeus
-      sea: '#87ceeb', // Pale blue for sea
-      shallow: 'none', // Transparent for shallow water
-      monsters: '#d4a574', // Light brown for monsters
-      offerings: '#e8c99b', // Darker yellow-tan for offerings (more visible)
-      temple: '#f9d9a9', // Yellow-tan for temple
-      shrine: '#f0f8ff', // Light blue-white for shrines
-      city: '#b0b0b0', // Light gray for city
-      statue: '#b0b0b0', // Light gray for statues
+      zeus: 'none',
+      sea: '#87ceeb',
+      shallow: 'none',
+      monsters: '#d4a574',
+      offerings: '#e8c99b',
+      temple: '#f9d9a9',
+      shrine: '#f0f8ff',
+      city: '#b0b0b0',
+      statue: '#b0b0b0',
     };
     return colors[terrain] || '#cccccc';
   }
 
-  /**
-   * Get stroke color based on cell color
-   */
   private getStrokeColor(color: HexColor): string {
     const colors: Record<HexColor, string> = {
       none: '#333333',
@@ -170,16 +161,10 @@ export class HexMapSvgGenerator {
     return colors[color] || '#333333';
   }
 
-  /**
-   * Get CSS class for terrain
-   */
   private getTerrainClass(terrain: TerrainType): string {
     return `terrain-${terrain}`;
   }
 
-  /**
-   * Generate colored cube icons for cube hexes
-   */
   private generateColoredCubes(
     options: IconOptions,
     cubeColors: HexColor[],
