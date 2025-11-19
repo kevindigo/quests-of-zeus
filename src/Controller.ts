@@ -5,7 +5,7 @@ import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
-import { HexMapSvgGenerator } from './hexmap-svg.ts';
+import { HexMapSvgGenerator } from './HexMapSvgGenerator.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { OracleSystem } from './oracle-system.ts';
 import type { Player } from './Player.ts';
