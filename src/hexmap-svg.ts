@@ -38,9 +38,26 @@ export class HexMapSVG {
     };
   }
 
-  /**
-   * Generate SVG for a single hex cell
-   */
+  public generateSVG(grid: HexGrid, gameState: GameState): string {
+    const cellSize = 30;
+
+    const radius = grid.getRadius();
+    const svgWidth = cellSize * 2 + cellSize * 1.5 * (radius * 2);
+    const svgHeight = cellSize * 2 + cellSize * Math.sqrt(3) * (radius * 2);
+
+    let svgContent = `<svg 
+      width="${svgWidth}" 
+      height="${svgHeight}" 
+      xmlns="http://www.w3.org/2000/svg" 
+      class="hex-map-svg">`;
+    svgContent += this.getStyleSection();
+    svgContent += this.getHexGridContent(grid, gameState, cellSize);
+    svgContent += `</svg>`;
+
+    console.log('SVG generation completed successfully');
+    return svgContent;
+  }
+
   public generateHexCell(
     gameState: GameState,
     cell: HexCell,
@@ -668,33 +685,7 @@ export class HexMapSVG {
     return this.getCubeFillColor(color);
   }
 
-  /**
-   * Generate complete SVG for the hex map
-   */
-  public generateSVG(grid: HexGrid, gameState: GameState): string {
-    const cellSize = 30;
-
-    const radius = grid.getRadius();
-    const svgWidth = cellSize * 2 + cellSize * 1.5 * (radius * 2);
-    const svgHeight = cellSize * 2 + cellSize * Math.sqrt(3) * (radius * 2);
-
-    let svgContent = `<svg 
-      width="${svgWidth}" 
-      height="${svgHeight}" 
-      xmlns="http://www.w3.org/2000/svg" 
-      class="hex-map-svg">`;
-    svgContent += this.getStyleSection();
-    svgContent += this.getHexGridContent(grid, gameState, cellSize);
-    svgContent += `</svg>`;
-
-    console.log('SVG generation completed successfully');
-    return svgContent;
-  }
-
-  /**
-   * Update options
-   */
-  setOptions(newOptions: HexMapSVGOptions): void {
+  public setOptions(newOptions: HexMapSVGOptions): void {
     this.options = { ...this.options, ...newOptions };
   }
 
