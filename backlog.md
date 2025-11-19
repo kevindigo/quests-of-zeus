@@ -36,9 +36,6 @@
 
 == Quests ==
 
-- Shrines
-  - action: shrine flip (and place) (and complete the quest)
-  - action: shrine flip (consolation prize)
 - Statues
   - action: statue pickup (slot open, not a repeat color)
   - action: statue dropoff
@@ -46,6 +43,10 @@
   - setup: correct cube quests
   - action: cube pickup (slot open, not a repeat color)
   - action: temple dropoff
+- Shrines
+  - action: shrine flip God reward (wait for gods to be implemented)
+  - action: shrine flip Shield+heal reward (wait for injuries to be implemented)
+    - Any reason not to randomly pick a color with the most injury cards?
 - Monsters
   - setup: correct monster quests
   - action: monster fight

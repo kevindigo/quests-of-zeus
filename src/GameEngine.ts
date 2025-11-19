@@ -400,6 +400,10 @@ export class GameEngine {
       return this.flipShrine(player, shrineHex);
     }
 
+    if (shrineHex.status == 'visible' && shrineHex.owner == player.color) {
+      return this.completeShrineQuest(shrineHex);
+    }
+
     return {
       success: false,
       message: 'activateShrine not implemented yet',
@@ -410,10 +414,17 @@ export class GameEngine {
     shrineHex: ShrineHex,
   ): ShrineResult {
     const player = this.getCurrentPlayer();
-    if (shrineHex.status !== 'hidden' || shrineHex.owner !== player.color) {
+    if (shrineHex.owner !== player.color) {
       return {
         success: false,
-        message: 'Impossible: wrong owner or already flipped',
+        message: 'Impossible: wrong owner',
+      };
+    }
+
+    if (shrineHex.status === 'filled') {
+      return {
+        success: false,
+        message: 'Impossible: already completed',
       };
     }
 
@@ -434,7 +445,7 @@ export class GameEngine {
     quest.isCompleted = true;
     return {
       success: true,
-      message: 'Flipped by the owner - QUEST REWARD NOT GRANTED!',
+      message: 'Built shrine - QUEST REWARD NOT GRANTED!',
     };
   }
 

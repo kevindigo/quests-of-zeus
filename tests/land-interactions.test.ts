@@ -144,6 +144,29 @@ Deno.test('Available land - shrine already flipped and not ours', () => {
   assert(!thisShrine, JSON.stringify(cells));
 });
 
+Deno.test('Available land - shrine already flipped and is ours', () => {
+  setup();
+  const shrineHex = state.getShrineHexes().find((sh) => {
+    return sh.owner === player.color;
+  });
+  assert(shrineHex);
+  const shrineCell = map.getCell(shrineHex);
+  assert(shrineCell);
+  assert(shrineCell.color !== 'none');
+
+  shrineHex.status = 'visible';
+  state.setSelectedDieColor(shrineCell.color);
+
+  player.oracleDice = [shrineCell.color];
+  putPlayerNextTo(shrineCell);
+
+  const lands = engine.getAvailableLandInteractions();
+  const ourShrine = lands.find((cell) => {
+    return cell.q === shrineCell.q && cell.r === shrineCell.r;
+  });
+  assert(ourShrine, JSON.stringify(lands));
+});
+
 Deno.test('click land - shrine no selected color', () => {
   setupWithReadyShrineHex();
   const result = engine.activateShrine(HexGrid.CENTER);
@@ -222,6 +245,25 @@ Deno.test('Click land - shrine hidden and ours (card)', () => {
   assertEquals(player.favor, originalFavor);
   assertEquals(player.oracleCards.length, originalCardCount - 1);
   assert(player.usedOracleCardThisTurn);
+});
+
+Deno.test('Click land - shrine visible and ours (die)', () => {
+  const shrineHex = setupWithReadyShrineHex();
+  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  assert(shrineCell);
+  assert(shrineCell.color !== 'none');
+
+  state.setSelectedDieColor(shrineCell.color);
+  shrineHex.owner = player.color;
+  shrineHex.status = 'visible';
+  const originalDiceCount = player.oracleDice.length;
+  const result = engine.activateShrine(
+    shrineCell.getCoordinates(),
+  );
+
+  assert(result.success, result.message);
+  assertEquals(shrineHex.status, 'filled');
+  assertEquals(player.oracleDice.length, originalDiceCount - 1);
 });
 
 Deno.test('Click land - shrine hidden and favor reward (die)', () => {
