@@ -252,3 +252,75 @@ Deno.test('Click land - shrine hidden and favor reward (die)', () => {
   assertEquals(player.favor, originalFavor + 4);
   assertEquals(player.oracleDice.length, originalDiceCount - 1);
 });
+
+Deno.test('Click land - shrine hidden and card reward (die)', () => {
+  setup();
+  const shrineHexes = state.getShrineHexes();
+  const shrineHex = shrineHexes.find((sh) => {
+    return sh.owner !== player.color && sh.reward === 'card';
+  });
+  assert(shrineHex, `Did not find a favor shrine`);
+  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  assert(shrineCell);
+  assert(shrineCell.color !== 'none');
+
+  const adjacentSeaCell = grid.getNeighborsOfType(shrineCell, 'sea')[0];
+  assert(adjacentSeaCell);
+  player.setShipPosition(adjacentSeaCell.getCoordinates());
+
+  player.oracleDice = [shrineCell.color];
+  state.setSelectedDieColor(shrineCell.color);
+  const originalFavor = player.favor;
+  const originalDiceCount = player.oracleDice.length;
+  const originalCardCount = player.oracleCards.length;
+  const result = engine.activateShrine(
+    shrineCell.getCoordinates(),
+  );
+
+  assert(result.success, result.message);
+  assertEquals(shrineHex.status, 'visible');
+  assertEquals(player.favor, originalFavor);
+  assertEquals(player.oracleDice.length, originalDiceCount - 1);
+  assertEquals(player.oracleCards.length, originalCardCount + 1);
+});
+
+Deno.test('Click land - shrine card reward but oracle deck empty', () => {
+  setup();
+  const shrineHexes = state.getShrineHexes();
+  const shrineHex = shrineHexes.find((sh) => {
+    return sh.owner !== player.color && sh.reward === 'card';
+  });
+  assert(shrineHex, `Did not find a favor shrine`);
+  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  assert(shrineCell);
+  assert(shrineCell.color !== 'none');
+
+  const adjacentSeaCell = grid.getNeighborsOfType(shrineCell, 'sea')[0];
+  assert(adjacentSeaCell);
+  player.setShipPosition(adjacentSeaCell.getCoordinates());
+
+  const MORE_THAN_ORACLE_DECK_CARD_COUNT = 1000;
+  for (let i = 0; i < MORE_THAN_ORACLE_DECK_CARD_COUNT; ++i) {
+    player.oracleDice = ['red'];
+    if (!engine.drawOracleCard(player.id, 'red')) {
+      break;
+    }
+  }
+
+  player.oracleDice = [shrineCell.color];
+  state.setSelectedDieColor(shrineCell.color);
+
+  const originalFavor = player.favor;
+  const originalDiceCount = player.oracleDice.length;
+  const originalCardCount = player.oracleCards.length;
+  const result = engine.activateShrine(
+    shrineCell.getCoordinates(),
+  );
+
+  assert(result.success, result.message);
+  assertEquals(shrineHex.status, 'visible');
+  assertEquals(player.favor, originalFavor);
+  assertEquals(player.oracleDice.length, originalDiceCount - 1);
+  assertEquals(player.oracleCards.length, originalCardCount);
+  assertStringIncludes(result.message, 'available');
+});

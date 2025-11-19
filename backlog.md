@@ -1,6 +1,5 @@
 == Short-term ==
 
-- Visible not-my shrine is highlighted (but shouldn't be)
 - Implement more shrine functionality
 - Look for more handlers where we shouldn't pass player and colors
 

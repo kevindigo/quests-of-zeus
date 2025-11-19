@@ -439,10 +439,22 @@ export class GameEngine {
   }
 
   private flipShrine(player: Player, shrineHex: ShrineHex): ShrineResult {
+    let message: string | undefined = undefined;
     switch (shrineHex.reward) {
       case 'favor':
         player.favor += 4;
+        message = 'Discovered shrine; gained favor';
         break;
+      case 'card': {
+        const card = this.oracleSystem?.takeOracleCardFromDeck();
+        if (card) {
+          player.oracleCards.push(card);
+          message = 'Discovered shrine; gained oracle card';
+        } else {
+          message = 'Discovered shrine; no oracle cards available';
+        }
+        break;
+      }
       default:
         return {
           success: false,
@@ -453,7 +465,7 @@ export class GameEngine {
     this.spendDieOrCard();
     return {
       success: true,
-      message: 'flipped but no reward granted',
+      message: message ?? 'flipped but no reward granted',
     };
   }
 
