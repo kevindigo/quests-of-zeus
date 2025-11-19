@@ -58,6 +58,28 @@ export class HexMapSVG {
     return svgContent;
   }
 
+  private getHexGridContent(
+    grid: HexGrid,
+    gameState: GameState,
+    cellSize: number,
+  ): string {
+    let svgContent = `<g class="hex-grid">`;
+
+    // Generate all hex cells
+    grid.forEachCell((cell) => {
+      if (cell) {
+        console.log(
+          `Generating hex cell at (${cell.q}, ${cell.r}) with terrain: ${cell.terrain}`,
+        );
+        const { x, y } = this.calculateCellPosition(cell.q, cell.r, cellSize);
+        svgContent += this.generateHexCell(gameState, cell, x, y, cellSize);
+      }
+    });
+
+    svgContent += `</g>`;
+    return svgContent;
+  }
+
   public generateHexCell(
     gameState: GameState,
     cell: HexCell,
@@ -716,27 +738,5 @@ export class HexMapSVG {
         user-select: none;
       }
     </style></defs>`;
-  }
-
-  private getHexGridContent(
-    grid: HexGrid,
-    gameState: GameState,
-    cellSize: number,
-  ): string {
-    let svgContent = `<g class="hex-grid">`;
-
-    // Generate all hex cells
-    grid.forEachCell((cell) => {
-      if (cell) {
-        console.log(
-          `Generating hex cell at (${cell.q}, ${cell.r}) with terrain: ${cell.terrain}`,
-        );
-        const { x, y } = this.calculateCellPosition(cell.q, cell.r, cellSize);
-        svgContent += this.generateHexCell(gameState, cell, x, y, cellSize);
-      }
-    });
-
-    svgContent += `</g>`;
-    return svgContent;
   }
 }
