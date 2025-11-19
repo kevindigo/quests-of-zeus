@@ -65,22 +65,19 @@ export class HexMapSVG {
   ): string {
     let svgContent = `<g class="hex-grid">`;
 
-    // Generate all hex cells
     grid.forEachCell((cell) => {
-      if (cell) {
-        console.log(
-          `Generating hex cell at (${cell.q}, ${cell.r}) with terrain: ${cell.terrain}`,
-        );
-        const { x, y } = this.calculateCellPosition(cell.q, cell.r, cellSize);
-        svgContent += this.generateHexCell(gameState, cell, x, y, cellSize);
-      }
+      console.log(
+        `Generating cell (${cell.q}, ${cell.r}) of terrain: ${cell.terrain}`,
+      );
+      const { x, y } = this.calculateCellPosition(cell.q, cell.r, cellSize);
+      svgContent += this.generateHexCell(gameState, cell, x, y, cellSize);
     });
 
     svgContent += `</g>`;
     return svgContent;
   }
 
-  public generateHexCell(
+  private generateHexCell(
     gameState: GameState,
     cell: HexCell,
     x: number,
