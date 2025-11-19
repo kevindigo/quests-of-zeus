@@ -551,7 +551,13 @@ export class HexMapSvgGenerator {
           cellSize,
         );
       case 'shrine':
-        return this.createHexShrineSvg(centerX, centerY, cellSize);
+        return this.createHexShrineSvg(
+          gameState,
+          cell,
+          centerX,
+          centerY,
+          cellSize,
+        );
       case 'statue':
         return this.createHexStatueSvg(
           gameState,
@@ -676,10 +682,19 @@ export class HexMapSvgGenerator {
   }
 
   private createHexShrineSvg(
+    gameState: GameState,
+    cell: HexCell,
     centerX: number,
     centerY: number,
     cellSize: number,
   ): string {
+    const shrineHex = gameState.findShrineHexAt(cell.getCoordinates());
+    if (shrineHex) {
+      if (shrineHex.status === 'filled') {
+        return '';
+      }
+    }
+
     return generateCloudsIcon({ centerX, centerY, cellSize });
   }
 
