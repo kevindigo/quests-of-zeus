@@ -92,26 +92,7 @@ export class HexMapSVG {
       cellContent += this.createHexColorBorderSvg(cell, x, y, cellSize);
     }
 
-    const highlightInsetAmount = 8;
-    const highlightHexPoints = this.calculateHexPoints(
-      x + highlightInsetAmount,
-      y + highlightInsetAmount,
-      cellSize - highlightInsetAmount,
-    );
-
-    cellContent += `
-      <polygon 
-        class="hex-highlight ${this.getTerrainClass(cell.terrain)}"
-        points="${highlightHexPoints}" 
-        fill="none" 
-        stroke="transparent" 
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        data-q="${cell.q}" 
-        data-r="${cell.r}"
-        data-terrain="${cell.terrain}"
-        style="pointer-events: none;"
-      />`;
+    cellContent += this.createHighlightableBorderSvg(cell, x, y, cellSize);
 
     const centerX = x + cellSize;
     const centerY = y + cellSize;
@@ -711,6 +692,34 @@ export class HexMapSVG {
         data-q="${cell.q}" 
         data-r="${cell.r}"
         data-terrain="${cell.terrain}"
+      />`;
+  }
+
+  private createHighlightableBorderSvg(
+    cell: HexCell,
+    x: number,
+    y: number,
+    cellSize: number,
+  ): string {
+    const highlightInsetAmount = 8;
+    const highlightHexPoints = this.calculateHexPoints(
+      x + highlightInsetAmount,
+      y + highlightInsetAmount,
+      cellSize - highlightInsetAmount,
+    );
+
+    return `
+      <polygon 
+        class="hex-highlight ${this.getTerrainClass(cell.terrain)}"
+        points="${highlightHexPoints}" 
+        fill="none" 
+        stroke="transparent" 
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        data-q="${cell.q}" 
+        data-r="${cell.r}"
+        data-terrain="${cell.terrain}"
+        style="pointer-events: none;"
       />`;
   }
 }
