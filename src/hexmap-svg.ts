@@ -50,7 +50,7 @@ export class HexMapSVG {
       height="${svgHeight}" 
       xmlns="http://www.w3.org/2000/svg" 
       class="hex-map-svg">`;
-    svgContent += this.getStyleSection();
+    svgContent += this.getStyleSheetContent();
     svgContent += this.getHexGridContent(grid, gameState, cellSize);
     svgContent += `</svg>`;
 
@@ -689,7 +689,7 @@ export class HexMapSVG {
     this.options = { ...this.options, ...newOptions };
   }
 
-  private getStyleSection(): string {
+  private getStyleSheetContent(): string {
     return `<defs><style>
       .hex-cell {
         transition: all 0.2s ease;
