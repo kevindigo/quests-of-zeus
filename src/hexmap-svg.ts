@@ -691,15 +691,32 @@ export class HexMapSVG {
   public generateSVG(grid: HexGrid): string {
     const { cellSize } = this.options;
 
-    // For hexagon with radius 6, the dimensions are fixed
-    const radius = 6;
+    const radius = grid.getRadius();
     const svgWidth = cellSize * 2 + cellSize * 1.5 * (radius * 2);
     const svgHeight = cellSize * 2 + cellSize * Math.sqrt(3) * (radius * 2);
 
-    let svgContent = `
-<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg" class="hex-map-svg">
-  <defs>
-    <style>
+    let svgContent = `<svg 
+      width="${svgWidth}" 
+      height="${svgHeight}" 
+      xmlns="http://www.w3.org/2000/svg" 
+      class="hex-map-svg">`;
+    svgContent += this.getStyleSection();
+    svgContent += this.getHexGridContent(grid);
+    svgContent += `</svg>`;
+
+    console.log('SVG generation completed successfully');
+    return svgContent;
+  }
+
+  /**
+   * Update options
+   */
+  setOptions(newOptions: HexMapSVGOptions): void {
+    this.options = { ...this.options, ...newOptions };
+  }
+
+  private getStyleSection(): string {
+    return `<defs><style>
       .hex-cell {
         transition: all 0.2s ease;
       }
@@ -724,10 +741,11 @@ export class HexMapSVG {
         pointer-events: none;
         user-select: none;
       }
-    </style>
-  </defs>
-  
-  <g class="hex-grid">`;
+    </style></defs>`;
+  }
+
+  private getHexGridContent(grid: HexGrid): string {
+    let svgContent = `<g class="hex-grid">`;
 
     // Generate all hex cells
     grid.forEachCell((cell) => {
@@ -740,18 +758,7 @@ export class HexMapSVG {
       }
     });
 
-    svgContent += `
-  </g>
-</svg>`;
-
-    console.log('SVG generation completed successfully');
+    svgContent += `</g>`;
     return svgContent;
-  }
-
-  /**
-   * Update options
-   */
-  setOptions(newOptions: HexMapSVGOptions): void {
-    this.options = { ...this.options, ...newOptions };
   }
 }
