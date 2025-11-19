@@ -38,11 +38,6 @@
         <div class="hex-map-container">
           <div id="hexMapSVG"></div>
           <div class="svg-controls">
-            <button id="toggleCoordinates">Show Coordinates</button>
-            <button id="toggleLabels">Show Labels</button>
-            <button id="zoomIn">Zoom In</button>
-            <button id="zoomOut">Zoom Out</button>
-            <button id="resetZoom">Reset Zoom</button>
             <button id="newGame">New Game</button>
           </div>
         </div>
@@ -76,62 +71,6 @@
         showTerrainLabels: false,
         cellSize: 30,
       };
-
-      document.getElementById('toggleCoordinates').addEventListener(
-        'click',
-        () => {
-          currentOptions.showCoordinates = !currentOptions
-            .showCoordinates;
-          document.getElementById('toggleCoordinates').textContent =
-            currentOptions.showCoordinates
-              ? 'Hide Coordinates'
-              : 'Show Coordinates';
-          // Note: This would need to be integrated with the game controller
-        },
-      );
-
-      document.getElementById('toggleLabels').addEventListener(
-        'click',
-        () => {
-          currentOptions.showTerrainLabels = !currentOptions
-            .showTerrainLabels;
-          document.getElementById('toggleLabels').textContent =
-            currentOptions.showTerrainLabels
-              ? 'Hide Labels'
-              : 'Show Labels';
-          // Note: This would need to be integrated with the game controller
-        },
-      );
-
-      document.getElementById('zoomIn').addEventListener(
-        'click',
-        () => {
-          currentOptions.cellSize = Math.min(
-            currentOptions.cellSize + 5,
-            60,
-          );
-          // Note: This would need to be integrated with the game controller
-        },
-      );
-
-      document.getElementById('zoomOut').addEventListener(
-        'click',
-        () => {
-          currentOptions.cellSize = Math.max(
-            currentOptions.cellSize - 5,
-            20,
-          );
-          // Note: This would need to be integrated with the game controller
-        },
-      );
-
-      document.getElementById('resetZoom').addEventListener(
-        'click',
-        () => {
-          currentOptions.cellSize = 30;
-          // Note: This would need to be integrated with the game controller
-        },
-      );
 
       document.getElementById('newGame').addEventListener(
         'click',
