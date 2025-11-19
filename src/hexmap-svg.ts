@@ -97,10 +97,13 @@ export class HexMapSVG {
     const centerX = x + cellSize;
     const centerY = y + cellSize;
 
-    // Add Greek god head icon for Zeus hex
-    if (cell.terrain === 'zeus') {
-      cellContent += generateZeusIcon({ centerX, centerY, cellSize });
-    }
+    cellContent += this.createHexTerrainSpecificSvg(
+      gameState,
+      cell,
+      x,
+      y,
+      cellSize,
+    );
 
     // Add city icon for city hexes
     if (cell.terrain === 'city') {
@@ -721,5 +724,31 @@ export class HexMapSVG {
         data-terrain="${cell.terrain}"
         style="pointer-events: none;"
       />`;
+  }
+
+  private createHexTerrainSpecificSvg(
+    _gameState: GameState,
+    cell: HexCell,
+    x: number,
+    y: number,
+    cellSize: number,
+  ): string {
+    const centerX = x + cellSize;
+    const centerY = y + cellSize;
+
+    switch (cell.terrain) {
+      case 'zeus':
+        return this.createHexZeusSvg(centerX, centerY, cellSize);
+      default:
+        return '';
+    }
+  }
+
+  private createHexZeusSvg(
+    centerX: number,
+    centerY: number,
+    cellSize: number,
+  ): string {
+    return generateZeusIcon({ centerX, centerY, cellSize });
   }
 }
