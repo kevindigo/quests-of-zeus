@@ -292,24 +292,27 @@ export class GameEngine {
       );
 
       for (const seaTile of reachableSeaTiles) {
-        if (
-          seaTile.color === effectiveColor &&
-          !(seaTile.q === player.getShipPosition().q &&
-            seaTile.r === player.getShipPosition().r)
-        ) {
-          if (favorSpent <= maxFavorForMovement) {
-            const existingMove = availableMoves.find((move) =>
-              move.q === seaTile.q && move.r === seaTile.r
-            );
-            if (!existingMove) {
-              availableMoves.push({
-                q: seaTile.q,
-                r: seaTile.r,
-                favorCost: favorSpent,
-              });
-            }
-          }
+        if (seaTile.color !== effectiveColor) {
+          continue;
         }
+        if (
+          seaTile.q === player.getShipPosition().q &&
+          seaTile.r === player.getShipPosition().r
+        ) {
+          continue;
+        }
+        const existingMove = availableMoves.find((move) =>
+          move.q === seaTile.q && move.r === seaTile.r
+        );
+        if (existingMove) {
+          continue;
+        }
+        const move = {
+          q: seaTile.q,
+          r: seaTile.r,
+          favorCost: favorSpent,
+        };
+        availableMoves.push(move);
       }
     }
 

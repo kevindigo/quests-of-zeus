@@ -1,6 +1,5 @@
 == Short-term ==
 
-- Implement more shrine functionality
 - Look for more handlers where we shouldn't pass player and colors
 
 == Cosmetic/Usability ==
