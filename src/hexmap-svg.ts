@@ -50,15 +50,15 @@ export class HexMapSVG {
       height="${svgHeight}" 
       xmlns="http://www.w3.org/2000/svg" 
       class="hex-map-svg">`;
-    svgContent += this.getStyleSheetContent();
-    svgContent += this.getHexGridContent(grid, gameState, cellSize);
+    svgContent += this.createStyleSheetSvg();
+    svgContent += this.createHexGridSvg(grid, gameState, cellSize);
     svgContent += `</svg>`;
 
     console.log('SVG generation completed successfully');
     return svgContent;
   }
 
-  private getHexGridContent(
+  private createHexGridSvg(
     grid: HexGrid,
     gameState: GameState,
     cellSize: number,
@@ -66,14 +66,14 @@ export class HexMapSVG {
     let svgContent = `<g class="hex-grid">`;
 
     grid.forEachCell((cell) => {
-      svgContent += this.generateHexCell(gameState, cell, cellSize);
+      svgContent += this.createHexCellSvg(gameState, cell, cellSize);
     });
 
     svgContent += `</g>`;
     return svgContent;
   }
 
-  private generateHexCell(
+  private createHexCellSvg(
     gameState: GameState,
     cell: HexCell,
     cellSize: number,
@@ -81,7 +81,7 @@ export class HexMapSVG {
     const { showCoordinates, showTerrainLabels } = this.options;
     const { x, y } = this.calculateCellPosition(cell.q, cell.r, cellSize);
 
-    let cellContent = this.getBasicHexPolygon(
+    let cellContent = this.createBasicHexPolygonSvg(
       cell,
       x,
       y,
@@ -89,14 +89,12 @@ export class HexMapSVG {
     );
 
     const terrainColor = this.getTerrainColor(cell.terrain);
-    const strokeColor = this.getStrokeColor(cell.color);
-    const centerX = x + cellSize;
-    const centerY = y + cellSize;
 
     // For colored hexes, add an inner polygon with thick colored outline
     if (cell.color !== 'none') {
       const effectiveStrokeWidth = 4;
       // Inset the polygon to make room for the thick border inside the basic outline
+      const strokeColor = this.getStrokeColor(cell.color);
       const insetAmount = (effectiveStrokeWidth / 2) + 1;
       const innerHexPoints = this.calculateHexPoints(
         x + insetAmount,
@@ -140,6 +138,9 @@ export class HexMapSVG {
         data-terrain="${cell.terrain}"
         style="pointer-events: none;"
       />`;
+
+    const centerX = x + cellSize;
+    const centerY = y + cellSize;
 
     // Add Greek god head icon for Zeus hex
     if (cell.terrain === 'zeus') {
@@ -654,7 +655,7 @@ export class HexMapSVG {
     this.options = { ...this.options, ...newOptions };
   }
 
-  private getStyleSheetContent(): string {
+  private createStyleSheetSvg(): string {
     return `<defs><style>
       .hex-cell {
         transition: all 0.2s ease;
@@ -683,7 +684,7 @@ export class HexMapSVG {
     </style></defs>`;
   }
 
-  private getBasicHexPolygon(
+  private createBasicHexPolygonSvg(
     cell: HexCell,
     x: number,
     y: number,
