@@ -354,7 +354,7 @@ export class GameEngine {
     }
 
     const player = this.getCurrentPlayer();
-    if (shrineHex?.status === 'visible' && shrineHex.owner == player.color) {
+    if (shrineHex?.status === 'visible' && shrineHex.owner === player.color) {
       return true;
     }
 
