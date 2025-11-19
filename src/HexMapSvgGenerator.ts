@@ -133,7 +133,7 @@ export class HexMapSvgGenerator {
     return { x, y };
   }
 
-  private getTerrainColor(terrain: TerrainType): string {
+  private getColorForTerrain(terrain: TerrainType): string {
     const colors: Record<TerrainType, string> = {
       zeus: 'none',
       sea: '#87ceeb',
@@ -148,7 +148,7 @@ export class HexMapSvgGenerator {
     return colors[terrain] || '#cccccc';
   }
 
-  private getStrokeColor(color: HexColor): string {
+  private getSvgColorForHexColor(color: HexColor): string {
     const colors: Record<HexColor, string> = {
       none: '#333333',
       red: '#DC143C',
@@ -191,7 +191,7 @@ export class HexMapSvgGenerator {
         const cubeX = centerX + Math.cos(angle) * spacing;
         const cubeY = centerY + Math.sin(angle) * spacing;
 
-        const strokeColor = this.getStrokeColor(color);
+        const strokeColor = this.getSvgColorForHexColor(color);
         const fillColor = this.getCubeFillColor(color);
 
         // Use squares instead of circles for cubes
@@ -247,7 +247,7 @@ export class HexMapSvgGenerator {
         const monsterX = centerX + Math.cos(angle) * spacing;
         const monsterY = centerY + Math.sin(angle) * spacing;
 
-        const strokeColor = this.getStrokeColor(color);
+        const strokeColor = this.getSvgColorForHexColor(color);
         const fillColor = this.getMonsterFillColor(color);
 
         // Create downward-pointing equilateral triangle
@@ -313,7 +313,7 @@ export class HexMapSvgGenerator {
         const baseX = xValues[index] || centerX;
         const baseY = yValues[index] || centerY;
 
-        const strokeColor = this.getStrokeColor(color);
+        const strokeColor = this.getSvgColorForHexColor(color);
 
         statueBasesContent += `
           <line 
@@ -435,7 +435,7 @@ export class HexMapSvgGenerator {
   ): string {
     const basicHexPoints = this.calculateHexPoints(x, y, cellSize);
     const outlineColor = cell.terrain === 'shallow' ? 'none' : 'black';
-    const terrainColor = this.getTerrainColor(cell.terrain);
+    const terrainColor = this.getColorForTerrain(cell.terrain);
 
     return `
       <polygon 
@@ -458,9 +458,9 @@ export class HexMapSvgGenerator {
     y: number,
     cellSize: number,
   ): string {
-    const terrainColor = this.getTerrainColor(cell.terrain);
+    const terrainColor = this.getColorForTerrain(cell.terrain);
     const effectiveStrokeWidth = 4;
-    const strokeColor = this.getStrokeColor(cell.color);
+    const strokeColor = this.getSvgColorForHexColor(cell.color);
     const insetAmount = (effectiveStrokeWidth / 2) + 1;
     const innerHexPoints = this.calculateHexPoints(
       x + insetAmount,
@@ -584,7 +584,7 @@ export class HexMapSvgGenerator {
       centerX,
       centerY,
       cellSize,
-      hexColor: this.getStrokeColor(cell.color),
+      hexColor: this.getSvgColorForHexColor(cell.color),
     });
 
     const cityHex = gameState.getCityHexes().find((ch) =>
@@ -599,7 +599,7 @@ export class HexMapSvgGenerator {
         centerX,
         centerY,
         cellSize,
-        hexColor: this.getStrokeColor(cell.color),
+        hexColor: this.getSvgColorForHexColor(cell.color),
       }, cityHex.statues);
     }
 
@@ -645,7 +645,7 @@ export class HexMapSvgGenerator {
       centerX,
       centerY,
       cellSize,
-      hexColor: this.getStrokeColor(cell.color),
+      hexColor: this.getSvgColorForHexColor(cell.color),
     });
   }
 
