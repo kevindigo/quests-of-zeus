@@ -105,40 +105,6 @@ export class HexMapSVG {
       cellSize,
     );
 
-    // Add cubes icon for offerings hexes
-    if (cell.terrain === 'offerings') {
-      try {
-        const cubeHex = gameState.getCubeHexes().find((ch) =>
-          ch.q === cell.q && ch.r === cell.r
-        );
-
-        console.log(`Processing cube hex at (${cell.q}, ${cell.r}):`, cubeHex);
-
-        // Always show the line-drawn offerings icon as the base
-        cellContent += generateOfferingsIcon({ centerX, centerY, cellSize });
-
-        // Then overlay colored cubes if present
-        if (cubeHex && cubeHex.cubeColors.length > 0) {
-          console.log(
-            `Generating colored cubes for (${cell.q}, ${cell.r}) with colors:`,
-            cubeHex.cubeColors,
-          );
-          cellContent += this.generateColoredCubes({
-            centerX,
-            centerY,
-            cellSize,
-          }, cubeHex.cubeColors);
-        }
-      } catch (error) {
-        console.error(
-          `Error rendering cube hex at (${cell.q}, ${cell.r}):`,
-          error,
-        );
-        // Fallback to generic cube icon on error
-        cellContent += generateOfferingsIcon({ centerX, centerY, cellSize });
-      }
-    }
-
     // Add clouds icon for clouds hexes
     if (cell.terrain === 'shrine') {
       cellContent += generateCloudsIcon({ centerX, centerY, cellSize });
@@ -683,6 +649,14 @@ export class HexMapSVG {
         );
       case 'temple':
         return this.createHexTempleSvg(cell, centerX, centerY, cellSize);
+      case 'offerings':
+        return this.createHexOfferingSvg(
+          gameState,
+          cell,
+          centerX,
+          centerY,
+          cellSize,
+        );
       default:
         return '';
     }
@@ -770,5 +744,31 @@ export class HexMapSVG {
       cellSize,
       hexColor: this.getStrokeColor(cell.color),
     });
+  }
+
+  private createHexOfferingSvg(
+    gameState: GameState,
+    cell: HexCell,
+    centerX: number,
+    centerY: number,
+    cellSize: number,
+  ): string {
+    let cellContent = generateOfferingsIcon({ centerX, centerY, cellSize });
+
+    const cubeHex = gameState.getCubeHexes().find((ch) =>
+      ch.q === cell.q && ch.r === cell.r
+    );
+    if (cubeHex && cubeHex.cubeColors.length > 0) {
+      console.log(
+        `Generating colored cubes for (${cell.q}, ${cell.r}) with colors:`,
+        cubeHex.cubeColors,
+      );
+      cellContent += this.generateColoredCubes({
+        centerX,
+        centerY,
+        cellSize,
+      }, cubeHex.cubeColors);
+    }
+    return cellContent;
   }
 }
