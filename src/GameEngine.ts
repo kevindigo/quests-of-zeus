@@ -134,7 +134,7 @@ export class GameEngine {
   ): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
-    return this.oracleSystem!.spendOracleCardForFavor(player, cardColor);
+    return this.playerActions!.spendOracleCardForFavor(player, cardColor);
   }
 
   public spendOracleCardToDrawCard(

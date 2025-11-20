@@ -67,47 +67,6 @@ export class OracleSystem {
   }
 
   /**
-   * Spend an oracle card to gain 2 favor during the action phase
-   * Players can only use 1 oracle card per turn
-   */
-  public spendOracleCardForFavor(
-    player: Player,
-    cardColor: CoreColor,
-  ): boolean {
-    // Check if player has already used an oracle card this turn
-    if (player.usedOracleCardThisTurn) {
-      return false;
-    }
-
-    // Check if player has the specified oracle card
-    if (!player.oracleCards.includes(cardColor)) {
-      return false;
-    }
-
-    // Consume the oracle card - always consume the original card color
-    const cardIndex = player.oracleCards.indexOf(cardColor);
-    if (cardIndex !== -1) {
-      player.oracleCards.splice(cardIndex, 1);
-    } else {
-      // This should not happen since we checked above, but log for debugging
-      console.warn(
-        `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${
-          player.oracleCards.join(', ')
-        }]`,
-      );
-      return false;
-    }
-
-    // Mark that player has used an oracle card this turn
-    player.usedOracleCardThisTurn = true;
-
-    // Gain 2 favor
-    player.favor += 2;
-
-    return true;
-  }
-
-  /**
    * Spend an oracle card to draw a new oracle card from the deck
    * Players can only use 1 oracle card per turn
    */
