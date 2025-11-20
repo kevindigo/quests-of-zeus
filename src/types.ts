@@ -34,12 +34,12 @@ export const CORE_COLORS = {
 } as const;
 
 export const COLOR_WHEEL: CoreColor[] = [
-  CORE_COLORS.BLACK,
-  CORE_COLORS.PINK,
   CORE_COLORS.BLUE,
   CORE_COLORS.YELLOW,
   CORE_COLORS.GREEN,
   CORE_COLORS.RED,
+  CORE_COLORS.BLACK,
+  CORE_COLORS.PINK,
 ];
 
 // Color types for hex cells
