@@ -1,12 +1,14 @@
 // Game Controller for Quests of Zeus
 // Manages the game UI and user interactions
 
+import { ActionMoveShip } from './ActionMoveShip.ts';
 import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMapSvgGenerator } from './HexMapSvgGenerator.ts';
+import { MovementSystem } from './movement-system.ts';
 import type { Player } from './Player.ts';
 import type {
   CityHex,
@@ -323,7 +325,9 @@ export class Controller {
     const favorAvailableForRange = currentPlayer.favor - favorForRecoloring;
 
     // Get available moves for the selected die color and available favor
-    const availableMoves = this.gameEngine.getAvailableMovesForColor(
+    const movementSystem = new MovementSystem(gameState.map);
+    const actionMoveShip = new ActionMoveShip(gameState, movementSystem);
+    const availableMoves = actionMoveShip.getAvailableMovesForColor(
       favorAvailableForRange,
     );
 

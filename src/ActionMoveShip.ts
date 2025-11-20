@@ -1,10 +1,10 @@
 // Player action implementations for Quests of Zeus
 import type { GameState } from './GameState.ts';
-import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import { type HexCoordinates, HexGrid } from './hexmap/HexGrid.ts';
 import type { MovementSystem } from './movement-system.ts';
 import { OracleSystem } from './oracle-system.ts';
 import type { Player } from './Player.ts';
-import type { CoreColor, MoveShipResult } from './types.ts';
+import type { CoreColor, MoveShipResult, PossibleShipMove } from './types.ts';
 
 export class ActionMoveShip {
   constructor(
@@ -18,6 +18,53 @@ export class ActionMoveShip {
 
   public getMovementSystem(): MovementSystem {
     return this.movementSystem;
+  }
+
+  public getAvailableMovesForColor(
+    maxFavorForMovement: number,
+  ): PossibleShipMove[] {
+    const player = this.state.getCurrentPlayer();
+    const origin = player.getShipPosition();
+    const effectiveColor = this.state.getEffectiveSelectedColor();
+
+    const availableMoves: PossibleShipMove[] = [];
+    for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
+      const movementRange = player.getRange() + favorSpent;
+      const reachableSeaCells = this.movementSystem!.getReachableSeaTiles(
+        origin,
+        movementRange,
+      );
+
+      const relevantCells = reachableSeaCells.filter((cell) => {
+        if (HexGrid.isSameLocation(cell, origin)) {
+          return false;
+        }
+        if (cell.color !== effectiveColor) {
+          return false;
+        }
+        return true;
+      });
+
+      relevantCells.forEach((cell) => {
+        const possibleMove = { q: cell.q, r: cell.r, favorCost: favorSpent };
+
+        if (!this.alreadyContainsMove(availableMoves, possibleMove)) {
+          availableMoves.push(possibleMove);
+        }
+      });
+    }
+
+    return availableMoves;
+  }
+
+  private alreadyContainsMove(
+    availableMoves: PossibleShipMove[],
+    candidateMove: PossibleShipMove,
+  ): boolean {
+    const found = availableMoves.find((move) => {
+      return HexGrid.isSameLocation(move, candidateMove);
+    });
+    return found ? true : false;
   }
 
   public attemptMoveShip(

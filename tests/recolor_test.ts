@@ -1,7 +1,9 @@
 // Unit test for recoloring favor calculation in extra range moves
 
 import { assert, assertEquals } from '@std/assert';
+import { ActionMoveShip } from '../src/ActionMoveShip.ts';
 import { GameEngine } from '../src/GameEngine.ts';
+import { MovementSystem } from '../src/movement-system.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
@@ -53,7 +55,11 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
 
   // Get available moves for black die with recoloring intention
   gameState.setSelectedDieColor('black');
-  const availableMoves = gameEngine.getAvailableMovesForColor(player.favor - 1);
+  const movementSystem = new MovementSystem(gameState.map);
+  const actionMoveShip = new ActionMoveShip(gameState, movementSystem);
+  const availableMoves = actionMoveShip.getAvailableMovesForColor(
+    player.favor - 1,
+  );
 
   // Should have moves that require pink sea tiles (since black die can be recolored to pink)
   const movesToPinkTiles = availableMoves.filter((move) => {
@@ -104,7 +110,10 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
   );
 
   gameEngine.getGameState().setSelectedDieColor('blue');
-  const movesWithHighRecolor = gameEngine.getAvailableMovesForColor(
+  const state = gameEngine.getGameState();
+  const movementSystem = new MovementSystem(state.map);
+  const actionMoveShip = new ActionMoveShip(state, movementSystem);
+  const movesWithHighRecolor = actionMoveShip.getAvailableMovesForColor(
     player.favor - 2,
   );
 
@@ -137,7 +146,9 @@ Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () =>
   gameState.clearSelectedRecoloring();
 
   gameState.setSelectedDieColor('black');
-  const movesWithoutRecolor = gameEngine.getAvailableMovesForColor(
+  const movementSystem = new MovementSystem(gameState.map);
+  const actionMoveShip = new ActionMoveShip(gameState, movementSystem);
+  const movesWithoutRecolor = actionMoveShip.getAvailableMovesForColor(
     player.favor,
   );
 

@@ -1,12 +1,19 @@
 // Tests for the new getAvailableMovesForDie method
 
 import { assert, assertEquals, assertGreater } from '@std/assert';
+import { ActionMoveShip } from '../src/ActionMoveShip.ts';
 import { GameEngine } from '../src/GameEngine.ts';
+import { MovementSystem } from '../src/movement-system.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('getAvailableMovesForDie - basic functionality', () => {
   const gameEngine = new GameEngine();
   gameEngine.initializeGame();
+  const movementSystem = new MovementSystem(gameEngine.getGameState().map);
+  const actionMoveShip = new ActionMoveShip(
+    gameEngine.getGameState(),
+    movementSystem,
+  );
 
   const player = gameEngine.getCurrentPlayer();
 
@@ -18,9 +25,9 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
   gameEngine.getGameState().setSelectedRecoloring(player.id, 0);
 
   // Test getting moves for a specific die color
-  const movesForBlack = gameEngine.getAvailableMovesForColor(player.favor);
-  const movesForPink = gameEngine.getAvailableMovesForColor(player.favor);
-  const movesForBlue = gameEngine.getAvailableMovesForColor(player.favor);
+  const movesForBlack = actionMoveShip.getAvailableMovesForColor(player.favor);
+  const movesForPink = actionMoveShip.getAvailableMovesForColor(player.favor);
+  const movesForBlue = actionMoveShip.getAvailableMovesForColor(player.favor);
 
   // Check that moves are returned for each die color
   assertEquals(Array.isArray(movesForBlack), true);
@@ -40,6 +47,11 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
 Deno.test('getAvailableMovesForDie - favor spending', () => {
   const gameEngine = new GameEngine();
   gameEngine.initializeGame();
+  const movementSystem = new MovementSystem(gameEngine.getGameState().map);
+  const actionMoveShip = new ActionMoveShip(
+    gameEngine.getGameState(),
+    movementSystem,
+  );
 
   const player = gameEngine.getCurrentPlayer();
 
@@ -49,9 +61,9 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
   gameEngine.getGameState().setSelectedDieColor('black');
 
   // Get moves with different favor amounts
-  const movesWithNoFavor = gameEngine.getAvailableMovesForColor(0);
-  const movesWithSomeFavor = gameEngine.getAvailableMovesForColor(2);
-  const movesWithMaxFavor = gameEngine.getAvailableMovesForColor(5);
+  const movesWithNoFavor = actionMoveShip.getAvailableMovesForColor(0);
+  const movesWithSomeFavor = actionMoveShip.getAvailableMovesForColor(2);
+  const movesWithMaxFavor = actionMoveShip.getAvailableMovesForColor(5);
 
   // With more favor, should have more or equal moves (since favor extends range)
   assert(movesWithSomeFavor.length >= movesWithNoFavor.length);
@@ -62,6 +74,8 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   const gameEngine = new GameEngine();
   gameEngine.initializeGame();
   const gameState = gameEngine.getGameState();
+  const movementSystem = new MovementSystem(gameState.map);
+  const actionMoveShip = new ActionMoveShip(gameState, movementSystem);
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
@@ -80,7 +94,9 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
 
   // Get moves for black die with recoloring intention
   gameState.setSelectedDieColor('black');
-  const movesWithRecolor = gameEngine.getAvailableMovesForColor(player.favor);
+  const movesWithRecolor = actionMoveShip.getAvailableMovesForColor(
+    player.favor,
+  );
 
   // Should have moves that require pink sea tiles (since black die can be recolored to pink)
   const pinkSeaTiles = gameState.map.getCellsByTerrain('sea').filter((cell) =>
@@ -103,6 +119,11 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
 Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
   const gameEngine = new GameEngine();
   gameEngine.initializeGame();
+  const movementSystem = new MovementSystem(gameEngine.getGameState().map);
+  const actionMoveShip = new ActionMoveShip(
+    gameEngine.getGameState(),
+    movementSystem,
+  );
 
   const player = gameEngine.getCurrentPlayer();
 
@@ -122,7 +143,7 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
 
   // Get moves for black die with recoloring intention but insufficient favor
   gameEngine.getGameState().setSelectedDieColor('pink');
-  const movesWithRecolor = gameEngine.getAvailableMovesForColor(
+  const movesWithRecolor = actionMoveShip.getAvailableMovesForColor(
     player.favor - 1,
   );
 
@@ -141,6 +162,8 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   const gameEngine = new GameEngine();
   gameEngine.initializeGame();
   const gameState = gameEngine.getGameState();
+  const movementSystem = new MovementSystem(gameState.map);
+  const actionMoveShip = new ActionMoveShip(gameState, movementSystem);
 
   const player = gameEngine.getCurrentPlayer();
 
@@ -163,7 +186,9 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
 
   // Get moves after clearing recoloring intention
   gameState.setSelectedDieColor('black');
-  const movesAfterClear = gameEngine.getAvailableMovesForColor(player.favor);
+  const movesAfterClear = actionMoveShip.getAvailableMovesForColor(
+    player.favor,
+  );
 
   // Should only have moves to black sea tiles now
   const movesToBlackTiles = movesAfterClear.filter((move) => {

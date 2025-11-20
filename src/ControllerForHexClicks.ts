@@ -1,6 +1,8 @@
+import { ActionMoveShip } from './ActionMoveShip.ts';
 import type { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import { MovementSystem } from './movement-system.ts';
 import type {
   ControllerActionResult,
   MoveShipResult,
@@ -111,7 +113,9 @@ export class ControllerForHexClicks {
     const availableFavor = currentPlayer.favor;
     const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
     // Get available moves for the selected color and available favor
-    const availableMoves = this.gameEngine.getAvailableMovesForColor(
+    const movementSystem = new MovementSystem(state.map);
+    const actionMoveShip = new ActionMoveShip(state, movementSystem);
+    const availableMoves = actionMoveShip.getAvailableMovesForColor(
       maxFavorForMovement,
     );
 
