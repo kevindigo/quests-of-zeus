@@ -11,7 +11,7 @@ import {
 } from './storage-manager.ts';
 import type { CoreColor, MoveShipResult } from './types.ts';
 
-export class PlayerActions {
+export class ActionMoveShip {
   constructor(
     private state: GameState,
     private movementSystem: MovementSystem,

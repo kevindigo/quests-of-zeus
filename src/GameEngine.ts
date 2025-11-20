@@ -1,13 +1,13 @@
 // Quests of Zeus Game Engine - Core Orchestration
 // High-level game management and orchestration
 
+import { ActionMoveShip } from './ActionMoveShip.ts';
 import { GameInitializer } from './GameInitializer.ts';
 import { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './movement-system.ts';
 import { OracleSystem } from './oracle-system.ts';
-import { PlayerActions } from './ActionMoveShip.ts';
 import type { Player } from './Player.ts';
 import type {
   CityHex,
@@ -27,7 +27,7 @@ export class GameEngine {
   private gameInitializer: GameInitializer;
   private movementSystem: MovementSystem | null = null;
   private oracleSystem: OracleSystem | null = null;
-  private playerActions: PlayerActions | null = null;
+  private playerActions: ActionMoveShip | null = null;
 
   constructor() {
     this.gameInitializer = new GameInitializer();
@@ -42,7 +42,7 @@ export class GameEngine {
     this.oracleSystem = new OracleSystem(
       this.gameInitializer.getOracleCardDeck(),
     );
-    this.playerActions = new PlayerActions(
+    this.playerActions = new ActionMoveShip(
       this.state,
       this.movementSystem,
     );

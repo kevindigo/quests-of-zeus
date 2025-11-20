@@ -1,12 +1,12 @@
 import { assert, assertEquals, assertFalse, assertGreater } from '@std/assert';
+import { ActionMoveShip } from '../src/ActionMoveShip.ts';
 import { GameState } from '../src/GameState.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { HexMap } from '../src/hexmap/HexMap.ts';
 import { MovementSystem } from '../src/movement-system.ts';
-import { PlayerActions } from '../src/ActionMoveShip.ts';
 import { Player } from '../src/Player.ts';
 
-function createPlayerActions(): PlayerActions {
+function createPlayerActions(): ActionMoveShip {
   const map = new HexMap();
   const centerHex = map.getCell(HexGrid.CENTER)!;
   centerHex.terrain = 'sea';
@@ -15,7 +15,7 @@ function createPlayerActions(): PlayerActions {
   const state = new GameState(map, [player]);
   state.setPhase('action');
   const movementSystem = new MovementSystem(map);
-  const playerActions = new PlayerActions(state, movementSystem);
+  const playerActions = new ActionMoveShip(state, movementSystem);
   return playerActions;
 }
 
