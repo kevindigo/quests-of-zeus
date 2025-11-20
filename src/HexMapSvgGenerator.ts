@@ -175,22 +175,17 @@ export class HexMapSvgGenerator {
     try {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
-      // Use squares for cubes
-      const cubeSize = 16 * scale;
-      const spacing = cubeSize * 1.5;
+      const cubeWidth = 16 * scale;
 
       let cubesContent = '';
 
-      // Position cubes in a circular arrangement around the center
-      const angleStep = (2 * Math.PI) / COLOR_WHEEL.length;
-
       cubeColors.forEach((color) => {
-        const colorIndex = COLOR_WHEEL.indexOf(color);
-        const index = colorIndex >= 0 ? colorIndex : 0;
-
-        const angle = index * angleStep;
-        const cubeX = centerX + Math.cos(angle) * spacing;
-        const cubeY = centerY + Math.sin(angle) * spacing;
+        const { bitCenterX, bitCenterY } = this.getBitLocationWithinHex(
+          centerX,
+          centerY,
+          cubeWidth,
+          color,
+        );
 
         const strokeColor = this.getSvgColorForHexColor(color);
         const fillColor = this.getCubeFillColor(color);
@@ -198,10 +193,10 @@ export class HexMapSvgGenerator {
         // Use squares instead of circles for cubes
         cubesContent += `
           <rect 
-            x="${cubeX - cubeSize / 2}" 
-            y="${cubeY - cubeSize / 2}" 
-            width="${cubeSize}" 
-            height="${cubeSize}" 
+            x="${bitCenterX - cubeWidth / 2}" 
+            y="${bitCenterY - cubeWidth / 2}" 
+            width="${cubeWidth}" 
+            height="${cubeWidth}" 
             fill="${fillColor}" 
             stroke="${strokeColor}" 
             stroke-width="${2 * scale}"
@@ -229,7 +224,7 @@ export class HexMapSvgGenerator {
     try {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
-      const triangleWidth = 20 * scale;
+      const triangleWidth = 16 * scale;
 
       let monstersContent = '';
 
@@ -281,7 +276,7 @@ export class HexMapSvgGenerator {
     try {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
-      const barSize = 20 * scale;
+      const barSize = 16 * scale;
 
       let statueBasesContent = '';
 
@@ -321,7 +316,7 @@ export class HexMapSvgGenerator {
     bitSize: number,
     color: CoreColor,
   ): { bitCenterX: number; bitCenterY: number } {
-    const spacing = bitSize * 1.2;
+    const spacing = bitSize * 1.5;
 
     const angleStep = (2 * Math.PI) / COLOR_WHEEL.length;
     const colorIndex = COLOR_WHEEL.indexOf(color);
