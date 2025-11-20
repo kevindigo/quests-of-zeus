@@ -49,9 +49,7 @@ Deno.test('Click land - shrine hidden and ours (die)', () => {
   shrineHex.reward = 'favor';
   const originalFavor = xPlayer.favor;
   const originalDiceCount = xPlayer.oracleDice.length;
-  const result = xEngine.activateShrine(
-    shrineCell.getCoordinates(),
-  );
+  const result = xEngine.activateShrine(shrineCell.getCoordinates());
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'filled');
@@ -72,9 +70,7 @@ Deno.test('Click land - shrine hidden and ours (recolored die)', () => {
   xState.setSelectedRecoloring(xPlayer.id, 5);
   shrineHex.owner = xPlayer.color;
   shrineHex.reward = 'favor';
-  const result = xEngine.activateShrine(
-    shrineCell.getCoordinates(),
-  );
+  const result = xEngine.activateShrine(shrineCell.getCoordinates());
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'filled');
@@ -94,9 +90,7 @@ Deno.test('Click land - shrine hidden and ours (card)', () => {
   shrineHex.reward = 'favor';
   const originalFavor = xPlayer.favor;
   const originalCardCount = xPlayer.oracleCards.length;
-  const result = xEngine.activateShrine(
-    shrineCell.getCoordinates(),
-  );
+  const result = xEngine.activateShrine(shrineCell.getCoordinates());
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'filled');
@@ -115,9 +109,7 @@ Deno.test('Click land - shrine visible and ours (die)', () => {
   shrineHex.owner = xPlayer.color;
   shrineHex.status = 'visible';
   const originalDiceCount = xPlayer.oracleDice.length;
-  const result = xEngine.activateShrine(
-    shrineCell.getCoordinates(),
-  );
+  const result = xEngine.activateShrine(shrineCell.getCoordinates());
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'filled');
@@ -143,9 +135,7 @@ Deno.test('Click land - shrine hidden and favor reward (die)', () => {
   xState.setSelectedDieColor(shrineCell.color);
   const originalFavor = xPlayer.favor;
   const originalDiceCount = xPlayer.oracleDice.length;
-  const result = xEngine.activateShrine(
-    shrineCell.getCoordinates(),
-  );
+  const result = xEngine.activateShrine(shrineCell.getCoordinates());
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'visible');
@@ -173,9 +163,7 @@ Deno.test('Click land - shrine hidden and card reward (die)', () => {
   const originalFavor = xPlayer.favor;
   const originalDiceCount = xPlayer.oracleDice.length;
   const originalCardCount = xPlayer.oracleCards.length;
-  const result = xEngine.activateShrine(
-    shrineCell.getCoordinates(),
-  );
+  const result = xEngine.activateShrine(shrineCell.getCoordinates());
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'visible');
@@ -213,9 +201,7 @@ Deno.test('Click land - shrine card reward but oracle deck empty', () => {
   const originalFavor = xPlayer.favor;
   const originalDiceCount = xPlayer.oracleDice.length;
   const originalCardCount = xPlayer.oracleCards.length;
-  const result = xEngine.activateShrine(
-    shrineCell.getCoordinates(),
-  );
+  const result = xEngine.activateShrine(shrineCell.getCoordinates());
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'visible');
