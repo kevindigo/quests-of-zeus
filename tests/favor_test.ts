@@ -66,4 +66,18 @@ Deno.test('Spend Die for Favor - turn continues after spending', () => {
 });
 
 Deno.test('Spend recolored die for favor - should use as unrecolored', () => {
+  const engine = new GameEngine();
+  engine.initializeGame();
+
+  const player = engine.getCurrentPlayer();
+  assert(player);
+  const existingFavor = player.favor;
+
+  const gameState = engine.getGameState();
+  gameState.setSelectedRecoloring(player.id, existingFavor);
+
+  const dieColor = player.oracleDice[0];
+  const success = engine.spendDieForFavor(player.id, dieColor!);
+  assert(success, 'Should successfully spend die for favor');
+  assertEquals(player.favor, existingFavor + 2);
 });
