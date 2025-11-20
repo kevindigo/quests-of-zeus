@@ -176,8 +176,8 @@ export class HexMapSvgGenerator {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
       // Use squares for cubes
-      const cubeSize = 8 * scale;
-      const spacing = cubeSize * 3;
+      const cubeSize = 16 * scale;
+      const spacing = cubeSize * 1.5;
 
       let cubesContent = '';
 
@@ -203,10 +203,10 @@ export class HexMapSvgGenerator {
         // Use squares instead of circles for cubes
         cubesContent += `
           <rect 
-            x="${cubeX - cubeSize}" 
-            y="${cubeY - cubeSize}" 
-            width="${cubeSize * 2}" 
-            height="${cubeSize * 2}" 
+            x="${cubeX - cubeSize / 2}" 
+            y="${cubeY - cubeSize / 2}" 
+            width="${cubeSize}" 
+            height="${cubeSize}" 
             fill="${fillColor}" 
             stroke="${strokeColor}" 
             stroke-width="${2 * scale}"
