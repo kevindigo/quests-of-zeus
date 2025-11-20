@@ -1,62 +1,39 @@
-import { assert, assertFalse, assertStringIncludes } from '@std/assert';
+import { assert, assertStringIncludes } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
-import { GameEngine } from '../src/GameEngine.ts';
-import type { GameState } from '../src/GameState.ts';
-import type { Player } from '../src/Player.ts';
 import type { HexCell } from '../src/hexmap/HexCell.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
-import type { HexMap } from '../src/hexmap/HexMap.ts';
 import { OracleSystem } from '../src/oracle-system.ts';
-import type {
-  HexColor,
-  ResultWithMessage,
-  ShrineHex,
-  TerrainType,
-} from '../src/types.ts';
-
-function assertFailureContains(
-  result: ResultWithMessage,
-  fragment: string,
-): void {
-  assertFalse(result.success, 'Should not have succeeded');
-  assertStringIncludes(result.message, fragment);
-}
-
-let engine: GameEngine;
-let state: GameState;
-let map: HexMap;
-let grid: HexGrid;
-let player: Player;
-
-function setup(): void {
-  engine = new GameEngine();
-  engine.initializeGame();
-  state = engine.getGameState();
-  map = state.map;
-  grid = map.getHexGrid();
-  player = state.getCurrentPlayer();
-}
+import type { HexColor, ShrineHex, TerrainType } from '../src/types.ts';
+import {
+  assertFailureContains,
+  setupGame,
+  xEngine,
+  xGrid,
+  xMap,
+  xPlayer,
+  xState,
+} from './test-helpers.ts';
 
 function setupWithReadyShrineHex(): ShrineHex {
-  setup();
-  const color = player.oracleDice[0];
+  setupGame();
+  const color = xPlayer.oracleDice[0];
   assert(color);
   const shrineCell = findLandCell('shrine', color);
   putPlayerNextTo(shrineCell);
 
-  const shrineHex = state.findShrineHexAt(shrineCell.getCoordinates());
+  const shrineHex = xState.findShrineHexAt(shrineCell.getCoordinates());
   assert(shrineHex, 'Failed to find our ShrineHex');
   return shrineHex;
 }
 
 function putPlayerNextTo(cell: HexCell): void {
-  const seaNeighbor = grid.getNeighborsOfType(cell, 'sea')[0];
+  const seaNeighbor = xGrid.getNeighborsOfType(cell, 'sea')[0];
   assert(seaNeighbor);
-  player.setShipPosition(seaNeighbor.getCoordinates());
+  xPlayer.setShipPosition(seaNeighbor.getCoordinates());
 }
 
 function findLandCell(terrain: TerrainType, color: HexColor): HexCell {
-  const allShrineCells = grid.getCellsOfType(terrain);
+  const allShrineCells = xGrid.getCellsOfType(terrain);
   const ourColorShrineCells = allShrineCells.filter((cell) => {
     return cell.color == color;
   });
@@ -66,22 +43,22 @@ function findLandCell(terrain: TerrainType, color: HexColor): HexCell {
 }
 
 Deno.test('Available land - nothing available from zeus', () => {
-  setup();
-  state.setSelectedDieColor('red');
-  const positions = engine.getAvailableLandInteractions();
+  setupGame();
+  xState.setSelectedDieColor('red');
+  const positions = xEngine.getAvailableLandInteractions();
   assertEquals(positions.length, 0);
 });
 
 Deno.test('Available land - shrine adjacent but wrong color', () => {
-  setup();
-  const color = player.oracleDice[0];
+  setupGame();
+  const color = xPlayer.oracleDice[0];
   assert(color);
   const shrineCell = findLandCell('shrine', color);
   putPlayerNextTo(shrineCell);
   const wrongColor = OracleSystem.applyRecolor(color, 1);
 
-  state.setSelectedDieColor(wrongColor);
-  const positions = engine.getAvailableLandInteractions();
+  xState.setSelectedDieColor(wrongColor);
+  const positions = xEngine.getAvailableLandInteractions();
   const shrines = positions.filter((cell) => {
     return cell.q === shrineCell.q && cell.r === shrineCell.r;
   });
@@ -89,14 +66,14 @@ Deno.test('Available land - shrine adjacent but wrong color', () => {
 });
 
 Deno.test('Available land - shrine adjacent correct color', () => {
-  setup();
-  const color = player.oracleDice[0];
+  setupGame();
+  const color = xPlayer.oracleDice[0];
   assert(color);
   const shrineCell = findLandCell('shrine', color);
   putPlayerNextTo(shrineCell);
 
-  state.setSelectedDieColor(color);
-  const lands = engine.getAvailableLandInteractions();
+  xState.setSelectedDieColor(color);
+  const lands = xEngine.getAvailableLandInteractions();
   const ourShrine = lands.find((cell) => {
     return cell.q === shrineCell.q && cell.r === shrineCell.r;
   });
@@ -104,18 +81,18 @@ Deno.test('Available land - shrine adjacent correct color', () => {
 });
 
 Deno.test('Available land - shrine already completed', () => {
-  setup();
-  const color = player.oracleDice[0];
+  setupGame();
+  const color = xPlayer.oracleDice[0];
   assert(color);
   const shrineCell = findLandCell('shrine', color);
   putPlayerNextTo(shrineCell);
 
-  const shrineHex = state.findShrineHexAt(shrineCell.getCoordinates());
+  const shrineHex = xState.findShrineHexAt(shrineCell.getCoordinates());
   assert(shrineHex);
   shrineHex.status = 'filled';
 
-  state.setSelectedDieColor(color);
-  const lands = engine.getAvailableLandInteractions();
+  xState.setSelectedDieColor(color);
+  const lands = xEngine.getAvailableLandInteractions();
   const shrines = lands.filter((cell) => {
     return cell.q === shrineCell.q && cell.r === shrineCell.r;
   });
@@ -123,21 +100,21 @@ Deno.test('Available land - shrine already completed', () => {
 });
 
 Deno.test('Available land - shrine already flipped and not ours', () => {
-  setup();
-  const shrineHex = state.getShrineHexes().find((sh) => {
-    return sh.owner !== player.color;
+  setupGame();
+  const shrineHex = xState.getShrineHexes().find((sh) => {
+    return sh.owner !== xPlayer.color;
   });
   assert(shrineHex);
-  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  const shrineCell = xGrid.getCell({ q: shrineHex.q, r: shrineHex.r });
   assert(shrineCell);
   assert(shrineCell.color !== 'none');
 
   shrineHex.status = 'visible';
   putPlayerNextTo(shrineCell);
-  player.oracleDice = [shrineCell.color];
-  state.setSelectedDieColor(shrineCell.color);
+  xPlayer.oracleDice = [shrineCell.color];
+  xState.setSelectedDieColor(shrineCell.color);
 
-  const cells = engine.getAvailableLandInteractions();
+  const cells = xEngine.getAvailableLandInteractions();
   const thisShrine = cells.find((cell) => {
     return cell.q === shrineHex.q && cell.r === shrineHex.r;
   });
@@ -145,22 +122,22 @@ Deno.test('Available land - shrine already flipped and not ours', () => {
 });
 
 Deno.test('Available land - shrine already flipped and is ours', () => {
-  setup();
-  const shrineHex = state.getShrineHexes().find((sh) => {
-    return sh.owner === player.color;
+  setupGame();
+  const shrineHex = xState.getShrineHexes().find((sh) => {
+    return sh.owner === xPlayer.color;
   });
   assert(shrineHex);
-  const shrineCell = map.getCell(shrineHex);
+  const shrineCell = xMap.getCell(shrineHex);
   assert(shrineCell);
   assert(shrineCell.color !== 'none');
 
   shrineHex.status = 'visible';
-  state.setSelectedDieColor(shrineCell.color);
+  xState.setSelectedDieColor(shrineCell.color);
 
-  player.oracleDice = [shrineCell.color];
+  xPlayer.oracleDice = [shrineCell.color];
   putPlayerNextTo(shrineCell);
 
-  const lands = engine.getAvailableLandInteractions();
+  const lands = xEngine.getAvailableLandInteractions();
   const ourShrine = lands.find((cell) => {
     return cell.q === shrineCell.q && cell.r === shrineCell.r;
   });
@@ -169,200 +146,200 @@ Deno.test('Available land - shrine already flipped and is ours', () => {
 
 Deno.test('click land - shrine no selected color', () => {
   setupWithReadyShrineHex();
-  const result = engine.activateShrine(HexGrid.CENTER);
+  const result = xEngine.activateShrine(HexGrid.CENTER);
   assertFailureContains(result, 'Must select');
 });
 
 Deno.test('click land - shrine not valid option', () => {
-  setup();
-  state.setSelectedDieColor('red');
-  const result = engine.activateShrine({ q: 0, r: -1 });
+  setupGame();
+  xState.setSelectedDieColor('red');
+  const result = xEngine.activateShrine({ q: 0, r: -1 });
   assertFailureContains(result, 'available');
 });
 
 Deno.test('Click land - shrine hidden and ours (die)', () => {
   const shrineHex = setupWithReadyShrineHex();
-  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  const shrineCell = xGrid.getCell({ q: shrineHex.q, r: shrineHex.r });
   assert(shrineCell);
   assert(shrineCell.color !== 'none');
 
-  state.setSelectedDieColor(shrineCell.color);
-  shrineHex.owner = player.color;
+  xState.setSelectedDieColor(shrineCell.color);
+  shrineHex.owner = xPlayer.color;
   shrineHex.reward = 'favor';
-  const originalFavor = player.favor;
-  const originalDiceCount = player.oracleDice.length;
-  const result = engine.activateShrine(
+  const originalFavor = xPlayer.favor;
+  const originalDiceCount = xPlayer.oracleDice.length;
+  const result = xEngine.activateShrine(
     shrineCell.getCoordinates(),
   );
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'filled');
-  assertEquals(player.favor, originalFavor);
-  assertEquals(player.oracleDice.length, originalDiceCount - 1);
+  assertEquals(xPlayer.favor, originalFavor);
+  assertEquals(xPlayer.oracleDice.length, originalDiceCount - 1);
 });
 
 Deno.test('Click land - shrine hidden and ours (recolored die)', () => {
   const shrineHex = setupWithReadyShrineHex();
-  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  const shrineCell = xGrid.getCell({ q: shrineHex.q, r: shrineHex.r });
   assert(shrineCell);
   assert(shrineCell.color !== 'none');
 
-  player.favor = 5;
+  xPlayer.favor = 5;
   const preRecoloredColor = OracleSystem.applyRecolor(shrineCell.color, 1);
-  player.oracleDice = [preRecoloredColor];
-  state.setSelectedDieColor(preRecoloredColor);
-  state.setSelectedRecoloring(player.id, 5);
-  shrineHex.owner = player.color;
+  xPlayer.oracleDice = [preRecoloredColor];
+  xState.setSelectedDieColor(preRecoloredColor);
+  xState.setSelectedRecoloring(xPlayer.id, 5);
+  shrineHex.owner = xPlayer.color;
   shrineHex.reward = 'favor';
-  const result = engine.activateShrine(
+  const result = xEngine.activateShrine(
     shrineCell.getCoordinates(),
   );
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'filled');
-  assertEquals(player.favor, 0);
-  assertEquals(player.oracleDice.length, 0);
+  assertEquals(xPlayer.favor, 0);
+  assertEquals(xPlayer.oracleDice.length, 0);
 });
 
 Deno.test('Click land - shrine hidden and ours (card)', () => {
   const shrineHex = setupWithReadyShrineHex();
-  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  const shrineCell = xGrid.getCell({ q: shrineHex.q, r: shrineHex.r });
   assert(shrineCell);
   assert(shrineCell.color !== 'none');
 
-  player.oracleCards = [shrineCell.color];
-  state.setSelectedOracleCardColor(shrineCell.color);
-  shrineHex.owner = player.color;
+  xPlayer.oracleCards = [shrineCell.color];
+  xState.setSelectedOracleCardColor(shrineCell.color);
+  shrineHex.owner = xPlayer.color;
   shrineHex.reward = 'favor';
-  const originalFavor = player.favor;
-  const originalCardCount = player.oracleCards.length;
-  const result = engine.activateShrine(
+  const originalFavor = xPlayer.favor;
+  const originalCardCount = xPlayer.oracleCards.length;
+  const result = xEngine.activateShrine(
     shrineCell.getCoordinates(),
   );
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'filled');
-  assertEquals(player.favor, originalFavor);
-  assertEquals(player.oracleCards.length, originalCardCount - 1);
-  assert(player.usedOracleCardThisTurn);
+  assertEquals(xPlayer.favor, originalFavor);
+  assertEquals(xPlayer.oracleCards.length, originalCardCount - 1);
+  assert(xPlayer.usedOracleCardThisTurn);
 });
 
 Deno.test('Click land - shrine visible and ours (die)', () => {
   const shrineHex = setupWithReadyShrineHex();
-  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  const shrineCell = xGrid.getCell({ q: shrineHex.q, r: shrineHex.r });
   assert(shrineCell);
   assert(shrineCell.color !== 'none');
 
-  state.setSelectedDieColor(shrineCell.color);
-  shrineHex.owner = player.color;
+  xState.setSelectedDieColor(shrineCell.color);
+  shrineHex.owner = xPlayer.color;
   shrineHex.status = 'visible';
-  const originalDiceCount = player.oracleDice.length;
-  const result = engine.activateShrine(
+  const originalDiceCount = xPlayer.oracleDice.length;
+  const result = xEngine.activateShrine(
     shrineCell.getCoordinates(),
   );
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'filled');
-  assertEquals(player.oracleDice.length, originalDiceCount - 1);
+  assertEquals(xPlayer.oracleDice.length, originalDiceCount - 1);
 });
 
 Deno.test('Click land - shrine hidden and favor reward (die)', () => {
-  setup();
-  const shrineHexes = state.getShrineHexes();
+  setupGame();
+  const shrineHexes = xState.getShrineHexes();
   const shrineHex = shrineHexes.find((sh) => {
-    return sh.owner !== player.color && sh.reward === 'favor';
+    return sh.owner !== xPlayer.color && sh.reward === 'favor';
   });
   assert(shrineHex, `Did not find a favor shrine`);
-  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  const shrineCell = xGrid.getCell({ q: shrineHex.q, r: shrineHex.r });
   assert(shrineCell);
   assert(shrineCell.color !== 'none');
 
-  const adjacentSeaCell = grid.getNeighborsOfType(shrineCell, 'sea')[0];
+  const adjacentSeaCell = xGrid.getNeighborsOfType(shrineCell, 'sea')[0];
   assert(adjacentSeaCell);
-  player.setShipPosition(adjacentSeaCell.getCoordinates());
+  xPlayer.setShipPosition(adjacentSeaCell.getCoordinates());
 
-  player.oracleDice = [shrineCell.color];
-  state.setSelectedDieColor(shrineCell.color);
-  const originalFavor = player.favor;
-  const originalDiceCount = player.oracleDice.length;
-  const result = engine.activateShrine(
+  xPlayer.oracleDice = [shrineCell.color];
+  xState.setSelectedDieColor(shrineCell.color);
+  const originalFavor = xPlayer.favor;
+  const originalDiceCount = xPlayer.oracleDice.length;
+  const result = xEngine.activateShrine(
     shrineCell.getCoordinates(),
   );
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'visible');
-  assertEquals(player.favor, originalFavor + 4);
-  assertEquals(player.oracleDice.length, originalDiceCount - 1);
+  assertEquals(xPlayer.favor, originalFavor + 4);
+  assertEquals(xPlayer.oracleDice.length, originalDiceCount - 1);
 });
 
 Deno.test('Click land - shrine hidden and card reward (die)', () => {
-  setup();
-  const shrineHexes = state.getShrineHexes();
+  setupGame();
+  const shrineHexes = xState.getShrineHexes();
   const shrineHex = shrineHexes.find((sh) => {
-    return sh.owner !== player.color && sh.reward === 'card';
+    return sh.owner !== xPlayer.color && sh.reward === 'card';
   });
   assert(shrineHex, `Did not find a favor shrine`);
-  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  const shrineCell = xGrid.getCell({ q: shrineHex.q, r: shrineHex.r });
   assert(shrineCell);
   assert(shrineCell.color !== 'none');
 
-  const adjacentSeaCell = grid.getNeighborsOfType(shrineCell, 'sea')[0];
+  const adjacentSeaCell = xGrid.getNeighborsOfType(shrineCell, 'sea')[0];
   assert(adjacentSeaCell);
-  player.setShipPosition(adjacentSeaCell.getCoordinates());
+  xPlayer.setShipPosition(adjacentSeaCell.getCoordinates());
 
-  player.oracleDice = [shrineCell.color];
-  state.setSelectedDieColor(shrineCell.color);
-  const originalFavor = player.favor;
-  const originalDiceCount = player.oracleDice.length;
-  const originalCardCount = player.oracleCards.length;
-  const result = engine.activateShrine(
+  xPlayer.oracleDice = [shrineCell.color];
+  xState.setSelectedDieColor(shrineCell.color);
+  const originalFavor = xPlayer.favor;
+  const originalDiceCount = xPlayer.oracleDice.length;
+  const originalCardCount = xPlayer.oracleCards.length;
+  const result = xEngine.activateShrine(
     shrineCell.getCoordinates(),
   );
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'visible');
-  assertEquals(player.favor, originalFavor);
-  assertEquals(player.oracleDice.length, originalDiceCount - 1);
-  assertEquals(player.oracleCards.length, originalCardCount + 1);
+  assertEquals(xPlayer.favor, originalFavor);
+  assertEquals(xPlayer.oracleDice.length, originalDiceCount - 1);
+  assertEquals(xPlayer.oracleCards.length, originalCardCount + 1);
 });
 
 Deno.test('Click land - shrine card reward but oracle deck empty', () => {
-  setup();
-  const shrineHexes = state.getShrineHexes();
+  setupGame();
+  const shrineHexes = xState.getShrineHexes();
   const shrineHex = shrineHexes.find((sh) => {
-    return sh.owner !== player.color && sh.reward === 'card';
+    return sh.owner !== xPlayer.color && sh.reward === 'card';
   });
   assert(shrineHex, `Did not find a favor shrine`);
-  const shrineCell = grid.getCell({ q: shrineHex.q, r: shrineHex.r });
+  const shrineCell = xGrid.getCell({ q: shrineHex.q, r: shrineHex.r });
   assert(shrineCell);
   assert(shrineCell.color !== 'none');
 
-  const adjacentSeaCell = grid.getNeighborsOfType(shrineCell, 'sea')[0];
+  const adjacentSeaCell = xGrid.getNeighborsOfType(shrineCell, 'sea')[0];
   assert(adjacentSeaCell);
-  player.setShipPosition(adjacentSeaCell.getCoordinates());
+  xPlayer.setShipPosition(adjacentSeaCell.getCoordinates());
 
   const MORE_THAN_ORACLE_DECK_CARD_COUNT = 1000;
   for (let i = 0; i < MORE_THAN_ORACLE_DECK_CARD_COUNT; ++i) {
-    player.oracleDice = ['red'];
-    if (!engine.drawOracleCard(player.id, 'red')) {
+    xPlayer.oracleDice = ['red'];
+    if (!xEngine.drawOracleCard(xPlayer.id, 'red')) {
       break;
     }
   }
 
-  player.oracleDice = [shrineCell.color];
-  state.setSelectedDieColor(shrineCell.color);
+  xPlayer.oracleDice = [shrineCell.color];
+  xState.setSelectedDieColor(shrineCell.color);
 
-  const originalFavor = player.favor;
-  const originalDiceCount = player.oracleDice.length;
-  const originalCardCount = player.oracleCards.length;
-  const result = engine.activateShrine(
+  const originalFavor = xPlayer.favor;
+  const originalDiceCount = xPlayer.oracleDice.length;
+  const originalCardCount = xPlayer.oracleCards.length;
+  const result = xEngine.activateShrine(
     shrineCell.getCoordinates(),
   );
 
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'visible');
-  assertEquals(player.favor, originalFavor);
-  assertEquals(player.oracleDice.length, originalDiceCount - 1);
-  assertEquals(player.oracleCards.length, originalCardCount);
+  assertEquals(xPlayer.favor, originalFavor);
+  assertEquals(xPlayer.oracleDice.length, originalDiceCount - 1);
+  assertEquals(xPlayer.oracleCards.length, originalCardCount);
   assertStringIncludes(result.message, 'available');
 });
