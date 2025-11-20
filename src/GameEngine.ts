@@ -49,11 +49,17 @@ export class GameEngine {
     return this.state;
   }
 
-  // Game Actions - delegate to specialized classes
-  public rollOracleDice(playerId: number): HexColor[] {
+  public rollOracleDice(playerId: number): void {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
-    return this.playerActions!.rollOracleDice(player);
+    const dice: CoreColor[] = [];
+    for (let i = 0; i < 3; i++) {
+      const randomColor =
+        COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
+      dice.push(randomColor!);
+    }
+
+    player.oracleDice = dice;
   }
 
   public moveShip(

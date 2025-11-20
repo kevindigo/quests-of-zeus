@@ -12,7 +12,6 @@ import {
   removeStatueFromStorage,
 } from './storage-manager.ts';
 import type { CoreColor, MoveShipResult, ResultWithMessage } from './types.ts';
-import { COLOR_WHEEL } from './types.ts';
 
 export class PlayerActions {
   constructor(
@@ -26,22 +25,6 @@ export class PlayerActions {
 
   public getMovementSystem(): MovementSystem {
     return this.movementSystem;
-  }
-
-  /**
-   * Roll oracle dice for a player
-   */
-  public rollOracleDice(player: Player): CoreColor[] {
-    // Roll 3 oracle dice (random colors)
-    const dice: CoreColor[] = [];
-    for (let i = 0; i < 3; i++) {
-      const randomColor =
-        COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
-      dice.push(randomColor!);
-    }
-
-    player.oracleDice = dice;
-    return dice;
   }
 
   public attemptMoveShip(

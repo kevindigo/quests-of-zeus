@@ -92,13 +92,6 @@ Deno.test('GameEngine - oracle dice rolling', () => {
   const player = engine.getPlayer(0);
   assertExists(player);
   assertEquals(player?.oracleDice.length, 3);
-
-  // Test manually rolling dice (for debugging or special cases)
-  const dice = engine.rollOracleDice(player.id);
-  assertEquals(dice.length, 3);
-
-  // Player should still have dice after manual roll
-  assertEquals(player?.oracleDice.length, 3);
 });
 
 Deno.test('GameEngine - quest completion', () => {
