@@ -14,6 +14,14 @@ export type HexGridJson = {
 };
 
 export class HexGrid {
+  public static isSameLocation(
+    coordinates1: HexCoordinates,
+    coordinates2: HexCoordinates,
+  ): boolean {
+    return coordinates1.q === coordinates2.q &&
+      coordinates1.r === coordinates2.r;
+  }
+
   public constructor(radius: number, defaultTerrain: TerrainType) {
     this.radius = radius;
     this.grid = HexGrid.generateHexShapedGrid(this.radius, defaultTerrain);

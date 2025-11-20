@@ -5,7 +5,7 @@ import { ActionMoveShip } from './ActionMoveShip.ts';
 import { GameInitializer } from './GameInitializer.ts';
 import { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
-import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import { type HexCoordinates, HexGrid } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './movement-system.ts';
 import { OracleSystem } from './oracle-system.ts';
 import type { Player } from './Player.ts';
@@ -277,7 +277,7 @@ export class GameEngine {
       );
 
       const relevantCells = reachableSeaCells.filter((cell) => {
-        if (this.isSameLocation(cell, origin)) {
+        if (HexGrid.isSameLocation(cell, origin)) {
           return false;
         }
         if (cell.color !== effectiveColor) {
@@ -303,17 +303,9 @@ export class GameEngine {
     candidateMove: PossibleShipMove,
   ): boolean {
     const found = availableMoves.find((move) => {
-      return this.isSameLocation(move, candidateMove);
+      return HexGrid.isSameLocation(move, candidateMove);
     });
     return found ? true : false;
-  }
-
-  private isSameLocation(
-    coordinates1: HexCoordinates,
-    coordinates2: HexCoordinates,
-  ): boolean {
-    return coordinates1.q === coordinates2.q &&
-      coordinates1.r === coordinates2.r;
   }
 
   public getAvailableLandInteractions(): HexCell[] {
