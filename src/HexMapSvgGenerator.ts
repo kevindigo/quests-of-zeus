@@ -229,41 +229,35 @@ export class HexMapSvgGenerator {
     try {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
-      // Use triangles
       const triangleWidth = 20 * scale;
-      const spacing = triangleWidth * 1.0;
 
       let monstersContent = '';
 
-      // Position monsters in a circular arrangement around the center
-      const angleStep = (2 * Math.PI) / COLOR_WHEEL.length;
-
       monsterColors.forEach((color) => {
-        const colorIndex = COLOR_WHEEL.indexOf(color);
-        const index = colorIndex >= 0 ? colorIndex : 0;
-
-        const angle = index * angleStep;
-        const monsterX = centerX + Math.cos(angle) * spacing;
-        const monsterY = centerY + Math.sin(angle) * spacing;
+        const { bitCenterX, bitCenterY } = this.getBitLocationWithinHex(
+          centerX,
+          centerY,
+          triangleWidth,
+          color,
+        );
 
         const strokeColor = this.getSvgColorForHexColor(color);
         const fillColor = this.getMonsterFillColor(color);
-
-        // Create downward-pointing equilateral triangle
-        // Equilateral triangle height = side * √3 / 2
         const triangleHeight = triangleWidth * Math.sqrt(3) / 2;
 
-        // Points for downward-pointing equilateral triangle:
-        // Top left, top right, bottom center
-        const points = [
-          `${monsterX - triangleWidth / 2},${monsterY - triangleHeight / 2}`,
-          `${monsterX + triangleWidth / 2},${monsterY - triangleHeight / 2}`,
-          `${monsterX},${monsterY + triangleHeight / 2}`,
+        const triangleCornerPoints = [
+          `${bitCenterX - triangleWidth / 2},${
+            bitCenterY - triangleHeight / 2
+          }`,
+          `${bitCenterX + triangleWidth / 2},${
+            bitCenterY - triangleHeight / 2
+          }`,
+          `${bitCenterX},${bitCenterY + triangleHeight / 2}`,
         ].join(' ');
 
         monstersContent += `
           <polygon 
-            points="${points}" 
+            points="${triangleCornerPoints}" 
             fill="${fillColor}" 
             stroke="${strokeColor}" 
             stroke-width="${2 * scale}"
