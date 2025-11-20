@@ -230,8 +230,8 @@ export class HexMapSvgGenerator {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
       // Use triangles
-      const triangleSize = 20 * scale;
-      const spacing = triangleSize * 1.0;
+      const triangleWidth = 20 * scale;
+      const spacing = triangleWidth * 1.0;
 
       let monstersContent = '';
 
@@ -251,14 +251,14 @@ export class HexMapSvgGenerator {
 
         // Create downward-pointing equilateral triangle
         // Equilateral triangle height = side * √3 / 2
-        const triangleWidth = triangleSize * Math.sqrt(3) / 2;
+        const triangleHeight = triangleWidth * Math.sqrt(3) / 2;
 
         // Points for downward-pointing equilateral triangle:
         // Top left, top right, bottom center
         const points = [
-          `${monsterX - triangleSize / 2},${monsterY - triangleWidth / 2}`,
-          `${monsterX + triangleSize / 2},${monsterY - triangleWidth / 2}`,
-          `${monsterX},${monsterY + triangleWidth / 2}`,
+          `${monsterX - triangleWidth / 2},${monsterY - triangleHeight / 2}`,
+          `${monsterX + triangleWidth / 2},${monsterY - triangleHeight / 2}`,
+          `${monsterX},${monsterY + triangleHeight / 2}`,
         ].join(' ');
 
         monstersContent += `
@@ -287,41 +287,27 @@ export class HexMapSvgGenerator {
     try {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
-      // Use horizontal bars
-      const barSize = 25 * scale;
+      const barSize = 20 * scale;
 
       let statueBasesContent = '';
 
-      // Safety check: if no base colors, return empty string
-      if (baseColors.length === 0) {
-        return statueBasesContent;
-      }
-
-      const xValues = [
-        centerX - scale * 5,
-        centerX + scale * 18,
-        centerX - scale * 12,
-      ];
-      const yValues = [
-        centerY - scale * 10,
-        centerY + scale * 10,
-        centerY + scale * 22,
-      ];
-
-      baseColors.forEach((color, index) => {
-        const baseX = xValues[index] || centerX;
-        const baseY = yValues[index] || centerY;
-
+      baseColors.forEach((color) => {
+        const { bitCenterX, bitCenterY } = this.getBitLocationWithinHex(
+          centerX,
+          centerY,
+          barSize,
+          color,
+        );
         const strokeColor = this.getSvgColorForHexColor(color);
 
         statueBasesContent += `
           <line 
-            x1 = "${baseX - barSize / 2}"
-            y1 = "${baseY}"
-            x2 = "${baseX + barSize / 2}"
-            y2 = "${baseY}"
+            x1 = "${bitCenterX - barSize / 2}"
+            y1 = "${bitCenterY}"
+            x2 = "${bitCenterX + barSize / 2}"
+            y2 = "${bitCenterY}"
             stroke="${strokeColor}" 
-            stroke-width="${5 * scale}"
+            stroke-width="${8 * scale}"
             class="colored-statue-base statue-base-${color}"
           />
         `;
@@ -333,6 +319,24 @@ export class HexMapSvgGenerator {
       // Return empty string on error - the fallback generic icon will be used
       return '';
     }
+  }
+
+  private getBitLocationWithinHex(
+    centerX: number,
+    centerY: number,
+    bitSize: number,
+    color: CoreColor,
+  ): { bitCenterX: number; bitCenterY: number } {
+    const spacing = bitSize * 1.2;
+
+    const angleStep = (2 * Math.PI) / COLOR_WHEEL.length;
+    const colorIndex = COLOR_WHEEL.indexOf(color);
+    const index = colorIndex >= 0 ? colorIndex : 0;
+
+    const angle = index * angleStep;
+    const bitCenterX = centerX + Math.cos(angle) * spacing;
+    const bitCenterY = centerY + Math.sin(angle) * spacing;
+    return { bitCenterX, bitCenterY };
   }
 
   private createPlayerMarkersSvg(
