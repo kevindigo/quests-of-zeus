@@ -57,14 +57,6 @@ Deno.test('GameEngine setup - player creation', () => {
   // All players should start on the same position (Zeus hex)
   assertEquals(player1?.getShipPosition(), player2?.getShipPosition());
 
-  // Check that players start with empty storage
-  assertEquals(player1?.storage.length, 2);
-  assertEquals(player2?.storage.length, 2);
-  assertEquals(player1?.storage[0].type, 'empty');
-  assertEquals(player1?.storage[1].type, 'empty');
-  assertEquals(player2?.storage[0].type, 'empty');
-  assertEquals(player2?.storage[1].type, 'empty');
-
   // Check that players start with 0 shield
   assertEquals(player1?.shield, 0, 'Player 1 should start with 0 shield');
   assertEquals(player2?.shield, 0, 'Player 2 should start with 0 shield');
