@@ -1,6 +1,7 @@
 == Short-term ==
 
-- Implement items, and pick up cubes
+- Implement controller activate offerings to pick up cubes
+- Display stored items
 
 == Cosmetic/Usability ==
 
