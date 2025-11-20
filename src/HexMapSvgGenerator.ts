@@ -181,11 +181,6 @@ export class HexMapSvgGenerator {
 
       let cubesContent = '';
 
-      // Safety check: if no cube colors, return empty string
-      if (cubeColors.length === 0) {
-        return cubesContent;
-      }
-
       // Position cubes in a circular arrangement around the center
       const angleStep = (2 * Math.PI) / COLOR_WHEEL.length;
 
@@ -239,11 +234,6 @@ export class HexMapSvgGenerator {
       const spacing = triangleSize * 1.0;
 
       let monstersContent = '';
-
-      // Safety check: if no monster colors, return empty string
-      if (monsterColors.length === 0) {
-        return monstersContent;
-      }
 
       // Position monsters in a circular arrangement around the center
       const angleStep = (2 * Math.PI) / COLOR_WHEEL.length;
