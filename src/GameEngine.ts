@@ -6,7 +6,7 @@ import { GameInitializer } from './GameInitializer.ts';
 import { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import { MovementSystem } from './movement-system.ts';
+import { MovementSystem } from './MovementSystem.ts';
 import { OracleSystem } from './oracle-system.ts';
 import type { Player } from './Player.ts';
 import type {

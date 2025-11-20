@@ -2,7 +2,7 @@ import { ActionMove } from './ActionMove.ts';
 import type { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import { MovementSystem } from './movement-system.ts';
+import { MovementSystem } from './MovementSystem.ts';
 import type {
   ControllerActionResult,
   MoveShipResult,

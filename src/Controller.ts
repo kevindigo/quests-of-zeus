@@ -8,7 +8,7 @@ import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMapSvgGenerator } from './HexMapSvgGenerator.ts';
-import { MovementSystem } from './movement-system.ts';
+import { MovementSystem } from './MovementSystem.ts';
 import type { Player } from './Player.ts';
 import type {
   CityHex,

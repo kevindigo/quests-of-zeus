@@ -3,7 +3,7 @@
 import { assert, assertEquals, assertGreater } from '@std/assert';
 import { ActionMove } from '../src/ActionMove.ts';
 import { GameEngine } from '../src/GameEngine.ts';
-import { MovementSystem } from '../src/movement-system.ts';
+import { MovementSystem } from '../src/MovementSystem.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('getAvailableMovesForDie - basic functionality', () => {
