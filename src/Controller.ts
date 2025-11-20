@@ -556,10 +556,7 @@ export class Controller {
 
   private spendResourceForFavor(): void {
     const handler = new ControllerForBasicActions(this.gameEngine);
-    const result = handler.spendResourceForFavor(
-      this.selectedDieColor,
-      this.selectedOracleCardColor,
-    );
+    const result = handler.spendResourceForFavor();
     if (result.success) {
       this.clearResourceSelection();
       this.renderGameState();
