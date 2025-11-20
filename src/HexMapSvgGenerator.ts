@@ -261,14 +261,14 @@ export class HexMapSvgGenerator {
 
         // Create downward-pointing equilateral triangle
         // Equilateral triangle height = side * √3 / 2
-        const triangleHeight = triangleSize * Math.sqrt(3) / 2;
+        const triangleWidth = triangleSize * Math.sqrt(3) / 2;
 
         // Points for downward-pointing equilateral triangle:
         // Top left, top right, bottom center
         const points = [
-          `${monsterX - triangleSize / 2},${monsterY - triangleHeight / 2}`,
-          `${monsterX + triangleSize / 2},${monsterY - triangleHeight / 2}`,
-          `${monsterX},${monsterY + triangleHeight / 2}`,
+          `${monsterX - triangleSize / 2},${monsterY - triangleWidth / 2}`,
+          `${monsterX + triangleSize / 2},${monsterY - triangleWidth / 2}`,
+          `${monsterX},${monsterY + triangleWidth / 2}`,
         ].join(' ');
 
         monstersContent += `
