@@ -74,7 +74,12 @@ export class GameInitializer {
   private initializePlayers(startPosition: HexCoordinates): Player[] {
     const players: Player[] = [];
 
-    const templeAndMonsterColors: HexColor[] = [...COLOR_WHEEL];
+    const templeAndMonsterColors: HexColor[] = [
+      'black',
+      'blue',
+      'pink',
+      'yellow',
+    ];
     UtilityService.shuffleArray(templeAndMonsterColors);
     const templeColors = templeAndMonsterColors.splice(0, 2);
     templeColors.push('none');

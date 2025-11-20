@@ -1,7 +1,6 @@
 == Short-term ==
 
-- Look for more handlers where we shouldn't pass player and colors
-- Change monster/temple colors to just pink black yellow blue
+- Implement items, and pick up cubes
 
 == Cosmetic/Usability ==
 

@@ -143,3 +143,19 @@ Deno.test('Quest - monster and temple quest colors should not overlap', () => {
   );
   assert(colorsAcrossPlayers.has('none'), 'Missing the uncolored quests?');
 });
+
+Deno.test('Quest - monster and temple quest colors should not contain red or green', () => {
+  const engine = new GameEngine();
+  engine.initializeGame();
+  const player = engine.getCurrentPlayer();
+  const monsterAndTempleQuests = player.getQuests().filter((quest) => {
+    return quest.type === 'monster' || quest.type === 'temple';
+  });
+  assertEquals(monsterAndTempleQuests.length, 6);
+  const colors = monsterAndTempleQuests.map((quest) => {
+    return quest.color;
+  });
+  assertEquals(colors.length, 6);
+  colors.sort();
+  assertEquals(colors, ['black', 'blue', 'none', 'none', 'pink', 'yellow']);
+});
