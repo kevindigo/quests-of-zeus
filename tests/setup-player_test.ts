@@ -18,6 +18,6 @@ Deno.test('Setup player - storage', () => {
   engine.initializeGame();
   engine.getGameState().players.forEach((player) => {
     assertEquals(player.getItemCapacity(), 2);
-    assertEquals(player.getItems().length, 0);
+    assertEquals(player.getItemCount(), 0);
   });
 });

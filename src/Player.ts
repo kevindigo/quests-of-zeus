@@ -1,7 +1,6 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import type {
   CoreColor,
-  Item,
   PlayerColorName,
   Quest,
   StorageSlot,
@@ -97,8 +96,8 @@ export class Player {
     return 2;
   }
 
-  public getItems(): Item[] {
-    return [];
+  public getItemCount(): number {
+    return 0;
   }
 
   public getQuests(): Quest[] {
