@@ -174,8 +174,7 @@ export class HexMapSvgGenerator {
   ): string {
     try {
       const { centerX, centerY, cellSize } = options;
-      const scale = cellSize / 40;
-      const cubeWidth = 16 * scale;
+      const cubeWidth = cellSize * 0.4;
 
       let cubesContent = '';
 
@@ -199,7 +198,7 @@ export class HexMapSvgGenerator {
             height="${cubeWidth}" 
             fill="${fillColor}" 
             stroke="${strokeColor}" 
-            stroke-width="${2 * scale}"
+            stroke-width="${cellSize * 0.05}"
             class="colored-cube cube-${color}"
           />
         `;
@@ -223,8 +222,7 @@ export class HexMapSvgGenerator {
   ): string {
     try {
       const { centerX, centerY, cellSize } = options;
-      const scale = cellSize / 40;
-      const triangleWidth = 16 * scale;
+      const triangleWidth = cellSize * 0.4;
 
       let monstersContent = '';
 
@@ -255,7 +253,7 @@ export class HexMapSvgGenerator {
             points="${triangleCornerPoints}" 
             fill="${fillColor}" 
             stroke="${strokeColor}" 
-            stroke-width="${2 * scale}"
+            stroke-width="${cellSize * 0.05}"
             class="colored-monster monster-${color}"
           />
         `;
@@ -275,8 +273,7 @@ export class HexMapSvgGenerator {
   ): string {
     try {
       const { centerX, centerY, cellSize } = options;
-      const scale = cellSize / 40;
-      const barSize = 16 * scale;
+      const barSize = cellSize * 0.4;
 
       let statueBasesContent = '';
 
@@ -296,7 +293,7 @@ export class HexMapSvgGenerator {
             x2 = "${bitCenterX + barSize / 2}"
             y2 = "${bitCenterY}"
             stroke="${strokeColor}" 
-            stroke-width="${8 * scale}"
+            stroke-width="${cellSize * 0.2}"
             class="colored-statue-base statue-base-${color}"
           />
         `;
