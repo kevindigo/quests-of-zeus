@@ -8,6 +8,7 @@ import type {
   CubeHex,
   MonsterHex,
   Phase,
+  ResultWithMessage,
   ShrineHex,
   StatueHex,
 } from './types.ts';
@@ -228,6 +229,34 @@ export class GameState {
     this.clearSelectedRecoloring();
     this.setSelectedDieColor(null);
     this.setSelectedOracleCardColor(null);
+  }
+
+  public removeSpentResourceFromPlayer(
+    player: Player,
+    dieSpent: CoreColor | undefined,
+    cardSpent: CoreColor | undefined,
+  ): ResultWithMessage {
+    const resourceArray = dieSpent ? player.oracleDice : player.oracleCards;
+    const originalColor = dieSpent || cardSpent;
+    if (!originalColor) {
+      return {
+        success: false,
+        message: 'Impossible: no resource was selected',
+      };
+    }
+    const index = resourceArray.indexOf(originalColor);
+    if (index < 0) {
+      return {
+        success: false,
+        message: `Could not remove ${originalColor} from ${resourceArray}`,
+      };
+    }
+
+    resourceArray.splice(index, 1);
+    return {
+      success: true,
+      message: 'Resource was spent',
+    };
   }
 
   public map: HexMap;

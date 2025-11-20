@@ -9,7 +9,7 @@ import {
   hasCubeOfColor,
   removeCubeFromStorage,
 } from './storage-manager.ts';
-import type { CoreColor, MoveShipResult, ResultWithMessage } from './types.ts';
+import type { CoreColor, MoveShipResult } from './types.ts';
 
 export class PlayerActions {
   constructor(
@@ -204,39 +204,11 @@ export class PlayerActions {
     if (cardSpent) {
       player.usedOracleCardThisTurn = true;
     }
-    this.removeSpentResourceFromPlayer(player, dieSpent, cardSpent);
+    this.state.removeSpentResourceFromPlayer(player, dieSpent, cardSpent);
 
     // log and return results
     return {
       success: true,
-    };
-  }
-
-  private removeSpentResourceFromPlayer(
-    player: Player,
-    dieSpent: CoreColor | undefined,
-    cardSpent: CoreColor | undefined,
-  ): ResultWithMessage {
-    const resourceArray = dieSpent ? player.oracleDice : player.oracleCards;
-    const originalColor = dieSpent || cardSpent;
-    if (!originalColor) {
-      return {
-        success: false,
-        message: 'Impossible: no resource was selected',
-      };
-    }
-    const index = resourceArray.indexOf(originalColor);
-    if (index < 0) {
-      return {
-        success: false,
-        message: `Could not remove ${originalColor} from ${resourceArray}`,
-      };
-    }
-
-    resourceArray.splice(index, 1);
-    return {
-      success: true,
-      message: 'Resource was spent',
     };
   }
 
@@ -364,28 +336,5 @@ export class PlayerActions {
     }
 
     return true;
-  }
-
-  public actionGainFavor(): ResultWithMessage {
-    const effectiveColor = this.state.getEffectiveSelectedColor();
-    if (!effectiveColor) {
-      return {
-        success: false,
-        message: 'Must select a die or card to gain favor',
-      };
-    }
-
-    const player = this.state.getCurrentPlayer();
-    player.favor += 2;
-
-    const selectedDie = this.state.getSelectedDieColor() || undefined;
-    const selectedCard = this.state.getSelectedOracleCardColor() || undefined;
-    this.removeSpentResourceFromPlayer(player, selectedDie, selectedCard);
-    this.state.clearResourceSelection();
-
-    return {
-      success: true,
-      message: `Resource spent (${effectiveColor}); favor gained`,
-    };
   }
 }

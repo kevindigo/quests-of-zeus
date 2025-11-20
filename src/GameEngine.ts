@@ -130,7 +130,27 @@ export class GameEngine {
 
   public spendResourceForFavor(): ResultWithMessage {
     this.ensureInitialized();
-    return this.playerActions!.actionGainFavor();
+    const state = this.getGameState();
+    const effectiveColor = state.getEffectiveSelectedColor();
+    if (!effectiveColor) {
+      return {
+        success: false,
+        message: 'Must select a die or card to gain favor',
+      };
+    }
+
+    const player = state.getCurrentPlayer();
+    player.favor += 2;
+
+    const selectedDie = state.getSelectedDieColor() || undefined;
+    const selectedCard = state.getSelectedOracleCardColor() || undefined;
+    state.removeSpentResourceFromPlayer(player, selectedDie, selectedCard);
+    state.clearResourceSelection();
+
+    return {
+      success: true,
+      message: `Resource spent (${effectiveColor}); favor gained`,
+    };
   }
 
   public spendOracleCardToDrawCard(
