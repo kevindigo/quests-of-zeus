@@ -7,9 +7,7 @@ import type { Player } from './Player.ts';
 import {
   addCubeToStorage,
   hasCubeOfColor,
-  hasStatueOfColor,
   removeCubeFromStorage,
-  removeStatueFromStorage,
 } from './storage-manager.ts';
 import type { CoreColor, MoveShipResult, ResultWithMessage } from './types.ts';
 
@@ -368,33 +366,6 @@ export class PlayerActions {
     return true;
   }
 
-  /**
-   * Complete a shrine quest
-   */
-  public completeShrineQuest(player: Player): boolean {
-    if (this.state.getPhase() !== 'action') {
-      return false;
-    }
-
-    // Check if player is on a shrine hex
-    const currentCell = this.state.map.getCell(
-      player.getShipPosition(),
-    );
-    if (!currentCell || currentCell.terrain !== 'shrine') {
-      return false;
-    }
-
-    // Check if player has a statue of the required color
-    const requiredColor = currentCell.color;
-    if (!hasStatueOfColor(player, requiredColor)) {
-      return false;
-    }
-
-    // Consume statue and complete shrine quest
-    const success = removeStatueFromStorage(player, requiredColor);
-    return success;
-  }
-
   public actionGainFavor(): ResultWithMessage {
     const effectiveColor = this.state.getEffectiveSelectedColor();
     if (!effectiveColor) {
@@ -416,75 +387,5 @@ export class PlayerActions {
       success: true,
       message: `Resource spent (${effectiveColor}); favor gained`,
     };
-  }
-
-  /**
-   * Spend any die to gain 2 favor during the action phase
-   */
-  public spendDieForFavor(player: Player, dieColor: CoreColor): boolean {
-    if (this.state.getPhase() !== 'action') {
-      return false;
-    }
-
-    // Check if player has the specified die
-    if (!player.oracleDice.includes(dieColor)) {
-      return false;
-    }
-
-    // Consume the oracle die - use the current dieColor after recoloring
-    const dieIndex = player.oracleDice.indexOf(dieColor);
-    if (dieIndex !== -1) {
-      player.oracleDice.splice(dieIndex, 1);
-    } else {
-      // This should not happen since we checked above, but log for debugging
-      console.warn(
-        `Attempted to consume die ${dieColor} but it was not found in player's oracle dice: [${
-          player.oracleDice.join(', ')
-        }]`,
-      );
-      return false;
-    }
-
-    // Gain 2 favor
-    player.favor += 2;
-
-    return true;
-  }
-
-  public spendOracleCardForFavor(
-    player: Player,
-    cardColor: CoreColor,
-  ): boolean {
-    // Check if player has already used an oracle card this turn
-    if (player.usedOracleCardThisTurn) {
-      return false;
-    }
-
-    // Check if player has the specified oracle card
-    if (!player.oracleCards.includes(cardColor)) {
-      return false;
-    }
-
-    // Consume the oracle card - always consume the original card color
-    const cardIndex = player.oracleCards.indexOf(cardColor);
-    if (cardIndex !== -1) {
-      player.oracleCards.splice(cardIndex, 1);
-    } else {
-      // This should not happen since we checked above, but log for debugging
-      console.warn(
-        `Attempted to consume oracle card ${cardColor} but it was not found in player's oracle cards: [${
-          player.oracleCards.join(', ')
-        }]`,
-      );
-      return false;
-    }
-
-    // Mark that player has used an oracle card this turn
-    player.usedOracleCardThisTurn = true;
-
-    // Gain 2 favor
-    player.favor += 2;
-
-    return true;
   }
 }
