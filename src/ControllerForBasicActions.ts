@@ -7,11 +7,9 @@ export class ControllerForBasicActions {
     this.gameEngine = engine;
   }
 
-  public spendResourceForFavor(
-    dieColor: CoreColor | null,
-    cardColor: CoreColor | null,
-  ): ControllerActionResult {
-    const phase = this.gameEngine.getGameState().getPhase();
+  public spendResourceForFavor(): ControllerActionResult {
+    const engine = this.gameEngine;
+    const phase = engine.getGameState().getPhase();
     if (phase !== 'action') {
       return {
         success: false,
@@ -19,33 +17,14 @@ export class ControllerForBasicActions {
       };
     }
 
-    const color = dieColor || cardColor;
-
-    if (!color) {
+    if (engine.getCurrentPlayer().usedOracleCardThisTurn) {
       return {
         success: false,
-        message: 'Please select a resource (die or oracle card) first!',
+        message: `Cannot use a second oracle card this turn`,
       };
     }
 
-    const engine = this.gameEngine;
-    const currentPlayer = engine.getCurrentPlayer();
-    const resourceType = dieColor ? 'die' : 'card';
-    const fn = dieColor
-      ? engine.spendDieForFavor.bind(engine)
-      : engine.spendOracleCardForFavor.bind(engine);
-
-    if (fn(currentPlayer.id, color)) {
-      return {
-        success: true,
-        message: `Spent ${color} ${resourceType} to gain 2 favor!`,
-      };
-    }
-
-    return {
-      success: false,
-      message: `Cannot spend ${resourceType} for favor at this time`,
-    };
+    return engine.spendResourceForFavor();
   }
 
   public drawOracleCard(

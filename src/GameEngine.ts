@@ -122,19 +122,9 @@ export class GameEngine {
     return success;
   }
 
-  public spendDieForFavor(playerId: number, dieColor: CoreColor): boolean {
+  public spendResourceForFavor(): ResultWithMessage {
     this.ensureInitialized();
-    const player = this.getValidPlayer(playerId);
-    return this.playerActions!.spendDieForFavor(player, dieColor);
-  }
-
-  public spendOracleCardForFavor(
-    playerId: number,
-    cardColor: CoreColor,
-  ): boolean {
-    this.ensureInitialized();
-    const player = this.getValidPlayer(playerId);
-    return this.playerActions!.spendOracleCardForFavor(player, cardColor);
+    return this.playerActions!.actionGainFavor();
   }
 
   public spendOracleCardToDrawCard(
