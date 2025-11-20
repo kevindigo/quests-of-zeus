@@ -1,7 +1,7 @@
 // Tests for the new getAvailableMovesForDie method
 
 import { assert, assertEquals, assertGreater } from '@std/assert';
-import { ActionMoveShip } from '../src/ActionMoveShip.ts';
+import { ActionMove } from '../src/ActionMoveShip.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { MovementSystem } from '../src/movement-system.ts';
 import type { CoreColor } from '../src/types.ts';
@@ -10,7 +10,7 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
   const gameEngine = new GameEngine();
   gameEngine.initializeGame();
   const movementSystem = new MovementSystem(gameEngine.getGameState().map);
-  const actionMoveShip = new ActionMoveShip(
+  const actionMoveShip = new ActionMove(
     gameEngine.getGameState(),
     movementSystem,
   );
@@ -48,7 +48,7 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
   const gameEngine = new GameEngine();
   gameEngine.initializeGame();
   const movementSystem = new MovementSystem(gameEngine.getGameState().map);
-  const actionMoveShip = new ActionMoveShip(
+  const actionMoveShip = new ActionMove(
     gameEngine.getGameState(),
     movementSystem,
   );
@@ -75,7 +75,7 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   gameEngine.initializeGame();
   const gameState = gameEngine.getGameState();
   const movementSystem = new MovementSystem(gameState.map);
-  const actionMoveShip = new ActionMoveShip(gameState, movementSystem);
+  const actionMoveShip = new ActionMove(gameState, movementSystem);
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
@@ -120,7 +120,7 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
   const gameEngine = new GameEngine();
   gameEngine.initializeGame();
   const movementSystem = new MovementSystem(gameEngine.getGameState().map);
-  const actionMoveShip = new ActionMoveShip(
+  const actionMoveShip = new ActionMove(
     gameEngine.getGameState(),
     movementSystem,
   );
@@ -163,7 +163,7 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   gameEngine.initializeGame();
   const gameState = gameEngine.getGameState();
   const movementSystem = new MovementSystem(gameState.map);
-  const actionMoveShip = new ActionMoveShip(gameState, movementSystem);
+  const actionMoveShip = new ActionMove(gameState, movementSystem);
 
   const player = gameEngine.getCurrentPlayer();
 

@@ -4,7 +4,7 @@ import {
   assertLess,
   assertStringIncludes,
 } from '@std/assert';
-import { ActionMoveShip } from '../src/ActionMoveShip.ts';
+import { ActionMove } from '../src/ActionMoveShip.ts';
 import { ControllerForHexClicks } from '../src/ControllerForHexClicks.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import type { GameState } from '../src/GameState.ts';
@@ -35,7 +35,7 @@ let handler: ControllerForHexClicks;
 let state: GameState;
 let center: HexCoordinates;
 let player: Player;
-let actionMoveShip: ActionMoveShip;
+let actionMoveShip: ActionMove;
 
 function setup(): void {
   engine = new GameEngine();
@@ -45,7 +45,7 @@ function setup(): void {
   center = HexGrid.CENTER;
   player = state.getCurrentPlayer();
   const movementSystem = new MovementSystem(state.map);
-  actionMoveShip = new ActionMoveShip(state, movementSystem);
+  actionMoveShip = new ActionMove(state, movementSystem);
 }
 
 Deno.test('Hex click move - no resource selected', () => {
