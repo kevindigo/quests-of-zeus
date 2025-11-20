@@ -12,7 +12,12 @@ import {
   generateTempleIcon,
   generateZeusIcon,
 } from './icons-svg.ts';
-import type { CoreColor, HexColor, TerrainType } from './types.ts';
+import {
+  COLOR_WHEEL,
+  type CoreColor,
+  type HexColor,
+  type TerrainType,
+} from './types.ts';
 
 export interface IconOptions {
   centerX: number;
@@ -165,7 +170,7 @@ export class HexMapSvgGenerator {
 
   private generateColoredCubes(
     options: IconOptions,
-    cubeColors: HexColor[],
+    cubeColors: CoreColor[],
   ): string {
     try {
       const { centerX, centerY, cellSize } = options;
@@ -182,9 +187,12 @@ export class HexMapSvgGenerator {
       }
 
       // Position cubes in a circular arrangement around the center
-      const angleStep = (2 * Math.PI) / cubeColors.length;
+      const angleStep = (2 * Math.PI) / COLOR_WHEEL.length;
 
-      cubeColors.forEach((color, index) => {
+      cubeColors.forEach((color) => {
+        const colorIndex = COLOR_WHEEL.indexOf(color);
+        const index = colorIndex >= 0 ? colorIndex : 0;
+
         const angle = index * angleStep;
         const cubeX = centerX + Math.cos(angle) * spacing;
         const cubeY = centerY + Math.sin(angle) * spacing;
@@ -221,14 +229,14 @@ export class HexMapSvgGenerator {
    */
   private generateColoredMonsters(
     options: IconOptions,
-    monsterColors: HexColor[],
+    monsterColors: CoreColor[],
   ): string {
     try {
       const { centerX, centerY, cellSize } = options;
       const scale = cellSize / 40;
       // Use triangles
-      const triangleSize = 15 * scale;
-      const spacing = triangleSize * 2;
+      const triangleSize = 20 * scale;
+      const spacing = triangleSize * 1.0;
 
       let monstersContent = '';
 
@@ -238,9 +246,12 @@ export class HexMapSvgGenerator {
       }
 
       // Position monsters in a circular arrangement around the center
-      const angleStep = (2 * Math.PI) / monsterColors.length;
+      const angleStep = (2 * Math.PI) / COLOR_WHEEL.length;
 
-      monsterColors.forEach((color, index) => {
+      monsterColors.forEach((color) => {
+        const colorIndex = COLOR_WHEEL.indexOf(color);
+        const index = colorIndex >= 0 ? colorIndex : 0;
+
         const angle = index * angleStep;
         const monsterX = centerX + Math.cos(angle) * spacing;
         const monsterY = centerY + Math.sin(angle) * spacing;

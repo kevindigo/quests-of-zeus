@@ -11,7 +11,7 @@ import {
   removeCubeFromStorage,
   removeStatueFromStorage,
 } from './storage-manager.ts';
-import type { CoreColor, HexColor, MoveShipResult } from './types.ts';
+import type { CoreColor, MoveShipResult } from './types.ts';
 import { COLOR_WHEEL } from './types.ts';
 
 export class PlayerActions {
@@ -245,7 +245,7 @@ export class PlayerActions {
   /**
    * Collect an offering cube
    */
-  public collectOffering(player: Player, color: HexColor): boolean {
+  public collectOffering(player: Player, color: CoreColor): boolean {
     if (this.state.getPhase() !== 'action') {
       return false;
     }

@@ -268,7 +268,7 @@ export class GameInitializer {
     UtilityService.shuffleArray(monsterColors);
 
     // We need playerCount copies of each color
-    const monsterColorsToPlace: HexColor[] = [];
+    const monsterColorsToPlace: CoreColor[] = [];
     for (let i = 0; i < playerCount; i++) {
       monsterColorsToPlace.push(...monsterColors);
     }

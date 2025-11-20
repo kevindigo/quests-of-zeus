@@ -83,7 +83,7 @@ export class CubeHex {
 
   q: number;
   r: number;
-  cubeColors: HexColor[]; // Array of colors that have cubes on this hex (no duplicates)
+  cubeColors: CoreColor[]; // Array of colors that have cubes on this hex (no duplicates)
 }
 
 export class MonsterHex {
@@ -94,7 +94,7 @@ export class MonsterHex {
   }
   q: number;
   r: number;
-  monsterColors: HexColor[]; // Array of monster colors on this hex (no duplicates, max 2 per hex)
+  monsterColors: CoreColor[];
 }
 
 export class CityHex {

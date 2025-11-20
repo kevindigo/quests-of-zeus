@@ -78,7 +78,7 @@ export class GameEngine {
     );
   }
 
-  public collectOffering(playerId: number, color: HexColor): boolean {
+  public collectOffering(playerId: number, color: CoreColor): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
     const success = this.playerActions!.collectOffering(player, color);
