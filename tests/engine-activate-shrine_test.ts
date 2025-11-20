@@ -4,7 +4,7 @@ import { OracleSystem } from '../src/oracle-system.ts';
 import type { ShrineHex } from '../src/types.ts';
 import {
   assertFailureContains,
-  findLandCell,
+  findFirstCellWithTerrainAndColor,
   putPlayerNextTo,
   setupGame,
   xEngine,
@@ -17,7 +17,7 @@ function setupWithReadyShrineHex(): ShrineHex {
   setupGame();
   const color = xPlayer.oracleDice[0];
   assert(color);
-  const shrineCell = findLandCell('shrine', color);
+  const shrineCell = findFirstCellWithTerrainAndColor('shrine', color);
   putPlayerNextTo(shrineCell);
 
   const shrineHex = xState.findShrineHexAt(shrineCell.getCoordinates());

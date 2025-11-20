@@ -2,7 +2,7 @@ import { assert } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
 import { OracleSystem } from '../src/oracle-system.ts';
 import {
-  findLandCell,
+  findFirstCellWithTerrainAndColor,
   putPlayerNextTo,
   setupGame,
   xEngine,
@@ -23,7 +23,7 @@ Deno.test('Available land - shrine adjacent but wrong color', () => {
   setupGame();
   const color = xPlayer.oracleDice[0];
   assert(color);
-  const shrineCell = findLandCell('shrine', color);
+  const shrineCell = findFirstCellWithTerrainAndColor('shrine', color);
   putPlayerNextTo(shrineCell);
   const wrongColor = OracleSystem.applyRecolor(color, 1);
 
@@ -39,7 +39,7 @@ Deno.test('Available land - shrine adjacent correct color', () => {
   setupGame();
   const color = xPlayer.oracleDice[0];
   assert(color);
-  const shrineCell = findLandCell('shrine', color);
+  const shrineCell = findFirstCellWithTerrainAndColor('shrine', color);
   putPlayerNextTo(shrineCell);
 
   xState.setSelectedDieColor(color);
@@ -54,7 +54,7 @@ Deno.test('Available land - shrine already completed', () => {
   setupGame();
   const color = xPlayer.oracleDice[0];
   assert(color);
-  const shrineCell = findLandCell('shrine', color);
+  const shrineCell = findFirstCellWithTerrainAndColor('shrine', color);
   putPlayerNextTo(shrineCell);
 
   const shrineHex = xState.findShrineHexAt(shrineCell.getCoordinates());

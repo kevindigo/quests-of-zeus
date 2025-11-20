@@ -36,7 +36,10 @@ export function putPlayerNextTo(cell: HexCell): void {
   xPlayer.setShipPosition(seaNeighbor.getCoordinates());
 }
 
-export function findLandCell(terrain: TerrainType, color: HexColor): HexCell {
+export function findFirstCellWithTerrainAndColor(
+  terrain: TerrainType,
+  color: HexColor,
+): HexCell {
   const allShrineCells = xGrid.getCellsOfType(terrain);
   const ourColorShrineCells = allShrineCells.filter((cell) => {
     return cell.color == color;
