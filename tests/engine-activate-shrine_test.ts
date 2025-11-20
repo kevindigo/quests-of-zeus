@@ -1,6 +1,6 @@
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
-import { OracleSystem } from '../src/oracle-system.ts';
+import { OracleSystem } from '../src/OracleSystem.ts';
 import type { ShrineHex } from '../src/types.ts';
 import {
   assertFailureContains,

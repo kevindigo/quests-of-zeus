@@ -1,5 +1,5 @@
 import type { GameEngine } from './GameEngine.ts';
-import { OracleSystem } from './oracle-system.ts';
+import { OracleSystem } from './OracleSystem.ts';
 import type { ControllerActionResult, CoreColor } from './types.ts';
 
 export class ControllerForBasicActions {

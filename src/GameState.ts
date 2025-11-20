@@ -1,6 +1,6 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMap, type HexMapJson } from './hexmap/HexMap.ts';
-import { OracleSystem } from './oracle-system.ts';
+import { OracleSystem } from './OracleSystem.ts';
 import { Player, type PlayerJson } from './Player.ts';
 import type {
   CityHex,

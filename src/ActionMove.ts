@@ -2,7 +2,7 @@
 import type { GameState } from './GameState.ts';
 import { type HexCoordinates, HexGrid } from './hexmap/HexGrid.ts';
 import type { MovementSystem } from './MovementSystem.ts';
-import { OracleSystem } from './oracle-system.ts';
+import { OracleSystem } from './OracleSystem.ts';
 import type { Player } from './Player.ts';
 import type { CoreColor, MoveShipResult, PossibleShipMove } from './types.ts';
 

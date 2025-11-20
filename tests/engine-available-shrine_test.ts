@@ -1,6 +1,6 @@
 import { assert } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
-import { OracleSystem } from '../src/oracle-system.ts';
+import { OracleSystem } from '../src/OracleSystem.ts';
 import {
   findFirstCellWithTerrainAndColor,
   putPlayerNextTo,
