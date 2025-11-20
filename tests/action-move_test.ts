@@ -3,7 +3,7 @@ import { GameState } from '../src/GameState.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { HexMap } from '../src/hexmap/HexMap.ts';
 import { MovementSystem } from '../src/movement-system.ts';
-import { PlayerActions } from '../src/player-actions.ts';
+import { PlayerActions } from '../src/ActionMoveShip.ts';
 import { Player } from '../src/Player.ts';
 
 function createPlayerActions(): PlayerActions {

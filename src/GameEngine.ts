@@ -7,7 +7,7 @@ import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './movement-system.ts';
 import { OracleSystem } from './oracle-system.ts';
-import { PlayerActions } from './player-actions.ts';
+import { PlayerActions } from './ActionMoveShip.ts';
 import type { Player } from './Player.ts';
 import type {
   CityHex,
