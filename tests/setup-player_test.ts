@@ -1,7 +1,7 @@
 import { assertEquals } from '@std/assert';
 import { GameEngine } from '../src/GameEngine.ts';
 
-Deno.test('Favor System - player initialization', () => {
+Deno.test('Setup player - favor', () => {
   const engine = new GameEngine();
   engine.initializeGame();
 
@@ -10,5 +10,14 @@ Deno.test('Favor System - player initialization', () => {
 
   state.players.forEach((player) => {
     assertEquals(player.favor, 3 + player.id);
+  });
+});
+
+Deno.test('Setup player - storage', () => {
+  const engine = new GameEngine();
+  engine.initializeGame();
+  engine.getGameState().players.forEach((player) => {
+    assertEquals(player.getItemCapacity(), 2);
+    assertEquals(player.getItems().length, 0);
   });
 });

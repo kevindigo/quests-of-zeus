@@ -221,3 +221,10 @@ export type ResultWithMessage = {
 };
 
 export type Phase = 'setup' | 'action' | 'end';
+
+export type ItemType = 'cube' | 'statue';
+
+export type Item = {
+  type: ItemType;
+  color: CoreColor;
+};
