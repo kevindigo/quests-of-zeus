@@ -1,9 +1,11 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import type {
   CoreColor,
+  Item,
   PlayerColorName,
   Quest,
-  StorageSlot,
+  QuestType,
+  ResultWithMessage,
 } from './types.ts';
 
 export type PlayerJson = {
@@ -11,7 +13,7 @@ export type PlayerJson = {
   name: string;
   color: PlayerColorName;
   shipPosition: HexCoordinates;
-  storage: [StorageSlot, StorageSlot];
+  items: Item[];
   oracleDice: CoreColor[];
   favor: number;
   shield: number;
@@ -31,7 +33,7 @@ export class Player {
     this.name = name;
     this.color = color;
     this.shipPosition = { q: shipPosition.q, r: shipPosition.r };
-    this.storage = [{ type: 'empty' }, { type: 'empty' }];
+    this.items = [];
     this.completedQuestTypes = {
       temple_offering: 0,
       monster: 0,
@@ -53,7 +55,7 @@ export class Player {
       json.color,
       json.shipPosition,
     );
-    player.storage = json.storage;
+    player.items = json.items;
     player.oracleCards = json.oracleCards;
     player.oracleDice = json.oracleDice;
     player.favor = json.favor;
@@ -69,7 +71,7 @@ export class Player {
       name: this.name,
       color: this.color,
       shipPosition: this.shipPosition,
-      storage: this.storage,
+      items: this.items,
       oracleDice: this.oracleDice,
       favor: this.favor,
       shield: this.shield,
@@ -92,23 +94,72 @@ export class Player {
     return 3;
   }
 
+  public getQuests(): Quest[] {
+    return this.quests;
+  }
+
+  public getQuestsOfType(type: QuestType): Quest[] {
+    return this.getQuests().filter((quest) => {
+      return quest.type === type;
+    });
+  }
+
   public getItemCapacity(): number {
     return 2;
   }
 
   public getItemCount(): number {
-    return 0;
+    return this.items.length;
   }
 
-  public getQuests(): Quest[] {
-    return this.quests;
+  public validateItemIsLoadable(item: Item): ResultWithMessage {
+    if (this.getItemCount() >= this.getItemCapacity()) {
+      return {
+        success: false,
+        message: `Storage is already full`,
+      };
+    }
+    if (this.isItemLoaded(item)) {
+      return {
+        success: false,
+        message: `Item already loaded: ${JSON.stringify(item)}`,
+      };
+    }
+
+    return {
+      success: true,
+      message: `OK to load ${JSON.stringify(item)}`,
+    };
+  }
+
+  public loadItem(item: Item): ResultWithMessage {
+    const validation = this.validateItemIsLoadable(item);
+    if (!validation.success) {
+      return validation;
+    }
+    this.items.push(item);
+    return {
+      success: true,
+      message: `Player loaded item ${JSON.stringify(item)}`,
+    };
+  }
+
+  public isItemLoaded(item: Item): boolean {
+    const found = this.items.find((loadedItem) => {
+      return loadedItem.type == item.type && loadedItem.color === item.color;
+    });
+    return found ? true : false;
+  }
+
+  public getLoadedItems(): Item[] {
+    return [...this.items];
   }
 
   public readonly id: number;
   public readonly name: string;
   public readonly color: PlayerColorName;
   private shipPosition: HexCoordinates;
-  public storage: [StorageSlot, StorageSlot]; // 2 storage slots, each can hold 1 cube or 1 statue
+  public items: Item[];
   public completedQuestTypes: {
     temple_offering: number;
     monster: number;

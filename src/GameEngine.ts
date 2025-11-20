@@ -14,6 +14,7 @@ import type {
   CoreColor,
   CubeHex,
   HexColor,
+  Item,
   MonsterHex,
   MoveShipResult,
   ResultWithMessage,
@@ -424,6 +425,39 @@ export class GameEngine {
     };
   }
 
+  public validateItemIsLoadable(item: Item): ResultWithMessage {
+    const player = this.getCurrentPlayer();
+    if (!this.isNeededForQuest(item)) {
+      return {
+        success: false,
+        message: `No unfinished quest needs ${JSON.stringify(item)}`,
+      };
+    }
+    const validation = player.validateItemIsLoadable(item);
+    if (!validation.success) {
+      return validation;
+    }
+    return {
+      success: true,
+      message: 'OK to load',
+    };
+  }
+
+  public loadItem(item: Item): ResultWithMessage {
+    const validation = this.validateItemIsLoadable(item);
+    if (!validation.success) {
+      return validation;
+    }
+
+    const player = this.getCurrentPlayer();
+    player.loadItem(item);
+    this.updateWildQuestIfNecessary(item);
+    return {
+      success: true,
+      message: `Loaded item ${item}`,
+    };
+  }
+
   public spendDieOrCard(): void {
     const player = this.getCurrentPlayer();
     const state = this.getGameState();
@@ -464,5 +498,53 @@ export class GameEngine {
       winner: winner || null,
       gameOver: !!winner,
     };
+  }
+
+  private isNeededForQuest(item: Item): boolean {
+    switch (item.type) {
+      case 'cube':
+        return this.isNeededForTempleQuest(item.color);
+      case 'statue':
+        return !this.hasStatueAlreadyBeenRaised(item.color);
+      default:
+        return false;
+    }
+  }
+
+  private isNeededForTempleQuest(color: CoreColor): boolean {
+    const player = this.getCurrentPlayer();
+    const templeQuests = player.getQuestsOfType('temple');
+    const availableTempleQuests = templeQuests.filter((quest) => {
+      return !quest.isCompleted;
+    });
+    const matchingColorQuests = availableTempleQuests.find((quest) => {
+      return quest.color === color || quest.color === 'none';
+    });
+    return (matchingColorQuests ? true : false);
+  }
+
+  private hasStatueAlreadyBeenRaised(_color: CoreColor): boolean {
+    return true;
+  }
+
+  private updateWildQuestIfNecessary(item: Item): void {
+    switch (item.type) {
+      case 'cube':
+        this.updateWildTempleQuestIfNecessary(item.color);
+        return;
+      default:
+        return;
+    }
+  }
+
+  private updateWildTempleQuestIfNecessary(color: CoreColor): void {
+    const player = this.getCurrentPlayer();
+
+    const templeQuests = player.getQuestsOfType('temple');
+    templeQuests.forEach((quest) => {
+      if (quest.color === 'none') {
+        quest.color = color;
+      }
+    });
   }
 }
