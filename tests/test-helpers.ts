@@ -15,32 +15,32 @@ export function assertFailureContains(
   assertStringIncludes(result.message, fragment);
 }
 
-export let xEngine: GameEngine;
-export let xState: GameState;
-export let xMap: HexMap;
-export let xGrid: HexGrid;
-export let xPlayer: Player;
+export let testEngine: GameEngine;
+export let testState: GameState;
+export let testMap: HexMap;
+export let testGrid: HexGrid;
+export let testPlayer: Player;
 
 export function setupGame(): void {
-  xEngine = new GameEngine();
-  xEngine.initializeGame();
-  xState = xEngine.getGameState();
-  xMap = xState.map;
-  xGrid = xMap.getHexGrid();
-  xPlayer = xState.getCurrentPlayer();
+  testEngine = new GameEngine();
+  testEngine.initializeGame();
+  testState = testEngine.getGameState();
+  testMap = testState.map;
+  testGrid = testMap.getHexGrid();
+  testPlayer = testState.getCurrentPlayer();
 }
 
 export function putPlayerNextTo(cell: HexCell): void {
-  const seaNeighbor = xGrid.getNeighborsOfType(cell, 'sea')[0];
+  const seaNeighbor = testGrid.getNeighborsOfType(cell, 'sea')[0];
   assert(seaNeighbor);
-  xPlayer.setShipPosition(seaNeighbor.getCoordinates());
+  testPlayer.setShipPosition(seaNeighbor.getCoordinates());
 }
 
 export function findFirstCellWithTerrainAndColor(
   terrain: TerrainType,
   color: HexColor,
 ): HexCell {
-  const allShrineCells = xGrid.getCellsOfType(terrain);
+  const allShrineCells = testGrid.getCellsOfType(terrain);
   const ourColorShrineCells = allShrineCells.filter((cell) => {
     return cell.color == color;
   });
