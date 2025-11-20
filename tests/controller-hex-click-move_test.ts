@@ -4,7 +4,7 @@ import {
   assertLess,
   assertStringIncludes,
 } from '@std/assert';
-import { ActionMove } from '../src/ActionMoveShip.ts';
+import { ActionMove } from '../src/ActionMove.ts';
 import { ControllerForHexClicks } from '../src/ControllerForHexClicks.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import type { GameState } from '../src/GameState.ts';

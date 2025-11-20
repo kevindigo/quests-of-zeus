@@ -1,7 +1,7 @@
 // Quests of Zeus Game Engine - Core Orchestration
 // High-level game management and orchestration
 
-import { ActionMove } from './ActionMoveShip.ts';
+import { ActionMove } from './ActionMove.ts';
 import { GameInitializer } from './GameInitializer.ts';
 import { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';

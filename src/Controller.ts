@@ -1,7 +1,7 @@
 // Game Controller for Quests of Zeus
 // Manages the game UI and user interactions
 
-import { ActionMove } from './ActionMoveShip.ts';
+import { ActionMove } from './ActionMove.ts';
 import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
 import { GameEngine } from './GameEngine.ts';

@@ -1,7 +1,7 @@
 // Tests for the new getAvailableMovesForDie method
 
 import { assert, assertEquals, assertGreater } from '@std/assert';
-import { ActionMove } from '../src/ActionMoveShip.ts';
+import { ActionMove } from '../src/ActionMove.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { MovementSystem } from '../src/movement-system.ts';
 import type { CoreColor } from '../src/types.ts';

@@ -1,4 +1,4 @@
-import { ActionMove } from './ActionMoveShip.ts';
+import { ActionMove } from './ActionMove.ts';
 import type { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';

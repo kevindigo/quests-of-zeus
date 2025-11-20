@@ -1,5 +1,5 @@
 import { assert, assertEquals, assertFalse, assertGreater } from '@std/assert';
-import { ActionMove } from '../src/ActionMoveShip.ts';
+import { ActionMove } from '../src/ActionMove.ts';
 import { GameState } from '../src/GameState.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { HexMap } from '../src/hexmap/HexMap.ts';
