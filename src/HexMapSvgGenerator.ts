@@ -8,8 +8,6 @@ import type { HexCoordinates, HexGrid } from './hexmap/HexGrid.ts';
 import {
   generateCityIcon,
   generateCloudsIcon,
-  generateMonsterIcon,
-  generateOfferingsIcon,
   generateStatueIcons,
   generateTempleIcon,
   generateZeusIcon,
@@ -619,7 +617,10 @@ export class HexMapSvgGenerator {
     centerY: number,
     cellSize: number,
   ): string {
-    let cellContent = generateMonsterIcon({ centerX, centerY, cellSize });
+    let cellContent = '';
+
+    // FixMe: If these icons remain hidden, just delete the entirely
+    // let cellContent = generateMonsterIcon({ centerX, centerY, cellSize });
 
     const monsterHex = gameState.getMonsterHexes().find((mh) =>
       mh.q === cell.q && mh.r === cell.r
@@ -662,7 +663,10 @@ export class HexMapSvgGenerator {
     centerY: number,
     cellSize: number,
   ): string {
-    let cellContent = generateOfferingsIcon({ centerX, centerY, cellSize });
+    let cellContent = '';
+
+    // FixMe: If these icons remain hidden, just delete the entirely
+    // let cellContent = generateOfferingsIcon({ centerX, centerY, cellSize });
 
     const cubeHex = gameState.getCubeHexes().find((ch) =>
       ch.q === cell.q && ch.r === cell.r
