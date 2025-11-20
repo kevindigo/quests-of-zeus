@@ -84,48 +84,24 @@ export class GameEngine {
     );
   }
 
-  public collectOffering(playerId: number, color: CoreColor): boolean {
+  public collectOffering(_playerId: number, _color: CoreColor): boolean {
     this.ensureInitialized();
-    const player = this.getValidPlayer(playerId);
-    const success = this.playerActions!.collectOffering(player, color);
-    if (success) {
-      this.completeQuestType(playerId, 'temple_offering');
-      this.endTurn();
-    }
-    return success;
+    return false;
   }
 
-  public fightMonster(playerId: number): boolean {
+  public fightMonster(_playerId: number): boolean {
     this.ensureInitialized();
-    const player = this.getValidPlayer(playerId);
-    const success = this.playerActions!.fightMonster(player);
-    if (success) {
-      this.completeQuestType(playerId, 'monster');
-      this.endTurn();
-    }
-    return success;
+    return false;
   }
 
-  public buildTemple(playerId: number): boolean {
+  public buildTemple(_playerId: number): boolean {
     this.ensureInitialized();
-    const player = this.getValidPlayer(playerId);
-    const success = this.playerActions!.buildTemple(player);
-    if (success) {
-      this.completeQuestType(playerId, 'temple_offering');
-      this.endTurn();
-    }
-    return success;
+    return false;
   }
 
-  public buildStatue(playerId: number): boolean {
+  public buildStatue(_playerId: number): boolean {
     this.ensureInitialized();
-    const player = this.getValidPlayer(playerId);
-    const success = this.playerActions!.buildStatue(player);
-    if (success) {
-      this.completeQuestType(playerId, 'statue');
-      this.endTurn();
-    }
-    return success;
+    return false;
   }
 
   public spendResourceForFavor(): ResultWithMessage {
@@ -171,15 +147,6 @@ export class GameEngine {
   public canPlaceStatueOnCity(_playerId: number): boolean {
     this.ensureInitialized();
     return false;
-  }
-
-  private completeQuestType(
-    playerId: number,
-    questType: 'temple_offering' | 'monster' | 'statue' | 'shrine',
-  ): void {
-    const player = this.state!.players.find((p) => p.id === playerId);
-    if (!player) return;
-    player.completedQuestTypes[questType]++;
   }
 
   public endTurn(): void {
