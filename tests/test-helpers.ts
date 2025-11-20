@@ -1,10 +1,11 @@
-import { assertFalse, assertStringIncludes } from '@std/assert';
+import { assert, assertFalse, assertStringIncludes } from '@std/assert';
 import { GameEngine } from '../src/GameEngine.ts';
 import type { GameState } from '../src/GameState.ts';
+import type { HexCell } from '../src/hexmap/HexCell.ts';
 import type { HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { HexMap } from '../src/hexmap/HexMap.ts';
 import type { Player } from '../src/Player.ts';
-import type { ResultWithMessage } from '../src/types.ts';
+import type { HexColor, ResultWithMessage, TerrainType } from '../src/types.ts';
 
 export function assertFailureContains(
   result: ResultWithMessage,
@@ -27,4 +28,20 @@ export function setupGame(): void {
   xMap = xState.map;
   xGrid = xMap.getHexGrid();
   xPlayer = xState.getCurrentPlayer();
+}
+
+export function putPlayerNextTo(cell: HexCell): void {
+  const seaNeighbor = xGrid.getNeighborsOfType(cell, 'sea')[0];
+  assert(seaNeighbor);
+  xPlayer.setShipPosition(seaNeighbor.getCoordinates());
+}
+
+export function findLandCell(terrain: TerrainType, color: HexColor): HexCell {
+  const allShrineCells = xGrid.getCellsOfType(terrain);
+  const ourColorShrineCells = allShrineCells.filter((cell) => {
+    return cell.color == color;
+  });
+  const matchingCell = ourColorShrineCells[0];
+  assert(matchingCell);
+  return matchingCell;
 }
