@@ -9,7 +9,6 @@ import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
-import type { Player } from './Player.ts';
 import type { CoreColor, TerrainType } from './types.ts';
 import { ViewGame } from './ViewGame.ts';
 
@@ -152,15 +151,14 @@ export class Controller {
   }
 
   private highlightAvailableHexElements(gameState: GameState): void {
-    const currentPlayer = gameState.getCurrentPlayer();
-    this.highlightAvailableShipMoves(gameState, currentPlayer);
+    this.highlightAvailableShipMoves(gameState);
     this.highlightAvailableLands();
   }
 
   private highlightAvailableShipMoves(
     gameState: GameState,
-    currentPlayer: Player,
   ): void {
+    const currentPlayer = gameState.getCurrentPlayer();
     const favorForRecoloring = gameState.getSelectedRecoloring();
     const favorAvailableForRange = currentPlayer.favor - favorForRecoloring;
 
