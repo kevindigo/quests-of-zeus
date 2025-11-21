@@ -11,7 +11,7 @@ export class ViewPlayer {
     currentPlayer: Player,
   ): string {
     const playerColor = this.getColorHex(currentPlayer.color);
-    let content = `
+    const content = `
           <div class="player-info">
             <h3>Current Player: ${currentPlayer.name}</h3>
             <div class="player-stats">
@@ -52,7 +52,6 @@ export class ViewPlayer {
               <div class="storage-slots">
               </div>
             </div>`;
-    content += this.getDiceAndOracleCardsContent();
 
     return content;
   }
@@ -261,15 +260,15 @@ export class ViewPlayer {
           `<button id="endTurn" class="action-btn secondary">End Turn</button>`;
 
         const selectedColor = selectedDie || selectedCard;
-        if (selectedColor) {
-          actions += `<div class="resource-actions" style="margin-top: 1rem;">
-            <h4>Resource Actions</h4>
-            <button id="spendResourceForFavor" class="action-btn">Spend for 2 Favor</button>
-            <button id="drawOracleCard" class="action-btn">Draw Oracle Card</button>
-            <p style="font-size: 0.9rem; opacity: 0.8;">Spend selected resource for favor or to draw an oracle card</p>
+        const disabledText = selectedColor ? '' : 'disabled';
+        actions += `<div class="resource-actions" style="margin-top: 1rem;">
+            <button id="spendResourceForFavor" 
+              class="action-btn" ${disabledText}>+2 Favor</button>
+            <button id="drawOracleCard" 
+              class="action-btn" ${disabledText}>+Oracle Card</button>
           </div>`;
-        }
 
+        actions += this.getDiceAndOracleCardsContent();
         if (!actions) {
           actions = '<p>Select a die or card to take an action</p>';
         }

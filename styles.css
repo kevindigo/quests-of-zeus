@@ -21,7 +21,7 @@ body {
   text-align: center;
   padding: 2rem;
   max-width: 1800px;
-  width: 100%;
+  /* width: 100%; */
 }
 
 h1 {
@@ -224,10 +224,10 @@ footer {
 /* Unified Resource Actions Panel */
 .resource-actions {
   margin-top: 1rem;
-  padding: 1rem;
+  /*padding: 1rem;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #667eea; */
 }
 
 .resource-actions h4 {
