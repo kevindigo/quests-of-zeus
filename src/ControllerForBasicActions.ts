@@ -19,10 +19,10 @@ export class ControllerForBasicActions {
       return new Failure(`Cannot buy favor during the ${phase} phase`);
     }
 
-    if (engine.getCurrentPlayer().usedOracleCardThisTurn) {
+    const usingCard = engine.getGameState().getSelectedOracleCardColor();
+    if (usingCard && engine.getCurrentPlayer().usedOracleCardThisTurn) {
       return new Failure(`Cannot use a second oracle card this turn`);
     }
-
     return engine.spendResourceForFavor();
   }
 

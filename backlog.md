@@ -1,7 +1,6 @@
 == Short-term ==
 
 - Display stored items
-- Bug: spending a die after a card said can't spend 2 cards
 
 == Cosmetic/Usability ==
 
@@ -29,6 +28,11 @@
 == Features/bugs ==
 
 - Allow spending more than 5 favor to extend move range
+- Cache all distances to avoid repeated BFS searches
+  - For each sea cell, have an array for each core color
+  - Each color array would hold a map of destination coordinates -> distance
+  - Could do something similar for equipment that allows cubes/statues not
+    adjacent
 
 == Code improvement ==
 
