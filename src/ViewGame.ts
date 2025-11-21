@@ -2,6 +2,7 @@ import type { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import { HexMapSvgGenerator } from './HexMapSvgGenerator.ts';
 import type { CityHex, CubeHex, MonsterHex } from './types.ts';
+import { ViewPhase } from './ViewPhase.ts';
 import { ViewPlayer } from './ViewPlayer.ts';
 import { ViewWelcome } from './ViewWelcome.ts';
 
@@ -67,7 +68,7 @@ export class ViewGame {
     // Get current player for display
     const currentPlayer = gameState.getCurrentPlayer();
 
-    const view = new ViewPlayer(gameState);
+    const view = new ViewPlayer();
     playerInfoContainer.innerHTML = view.getPlayerPanelContents(currentPlayer);
   }
 
@@ -141,7 +142,7 @@ export class ViewGame {
     const phaseDisplay = document.getElementById('phaseDisplay');
     if (!phaseDisplay) return;
 
-    const view = new ViewPlayer(state);
+    const view = new ViewPhase(state);
     phaseDisplay.innerHTML = view.getPhasePanelContents(
       state.getSelectedDieColor(),
       state.getSelectedOracleCardColor(),

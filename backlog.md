@@ -1,6 +1,5 @@
 == Short-term ==
 
-- Bug: Loading a cube matching a quest colored the wild quest instead
 - Display stored items
 
 == Cosmetic/Usability ==
