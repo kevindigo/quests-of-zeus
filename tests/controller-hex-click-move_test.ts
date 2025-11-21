@@ -11,10 +11,10 @@ import type { GameState } from '../src/GameState.ts';
 import { type HexCoordinates, HexGrid } from '../src/hexmap/HexGrid.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
 import type { Player } from '../src/Player.ts';
-import type { ControllerActionResult } from '../src/types.ts';
+import type { ResultWithMessage } from '../src/types.ts';
 
 function assertFailureContains(
-  result: ControllerActionResult,
+  result: ResultWithMessage,
   fragment: string,
 ): void {
   assertFalse(result.success, 'Should not have succeeded');
@@ -22,7 +22,7 @@ function assertFailureContains(
 }
 
 function assertFailureContainsAll(
-  result: ControllerActionResult,
+  result: ResultWithMessage,
   fragments: string[],
 ): void {
   fragments.forEach((fragment) => {

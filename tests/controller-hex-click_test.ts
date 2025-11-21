@@ -10,10 +10,10 @@ import { GameEngine } from '../src/GameEngine.ts';
 import type { GameState } from '../src/GameState.ts';
 import { type HexCoordinates, HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { Player } from '../src/Player.ts';
-import type { ControllerActionResult } from '../src/types.ts';
+import type { ResultWithMessage } from '../src/types.ts';
 
 function assertFailureContains(
-  result: ControllerActionResult,
+  result: ResultWithMessage,
   fragment: string,
 ): void {
   assertFalse(result.success, 'Should not have succeeded');
@@ -154,4 +154,3 @@ Deno.test('Hex click - available my hidden shrine (die)', () => {
   assertEquals(state.getEffectiveSelectedColor(), null);
   assertEquals(state.getSelectedRecoloring(), 0);
 });
-

@@ -165,11 +165,6 @@ export interface PossibleShipMove {
   favorCost: number;
 }
 
-export interface ControllerActionResult {
-  success: boolean;
-  message: string;
-}
-
 export interface MoveShipResult {
   success: boolean;
   error?: {

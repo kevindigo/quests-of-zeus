@@ -4,8 +4,8 @@ import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
 import type {
-  ControllerActionResult,
   MoveShipResult,
+  ResultWithMessage,
   TerrainType,
 } from './types.ts';
 
@@ -25,7 +25,7 @@ export class ControllerForHexClicks {
   public handleHexClick(
     coordinates: HexCoordinates,
     terrain: TerrainType,
-  ): ControllerActionResult {
+  ): ResultWithMessage {
     const gameState = this.gameEngine.getGameStateSnapshot();
     if (gameState.getPhase() !== 'action') {
       return {
@@ -105,7 +105,7 @@ export class ControllerForHexClicks {
 
   private handleMoveWithDieOrCard(
     coordinates: HexCoordinates,
-  ): ControllerActionResult {
+  ): ResultWithMessage {
     const state = this.getState();
     const currentPlayer = state.getCurrentPlayer();
     const effectiveColor = state.getEffectiveSelectedColor();
@@ -185,7 +185,7 @@ export class ControllerForHexClicks {
 
   private handleShrineWithDieOrCard(
     coordinates: HexCoordinates,
-  ): ControllerActionResult {
+  ): ResultWithMessage {
     const engine = this.getEngine();
     const state = engine.getGameState();
     const color = state.getEffectiveSelectedColor();

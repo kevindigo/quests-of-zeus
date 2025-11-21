@@ -1,13 +1,13 @@
 import type { GameEngine } from './GameEngine.ts';
 import { OracleSystem } from './OracleSystem.ts';
-import type { ControllerActionResult, CoreColor } from './types.ts';
+import type { CoreColor, ResultWithMessage } from './types.ts';
 
 export class ControllerForBasicActions {
   public constructor(engine: GameEngine) {
     this.gameEngine = engine;
   }
 
-  public spendResourceForFavor(): ControllerActionResult {
+  public spendResourceForFavor(): ResultWithMessage {
     const engine = this.gameEngine;
     const phase = engine.getGameState().getPhase();
     if (phase !== 'action') {
@@ -30,7 +30,7 @@ export class ControllerForBasicActions {
   public drawOracleCard(
     dieColor: CoreColor | null,
     cardColor: CoreColor | null,
-  ): ControllerActionResult {
+  ): ResultWithMessage {
     const phase = this.gameEngine.getGameState().getPhase();
     if (phase !== 'action') {
       return {
@@ -72,7 +72,7 @@ export class ControllerForBasicActions {
     favorCost: number,
     dieColor: CoreColor | null,
     cardColor: CoreColor | null,
-  ): ControllerActionResult {
+  ): ResultWithMessage {
     const selectedColor = dieColor || cardColor;
     if (!selectedColor) {
       return {
