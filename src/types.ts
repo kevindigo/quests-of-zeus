@@ -1,5 +1,10 @@
 // Game type definitions for Quests of Zeus
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import {
+  Failure,
+  type ResultWithMessage,
+  Success,
+} from './ResultWithMessage.ts';
 
 // Terrain types for the hexagonal map
 export type TerrainType =
@@ -74,6 +79,20 @@ export class CubeHex {
     this.q = coordinates.q;
     this.r = coordinates.r;
     this.cubeColors = [];
+  }
+
+  public remove(color: CoreColor): ResultWithMessage {
+    const index = this.cubeColors.indexOf(color);
+    if (index < 0) {
+      return new Failure(
+        `Could not remove ${color} from ${this.r},${this.q} (${
+          JSON.stringify(this.cubeColors)
+        })`,
+      );
+    }
+
+    this.cubeColors.splice(index, 1);
+    return new Success(`${color} was removed from ${this.r},${this.q}`);
   }
 
   q: number;

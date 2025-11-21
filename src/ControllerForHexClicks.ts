@@ -181,21 +181,28 @@ export class ControllerForHexClicks {
   private handleShrineWithDieOrCard(
     coordinates: HexCoordinates,
   ): ResultWithMessage {
-    const engine = this.getEngine();
-    const cells = engine.getAvailableLandInteractions();
-    const thisShrine = cells.find((cell) => {
-      return (cell.q === coordinates.q && cell.r === coordinates.r);
-    });
-    if (!thisShrine) {
+    if (!this.isLandHexClickable(coordinates)) {
       return new Failure('That shrine is not available');
     }
     return this.getEngine().activateShrine(coordinates);
   }
 
   private handleOfferingsWithDieOrCard(
-    _coordinates: HexCoordinates,
+    coordinates: HexCoordinates,
   ): ResultWithMessage {
-    return new Failure('Offerings not handled yet');
+    if (!this.isLandHexClickable(coordinates)) {
+      return new Failure('That offering is not available');
+    }
+    return this.getEngine().activateOffering(coordinates);
+  }
+
+  private isLandHexClickable(coordinates: HexCoordinates): boolean {
+    const engine = this.getEngine();
+    const cells = engine.getAvailableLandInteractions();
+    const found = cells.find((cell) => {
+      return (cell.q === coordinates.q && cell.r === coordinates.r);
+    });
+    return found ? true : false;
   }
 
   /**

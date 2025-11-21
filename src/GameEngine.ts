@@ -426,6 +426,35 @@ export class GameEngine {
     return true;
   }
 
+  public activateOffering(coordinates: HexCoordinates): ResultWithMessage {
+    const state = this.getGameState();
+    const cubeHex = state.getCubeHexes().find((hex) => {
+      return hex.q === coordinates.q && hex.r === coordinates.r;
+    });
+    if (!cubeHex) {
+      return new Failure(
+        `Impossible: ${JSON.stringify(coordinates)} is not an offering`,
+      );
+    }
+    const effectiveColor = state.getEffectiveSelectedColor();
+    if (!effectiveColor) {
+      return new Failure('Impossible: No resource was selected');
+    }
+    const item: Item = { type: 'cube', color: effectiveColor };
+    const result = this.loadItem(item);
+    if (!result.success) {
+      return result;
+    }
+
+    const removalResult = cubeHex.remove(effectiveColor);
+    if (!removalResult.success) {
+      return removalResult;
+    }
+    this.spendDieOrCard();
+
+    return new Success(`Loaded ${effectiveColor} cube`);
+  }
+
   public validateItemIsLoadable(item: Item): ResultWithMessage {
     const player = this.getCurrentPlayer();
     if (!this.isNeededForQuest(item)) {

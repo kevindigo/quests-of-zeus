@@ -2,12 +2,15 @@ import {
   assert,
   assertEquals,
   assertFalse,
+  assertGreater,
+  assertLess,
   assertNotEquals,
   assertStringIncludes,
 } from '@std/assert';
 import { ControllerForHexClicks } from '../src/ControllerForHexClicks.ts';
 import { type HexCoordinates, HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { ResultWithMessage } from '../src/ResultWithMessage.ts';
+import type { CubeHex } from '../src/types.ts';
 import {
   setupGame,
   testEngine,
@@ -97,6 +100,7 @@ Deno.test('Hex click - next to good color, but click elsewhere', () => {
   testPlayer.setShipPosition(seaNeighbor.getCoordinates());
   testPlayer.oracleDice = [adjacentColor, 'green'];
   testState.setSelectedDieColor(adjacentColor);
+  
   const result = testHandler.handleHexClick(
     otherShrineCell.getCoordinates(),
   );
@@ -149,35 +153,59 @@ Deno.test('Hex click - available my hidden shrine (die)', () => {
 });
 
 /********************** Offering tests ****************************/
-// function setupGameNextToRedCube(): CubeHex {
-//   setupWithController();
-//   const cubeHexes = testState.getCubeHexes();
-//   assertEquals(cubeHexes.length, 6);
-//   const hexesWithRed = cubeHexes.filter((hex) => {
-//     return (hex.cubeColors.indexOf('red') >= 0);
-//   });
-//   assertEquals(
-//     hexesWithRed.length,
-//     testState.players.length,
-//     'red cube hex count',
-//   );
-//   const cubeHex = hexesWithRed[0];
-//   assert(cubeHex);
-//   const cubeHexCoordinates = { q: cubeHex.q, r: cubeHex.r };
-//   const seaNeighbors = testGrid.getNeighborsByCoordinates(cubeHexCoordinates);
-//   const destination = seaNeighbors[0];
-//   assert(destination);
-//   testPlayer.setShipPosition(destination.getCoordinates());
-//   const shipCell = testGrid.getCell(testPlayer.getShipPosition());
-//   assert(shipCell);
-//   assertGreater(testGrid.getNeighborsOfType(shipCell, 'offerings').length, 0);
-//   return cubeHex;
-// }
+function setupGameNextToRedCube(): CubeHex {
+  setupWithController();
+  const cubeHexes = testState.getCubeHexes();
+  assertEquals(cubeHexes.length, 6);
+  const hexesWithRed = cubeHexes.filter((hex) => {
+    return (hex.cubeColors.indexOf('red') >= 0);
+  });
+  assertEquals(
+    hexesWithRed.length,
+    testState.players.length,
+    'red cube hex count',
+  );
+  const cubeHex = hexesWithRed[0];
+  assert(cubeHex);
+  const cubeHexCoordinates = { q: cubeHex.q, r: cubeHex.r };
+  const seaNeighbors = testGrid.getNeighborsByCoordinates(cubeHexCoordinates);
+  const destination = seaNeighbors[0];
+  assert(destination);
+  testPlayer.setShipPosition(destination.getCoordinates());
+  const shipCell = testGrid.getCell(testPlayer.getShipPosition());
+  assert(shipCell);
+  assertGreater(testGrid.getNeighborsOfType(shipCell, 'offerings').length, 0);
+  return cubeHex;
+}
 
-// Deno.test('Hex click - available offering', () => {
-//   const cubeHex = setupGameNextToRedCube();
-//   testPlayer.oracleDice = ['red'];
-//   testState.setSelectedDieColor('red');
-//   const result = testHandler.handleHexClick(cubeHex, 'offerings');
-//   assert(result.success, result.message);
-// });
+Deno.test('Hex click - available offering', () => {
+  const cubeHex = setupGameNextToRedCube();
+  testPlayer.oracleDice = ['red'];
+  testState.setSelectedDieColor('red');
+
+  const result = testHandler.handleHexClick(cubeHex);
+  assert(result.success, result.message);
+  assertEquals(testPlayer.getItemCount(), 1);
+  const thisCube = testPlayer.getLoadedItems().find((item) => {
+    return item.type == 'cube' && item.color == 'red';
+  });
+  assert(
+    thisCube,
+    `Loaded wrong item (${JSON.stringify(testPlayer.getLoadedItems())})`,
+  );
+  assertEquals(testPlayer.oracleDice.length, 0, 'Should have spent the die');
+  assertFalse(
+    testState.getEffectiveSelectedColor(),
+    'Should have unselected the die',
+  );
+  const templeQuests = testPlayer.getQuestsOfType('temple');
+  const redCubeQuest = templeQuests.find((quest) => {
+    return quest.color === 'red';
+  });
+  assert(redCubeQuest, 'Did not update wild quest to red?');
+  assertLess(
+    cubeHex.cubeColors.indexOf('red'),
+    0,
+    'Cube not removed from the hex?',
+  );
+});

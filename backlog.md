@@ -1,7 +1,7 @@
 == Short-term ==
 
-- Implement controller activate offerings to pick up cubes
 - Display stored items
+- Bug: spending a die after a card said can't spend 2 cards
 
 == Cosmetic/Usability ==
 
