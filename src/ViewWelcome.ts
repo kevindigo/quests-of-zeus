@@ -1,29 +1,37 @@
 export class ViewWelcome {
+  public showWelcomeScreen(): void {
+    const playerInfoContainer = document.getElementById('playerInfo');
+    const questInfoContainer = document.getElementById('questInfo');
+    const phaseDisplay = document.getElementById('phaseDisplay');
+    const hexMapContainer = document.getElementById('hexMapSVG');
+
+    if (playerInfoContainer) {
+      playerInfoContainer.innerHTML = this.getInfoPanelContents();
+    }
+
+    if (questInfoContainer) {
+      questInfoContainer.innerHTML = this.getQuestPanelContents();
+    }
+
+    if (phaseDisplay) {
+      phaseDisplay.innerHTML = this.getPhasePanelContents();
+    }
+
+    if (hexMapContainer) {
+      hexMapContainer.innerHTML = this.getMapPanelContents();
+    }
+  }
+
   public getInfoPanelContents(): string {
     return `
         <div class="welcome-screen">
           <h3>Welcome to Quests of Zeus</h3>
           <p>A strategic board game of ancient Greece</p>
-          <button id="startGame" class="action-btn">Start New Game</button>
       `;
   }
 
   public getQuestPanelContents(): string {
-    return `
-        <div class="game-rules">
-          <h3>Game Rules</h3>
-          <div class="rules-section">
-            <h4>Phases:</h4>
-            <ul>
-              <li><strong>Action Phase:</strong> Select a die and perform actions (move, collect offerings, fight monsters, etc.)</li>
-              <li><strong>End of Turn:</strong> Dice are automatically rolled for the next player</li>
-              <li>You can change your selected die before making a move</li>
-              <li>You can recolor dice and oracle cards by spending favor (1 favor per color advancement)</li>
-              <li>Color wheel: black → pink → blue → yellow → green → red → black</li>
-            </ul>
-          </div>
-        </div>
-      `;
+    return ``;
   }
 
   public getPhasePanelContents(): string {
@@ -31,6 +39,7 @@ export class ViewWelcome {
         <div class="phase-info">
           <h3>Ready to Begin</h3>
           <p>Click "Start New Game" to begin your adventure!</p>
+          <button id="startGame" class="action-btn">Start New Game</button>
         </div>
       `;
   }

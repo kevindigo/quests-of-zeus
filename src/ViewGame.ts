@@ -10,30 +10,6 @@ export class ViewGame {
     this.gameEngine = gameEngine;
   }
 
-  public showWelcomeScreen(): void {
-    const view = new ViewWelcome();
-    const playerInfoContainer = document.getElementById('playerInfo');
-    const questInfoContainer = document.getElementById('questInfo');
-    const phaseDisplay = document.getElementById('phaseDisplay');
-    const hexMapContainer = document.getElementById('hexMapSVG');
-
-    if (playerInfoContainer) {
-      playerInfoContainer.innerHTML = view.getInfoPanelContents();
-    }
-
-    if (questInfoContainer) {
-      questInfoContainer.innerHTML = view.getQuestPanelContents();
-    }
-
-    if (phaseDisplay) {
-      phaseDisplay.innerHTML = view.getPhasePanelContents();
-    }
-
-    if (hexMapContainer) {
-      hexMapContainer.innerHTML = view.getMapPanelContents();
-    }
-  }
-
   public showMessage(message: string): void {
     if (!document) {
       console.log(`GameMessage: ${message}`);
@@ -50,9 +26,14 @@ export class ViewGame {
     }
   }
 
+  public viewWelcome(): void {
+    const viewWelcome = new ViewWelcome();
+    viewWelcome.showWelcomeScreen();
+  }
+
   public renderGameState(): void {
     if (!this.gameEngine.isGameInitialized()) {
-      this.showWelcomeScreen();
+      this.viewWelcome();
       return;
     }
 

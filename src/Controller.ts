@@ -26,7 +26,7 @@ export class Controller {
   }
 
   public initializeGameUI(): void {
-    this.viewGame.showWelcomeScreen();
+    this.viewGame.viewWelcome();
     this.setupEventListeners();
   }
 

@@ -36,19 +36,23 @@ h1 {
 }
 
 .game-layout {
-  display: grid;
+  /* display: grid;
   grid-template-columns: 300px 1fr;
   gap: 1rem;
   margin: 1rem 0;
-  align-items: start;
+  align-items: start; */
+  display: flex; /* enable flex layout */
+  flex-direction: row; /* horizontal layout */
+  align-items: flex-start; /* vertical alignment of children */
+  gap: 1rem; /* optional spacing between children */
 }
 
 .game-panel {
-  background: rgba(255, 255, 255, 0.1);
+  background: #ccccff;
+  color: black;
   padding: 1.5rem;
   border-radius: 8px;
-  backdrop-filter: blur(10px);
-  text-align: left;
+  max-width: 300px;
 }
 
 .game-panel h3 {
@@ -58,8 +62,7 @@ h1 {
 }
 
 .player-info {
-  background: #ccccff;
-  color: black;
+  margin-top: 1rem;
 }
 
 .hex-map-container {
@@ -71,6 +74,11 @@ h1 {
   overflow: auto;
   min-height: 100px;
   max-height: 800px;
+
+  display: flex; /* enable flex layout */
+  flex-direction: row; /* horizontal layout */
+  align-items: flex-start; /* vertical alignment of children */
+  gap: 1rem; /* optional spacing between children */
 }
 
 .hex-map-svg {
@@ -83,19 +91,19 @@ h1 {
 
 .svg-controls {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  bottom: 1rem;
+  left: 1rem;
   display: flex;
   gap: 0.5rem;
-  justify-content: right;
   margin-bottom: 1rem;
   flex-wrap: wrap;
 }
 
 .phase-display {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
+  background: #ccccff;
+  color: black;
+  padding: 1.5rem;
+  border-radius: 8px;
   max-width: 300px;
 }
 
