@@ -35,6 +35,7 @@ function setupGameNextToRedCube(): CubeHex {
   assertGreater(testGrid.getNeighborsOfType(shipCell, 'offerings').length, 0);
   return cubeHex;
 }
+
 Deno.test('Engine available offerings - no resource selected', () => {
   setupGameNextToRedCube();
   const lands = testEngine.getAvailableLandInteractions();
