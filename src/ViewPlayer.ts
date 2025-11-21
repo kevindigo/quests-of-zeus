@@ -9,12 +9,9 @@ export class ViewPlayer {
 
   public getPlayerPanelContents(
     currentPlayer: Player,
-    selectedDie: CoreColor | null,
-    selectedCard: CoreColor | null,
   ): string {
-    const selectedColor = selectedDie || selectedCard;
     const playerColor = this.getColorHex(currentPlayer.color);
-    return `
+    let content = `
           <div class="player-info">
             <h3>Current Player: ${currentPlayer.name}</h3>
             <div class="player-stats">
@@ -54,7 +51,38 @@ export class ViewPlayer {
               <h4>Storage (2 slots)</h4>
               <div class="storage-slots">
               </div>
-            </div>
+            </div>`;
+    content += this.getDiceAndOracleCardsContent();
+
+    return content;
+  }
+
+  private getColoredQuestContents(
+    currentPlayer: Player,
+    questType: QuestType,
+  ): string {
+    const quests = currentPlayer.getQuests().filter((quest) => {
+      return quest.type === questType;
+    });
+    const questTexts = quests.map((quest) => {
+      const background = this.getColorHex(quest.color);
+      const symbol = this.getSymbol(quest.color);
+      const isCompleted = quest.isCompleted;
+      const opacity = isCompleted ? '0.2' : '1.0';
+      return `<span style="background-color: ${background}; opacity: ${opacity}">${symbol}</span>`;
+    });
+
+    const details = questTexts.join('&nbsp;');
+    return `${details}`;
+  }
+
+  private getDiceAndOracleCardsContent() {
+    const state = this.gameState;
+    const currentPlayer = state.getCurrentPlayer();
+    const selectedDie = state.getSelectedDieColor();
+    const selectedCard = state.getSelectedOracleCardColor();
+    const selectedColor = selectedDie || selectedCard;
+    const content = `
             <div class="oracle-dice">
               <h4>Oracle Dice</h4>
               <div class="dice-container">
@@ -133,25 +161,8 @@ export class ViewPlayer {
     }
           </div>
         `;
-  }
 
-  private getColoredQuestContents(
-    currentPlayer: Player,
-    questType: QuestType,
-  ): string {
-    const quests = currentPlayer.getQuests().filter((quest) => {
-      return quest.type === questType;
-    });
-    const questTexts = quests.map((quest) => {
-      const background = this.getColorHex(quest.color);
-      const symbol = this.getSymbol(quest.color);
-      const isCompleted = quest.isCompleted;
-      const opacity = isCompleted ? '0.2' : '1.0';
-      return `<span style="background-color: ${background}; opacity: ${opacity}">${symbol}</span>`;
-    });
-
-    const details = questTexts.join('&nbsp;');
-    return `${details}`;
+    return content;
   }
 
   private getRecolorOptionsContent(
@@ -246,6 +257,8 @@ export class ViewPlayer {
     switch (this.gameState.getPhase()) {
       case 'action': {
         let actions = '';
+        actions +=
+          `<button id="endTurn" class="action-btn secondary">End Turn</button>`;
 
         const selectedColor = selectedDie || selectedCard;
         if (selectedColor) {
@@ -261,8 +274,6 @@ export class ViewPlayer {
           actions = '<p>Select a die or card to take an action</p>';
         }
 
-        actions +=
-          `<button id="endTurn" class="action-btn secondary">End Turn</button>`;
         return actions;
       }
       default: {

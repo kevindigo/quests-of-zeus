@@ -82,11 +82,7 @@ export class ViewGame {
     const currentPlayer = gameState.getCurrentPlayer();
 
     const view = new ViewPlayer(gameState);
-    playerInfoContainer.innerHTML = view.getPlayerPanelContents(
-      currentPlayer,
-      gameState.getSelectedDieColor(),
-      gameState.getSelectedOracleCardColor(),
-    );
+    playerInfoContainer.innerHTML = view.getPlayerPanelContents(currentPlayer);
   }
 
   private renderMap(gameState: GameState): void {

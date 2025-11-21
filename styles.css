@@ -69,12 +69,14 @@ h1 {
   padding: 1rem;
   backdrop-filter: blur(10px);
   overflow: auto;
+  min-height: 100px;
   max-height: 800px;
 }
 
 .hex-map-svg {
   display: block;
-  margin: 0 auto;
+  margin-left: auto;
+  margin-right: 0;
   max-width: 100%;
   height: auto;
 }
@@ -88,6 +90,13 @@ h1 {
   justify-content: right;
   margin-bottom: 1rem;
   flex-wrap: wrap;
+}
+
+.phase-display {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  max-width: 300px;
 }
 
 .svg-controls button {
