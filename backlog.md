@@ -1,7 +1,5 @@
 == Short-term ==
 
-- Temples
-  - action: temple dropoff
 - Change message display to be a scrolling text box
 
 == Cosmetic/Usability ==
