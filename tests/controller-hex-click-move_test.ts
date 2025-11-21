@@ -51,7 +51,7 @@ function setup(): void {
 Deno.test('Hex click move - no resource selected', () => {
   setup();
   assertFailureContains(
-    handler.handleHexClick(center, 'sea'),
+    handler.handleHexClick(center),
     'select a',
   );
 });
@@ -61,7 +61,7 @@ Deno.test('Hex click move - player does not have that card', () => {
   player.oracleCards = ['green'];
   state.setSelectedOracleCardColor('blue');
   assertFailureContainsAll(
-    handler.handleHexClick(center, 'sea'),
+    handler.handleHexClick(center),
     ['card', 'blue'],
   );
 });
@@ -71,7 +71,7 @@ Deno.test('Hex click move - player does not have that die', () => {
   player.oracleDice = ['green'];
   state.setSelectedDieColor('blue');
   assertFailureContainsAll(
-    handler.handleHexClick(center, 'sea'),
+    handler.handleHexClick(center),
     ['dice', 'blue'],
   );
 });
@@ -94,7 +94,7 @@ Deno.test('Hex click move - unlisted but otherwise legal', () => {
   player.favor = 0;
   const coordinates = { q: moveNeedingFavor.q, r: moveNeedingFavor.r };
   assertFailureContains(
-    handler.handleHexClick(coordinates, 'sea'),
+    handler.handleHexClick(coordinates),
     'range',
   );
 });
@@ -112,7 +112,6 @@ Deno.test('Hex click move - legal move but failed', () => {
   player.favor = 0;
   const result = handler.handleHexClick(
     { q: moveNeedingFavor.q, r: moveNeedingFavor.r },
-    'sea',
   );
   assert(!result.success, result.message);
   assertFailureContains(result, 'range');
@@ -128,7 +127,6 @@ Deno.test('Hex click move - successful', () => {
   assert(move);
   const result = handler.handleHexClick(
     { q: move.q, r: move.r },
-    'sea',
   );
   assert(result.success);
 });
