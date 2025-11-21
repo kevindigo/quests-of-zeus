@@ -32,41 +32,28 @@ export class Controller {
   }
 
   public clearResourceSelection(): void {
-    this.selectedDieColor = null;
-    this.selectedOracleCardColor = null;
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
-    if (currentPlayer) {
-      this.gameEngine.getGameState().clearSelectedRecoloring();
-    }
+    this.gameEngine.getGameState().clearResourceSelection();
   }
 
   public getSelectedDieColor(): CoreColor | null {
-    return this.selectedDieColor;
+    return this.gameEngine.getGameState().getSelectedDieColor();
   }
 
   public getSelectedCardColor(): CoreColor | null {
-    return this.selectedOracleCardColor;
+    return this.gameEngine.getGameState().getSelectedOracleCardColor();
   }
 
   public selectDieColor(color: CoreColor): boolean {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
-    if (!currentPlayer.oracleDice.includes(color)) {
-      return false;
-    }
-
-    this.selectedDieColor = color;
-    this.selectedOracleCardColor = null;
+    const state = this.gameEngine.getGameState();
+    state.clearResourceSelection();
+    state.setSelectedDieColor(color);
     return true;
   }
 
   public selectCardColor(color: CoreColor): boolean {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
-    if (!currentPlayer.oracleCards.includes(color)) {
-      return false;
-    }
-
-    this.selectedOracleCardColor = color;
-    this.selectedDieColor = null;
+    const state = this.gameEngine.getGameState();
+    state.clearResourceSelection();
+    state.setSelectedOracleCardColor(color);
     return true;
   }
 
@@ -166,12 +153,6 @@ export class Controller {
 
   private highlightAvailableHexElements(gameState: GameState): void {
     const currentPlayer = gameState.getCurrentPlayer();
-
-    const selectedColor = this.selectedDieColor || this.selectedOracleCardColor;
-    if (!selectedColor) {
-      return;
-    }
-
     this.highlightAvailableShipMoves(gameState, currentPlayer);
     this.highlightAvailableLands();
   }
@@ -345,8 +326,8 @@ export class Controller {
   private drawOracleCard(): void {
     const handler = new ControllerForBasicActions(this.gameEngine);
     const result = handler.drawOracleCard(
-      this.selectedDieColor,
-      this.selectedOracleCardColor,
+      this.getSelectedDieColor(),
+      this.getSelectedCardColor(),
     );
     if (result.success) {
       this.clearResourceSelection();
@@ -359,8 +340,8 @@ export class Controller {
     const handler = new ControllerForBasicActions(this.gameEngine);
     const result = handler.setRecolorIntention(
       favorCost,
-      this.selectedDieColor,
-      this.selectedOracleCardColor,
+      this.getSelectedDieColor(),
+      this.getSelectedCardColor(),
     );
     if (result.success) {
       this.renderGameState();
@@ -395,21 +376,5 @@ export class Controller {
     if (state.getPhase() === 'action') {
       this.highlightAvailableHexElements(state);
     }
-  }
-
-  private get selectedDieColor(): CoreColor | null {
-    return this.gameEngine.getGameState().getSelectedDieColor();
-  }
-
-  private set selectedDieColor(value: CoreColor | null) {
-    this.gameEngine.getGameState().setSelectedDieColor(value);
-  }
-
-  public get selectedOracleCardColor(): CoreColor | null {
-    return this.gameEngine.getGameState().getSelectedOracleCardColor();
-  }
-
-  public set selectedOracleCardColor(value: CoreColor | null) {
-    this.gameEngine.getGameState().setSelectedOracleCardColor(value);
   }
 }
