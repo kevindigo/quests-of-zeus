@@ -31,19 +31,22 @@ export class ViewPlayer {
               <div><strong>Shield:</strong> ${currentPlayer.shield}</div>
             </div>
             <div class="quest-progress">
-              <h4>Quest Progress</h4>
               <div class="quest-types">
-                <div class="quest-type-item">Temple: 
+                <div class="quest-type-item">
                 ${this.getColoredQuestContents(currentPlayer, 'temple')}
+                Temple
                 </div>
-                <div class="quest-type-item">Monster:
+                <div class="quest-type-item">
                  ${this.getColoredQuestContents(currentPlayer, 'monster')}
+                 Monster
                  </div>
-                <div class="quest-type-item">Statue:
+                <div class="quest-type-item">
                  ${this.getColoredQuestContents(currentPlayer, 'statue')}
+                 Statue
                  </div>
-                <div class="quest-type-item">Shrine: 
+                <div class="quest-type-item">
                  ${this.getColoredQuestContents(currentPlayer, 'shrine')}
+                 Shrine
                 </div>
               </div>
             </div>
@@ -139,18 +142,16 @@ export class ViewPlayer {
     const quests = currentPlayer.getQuests().filter((quest) => {
       return quest.type === questType;
     });
-    const completed = quests.filter((quest) => {
-      return quest.isCompleted;
-    });
-    const completedCount = completed.length;
     const questTexts = quests.map((quest) => {
       const background = this.getColorHex(quest.color);
       const symbol = this.getSymbol(quest.color);
-      return `<span style="background-color: ${background}">${symbol}</span>`;
+      const isCompleted = quest.isCompleted;
+      const opacity = isCompleted ? '0.2' : '1.0';
+      return `<span style="background-color: ${background}; opacity: ${opacity}">${symbol}</span>`;
     });
 
     const details = questTexts.join('&nbsp;');
-    return `${completedCount}/3 ${details}`;
+    return `${details}`;
   }
 
   private getRecolorOptionsContent(
