@@ -38,7 +38,7 @@ Deno.test('Hex click - wrong phase', () => {
 
   testState.setPhase('setup');
   assertFailureContains(
-    testHandler.handleHexClick(center, 'sea'),
+    testHandler.handleHexClick(center),
     'phase',
   );
 });
@@ -49,7 +49,7 @@ Deno.test('Hex click - second oracle card', () => {
   testPlayer.usedOracleCardThisTurn = true;
   testState.setSelectedOracleCardColor('red');
   assertFailureContains(
-    testHandler.handleHexClick(center, 'sea'),
+    testHandler.handleHexClick(center),
     'per turn',
   );
 });
@@ -58,8 +58,10 @@ Deno.test('Hex click - unsupported terrain', () => {
   setupWithController();
   testPlayer.oracleDice = ['red'];
   testState.setSelectedDieColor('red');
+  const shallowCell = testGrid.getCellsOfType('shallow')[0];
+  assert(shallowCell, 'No shallows found on the map?');
   assertFailureContains(
-    testHandler.handleHexClick(center, 'shallow'),
+    testHandler.handleHexClick(shallowCell.getCoordinates()),
     'shallow',
   );
 });
@@ -74,7 +76,6 @@ Deno.test('Hex click - shrine not adjacent', () => {
   testState.setSelectedDieColor(shrineCell.color);
   const result = testHandler.handleHexClick(
     shrineCell.getCoordinates(),
-    'shrine',
   );
   assertFailureContains(result, 'not available');
 });
@@ -98,7 +99,6 @@ Deno.test('Hex click - next to good color, but click elsewhere', () => {
   testState.setSelectedDieColor(adjacentColor);
   const result = testHandler.handleHexClick(
     otherShrineCell.getCoordinates(),
-    'shrine',
   );
   assertFailureContains(result, 'not available');
 });
@@ -115,7 +115,6 @@ Deno.test('Hex click - next to good color, but different color', () => {
   testState.setSelectedDieColor('green');
   const result = testHandler.handleHexClick(
     shrineCell.getCoordinates(),
-    'shrine',
   );
   assertFailureContains(result, 'not available');
 });
@@ -142,7 +141,6 @@ Deno.test('Hex click - available my hidden shrine (die)', () => {
   testState.setSelectedDieColor(color);
   const result = testHandler.handleHexClick(
     shrineCell.getCoordinates(),
-    'shrine',
   );
   assert(result.success, `Should have succeeded, but ${result.message}`);
   assertEquals(shrineHex.status, 'filled');

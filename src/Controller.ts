@@ -470,12 +470,11 @@ export class Controller {
     const customEvent = event as CustomEvent<
       { q: number; r: number; terrain: TerrainType }
     >;
-    const { q, r, terrain } = customEvent.detail;
+    const { q, r } = customEvent.detail;
     const coordinates: HexCoordinates = { q, r };
     const handlers = new ControllerForHexClicks(this.gameEngine);
     const result = handlers.handleHexClick(
       coordinates,
-      terrain,
     );
     if (result.success) {
       this.clearResourceSelection();

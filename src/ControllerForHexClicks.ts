@@ -8,7 +8,7 @@ import {
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import type { MoveShipResult, TerrainType } from './types.ts';
+import type { MoveShipResult } from './types.ts';
 
 export class ControllerForHexClicks {
   public constructor(engine: GameEngine) {
@@ -25,7 +25,6 @@ export class ControllerForHexClicks {
 
   public handleHexClick(
     coordinates: HexCoordinates,
-    terrain: TerrainType,
   ): ResultWithMessage {
     const gameState = this.gameEngine.getGameStateSnapshot();
     if (gameState.getPhase() !== 'action') {
@@ -79,6 +78,12 @@ export class ControllerForHexClicks {
       );
     }
 
+    const cell = this.gameEngine.getGameState().map.getCell(coordinates);
+    if (!cell) {
+      return new Failure(`No cell found at ${JSON.stringify(coordinates)}`);
+    }
+
+    const terrain = cell.terrain;
     if (terrain === 'sea') {
       return this.handleMoveWithDieOrCard(coordinates);
     }
