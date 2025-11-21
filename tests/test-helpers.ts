@@ -5,7 +5,8 @@ import type { HexCell } from '../src/hexmap/HexCell.ts';
 import type { HexGrid } from '../src/hexmap/HexGrid.ts';
 import type { HexMap } from '../src/hexmap/HexMap.ts';
 import type { Player } from '../src/Player.ts';
-import type { HexColor, ResultWithMessage, TerrainType } from '../src/types.ts';
+import type { ResultWithMessage } from '../src/ResultWithMessage.ts';
+import type { HexColor, TerrainType } from '../src/types.ts';
 
 export function assertFailureContains(
   result: ResultWithMessage,

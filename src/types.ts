@@ -205,11 +205,6 @@ export interface MoveShipResult {
   };
 }
 
-export interface ResultWithMessage {
-  success: boolean;
-  message: string;
-}
-
 export type Phase = 'setup' | 'action' | 'end';
 
 export type ItemType = 'cube' | 'statue';

@@ -1,11 +1,11 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import type { ResultWithMessage } from './ResultWithMessage.ts';
 import type {
   CoreColor,
   Item,
   PlayerColorName,
   Quest,
   QuestType,
-  ResultWithMessage,
 } from './types.ts';
 
 export type PlayerJson = {

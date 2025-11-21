@@ -9,6 +9,7 @@ import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
 import { OracleSystem } from './OracleSystem.ts';
 import type { Player } from './Player.ts';
+import type { ResultWithMessage } from './ResultWithMessage.ts';
 import type {
   CityHex,
   CoreColor,
@@ -17,7 +18,6 @@ import type {
   Item,
   MonsterHex,
   MoveShipResult,
-  ResultWithMessage,
   ShrineHex,
 } from './types.ts';
 import { COLOR_WHEEL } from './types.ts';

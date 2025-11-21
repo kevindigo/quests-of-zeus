@@ -2,13 +2,13 @@ import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMap, type HexMapJson } from './hexmap/HexMap.ts';
 import { OracleSystem } from './OracleSystem.ts';
 import { Player, type PlayerJson } from './Player.ts';
+import type { ResultWithMessage } from './ResultWithMessage.ts';
 import type {
   CityHex,
   CoreColor,
   CubeHex,
   MonsterHex,
   Phase,
-  ResultWithMessage,
   ShrineHex,
   StatueHex,
 } from './types.ts';

@@ -1,6 +1,7 @@
 import type { GameEngine } from './GameEngine.ts';
 import { OracleSystem } from './OracleSystem.ts';
-import type { CoreColor, ResultWithMessage } from './types.ts';
+import type { ResultWithMessage } from './ResultWithMessage.ts';
+import type { CoreColor } from './types.ts';
 
 export class ControllerForBasicActions {
   public constructor(engine: GameEngine) {

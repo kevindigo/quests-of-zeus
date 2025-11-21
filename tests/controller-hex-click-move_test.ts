@@ -11,7 +11,7 @@ import type { GameState } from '../src/GameState.ts';
 import { type HexCoordinates, HexGrid } from '../src/hexmap/HexGrid.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
 import type { Player } from '../src/Player.ts';
-import type { ResultWithMessage } from '../src/types.ts';
+import type { ResultWithMessage } from '../src/ResultWithMessage.ts';
 
 function assertFailureContains(
   result: ResultWithMessage,

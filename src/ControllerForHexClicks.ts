@@ -3,11 +3,8 @@ import type { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
-import type {
-  MoveShipResult,
-  ResultWithMessage,
-  TerrainType,
-} from './types.ts';
+import type { ResultWithMessage } from './ResultWithMessage.ts';
+import type { MoveShipResult, TerrainType } from './types.ts';
 
 export class ControllerForHexClicks {
   public constructor(engine: GameEngine) {
