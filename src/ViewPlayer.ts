@@ -2,7 +2,7 @@ import type { GameState } from './GameState.ts';
 import type { Player } from './Player.ts';
 import { COLOR_WHEEL, type CoreColor, type QuestType } from './types.ts';
 
-export class ViewGame {
+export class ViewPlayer {
   public constructor(gameState: GameState) {
     this.gameState = gameState;
   }

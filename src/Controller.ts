@@ -18,7 +18,7 @@ import type {
   MonsterHex,
   TerrainType,
 } from './types.ts';
-import { ViewGame } from './ViewGame.ts';
+import { ViewPlayer } from './ViewPlayer.ts';
 import { ViewWelcome } from './ViewWelcome.ts';
 
 export class Controller {
@@ -167,7 +167,7 @@ export class Controller {
     // Get current player for display
     const currentPlayer = gameState.getCurrentPlayer();
 
-    const view = new ViewGame(gameState);
+    const view = new ViewPlayer(gameState);
     playerInfoContainer.innerHTML = view.getPlayerPanelContents(
       currentPlayer,
       this.selectedDieColor,
@@ -379,7 +379,7 @@ export class Controller {
     const phaseDisplay = document.getElementById('phaseDisplay');
     if (!phaseDisplay) return;
 
-    const view = new ViewGame(state);
+    const view = new ViewPlayer(state);
     phaseDisplay.innerHTML = view.getPhasePanelContents(
       this.selectedDieColor,
       this.selectedOracleCardColor,
