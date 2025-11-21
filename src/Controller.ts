@@ -8,34 +8,26 @@ import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import { HexMapSvgGenerator } from './HexMapSvgGenerator.ts';
 import { MovementSystem } from './MovementSystem.ts';
 import type { Player } from './Player.ts';
-import type {
-  CityHex,
-  CoreColor,
-  CubeHex,
-  MonsterHex,
-  TerrainType,
-} from './types.ts';
-import { ViewPlayer } from './ViewPlayer.ts';
-import { ViewWelcome } from './ViewWelcome.ts';
+import type { CoreColor, TerrainType } from './types.ts';
+import { ViewGame } from './ViewGame.ts';
 
 export class Controller {
   private gameEngine: GameEngine;
-  private hexMapSVG: HexMapSvgGenerator;
+  private viewGame: ViewGame;
+
   constructor(engine?: GameEngine) {
     if (engine) {
       this.gameEngine = engine;
     } else {
       this.gameEngine = new GameEngine();
     }
-
-    this.hexMapSVG = new HexMapSvgGenerator();
+    this.viewGame = new ViewGame(this.gameEngine);
   }
 
   public initializeGameUI(): void {
-    this.showWelcomeScreen();
+    this.viewGame.showWelcomeScreen();
     this.setupEventListeners();
   }
 
@@ -109,140 +101,6 @@ export class Controller {
           currentPlayer.oracleCards,
         );
       }
-    }
-  }
-
-  private showWelcomeScreen(): void {
-    const view = new ViewWelcome();
-    const playerInfoContainer = document.getElementById('playerInfo');
-    const questInfoContainer = document.getElementById('questInfo');
-    const phaseDisplay = document.getElementById('phaseDisplay');
-    const hexMapContainer = document.getElementById('hexMapSVG');
-
-    if (playerInfoContainer) {
-      playerInfoContainer.innerHTML = view.getInfoPanelContents();
-    }
-
-    if (questInfoContainer) {
-      questInfoContainer.innerHTML = view.getQuestPanelContents();
-    }
-
-    if (phaseDisplay) {
-      phaseDisplay.innerHTML = view.getPhasePanelContents();
-    }
-
-    if (hexMapContainer) {
-      hexMapContainer.innerHTML = view.getMapPanelContents();
-    }
-  }
-
-  private renderGameState(): void {
-    if (!this.gameEngine.isGameInitialized()) {
-      this.showWelcomeScreen();
-      return;
-    }
-
-    const gameState = this.gameEngine.getGameStateSnapshot();
-
-    // Update player info display
-    this.updatePlayerInfo(gameState);
-
-    // Render the map with player positions
-    this.renderMap(gameState);
-
-    // Update game phase display
-    this.updatePhaseDisplay(gameState);
-
-    // Check for win condition
-    const winCondition = this.gameEngine.checkWinCondition();
-    if (winCondition.gameOver) {
-      this.showGameOver(winCondition.winner!);
-    }
-  }
-
-  private updatePlayerInfo(gameState: GameState): void {
-    const playerInfoContainer = document.getElementById('playerInfo');
-    if (!playerInfoContainer) return;
-
-    // Get current player for display
-    const currentPlayer = gameState.getCurrentPlayer();
-
-    const view = new ViewPlayer(gameState);
-    playerInfoContainer.innerHTML = view.getPlayerPanelContents(
-      currentPlayer,
-      this.selectedDieColor,
-      this.selectedOracleCardColor,
-    );
-  }
-
-  private renderMap(gameState: GameState): void {
-    const hexMapContainer = document.getElementById('hexMapSVG');
-    if (!hexMapContainer) return;
-
-    const grid = gameState.map.getHexGrid();
-    console.log('Grid structure:', grid);
-    console.log('Grid length:', grid.getRadius());
-
-    try {
-      // Update the hex map SVG with cube hex data
-      const cityHexes = gameState.getCityHexes();
-      // Debug: Log city hex details
-      cityHexes.forEach((cityHex: CityHex, index: number) => {
-        console.log(
-          `City hex ${index}: (${cityHex.q}, ${cityHex.r}) with statues:`,
-          cityHex.statues,
-        );
-      });
-
-      const cubeHexes: CubeHex[] = gameState.getCubeHexes();
-      console.log('Cube hexes for rendering:', cubeHexes);
-
-      // Debug: Log cube hex details
-      cubeHexes.forEach((cubeHex: CubeHex, index: number) => {
-        console.log(
-          `Cube hex ${index}: (${cubeHex.q}, ${cubeHex.r}) with colors:`,
-          cubeHex.cubeColors,
-        );
-      });
-
-      // Update the hex map SVG with monster hex data
-      const monsterHexes: MonsterHex[] = gameState.getMonsterHexes() || [];
-      console.log('Monster hexes for rendering:', monsterHexes);
-
-      // Debug: Log monster hex details
-      monsterHexes.forEach((monsterHex: MonsterHex, index: number) => {
-        console.log(
-          `Monster hex ${index}: (${monsterHex.q}, ${monsterHex.r}) with colors:`,
-          monsterHex.monsterColors,
-        );
-      });
-
-      // Debug: Check if cube hexes and monster hexes are being passed to SVG renderer
-      console.log(
-        'Setting cubeHexes in SVG options:',
-        cubeHexes.length,
-        'hexes',
-      );
-      console.log(
-        'Setting monsterHexes in SVG options:',
-        monsterHexes.length,
-        'hexes',
-      );
-
-      hexMapContainer.innerHTML = this.hexMapSVG.generateSVG(grid, gameState);
-      this.addHandlersToSvg();
-
-      // Highlight available moves
-      if (gameState.getPhase() === 'action') {
-        this.highlightAvailableHexElements(gameState);
-      }
-    } catch (error) {
-      console.error('Error generating SVG:', error);
-      const errorMessage = error instanceof Error
-        ? error.message
-        : String(error);
-      hexMapContainer.innerHTML =
-        `<div class="welcome-map"><p>Error generating map: ${errorMessage}</p></div>`;
     }
   }
 
@@ -373,17 +231,6 @@ export class Controller {
     }
 
     hexToHighlight.classList.add('available-land');
-  }
-
-  private updatePhaseDisplay(state: GameState): void {
-    const phaseDisplay = document.getElementById('phaseDisplay');
-    if (!phaseDisplay) return;
-
-    const view = new ViewPlayer(state);
-    phaseDisplay.innerHTML = view.getPhasePanelContents(
-      this.selectedDieColor,
-      this.selectedOracleCardColor,
-    );
   }
 
   private setupEventListeners(): void {
@@ -607,34 +454,20 @@ export class Controller {
   }
 
   private showMessage(message: string): void {
-    if (!document) {
-      console.log(`GameMessage: ${message}`);
-      return;
-    }
-    const messageContainer = document.getElementById('gameMessage');
-    if (messageContainer) {
-      messageContainer.textContent = message;
-      messageContainer.style.display = 'block';
-
-      setTimeout(() => {
-        messageContainer.style.display = 'none';
-      }, 5000);
-    }
+    this.viewGame.showMessage(message);
   }
 
-  private showGameOver(
-    winner: { name: string; color: string },
-  ): void {
-    const message = `Game Over! ${winner.name} (${
-      winner.color.charAt(0).toUpperCase() + winner.color.slice(1)
-    }) wins!`;
-    this.showMessage(message);
+  private renderGameState(): void {
+    this.viewGame.renderGameState();
 
-    // Disable further actions
-    const actionButtons = document.querySelectorAll('.action-btn');
-    actionButtons.forEach((button: Element) => {
-      (button as HTMLButtonElement).disabled = true;
-    });
+    const hexMapContainer = document.getElementById('hexMapSVG');
+    if (!hexMapContainer) return;
+    this.addHandlersToSvg();
+
+    const state = this.gameEngine.getGameState();
+    if (state.getPhase() === 'action') {
+      this.highlightAvailableHexElements(state);
+    }
   }
 
   private get selectedDieColor(): CoreColor | null {
