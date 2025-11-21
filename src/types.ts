@@ -69,11 +69,6 @@ export const PLAYER_COLORS = [
   PLAYER_COLOR_NAMES.RED,
 ];
 
-export interface StorageSlot {
-  type: 'cube' | 'statue' | 'empty';
-  color?: HexColor;
-}
-
 export class CubeHex {
   public constructor(coordinates: HexCoordinates) {
     this.q = coordinates.q;
@@ -164,16 +159,16 @@ export class Quest {
   isCompleted: boolean;
 }
 
-export type PossibleShipMove = {
+export interface PossibleShipMove {
   q: number;
   r: number;
   favorCost: number;
-};
+}
 
-export type ControllerActionResult = {
+export interface ControllerActionResult {
   success: boolean;
   message: string;
-};
+}
 
 export interface MoveShipResult {
   success: boolean;
@@ -215,16 +210,16 @@ export interface MoveShipResult {
   };
 }
 
-export type ResultWithMessage = {
+export interface ResultWithMessage {
   success: boolean;
   message: string;
-};
+}
 
 export type Phase = 'setup' | 'action' | 'end';
 
 export type ItemType = 'cube' | 'statue';
 
-export type Item = {
+export interface Item {
   type: ItemType;
   color: CoreColor;
-};
+}

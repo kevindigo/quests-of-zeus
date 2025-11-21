@@ -1,7 +1,9 @@
 == Short-term ==
 
+- Implement Failure and Success classes, implementing ResultWithMessage
 - Implement controller activate offerings to pick up cubes
 - Display stored items
+- Change city statue icon to not hang off the bottom
 
 == Cosmetic/Usability ==
 
