@@ -559,10 +559,19 @@ export class GameEngine {
     const player = this.getCurrentPlayer();
 
     const templeQuests = player.getQuestsOfType('temple');
-    templeQuests.forEach((quest) => {
-      if (quest.color === 'none') {
-        quest.color = color;
-      }
+    if (
+      templeQuests.find((quest) => {
+        return quest.color === color;
+      })
+    ) {
+      return;
+    }
+
+    const wildQuest = templeQuests.find((quest) => {
+      return quest.color === 'none';
     });
+    if (wildQuest) {
+      wildQuest.color = color;
+    }
   }
 }

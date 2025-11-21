@@ -13,9 +13,9 @@ Deno.test('Engine offering - can load valid wild cube', () => {
   const redCube: Item = { type: 'cube', color: 'red' };
   const validation = testEngine.validateItemIsLoadable(redCube);
   assert(validation.success, validation.message);
+
   const result = testEngine.loadItem(redCube);
   assert(result.success, result.message);
-
   const templeQuests = testPlayer.getQuestsOfType('temple');
   const redQuest = templeQuests.find((quest) => {
     return quest.color === 'red';
@@ -24,6 +24,26 @@ Deno.test('Engine offering - can load valid wild cube', () => {
     redQuest,
     `Should have found red qeust in ${JSON.stringify(templeQuests)}`,
   );
+});
+
+Deno.test('Engine offering - should use color quest if appropriate', () => {
+  setupGame();
+  const templeQuests = testPlayer.getQuestsOfType('temple');
+  const wildQuest = templeQuests.find((quest) => {
+    return quest.color === 'none';
+  });
+  assert(wildQuest);
+  const colorQuest = templeQuests.find((quest) => {
+    return quest.color !== 'none';
+  });
+  assert(colorQuest);
+  const color = colorQuest.color;
+  assert(color !== 'none');
+  const cube: Item = { type: 'cube', color };
+
+  const result = testEngine.loadItem(cube);
+  assert(result.success, result.message);
+  assertEquals(wildQuest.color, 'none');
 });
 
 Deno.test('Engine offering - cannot load same cube twice', () => {
