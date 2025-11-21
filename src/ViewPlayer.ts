@@ -257,15 +257,15 @@ export class ViewPlayer {
       case 'action': {
         let actions = '';
         actions +=
-          `<button id="endTurn" class="action-btn secondary">End Turn</button>`;
+          `<button id="endTurn" class="action-button secondary">End Turn</button>`;
 
         const selectedColor = selectedDie || selectedCard;
         const disabledText = selectedColor ? '' : 'disabled';
         actions += `<div class="resource-actions" style="margin-top: 1rem;">
             <button id="spendResourceForFavor" 
-              class="action-btn" ${disabledText}>+2 Favor</button>
+              class="action-button" ${disabledText}>+2 Favor</button>
             <button id="drawOracleCard" 
-              class="action-btn" ${disabledText}>+Oracle Card</button>
+              class="action-button" ${disabledText}>+Oracle Card</button>
           </div>`;
 
         actions += this.getDiceAndOracleCardsContent();

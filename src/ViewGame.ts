@@ -48,6 +48,11 @@ export class ViewGame {
     // Update game phase display
     this.updatePhaseDisplay(gameState);
 
+    const newGameButton = document.getElementById('newGame');
+    if (newGameButton) {
+      newGameButton.style.visibility = 'visible';
+    }
+
     // Check for win condition
     const winCondition = this.gameEngine.checkWinCondition();
     if (winCondition.gameOver) {

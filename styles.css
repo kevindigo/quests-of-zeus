@@ -50,9 +50,10 @@ h1 {
 .game-panel {
   background: #ccccff;
   color: black;
-  padding: 1.5rem;
   border-radius: 8px;
   max-width: 300px;
+  text-align: left;
+  padding: 1rem;
 }
 
 .game-panel h3 {
@@ -62,7 +63,7 @@ h1 {
 }
 
 .player-info {
-  margin-top: 1rem;
+  text-align: left;
 }
 
 .hex-map-container {
@@ -102,14 +103,10 @@ h1 {
 .phase-display {
   background: #ccccff;
   color: black;
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 8px;
   max-width: 300px;
-}
-
-.svg-controls button {
-  font-size: 0.8rem;
-  padding: 0.3rem 0.6rem;
+  text-align: left;
 }
 
 .game-message {
@@ -242,6 +239,14 @@ footer {
   margin-bottom: 0.75rem;
   font-size: 1rem;
   color: rgba(255, 255, 255, 0.9);
+}
+
+.action-button {
+  padding: 0.5rem 1rem; /* vertical / horizontal padding */
+  margin: 0; /* reset margin */
+  font: inherit; /* match surrounding text */
+  line-height: 1.2; /* consistent line height */
+  box-sizing: border-box; /* include padding in size */
 }
 
 @keyframes pulse-breathe {

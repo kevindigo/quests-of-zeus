@@ -1,24 +1,28 @@
 export class ViewWelcome {
   public showWelcomeScreen(): void {
     const playerInfoContainer = document.getElementById('playerInfo');
-    const questInfoContainer = document.getElementById('questInfo');
-    const phaseDisplay = document.getElementById('phaseDisplay');
-    const hexMapContainer = document.getElementById('hexMapSVG');
-
     if (playerInfoContainer) {
       playerInfoContainer.innerHTML = this.getInfoPanelContents();
     }
 
+    const questInfoContainer = document.getElementById('questInfo');
     if (questInfoContainer) {
       questInfoContainer.innerHTML = this.getQuestPanelContents();
     }
 
+    const phaseDisplay = document.getElementById('phaseDisplay');
     if (phaseDisplay) {
       phaseDisplay.innerHTML = this.getPhasePanelContents();
     }
 
+    const hexMapContainer = document.getElementById('hexMapSVG');
     if (hexMapContainer) {
       hexMapContainer.innerHTML = this.getMapPanelContents();
+    }
+
+    const newGameButton = document.getElementById('newGame');
+    if (newGameButton) {
+      newGameButton.style.visibility = 'hidden';
     }
   }
 
@@ -39,7 +43,7 @@ export class ViewWelcome {
         <div class="phase-info">
           <h3>Ready to Begin</h3>
           <p>Click "Start New Game" to begin your adventure!</p>
-          <button id="startGame" class="action-btn">Start New Game</button>
+          <button id="startGame" class="action-button">Start New Game</button>
         </div>
       `;
   }
