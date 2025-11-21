@@ -84,25 +84,28 @@ export class ControllerForHexClicks {
     }
 
     const terrain = cell.terrain;
-    if (terrain === 'sea') {
-      return this.handleMoveWithDieOrCard(coordinates);
+    switch (terrain) {
+      case 'sea': {
+        return this.handleMoveWithDieOrCard(coordinates);
+      }
+      case 'shrine': {
+        return this.handleShrineWithDieOrCard(
+          coordinates,
+        );
+      }
+      case 'offerings': {
+        return this.handleOfferingsWithDieOrCard(coordinates);
+      }
+      case 'temple': {
+        return this.handleTempleWithDieOrCard(coordinates);
+      }
+      default:
+        return new Failure(
+          `Hex click not supported for ${
+            JSON.stringify(coordinates)
+          } of ${terrain}`,
+        );
     }
-
-    if (terrain === 'shrine') {
-      return this.handleShrineWithDieOrCard(
-        coordinates,
-      );
-    }
-
-    if (terrain === 'offerings') {
-      return this.handleOfferingsWithDieOrCard(coordinates);
-    }
-
-    return new Failure(
-      `Hex click not supported for ${
-        JSON.stringify(coordinates)
-      } of ${terrain}`,
-    );
   }
 
   private handleMoveWithDieOrCard(
@@ -194,6 +197,15 @@ export class ControllerForHexClicks {
       return new Failure('That offering is not available');
     }
     return this.getEngine().activateOffering(coordinates);
+  }
+
+  private handleTempleWithDieOrCard(
+    coordinates: HexCoordinates,
+  ): ResultWithMessage {
+    if (!this.isLandHexClickable(coordinates)) {
+      return new Failure('That temple is not available');
+    }
+    return this.getEngine().activateTemple(coordinates);
   }
 
   private isLandHexClickable(coordinates: HexCoordinates): boolean {

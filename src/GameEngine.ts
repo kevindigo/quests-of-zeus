@@ -274,6 +274,8 @@ export class GameEngine {
           return this.isShrineAvailable(cell);
         case 'offerings':
           return this.isOfferingAvailable(cell, color);
+        case 'temple':
+          return this.isTempleAvailable(cell, color);
         default:
           return false;
       }
@@ -474,6 +476,50 @@ export class GameEngine {
     player.loadItem(item);
     this.updateWildQuestIfNecessary(item);
     return new Success(`Loaded item ${item}`);
+  }
+
+  private isTempleAvailable(cell: HexCell, color: CoreColor): boolean {
+    if (cell.color !== color) {
+      return false;
+    }
+
+    const player = this.getCurrentPlayer();
+    const cube: Item = { type: 'cube', color };
+    if (!player.isItemLoaded(cube)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public activateTemple(_coordinates: HexCoordinates): ResultWithMessage {
+    const color = this.getGameState().getEffectiveSelectedColor();
+    if (!color) {
+      return new Failure('No resource selected');
+    }
+
+    const cube: Item = { type: 'cube', color: color };
+    const player = this.getCurrentPlayer();
+    const unloaded = player.unloadItem(cube);
+    if (!unloaded.success) {
+      return unloaded;
+    }
+
+    const quest = player.getQuestsOfType('temple').find((quest) => {
+      return quest.color === color;
+    });
+    if (!quest) {
+      return new Failure(`Impossible: no ${color} temple quest`);
+    }
+    quest.isCompleted = true;
+
+    this.spendDieOrCard();
+
+    player.favor += 3;
+
+    return new Success(
+      `Delivered ${color} offering to temple and gained 3 favor`,
+    );
   }
 
   public spendDieOrCard(): void {

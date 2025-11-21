@@ -147,6 +147,26 @@ export class Player {
     return [...this.items];
   }
 
+  public unloadItem(itemToUnload: Item): ResultWithMessage {
+    if (!this.isItemLoaded(itemToUnload)) {
+      return new Failure(
+        `Item ${JSON.stringify(itemToUnload)} not found in cargo`,
+      );
+    }
+
+    const at = this.items.findIndex((item) => {
+      return item.type === 'cube' && item.color === itemToUnload.color;
+    });
+    if (at < 0) {
+      return new Failure(
+        `Impossible: ${JSON.stringify(itemToUnload)} loaded but not in array`,
+      );
+    }
+    this.items.splice(at, 1);
+
+    return new Success('Unloaded');
+  }
+
   public readonly id: number;
   public readonly name: string;
   public readonly color: PlayerColorName;
