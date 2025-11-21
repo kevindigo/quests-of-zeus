@@ -1,9 +1,12 @@
 == Short-term ==
 
-- Display stored items
+- Temples
+  - action: temple dropoff
+- Change message display to be a scrolling text box
 
 == Cosmetic/Usability ==
 
+- Should not be able to select a card if you have already played one this turn
 - Can't click on anything on a hex (icon, cubes, monsters)
 - Make monster triangles larger
 - Make statue bar taller
@@ -43,16 +46,11 @@
 - Statues
   - action: statue pickup (slot open, not a repeat color)
   - action: statue dropoff
-- Temples
-  - setup: correct cube quests
-  - action: cube pickup (slot open, not a repeat color)
-  - action: temple dropoff
 - Shrines
   - action: shrine flip God reward (wait for gods to be implemented)
   - action: shrine flip Shield+heal reward (wait for injuries to be implemented)
     - Any reason not to randomly pick a color with the most injury cards?
 - Monsters
-  - setup: correct monster quests
   - action: monster fight
 
 == Round end/Game end ==

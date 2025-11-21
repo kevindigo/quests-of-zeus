@@ -42,8 +42,9 @@ export class ViewPlayer {
               </div>
             </div>
             <div class="storage">
-              <h4>Storage (2 slots)</h4>
-              <div class="storage-slots">
+              <h4>Ship cargo</h4>
+              <div class="ship-cargo">
+              ${this.getShipCargoContents(currentPlayer)}
               </div>
             </div>`;
 
@@ -70,6 +71,18 @@ export class ViewPlayer {
 
     const details = questTexts.join('&nbsp;');
     return `${details}`;
+  }
+
+  public getShipCargoContents(player: Player) {
+    const contentForEachItem = player.getLoadedItems().map((item) => {
+      return `<div 
+        class="cargo-item" style="background-color: ${
+        ViewPlayer.getColorHex(item.color)
+      }">
+        </div>`;
+    });
+
+    return contentForEachItem.join('&nbsp');
   }
 
   public static getSymbol(color: string): string {
