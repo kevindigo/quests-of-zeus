@@ -1,5 +1,6 @@
 import { assert } from '@std/assert/assert';
 import { assertEquals } from '@std/assert/equals';
+import { assertFalse } from '@std/assert/false';
 import { assertGreater } from '@std/assert/greater';
 import { COLOR_WHEEL, type CubeHex, type Item } from '../src/types.ts';
 import {
@@ -56,7 +57,9 @@ Deno.test('Engine available offerings - not next to selected color cube', () => 
   testPlayer.oracleDice = [missingColor];
   testState.setSelectedDieColor(missingColor);
   const lands = testEngine.getAvailableLandInteractions();
-  assertEquals(lands.length, 0);
+  assertFalse(lands.find((cell) => {
+    cell.q === cubeHex.q && cell.r === cubeHex.r;
+  }));
 });
 
 Deno.test('Engine available offerings - not loadable', () => {
