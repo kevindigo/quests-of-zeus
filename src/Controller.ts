@@ -6,6 +6,7 @@ import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
+import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMapSvgGenerator } from './HexMapSvgGenerator.ts';
 import { MovementSystem } from './MovementSystem.ts';
@@ -314,7 +315,7 @@ export class Controller {
     }
 
     this.highlightAvailableShipMoves(gameState, currentPlayer);
-    this.highlightAvailableShrines();
+    this.highlightAvailableLands();
   }
 
   private highlightAvailableShipMoves(
@@ -353,25 +354,25 @@ export class Controller {
     );
   }
 
-  private highlightAvailableShrines(): void {
-    const lands = this.gameEngine.getAvailableLandInteractions().filter(
-      (cell) => {
-        return cell.terrain === 'shrine';
-      },
-    );
-    lands.forEach((shrineCell) => {
-      const hexToHighlight = document.querySelector(
-        `.hex-highlight[data-q="${shrineCell.q}"][data-r="${shrineCell.r}"]`,
-      );
-
-      if (hexToHighlight) {
-        hexToHighlight.classList.add('available-shrine');
-      } else {
-        console.warn(
-          `Could not find hex-highlight element for (${shrineCell.q}, ${shrineCell.r})`,
-        );
-      }
+  private highlightAvailableLands(): void {
+    const lands = this.gameEngine.getAvailableLandInteractions();
+    lands.forEach((cell) => {
+      this.highlightLand(cell);
     });
+  }
+
+  private highlightLand(cell: HexCell): void {
+    const hexToHighlight = document.querySelector(
+      `.hex-highlight[data-q="${cell.q}"][data-r="${cell.r}"]`,
+    );
+    if (!hexToHighlight) {
+      console.warn(
+        `Could not find hex-highlight element for (${cell.q}, ${cell.r})`,
+      );
+      return;
+    }
+
+    hexToHighlight.classList.add('available-land');
   }
 
   private updatePhaseDisplay(state: GameState): void {

@@ -154,7 +154,7 @@ footer {
   paint-order: stroke; /* Ensure stroke is painted on top, not covering fill */
 }
 
-.hex-highlight.available-shrine {
+.hex-highlight.available-land {
   stroke: dimgray !important;
   stroke-width: 4px !important;
   animation: pulse-spin 2s infinite !important;
