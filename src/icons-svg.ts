@@ -509,7 +509,8 @@ export function generateStatueIcons(
   let statuesContent = '';
 
   // Position statues at the bottom of the hex, below the city icon
-  const startY = size * 0.8; // Position below the city buildings
+  const cellRadius = cellSize * Math.sqrt(3) / 2;
+  const startY = cellRadius - statueHeight - 3; // Position below the city buildings
   const totalWidth = statueCount * statueWidth +
     (statueCount - 1) * statueSpacing;
   const startX = -totalWidth / 2; // Center the statues horizontally
