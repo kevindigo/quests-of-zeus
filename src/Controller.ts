@@ -267,17 +267,7 @@ export class Controller {
       target.classList,
     );
 
-    if (target.id === 'collectOffering') {
-      this.collectOffering();
-    } else if (target.id === 'fightMonster') {
-      this.fightMonster();
-    } else if (target.id === 'buildTemple') {
-      this.buildTemple();
-    } else if (target.id === 'buildStatue') {
-      this.buildStatue();
-    } else if (target.id === 'placeStatue') {
-      // this.placeStatueOnCity();
-    } else if (target.id === 'spendResourceForFavor') {
+    if (target.id === 'spendResourceForFavor') {
       this.spendResourceForFavor();
     } else if (target.id === 'drawOracleCard') {
       this.drawOracleCard();
@@ -340,69 +330,6 @@ export class Controller {
     this.showMessage(
       "New game started! All players have rolled their dice. Player 1's turn begins.",
     );
-  }
-
-  private collectOffering(): void {
-    const gameState = this.gameEngine.getGameStateSnapshot();
-    const currentPlayer = gameState.getCurrentPlayer();
-    const position = currentPlayer.getShipPosition();
-    const currentCell = gameState.map.getCell(
-      position,
-    );
-
-    if (currentCell?.terrain === 'offerings' && currentCell.color !== 'none') {
-      const success = this.gameEngine.collectOffering(
-        currentPlayer.id,
-        currentCell.color,
-      );
-      if (success) {
-        this.showMessage(`Collected ${currentCell.color} cube!`);
-        // Clear selected die after successful action
-        this.selectedDieColor = null;
-        this.renderGameState();
-      } else {
-        this.showMessage('No storage space available for cube!');
-      }
-    }
-  }
-
-  private fightMonster(): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
-    const success = this.gameEngine.fightMonster(currentPlayer.id);
-    if (success) {
-      this.showMessage('Monster defeated! Quest completed!');
-      // Clear selected die after successful action
-      this.selectedDieColor = null;
-      this.renderGameState();
-    } else {
-      this.showMessage('Not enough oracle dice to fight this monster');
-    }
-  }
-
-  private buildTemple(): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
-    const success = this.gameEngine.buildTemple(currentPlayer.id);
-    if (success) {
-      this.showMessage('Temple built! Quest completed!');
-      // Clear selected die after successful action
-      this.selectedDieColor = null;
-      this.renderGameState();
-    } else {
-      this.showMessage('Cannot build temple here or missing required cube');
-    }
-  }
-
-  private buildStatue(): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
-    const success = this.gameEngine.buildStatue(currentPlayer.id);
-    if (success) {
-      this.showMessage('Statue built! Quest completed!');
-      // Clear selected die after successful action
-      this.selectedDieColor = null;
-      this.renderGameState();
-    } else {
-      this.showMessage('Cannot build statue here');
-    }
   }
 
   private spendResourceForFavor(): void {
