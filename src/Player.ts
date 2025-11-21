@@ -1,5 +1,9 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import type { ResultWithMessage } from './ResultWithMessage.ts';
+import {
+  Failure,
+  type ResultWithMessage,
+  Success,
+} from './ResultWithMessage.ts';
 import type {
   CoreColor,
   Item,
@@ -114,22 +118,13 @@ export class Player {
 
   public validateItemIsLoadable(item: Item): ResultWithMessage {
     if (this.getItemCount() >= this.getItemCapacity()) {
-      return {
-        success: false,
-        message: `Storage is already full`,
-      };
+      return new Failure(`Storage is already full`);
     }
     if (this.isItemLoaded(item)) {
-      return {
-        success: false,
-        message: `Item already loaded: ${JSON.stringify(item)}`,
-      };
+      return new Failure(`Item already loaded: ${JSON.stringify(item)}`);
     }
 
-    return {
-      success: true,
-      message: `OK to load ${JSON.stringify(item)}`,
-    };
+    return new Success(`OK to load ${JSON.stringify(item)}`);
   }
 
   public loadItem(item: Item): ResultWithMessage {
@@ -138,10 +133,7 @@ export class Player {
       return validation;
     }
     this.items.push(item);
-    return {
-      success: true,
-      message: `Player loaded item ${JSON.stringify(item)}`,
-    };
+    return new Success(`Player loaded item ${JSON.stringify(item)}`);
   }
 
   public isItemLoaded(item: Item): boolean {

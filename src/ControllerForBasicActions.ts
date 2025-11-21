@@ -1,6 +1,10 @@
 import type { GameEngine } from './GameEngine.ts';
 import { OracleSystem } from './OracleSystem.ts';
-import type { ResultWithMessage } from './ResultWithMessage.ts';
+import {
+  Failure,
+  type ResultWithMessage,
+  Success,
+} from './ResultWithMessage.ts';
 import type { CoreColor } from './types.ts';
 
 export class ControllerForBasicActions {
@@ -12,17 +16,11 @@ export class ControllerForBasicActions {
     const engine = this.gameEngine;
     const phase = engine.getGameState().getPhase();
     if (phase !== 'action') {
-      return {
-        success: false,
-        message: `Cannot buy favor during the ${phase} phase`,
-      };
+      return new Failure(`Cannot buy favor during the ${phase} phase`);
     }
 
     if (engine.getCurrentPlayer().usedOracleCardThisTurn) {
-      return {
-        success: false,
-        message: `Cannot use a second oracle card this turn`,
-      };
+      return new Failure(`Cannot use a second oracle card this turn`);
     }
 
     return engine.spendResourceForFavor();
@@ -34,19 +32,15 @@ export class ControllerForBasicActions {
   ): ResultWithMessage {
     const phase = this.gameEngine.getGameState().getPhase();
     if (phase !== 'action') {
-      return {
-        success: false,
-        message: `Cannot buy oracle card during the ${phase} phase`,
-      };
+      return new Failure(`Cannot buy oracle card during the ${phase} phase`);
     }
 
     const color = dieColor || cardColor;
 
     if (!color) {
-      return {
-        success: false,
-        message: 'Please select a resource (die or oracle card) first!',
-      };
+      return new Failure(
+        'Please select a resource (die or oracle card) first!',
+      );
     }
 
     const engine = this.gameEngine;
@@ -57,16 +51,12 @@ export class ControllerForBasicActions {
       : engine.spendOracleCardToDrawCard.bind(engine);
 
     if (fn(currentPlayer.id, color)) {
-      return {
-        success: true,
-        message: `Spent ${color} ${resourceType} to gain oracle card!`,
-      };
+      return new Success(`Spent ${color} ${resourceType} to gain oracle card!`);
     }
 
-    return {
-      success: false,
-      message: `Cannot spend ${resourceType} for oracle card at this time`,
-    };
+    return new Failure(
+      `Cannot spend ${resourceType} for oracle card at this time`,
+    );
   }
 
   public setRecolorIntention(
@@ -76,10 +66,9 @@ export class ControllerForBasicActions {
   ): ResultWithMessage {
     const selectedColor = dieColor || cardColor;
     if (!selectedColor) {
-      return {
-        success: false,
-        message: 'Please select a resource (die or oracle card) first!',
-      };
+      return new Failure(
+        'Please select a resource (die or oracle card) first!',
+      );
     }
 
     const state = this.gameEngine.getGameState();
@@ -87,10 +76,7 @@ export class ControllerForBasicActions {
     if (favorCost === 0) {
       state.clearSelectedRecoloring();
 
-      return {
-        success: true,
-        message: 'Recoloring intention cleared',
-      };
+      return new Success('Recoloring intention cleared');
     } else {
       const success = state.setSelectedRecoloring(
         playerId,
@@ -107,10 +93,7 @@ export class ControllerForBasicActions {
           } will be recolored from ${selectedColor} to ${newColor} when used (${favorCost} favor will be spent)`,
         };
       } else {
-        return {
-          success: false,
-          message: 'Failed to set recoloring intention',
-        };
+        return new Failure('Failed to set recoloring intention');
       }
     }
   }

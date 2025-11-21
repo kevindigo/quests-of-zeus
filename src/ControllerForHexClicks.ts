@@ -3,7 +3,11 @@ import type { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
-import type { ResultWithMessage } from './ResultWithMessage.ts';
+import {
+  Failure,
+  type ResultWithMessage,
+  Success,
+} from './ResultWithMessage.ts';
 import type { MoveShipResult, TerrainType } from './types.ts';
 
 export class ControllerForHexClicks {
@@ -25,10 +29,9 @@ export class ControllerForHexClicks {
   ): ResultWithMessage {
     const gameState = this.gameEngine.getGameStateSnapshot();
     if (gameState.getPhase() !== 'action') {
-      return {
-        success: false,
-        message: `Cannot click hexes during the ${gameState.getPhase()} phase`,
-      };
+      return new Failure(
+        `Cannot click hexes during the ${gameState.getPhase()} phase`,
+      );
     }
 
     const effectiveColor = this.getState().getEffectiveSelectedColor();
@@ -44,10 +47,9 @@ export class ControllerForHexClicks {
       }
       // END DEBUGGING!!!
 
-      return {
-        success: false,
-        message: 'Please select a resource (die or oracle card) first!!',
-      };
+      return new Failure(
+        'Please select a resource (die or oracle card) first!!',
+      );
     }
 
     const currentPlayer = gameState.getCurrentPlayer();
@@ -55,31 +57,26 @@ export class ControllerForHexClicks {
     const selectedDieColor = gameState.getSelectedDieColor();
 
     if (selectedOracleCardColor && currentPlayer.usedOracleCardThisTurn) {
-      return {
-        success: false,
-        message: 'Cannot use more than 1 oracle card per turn',
-      };
+      return new Failure('Cannot use more than 1 oracle card per turn');
     }
     if (
       selectedDieColor && !currentPlayer.oracleDice.includes(selectedDieColor)
     ) {
-      return {
-        success: false,
-        message: `Color ${selectedDieColor} not in dice ${
+      return new Failure(
+        `Color ${selectedDieColor} not in dice ${
           JSON.stringify(currentPlayer.oracleDice)
         }`,
-      };
+      );
     }
     if (
       selectedOracleCardColor &&
       !currentPlayer.oracleCards.includes(selectedOracleCardColor)
     ) {
-      return {
-        success: false,
-        message: `Color ${selectedOracleCardColor} not in cards ${
+      return new Failure(
+        `Color ${selectedOracleCardColor} not in cards ${
           JSON.stringify(currentPlayer.oracleCards)
         }`,
-      };
+      );
     }
 
     if (terrain === 'sea') {
@@ -92,12 +89,11 @@ export class ControllerForHexClicks {
       );
     }
 
-    return {
-      success: false,
-      message: `Hex click not supported for ${
+    return new Failure(
+      `Hex click not supported for ${
         JSON.stringify(coordinates)
       } of ${terrain}`,
-    };
+    );
   }
 
   private handleMoveWithDieOrCard(
@@ -123,11 +119,10 @@ export class ControllerForHexClicks {
     );
 
     if (!targetMove) {
-      return {
-        success: false,
-        message:
-          `Cannot move to this hex using ${effectiveColor}! Must be a sea hex within range of matching color.`,
-      };
+      return new Failure(
+        `Cannot move to this hex using ${effectiveColor}!` +
+          'Must be a sea hex within range of matching color.',
+      );
     }
 
     const favorSpentForRange = targetMove.favorCost;
@@ -153,10 +148,7 @@ export class ControllerForHexClicks {
       if (favorSpentForRange > 0) {
         message += ` spending ${favorSpentForRange} to extend range`;
       }
-      return {
-        success: true,
-        message,
-      };
+      return new Success(message);
     } else {
       // Debug: Log the failure details
       console.log('Move failed with details:', {
@@ -171,12 +163,9 @@ export class ControllerForHexClicks {
         moveResult,
       });
 
-      return {
-        success: false,
-        message: ControllerForHexClicks.formatMoveErrorMessage(
-          moveResult.error,
-        ),
-      };
+      return new Failure(ControllerForHexClicks.formatMoveErrorMessage(
+        moveResult.error,
+      ));
     }
   }
 
@@ -187,10 +176,7 @@ export class ControllerForHexClicks {
     const state = engine.getGameState();
     const color = state.getEffectiveSelectedColor();
     if (!color) {
-      return {
-        success: false,
-        message: 'Handler needs a selected color',
-      };
+      return new Failure('Handler needs a selected color');
     }
 
     const cells = engine.getAvailableLandInteractions();
@@ -202,10 +188,7 @@ export class ControllerForHexClicks {
       return (isShrine && isCorrectColor && isCorrectPlace);
     });
     if (!thisShrine) {
-      return {
-        success: false,
-        message: 'That shrine is not available',
-      };
+      return new Failure('That shrine is not available');
     }
     return this.getEngine().activateShrine(coordinates);
   }

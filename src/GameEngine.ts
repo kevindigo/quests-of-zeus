@@ -9,7 +9,11 @@ import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
 import { OracleSystem } from './OracleSystem.ts';
 import type { Player } from './Player.ts';
-import type { ResultWithMessage } from './ResultWithMessage.ts';
+import {
+  Failure,
+  type ResultWithMessage,
+  Success,
+} from './ResultWithMessage.ts';
 import type {
   CityHex,
   CoreColor,
@@ -109,10 +113,7 @@ export class GameEngine {
     const state = this.getGameState();
     const effectiveColor = state.getEffectiveSelectedColor();
     if (!effectiveColor) {
-      return {
-        success: false,
-        message: 'Must select a die or card to gain favor',
-      };
+      return new Failure('Must select a die or card to gain favor');
     }
 
     const player = state.getCurrentPlayer();
@@ -123,10 +124,7 @@ export class GameEngine {
     state.removeSpentResourceFromPlayer(player, selectedDie, selectedCard);
     state.clearResourceSelection();
 
-    return {
-      success: true,
-      message: `Resource spent (${effectiveColor}); favor gained`,
-    };
+    return new Success(`Resource spent (${effectiveColor}); favor gained`);
   }
 
   public spendOracleCardToDrawCard(
@@ -311,10 +309,7 @@ export class GameEngine {
   ): ResultWithMessage {
     const effectiveColor = this.getGameState().getEffectiveSelectedColor();
     if (!effectiveColor) {
-      return {
-        success: false,
-        message: 'Must select a die or card',
-      };
+      return new Failure('Must select a die or card');
     }
 
     const allLand = this.getAvailableLandInteractions();
@@ -322,17 +317,13 @@ export class GameEngine {
       return cell.q === coordinates.q && cell.r === coordinates.r;
     });
     if (!shrineCell) {
-      return {
-        success: false,
-        message: 'That shrine is not available',
-      };
+      return new Failure('That shrine is not available');
     }
     const shrineHex = this.getGameState().findShrineHexAt(coordinates);
     if (!shrineHex) {
-      return {
-        success: false,
-        message: 'Impossible: ShrineHex not found at those coordinates',
-      };
+      return new Failure(
+        'Impossible: ShrineHex not found at those coordinates',
+      );
     }
 
     const player = this.getCurrentPlayer();
@@ -349,10 +340,7 @@ export class GameEngine {
       return this.completeShrineQuest(shrineHex);
     }
 
-    return {
-      success: false,
-      message: 'activateShrine not implemented yet',
-    };
+    return new Failure('activateShrine not implemented yet');
   }
 
   private completeShrineQuest(
@@ -360,17 +348,11 @@ export class GameEngine {
   ): ResultWithMessage {
     const player = this.getCurrentPlayer();
     if (shrineHex.owner !== player.color) {
-      return {
-        success: false,
-        message: 'Impossible: wrong owner',
-      };
+      return new Failure('Impossible: wrong owner');
     }
 
     if (shrineHex.status === 'filled') {
-      return {
-        success: false,
-        message: 'Impossible: already completed',
-      };
+      return new Failure('Impossible: already completed');
     }
 
     const quests = player.getQuests();
@@ -380,18 +362,12 @@ export class GameEngine {
         !quest.isCompleted;
     });
     if (!quest) {
-      return {
-        success: false,
-        message: 'Impossible: no remaining incomplete shrine quests',
-      };
+      return new Success('Impossible: no remaining incomplete shrine quests');
     }
     this.spendDieOrCard();
     shrineHex.status = 'filled';
     quest.isCompleted = true;
-    return {
-      success: true,
-      message: 'Built shrine - QUEST REWARD NOT GRANTED!',
-    };
+    return new Success('Built shrine - QUEST REWARD NOT GRANTED!');
   }
 
   private flipShrine(player: Player, shrineHex: ShrineHex): ResultWithMessage {
@@ -412,35 +388,25 @@ export class GameEngine {
         break;
       }
       default:
-        return {
-          success: false,
-          message: `Shrine reward ${shrineHex.reward} not implemented yet`,
-        };
+        return new Failure(
+          `Shrine reward ${shrineHex.reward} not implemented yet`,
+        );
     }
 
     this.spendDieOrCard();
-    return {
-      success: true,
-      message: message ?? 'flipped but no reward granted',
-    };
+    return new Success(message ?? 'flipped but no reward granted');
   }
 
   public validateItemIsLoadable(item: Item): ResultWithMessage {
     const player = this.getCurrentPlayer();
     if (!this.isNeededForQuest(item)) {
-      return {
-        success: false,
-        message: `No unfinished quest needs ${JSON.stringify(item)}`,
-      };
+      return new Failure(`No unfinished quest needs ${JSON.stringify(item)}`);
     }
     const validation = player.validateItemIsLoadable(item);
     if (!validation.success) {
       return validation;
     }
-    return {
-      success: true,
-      message: 'OK to load',
-    };
+    return new Success('OK to load');
   }
 
   public loadItem(item: Item): ResultWithMessage {
@@ -452,10 +418,7 @@ export class GameEngine {
     const player = this.getCurrentPlayer();
     player.loadItem(item);
     this.updateWildQuestIfNecessary(item);
-    return {
-      success: true,
-      message: `Loaded item ${item}`,
-    };
+    return new Success(`Loaded item ${item}`);
   }
 
   public spendDieOrCard(): void {

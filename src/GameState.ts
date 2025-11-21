@@ -2,7 +2,11 @@ import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMap, type HexMapJson } from './hexmap/HexMap.ts';
 import { OracleSystem } from './OracleSystem.ts';
 import { Player, type PlayerJson } from './Player.ts';
-import type { ResultWithMessage } from './ResultWithMessage.ts';
+import {
+  Failure,
+  type ResultWithMessage,
+  Success,
+} from './ResultWithMessage.ts';
 import type {
   CityHex,
   CoreColor,
@@ -239,24 +243,17 @@ export class GameState {
     const resourceArray = dieSpent ? player.oracleDice : player.oracleCards;
     const originalColor = dieSpent || cardSpent;
     if (!originalColor) {
-      return {
-        success: false,
-        message: 'Impossible: no resource was selected',
-      };
+      return new Failure('Impossible: no resource was selected');
     }
     const index = resourceArray.indexOf(originalColor);
     if (index < 0) {
-      return {
-        success: false,
-        message: `Could not remove ${originalColor} from ${resourceArray}`,
-      };
+      return new Failure(
+        `Could not remove ${originalColor} from ${resourceArray}`,
+      );
     }
 
     resourceArray.splice(index, 1);
-    return {
-      success: true,
-      message: 'Resource was spent',
-    };
+    return new Success('Resource was spent');
   }
 
   public map: HexMap;
