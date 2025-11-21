@@ -20,7 +20,7 @@ body {
 .container {
   text-align: center;
   padding: 2rem;
-  max-width: 1400px;
+  max-width: 1800px;
   width: 100%;
 }
 
@@ -63,6 +63,7 @@ h1 {
 }
 
 .hex-map-container {
+  position: relative;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   padding: 1rem;
@@ -79,6 +80,9 @@ h1 {
 }
 
 .svg-controls {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
   display: flex;
   gap: 0.5rem;
   justify-content: right;
