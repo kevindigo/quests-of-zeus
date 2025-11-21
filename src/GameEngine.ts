@@ -275,6 +275,8 @@ export class GameEngine {
       switch (cell.terrain) {
         case 'shrine':
           return this.isShrineAvailable(cell);
+        case 'offerings':
+          return this.isOfferingAvailable(cell, color);
         default:
           return false;
       }
@@ -395,6 +397,33 @@ export class GameEngine {
 
     this.spendDieOrCard();
     return new Success(message ?? 'flipped but no reward granted');
+  }
+
+  private isOfferingAvailable(
+    cell: HexCell,
+    effectiveColor: CoreColor,
+  ): boolean {
+    const cubeHexes = this.getGameState().getCubeHexes();
+    const cubeHex = cubeHexes.find((hex) => {
+      return hex.q === cell.q && hex.r === cell.r;
+    });
+    if (!cubeHex) {
+      console.error(`No cube hex for ${JSON.stringify(cell)}`);
+      return false;
+    }
+
+    if (cubeHex.cubeColors.indexOf(effectiveColor) < 0) {
+      return false;
+    }
+
+    const thisCube: Item = { type: 'cube', color: effectiveColor };
+    const player = this.getCurrentPlayer();
+    const validation = player.validateItemIsLoadable(thisCube);
+    if (!validation.success) {
+      return false;
+    }
+
+    return true;
   }
 
   public validateItemIsLoadable(item: Item): ResultWithMessage {
