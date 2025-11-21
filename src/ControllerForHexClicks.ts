@@ -182,19 +182,9 @@ export class ControllerForHexClicks {
     coordinates: HexCoordinates,
   ): ResultWithMessage {
     const engine = this.getEngine();
-    const state = engine.getGameState();
-    const color = state.getEffectiveSelectedColor();
-    if (!color) {
-      return new Failure('Handler needs a selected color');
-    }
-
     const cells = engine.getAvailableLandInteractions();
     const thisShrine = cells.find((cell) => {
-      const isShrine = cell.terrain === 'shrine';
-      const isCorrectColor = cell.color === color;
-      const at = cell.getCoordinates();
-      const isCorrectPlace = at.q === coordinates.q && at.r === coordinates.r;
-      return (isShrine && isCorrectColor && isCorrectPlace);
+      return (cell.q === coordinates.q && cell.r === coordinates.r);
     });
     if (!thisShrine) {
       return new Failure('That shrine is not available');
