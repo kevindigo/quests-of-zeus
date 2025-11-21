@@ -249,6 +249,37 @@ footer {
   box-sizing: border-box; /* include padding in size */
 }
 
+.quest-type-item {
+  font: inherit; /* only here to avoid a warning */
+}
+
+.quest-color-icon {
+  display: inline-flex; /* treat span as a flex container */
+  align-items: center; /* vertical center */
+  justify-content: center; /* horizontal center */
+  width: 2.5rem; /* square width */
+  aspect-ratio: 1 / 1; /* height = width */
+  background-color: lightgray; /* your background */
+  font-size: 1.5rem; /* emoji size */
+  overflow: hidden; /* crop excess if needed */
+  border: black;
+  border-style: solid;
+  border-width: 2px;
+}
+
+.die-color-icon {
+  display: inline-flex; /* treat span as a flex container */
+  align-items: center; /* vertical center */
+  justify-content: center; /* horizontal center */
+  width: 2.5rem; /* square width */
+  aspect-ratio: 1 / 1; /* height = width */
+  font-size: 1.5rem; /* emoji size */
+  overflow: hidden; /* crop excess if needed */
+  border: black;
+  border-style: solid;
+  border-width: 2px;
+}
+
 @keyframes pulse-breathe {
   0%, 100% {
     stroke-opacity: 1;

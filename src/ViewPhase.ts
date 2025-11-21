@@ -21,7 +21,7 @@ export class ViewPhase {
                   ${
       currentPlayer.oracleDice.map((color: string) => {
         const isSelected = selectedDie === color;
-        return `<div class="die color-${color} ${
+        return `<div class="die die-color-icon color-${color} ${
           isSelected ? 'selected-die' : ''
         }" 
                            style="background-color: ${
@@ -38,6 +38,9 @@ export class ViewPhase {
         : ''
     }
                 </div>
+                            <br/>
+
+
                 ${
       selectedDie && currentPlayer.oracleDice.length > 0
         ? `<div class="selected-die-info">

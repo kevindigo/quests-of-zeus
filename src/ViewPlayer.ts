@@ -22,24 +22,23 @@ export class ViewPlayer {
               <div><strong>Favor:</strong> ${currentPlayer.favor}</div>
               <div><strong>Shield:</strong> ${currentPlayer.shield}</div>
             </div>
-            <div class="quest-progress">
-              <div class="quest-types">
-                <div class="quest-type-item">
-                ${this.getColoredQuestContents(currentPlayer, 'temple')}
-                Temple
+            <div class="quest-types">
+            <strong>Quests:</strong>
+              <div class="quest-type-item">
+              ${this.getColoredQuestContents(currentPlayer, 'temple')}
+              &nbsp;Temple
+              </div>
+              <div class="quest-type-item">
+                ${this.getColoredQuestContents(currentPlayer, 'monster')}
+                &nbsp;Monster
                 </div>
-                <div class="quest-type-item">
-                 ${this.getColoredQuestContents(currentPlayer, 'monster')}
-                 Monster
-                 </div>
-                <div class="quest-type-item">
-                 ${this.getColoredQuestContents(currentPlayer, 'statue')}
-                 Statue
-                 </div>
-                <div class="quest-type-item">
-                 ${this.getColoredQuestContents(currentPlayer, 'shrine')}
-                 Shrine
+              <div class="quest-type-item">
+                ${this.getColoredQuestContents(currentPlayer, 'statue')}
+                &nbsp;Statue
                 </div>
+              <div class="quest-type-item">
+                ${this.getColoredQuestContents(currentPlayer, 'shrine')}
+                &nbsp;Shrine
               </div>
             </div>
             <div class="storage">
@@ -63,7 +62,10 @@ export class ViewPlayer {
       const symbol = ViewPlayer.getSymbol(quest.color);
       const isCompleted = quest.isCompleted;
       const opacity = isCompleted ? '0.2' : '1.0';
-      return `<span style="background-color: ${background}; opacity: ${opacity}">${symbol}</span>`;
+      return `<span class="quest-color-icon" 
+        style="background-color: ${background}; opacity: ${opacity}">
+          ${symbol}
+        </span>`;
     });
 
     const details = questTexts.join('&nbsp;');
