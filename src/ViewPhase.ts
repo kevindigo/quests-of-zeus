@@ -66,7 +66,7 @@ export class ViewPhase {
                   ${
       currentPlayer.oracleCards.map((color: string) => {
         const isSelected = selectedCard === color;
-        return `<div class="oracle-card color-${color} ${
+        return `<div class="oracle-card card-color-icon color-${color} ${
           isSelected ? 'selected-oracle-card' : ''
         }" 
                              style="background-color: ${

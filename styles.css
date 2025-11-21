@@ -278,6 +278,20 @@ footer {
   border: black;
   border-style: solid;
   border-width: 2px;
+  border-radius: 8px;
+}
+
+.card-color-icon {
+  display: inline-flex; /* treat span as a flex container */
+  align-items: center; /* vertical center */
+  justify-content: center; /* horizontal center */
+  width: 2.5rem; /* square width */
+  aspect-ratio: 1.0 / 1.5; /* width / height */
+  font-size: 1.5rem; /* emoji size */
+  overflow: hidden; /* crop excess if needed */
+  border: black;
+  border-style: solid;
+  border-width: 2px;
 }
 
 @keyframes pulse-breathe {
