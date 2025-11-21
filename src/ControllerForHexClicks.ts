@@ -89,6 +89,10 @@ export class ControllerForHexClicks {
       );
     }
 
+    if (terrain === 'offerings') {
+      return this.handleOfferingsWithDieOrCard(coordinates);
+    }
+
     return new Failure(
       `Hex click not supported for ${
         JSON.stringify(coordinates)
@@ -191,6 +195,12 @@ export class ControllerForHexClicks {
       return new Failure('That shrine is not available');
     }
     return this.getEngine().activateShrine(coordinates);
+  }
+
+  private handleOfferingsWithDieOrCard(
+    _coordinates: HexCoordinates,
+  ): ResultWithMessage {
+    return new Failure('Offerings not handled yet');
   }
 
   /**
