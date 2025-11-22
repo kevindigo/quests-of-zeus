@@ -304,6 +304,7 @@ export class Controller {
   }
 
   private startNewGame(): void {
+    this.clearMessagePanel();
     this.gameEngine.initializeGame();
     this.renderGameState();
     this.showMessage(
@@ -357,6 +358,10 @@ export class Controller {
     );
 
     this.renderGameState();
+  }
+
+  private clearMessagePanel(): void {
+    this.viewGame.clearMessagePanel();
   }
 
   private showMessage(message: string): void {

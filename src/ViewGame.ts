@@ -11,6 +11,18 @@ export class ViewGame {
     this.gameEngine = gameEngine;
   }
 
+  public clearMessagePanel(): void {
+    if (!document) {
+      console.log(`GameMessage: ${'Trying to clear message panel'}`);
+      return;
+    }
+    const messageTextArea = document.getElementById('gameMessage');
+    if (messageTextArea) {
+      messageTextArea.textContent = '';
+      messageTextArea.scrollTop = messageTextArea.scrollHeight;
+    }
+  }
+
   public showMessage(message: string): void {
     if (!document) {
       console.log(`GameMessage: ${message}`);
