@@ -8,7 +8,7 @@
 
 body {
   font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    'Atkinson Hyperlegible', 'Ubuntu', 'Verdana', 'Tahoma' sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   display: flex;
@@ -17,9 +17,9 @@ body {
   color: white;
 }
 
-.container {
+.outer-container {
   text-align: center;
-  padding: 2rem;
+  padding: 1rem;
   max-width: 1800px;
   /* width: 100%; */
 }
@@ -27,27 +27,24 @@ body {
 h1 {
   font-size: 3rem;
   margin-bottom: 1rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .subtitle {
-  font-size: 1.2rem;
+  font-size: 1rem;
   margin-bottom: 1rem;
 }
 
 .game-layout {
-  /* display: grid;
-  grid-template-columns: 300px 1fr;
+  display: grid;
+  grid-auto-rows: auto;
+  grid-template-columns: auto auto auto;
+  width: max-content;
   gap: 1rem;
-  margin: 1rem 0;
-  align-items: start; */
-  display: flex; /* enable flex layout */
-  flex-direction: row; /* horizontal layout */
-  align-items: flex-start; /* vertical alignment of children */
-  gap: 1rem; /* optional spacing between children */
+  margin: 0 0;
 }
 
 .game-panel {
+  grid-column: 1;
   background: #ccccff;
   color: black;
   border-radius: 8px;
@@ -66,7 +63,18 @@ h1 {
   text-align: left;
 }
 
+.phase-display {
+  grid-column: 2;
+  background: #ccccff;
+  color: black;
+  padding: 1rem;
+  border-radius: 8px;
+  max-width: 300px;
+  text-align: left;
+}
+
 .hex-map-container {
+  grid-column: 3;
   position: relative;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -98,15 +106,6 @@ h1 {
   gap: 0.5rem;
   margin-bottom: 1rem;
   flex-wrap: wrap;
-}
-
-.phase-display {
-  background: #ccccff;
-  color: black;
-  padding: 1rem;
-  border-radius: 8px;
-  max-width: 300px;
-  text-align: left;
 }
 
 .game-message {
