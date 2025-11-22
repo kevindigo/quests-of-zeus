@@ -25,16 +25,17 @@
       <h2>Quests of Zeus</h2>
       <p class="subtitle">A Playable Board Game Implementation</p>
 
-      <div class="game-message" id="gameMessage"></div>
-
       <div class="game-layout">
         <!-- Left Panel: Player Info & Actions -->
         <div class="game-panel">
           <div id="playerInfo"></div>
+
+          <div id="phaseDisplay" class="phase-display"></div>
+          <div class="message-container">
+            <div class="game-message" id="gameMessage"></div>
+          </div>
         </div>
 
-        <div id="phaseDisplay" class="phase-display"></div>
-        <!-- Center Panel: Game Map -->
         <div class="hex-map-container">
           <div id="hexMapSVG"></div>
           <div class="svg-controls">

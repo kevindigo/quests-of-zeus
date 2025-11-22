@@ -19,11 +19,6 @@ export class ViewGame {
     const messageContainer = document.getElementById('gameMessage');
     if (messageContainer) {
       messageContainer.textContent = message;
-      messageContainer.style.display = 'block';
-
-      setTimeout(() => {
-        messageContainer.style.display = 'none';
-      }, 5000);
     }
   }
 

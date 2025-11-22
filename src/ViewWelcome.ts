@@ -31,7 +31,7 @@ export class ViewWelcome {
         <div class="welcome-screen">
           <h3>Welcome to Quests of Zeus</h3>
           <p>A strategic board game of ancient Greece</p>
-      `;
+      </div>`;
   }
 
   public getQuestPanelContents(): string {
