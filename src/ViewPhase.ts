@@ -94,12 +94,7 @@ export class ViewPhase {
         : ''
     }
               </div>
-              ${
-      (selectedDie || selectedCard) &&
-        currentPlayer.favor > 0
-        ? this.getRecolorOptionsContent(currentPlayer, selectedColor)
-        : ''
-    }
+              ${this.getRecolorOptionsContent(currentPlayer, selectedColor)}
             </div>
           `;
 
@@ -110,11 +105,9 @@ export class ViewPhase {
     player: Player,
     selectedColor: CoreColor | null,
   ): string {
-    if (!selectedColor) {
-      return '';
-    }
+    const useColor = selectedColor || 'red';
 
-    const currentIndex = COLOR_WHEEL.indexOf(selectedColor);
+    const currentIndex = COLOR_WHEEL.indexOf(useColor);
 
     if (currentIndex === -1) return '';
 
@@ -125,14 +118,15 @@ export class ViewPhase {
     // Add "No Recolor" option
     const hasRecolorIntention = this.gameState.getSelectedRecoloring() > 0;
 
-    const originalColorBackground = ViewPlayer.getColorHex(selectedColor);
-    const symbol = ViewPlayer.getSymbol(selectedColor);
+    const originalColorBackground = ViewPlayer.getColorHex(useColor);
+    const symbol = ViewPlayer.getSymbol(useColor);
     options += `
         <div class="recolor-option" style="margin-bottom: 0.5rem;">
           <label style="display: flex; align-items: center; gap: 0.5rem;">
-            <input type="radio" name="recolorOption" value="0" ${
-      !hasRecolorIntention ? 'checked' : ''
-    } data-recolor-favor="0">
+            <input type="radio" name="recolorOption" value="0" 
+            ${!hasRecolorIntention ? 'checked' : ''} 
+            ${!selectedColor ? 'disabled' : ''}
+            data-recolor-favor="0">
             0 -&gt;
             <span class="color-swatch" style="background-color: ${originalColorBackground}">
             ${symbol}
@@ -141,10 +135,11 @@ export class ViewPhase {
         </div>
       `;
 
+    const maxFavorToShow = 5;
     // Add recolor options
     for (
       let favorCost = 1;
-      favorCost <= Math.min(player.favor, 5);
+      favorCost <= maxFavorToShow;
       favorCost++
     ) {
       const newIndex = (currentIndex + favorCost) % COLOR_WHEEL.length;
@@ -157,9 +152,10 @@ export class ViewPhase {
       options += `
           <div class="recolor-option" style="margin-bottom: 0.5rem;">
             <label style="display: flex; align-items: center; gap: 0.5rem;">
-              <input type="radio" name="recolorOption" value="${favorCost}" ${
-        isSelected ? 'checked' : ''
-      } data-recolor-favor="${favorCost}">
+              <input type="radio" name="recolorOption" value="${favorCost}" 
+              ${isSelected ? 'checked' : ''} 
+              ${!selectedColor || favorCost > player.favor ? 'disabled' : ''}
+              data-recolor-favor="${favorCost}">
               ${favorCost} -&gt; 
             <span class="color-swatch" style="background-color: ${background}">
             ${symbol}
