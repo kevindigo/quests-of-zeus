@@ -1,6 +1,6 @@
 import type { GameState } from './GameState.ts';
 import type { Player } from './Player.ts';
-import { COLOR_WHEEL, type CoreColor, type Resource } from './types.ts';
+import { COLOR_WHEEL, type Resource } from './types.ts';
 import { ViewPlayer } from './ViewPlayer.ts';
 
 export class ViewPhase {
@@ -51,9 +51,13 @@ export class ViewPhase {
   private getDiceAndOracleCardsContent() {
     const state = this.gameState;
     const currentPlayer = state.getCurrentPlayer();
-    const selectedDie = state.getSelectedDieColor();
-    const selectedCard = state.getSelectedOracleCardColor();
-    const selectedColor = selectedDie || selectedCard;
+    const selectedResource = state.getSelectedResource();
+    const selectedDie = selectedResource.isDie()
+      ? selectedResource.getColor()
+      : null;
+    const selectedCard = selectedResource.isCard()
+      ? selectedResource.getColor()
+      : null;
     const content = `
       <div class="oracle-dice">
         <h4>
@@ -104,7 +108,7 @@ export class ViewPhase {
     }
           </div>
         </div>
-        ${this.getRecolorOptionsContent(currentPlayer, selectedColor)}
+        ${this.getRecolorOptionsContent(currentPlayer, selectedResource)}
       </div>
     `;
 
@@ -113,9 +117,11 @@ export class ViewPhase {
 
   private getRecolorOptionsContent(
     player: Player,
-    selectedColor: CoreColor | null,
+    selectedResource: Resource,
   ): string {
-    const useColor = selectedColor || 'red';
+    const useColor = selectedResource.hasColor()
+      ? selectedResource.getColor()
+      : 'red';
 
     const currentIndex = COLOR_WHEEL.indexOf(useColor);
 
@@ -135,7 +141,7 @@ export class ViewPhase {
           <label style="display: flex; align-items: center; gap: 0.5rem;">
             <input type="radio" name="recolorOption" value="0" 
             ${!hasRecolorIntention ? 'checked' : ''} 
-            ${!selectedColor ? 'disabled' : ''}
+            ${!selectedResource.hasColor() ? 'disabled' : ''}
             data-recolor-favor="0">
             0 -&gt;
             <span class="color-swatch" style="background-color: ${originalColorBackground}">
@@ -164,7 +170,11 @@ export class ViewPhase {
             <label style="display: flex; align-items: center; gap: 0.5rem;">
               <input type="radio" name="recolorOption" value="${favorCost}" 
               ${isSelected ? 'checked' : ''} 
-              ${!selectedColor || favorCost > player.favor ? 'disabled' : ''}
+              ${
+        !selectedResource.hasColor() || favorCost > player.favor
+          ? 'disabled'
+          : ''
+      }
               data-recolor-favor="${favorCost}">
               ${favorCost} -&gt; 
             <span class="color-swatch" style="background-color: ${background}">

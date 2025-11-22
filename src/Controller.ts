@@ -35,11 +35,13 @@ export class Controller {
   }
 
   public getSelectedDieColor(): CoreColor | null {
-    return this.gameEngine.getGameState().getSelectedDieColor();
+    const selected = this.gameEngine.getGameState().getSelectedResource();
+    return selected.isDie() ? selected.getColor() : null;
   }
 
   public getSelectedCardColor(): CoreColor | null {
-    return this.gameEngine.getGameState().getSelectedOracleCardColor();
+    const selected = this.gameEngine.getGameState().getSelectedResource();
+    return selected.isCard() ? selected.getColor() : null;
   }
 
   public selectDieColor(color: CoreColor): boolean {
