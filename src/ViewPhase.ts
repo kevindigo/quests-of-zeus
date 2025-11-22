@@ -61,21 +61,20 @@ export class ViewPhase {
     const selectedCard = state.getSelectedOracleCardColor();
     const selectedColor = selectedDie || selectedCard;
     const content = `
-              <div class="oracle-dice">
-                <h4>Oracle Dice</h4>
-                <div class="dice-container">
-                  ${
+      <div class="oracle-dice">
+        <h4>Oracle Dice</h4>
+        <div class="dice-container">
+          ${
       currentPlayer.oracleDice.map((color: string) => {
         const isSelected = selectedDie === color;
-        return `<div class="die die-color-icon color-${color} ${
-          isSelected ? 'selected-die' : ''
+        return `<div 
+          class="die die-color-icon color-${color} ${
+          isSelected ? 'selected-resource' : ''
         }" 
-                           style="background-color: ${
-          ViewPlayer.getColorHex(color)
-        }"
-                           data-die-color="${color}">
-                      ${ViewPlayer.getSymbol(color)}
-                    </div>`;
+            style="background-color: ${ViewPlayer.getColorHex(color)}"
+            data-die-color="${color}">
+              ${ViewPlayer.getSymbol(color)}
+        </div>`;
       }).join('')
     }
                   ${
@@ -112,16 +111,15 @@ export class ViewPhase {
                   ${
       currentPlayer.oracleCards.map((color: string) => {
         const isSelected = selectedCard === color;
-        return `<div class="oracle-card card-color-icon color-${color} ${
-          isSelected ? 'selected-oracle-card' : ''
+        return `<div 
+          class="oracle-card card-color-icon color-${color} ${
+          isSelected ? 'selected-resource' : ''
         }" 
-                             style="background-color: ${
-          ViewPlayer.getColorHex(color)
-        }" 
-                             title="Oracle Card: ${color}"
-                             data-oracle-card-color="${color}">
-                      ${ViewPlayer.getSymbol(color)}
-                    </div>`;
+           style="background-color: ${ViewPlayer.getColorHex(color)}" 
+          title="Oracle Card: ${color}"
+          data-oracle-card-color="${color}">
+          ${ViewPlayer.getSymbol(color)}
+        </div>`;
       }).join('')
     }
                 </div>
