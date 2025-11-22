@@ -8,6 +8,52 @@ export class ViewPhase {
     this.gameState = gameState;
   }
 
+  public getPhasePanelContents(
+    selectedDie: CoreColor | null,
+    selectedCard: CoreColor | null,
+  ): string {
+    return `
+        <div class="phase-info">
+          <h3>Current Phase: ${this.gameState.getPhase().toUpperCase()}</h3>
+          <div class="phase-actions">
+            ${this.getPhaseActionsContents(selectedDie, selectedCard)}
+          </div>
+        </div>
+      `;
+  }
+
+  private getPhaseActionsContents(
+    selectedDie: CoreColor | null,
+    selectedCard: CoreColor | null,
+  ): string {
+    switch (this.gameState.getPhase()) {
+      case 'action': {
+        let actions = '';
+        actions +=
+          `<button id="endTurn" class="action-button secondary">End Turn</button>`;
+
+        const selectedColor = selectedDie || selectedCard;
+        const disabledText = selectedColor ? '' : 'disabled';
+        actions += `<div class="resource-actions" style="margin-top: 1rem;">
+              <button id="spendResourceForFavor" 
+                class="action-button" ${disabledText}>+2 Favor</button>
+              <button id="drawOracleCard" 
+                class="action-button" ${disabledText}>+Oracle Card</button>
+            </div>`;
+
+        actions += this.getDiceAndOracleCardsContent();
+        if (!actions) {
+          actions = '<p>Select a die or card to take an action</p>';
+        }
+
+        return actions;
+      }
+      default: {
+        return '<p>Game phase not recognized</p>';
+      }
+    }
+  }
+
   private getDiceAndOracleCardsContent() {
     const state = this.gameState;
     const currentPlayer = state.getCurrentPlayer();
@@ -171,52 +217,6 @@ export class ViewPhase {
       `;
 
     return options;
-  }
-
-  public getPhasePanelContents(
-    selectedDie: CoreColor | null,
-    selectedCard: CoreColor | null,
-  ): string {
-    return `
-        <div class="phase-info">
-          <h3>Current Phase: ${this.gameState.getPhase().toUpperCase()}</h3>
-          <div class="phase-actions">
-            ${this.getPhaseActionsContents(selectedDie, selectedCard)}
-          </div>
-        </div>
-      `;
-  }
-
-  private getPhaseActionsContents(
-    selectedDie: CoreColor | null,
-    selectedCard: CoreColor | null,
-  ): string {
-    switch (this.gameState.getPhase()) {
-      case 'action': {
-        let actions = '';
-        actions +=
-          `<button id="endTurn" class="action-button secondary">End Turn</button>`;
-
-        const selectedColor = selectedDie || selectedCard;
-        const disabledText = selectedColor ? '' : 'disabled';
-        actions += `<div class="resource-actions" style="margin-top: 1rem;">
-              <button id="spendResourceForFavor" 
-                class="action-button" ${disabledText}>+2 Favor</button>
-              <button id="drawOracleCard" 
-                class="action-button" ${disabledText}>+Oracle Card</button>
-            </div>`;
-
-        actions += this.getDiceAndOracleCardsContent();
-        if (!actions) {
-          actions = '<p>Select a die or card to take an action</p>';
-        }
-
-        return actions;
-      }
-      default: {
-        return '<p>Game phase not recognized</p>';
-      }
-    }
   }
 
   private gameState: GameState;
