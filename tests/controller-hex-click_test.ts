@@ -51,7 +51,8 @@ Deno.test('Hex click - second oracle card', () => {
 
   testPlayer.usedOracleCardThisTurn = true;
   testState.setSelectedOracleCardColor('red');
-  assertEquals(testState.getSelectedOracleCardColor(), 'red');
+  assert(testState.getSelectedResource().isCard());
+  assertEquals(testState.getSelectedResource().getColor(), 'red');
   assertFailureContains(
     testHandler.handleHexClick(center),
     'per turn',

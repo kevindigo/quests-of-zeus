@@ -204,12 +204,6 @@ export class GameState {
     this.selectedResource = color ? Resource.createDie(color) : Resource.none;
   }
 
-  public getSelectedOracleCardColor(): CoreColor | null {
-    return this.selectedResource.isCard()
-      ? this.selectedResource.getColor()
-      : null;
-  }
-
   public setSelectedOracleCardColor(color: CoreColor | null): void {
     this.selectedResource = color ? Resource.createCard(color) : Resource.none;
   }
