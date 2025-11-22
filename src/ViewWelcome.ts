@@ -43,7 +43,7 @@ export class ViewWelcome {
         <div class="phase-info">
           <h3>Ready to Begin</h3>
           <p>Click "Start New Game" to begin your adventure!</p>
-          <button id="startGame" class="action-button">Start New Game</button>
+          <button id="startGame" class="action-button" autofocus>Start New Game</button>
         </div>
       `;
   }
