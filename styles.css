@@ -37,7 +37,8 @@ h1 {
 .game-layout {
   display: flex;
   gap: 1rem;
-  width: max-content; /* keep grid compressed to content */
+  width: 100%;
+  overflow: auto; /* scroll bars as needed */
   margin: 0 0;
 }
 
@@ -104,7 +105,7 @@ h1 {
 }
 
 .hex-map-container {
-  flex: 1;
+  flex: 1 0 auto; /* grow = 1, shrink = 0, base = auto */
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   padding: 1rem;
@@ -117,6 +118,8 @@ h1 {
   flex-direction: row; /* horizontal layout */
   align-items: flex-start; /* vertical alignment of children */
   gap: 1rem; /* optional spacing between children */
+
+  overflow: auto; /* scroll bars as needed */
 }
 
 .hex-map-svg {
