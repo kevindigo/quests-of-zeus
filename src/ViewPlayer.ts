@@ -82,6 +82,9 @@ export class ViewPlayer {
         </div>`;
     });
 
+    if (contentForEachItem.length === 0) {
+      contentForEachItem.push('(none)');
+    }
     return contentForEachItem.join('&nbsp');
   }
 
