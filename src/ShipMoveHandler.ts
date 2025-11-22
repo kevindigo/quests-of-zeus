@@ -6,7 +6,7 @@ import { OracleSystem } from './OracleSystem.ts';
 import type { Player } from './Player.ts';
 import type { MoveShipResult, PossibleShipMove, Resource } from './types.ts';
 
-export class ActionMove {
+export class ShipMoveHandler {
   constructor(
     private state: GameState,
     private movementSystem: MovementSystem,

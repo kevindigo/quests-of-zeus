@@ -1,9 +1,9 @@
 // Unit test for recoloring favor calculation in extra range moves
 
 import { assert, assertEquals } from '@std/assert';
-import { ActionMove } from '../src/ActionMove.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
+import { ShipMoveHandler } from '../src/ShipMoveHandler.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
@@ -56,8 +56,8 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   // Get available moves for black die with recoloring intention
   gameState.setSelectedDieColor('black');
   const movementSystem = new MovementSystem(gameState.map);
-  const actionMoveShip = new ActionMove(gameState, movementSystem);
-  const availableMoves = actionMoveShip.getAvailableMovesForColor(
+  const handler = new ShipMoveHandler(gameState, movementSystem);
+  const availableMoves = handler.getAvailableMovesForColor(
     player.favor - 1,
   );
 
@@ -112,8 +112,8 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
   gameEngine.getGameState().setSelectedDieColor('blue');
   const state = gameEngine.getGameState();
   const movementSystem = new MovementSystem(state.map);
-  const actionMoveShip = new ActionMove(state, movementSystem);
-  const movesWithHighRecolor = actionMoveShip.getAvailableMovesForColor(
+  const handler = new ShipMoveHandler(state, movementSystem);
+  const movesWithHighRecolor = handler.getAvailableMovesForColor(
     player.favor - 2,
   );
 
@@ -147,8 +147,8 @@ Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () =>
 
   gameState.setSelectedDieColor('black');
   const movementSystem = new MovementSystem(gameState.map);
-  const actionMoveShip = new ActionMove(gameState, movementSystem);
-  const movesWithoutRecolor = actionMoveShip.getAvailableMovesForColor(
+  const handler = new ShipMoveHandler(gameState, movementSystem);
+  const movesWithoutRecolor = handler.getAvailableMovesForColor(
     player.favor,
   );
 

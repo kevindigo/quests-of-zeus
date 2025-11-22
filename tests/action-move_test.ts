@@ -1,13 +1,13 @@
 import { assert, assertEquals, assertFalse, assertGreater } from '@std/assert';
-import { ActionMove } from '../src/ActionMove.ts';
 import { GameState } from '../src/GameState.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { HexMap } from '../src/hexmap/HexMap.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
 import { Player } from '../src/Player.ts';
+import { ShipMoveHandler } from '../src/ShipMoveHandler.ts';
 import { Resource } from '../src/types.ts';
 
-function createPlayerActions(): ActionMove {
+function createShipMoveHandler(): ShipMoveHandler {
   const map = new HexMap();
   const centerHex = map.getCell(HexGrid.CENTER)!;
   centerHex.terrain = 'sea';
@@ -16,15 +16,15 @@ function createPlayerActions(): ActionMove {
   const state = new GameState(map, [player]);
   state.setPhase('action');
   const movementSystem = new MovementSystem(map);
-  const playerActions = new ActionMove(state, movementSystem);
-  return playerActions;
+  const shipMoveHandler = new ShipMoveHandler(state, movementSystem);
+  return shipMoveHandler;
 }
 
 Deno.test('Action move ship not your turn', () => {
-  const playerActions = createPlayerActions();
+  const handler = createShipMoveHandler();
   const player = new Player(2, 'not current', 'yellow', HexGrid.CENTER);
 
-  const result = playerActions.attemptMoveShip(
+  const result = handler.attemptMoveShip(
     player,
     HexGrid.CENTER,
     Resource.none,
@@ -37,12 +37,12 @@ Deno.test('Action move ship not your turn', () => {
 });
 
 Deno.test('Action move ship wrong phase', () => {
-  const playerActions = createPlayerActions();
-  const state = playerActions.getState();
+  const handler = createShipMoveHandler();
+  const state = handler.getState();
   const player = state.getCurrentPlayer();
 
   state.setPhase('setup');
-  const result = playerActions.attemptMoveShip(
+  const result = handler.attemptMoveShip(
     player,
     HexGrid.CENTER,
     Resource.none,
@@ -56,13 +56,13 @@ Deno.test('Action move ship wrong phase', () => {
 });
 
 Deno.test('Action move ship invalid destination coordinates', () => {
-  const playerActions = createPlayerActions();
-  const state = playerActions.getState();
+  const handler = createShipMoveHandler();
+  const state = handler.getState();
   const player = state.getCurrentPlayer();
 
   player.oracleDice = ['red'];
   const destination = player.getShipPosition();
-  const alreadyThere = playerActions.attemptMoveShip(
+  const alreadyThere = handler.attemptMoveShip(
     player,
     destination,
     Resource.createDie('red'),
@@ -79,7 +79,7 @@ Deno.test('Action move ship invalid destination coordinates', () => {
     q: state.map.getHexGrid().getRadius() + 1,
     r: 0,
   };
-  const offMap = playerActions.attemptMoveShip(
+  const offMap = handler.attemptMoveShip(
     player,
     qIsOffMapCoordinates,
     Resource.createDie('red'),
@@ -96,7 +96,7 @@ Deno.test('Action move ship invalid destination coordinates', () => {
     q: 0,
     r: -(state.map.getHexGrid().getRadius() + 1),
   };
-  const offMap2 = playerActions.attemptMoveShip(
+  const offMap2 = handler.attemptMoveShip(
     player,
     rIsOffMapCoordinates,
     Resource.createDie('red'),
@@ -111,11 +111,11 @@ Deno.test('Action move ship invalid destination coordinates', () => {
 });
 
 Deno.test('Action move ship use die or card not both', () => {
-  const playerActions = createPlayerActions();
-  const state = playerActions.getState();
+  const handler = createShipMoveHandler();
+  const state = handler.getState();
   const player = state.getCurrentPlayer();
 
-  const noDieOrCard = playerActions.attemptMoveShip(
+  const noDieOrCard = handler.attemptMoveShip(
     player,
     HexGrid.CENTER,
     Resource.none,
@@ -128,12 +128,12 @@ Deno.test('Action move ship use die or card not both', () => {
 });
 
 Deno.test('Action move ship use invalid die', () => {
-  const playerActions = createPlayerActions();
-  const state = playerActions.getState();
+  const handler = createShipMoveHandler();
+  const state = handler.getState();
   const player = state.getCurrentPlayer();
 
   player.oracleDice = ['red'];
-  const result = playerActions.attemptMoveShip(
+  const result = handler.attemptMoveShip(
     player,
     HexGrid.CENTER,
     Resource.createDie('blue'),
@@ -148,12 +148,12 @@ Deno.test('Action move ship use invalid die', () => {
 });
 
 Deno.test('Action move ship use invalid card', () => {
-  const playerActions = createPlayerActions();
-  const state = playerActions.getState();
+  const handler = createShipMoveHandler();
+  const state = handler.getState();
   const player = state.getCurrentPlayer();
 
   player.oracleCards = ['red'];
-  const result = playerActions.attemptMoveShip(
+  const result = handler.attemptMoveShip(
     player,
     HexGrid.CENTER,
     Resource.createCard('blue'),
@@ -168,12 +168,12 @@ Deno.test('Action move ship use invalid card', () => {
 });
 
 Deno.test('Action move ship not enough favor', () => {
-  const playerActions = createPlayerActions();
-  const state = playerActions.getState();
+  const handler = createShipMoveHandler();
+  const state = handler.getState();
   const player = state.getCurrentPlayer();
 
   player.oracleDice = ['red'];
-  const tooMuchRecolor = playerActions.attemptMoveShip(
+  const tooMuchRecolor = handler.attemptMoveShip(
     player,
     HexGrid.CENTER,
     Resource.createDie('red'),
@@ -184,7 +184,7 @@ Deno.test('Action move ship not enough favor', () => {
   assert(tooMuchRecolor.error);
   assertEquals(tooMuchRecolor.error.type, 'not_enough_favor');
 
-  const tooMuchRange = playerActions.attemptMoveShip(
+  const tooMuchRange = handler.attemptMoveShip(
     player,
     HexGrid.CENTER,
     Resource.createDie('red'),
@@ -197,14 +197,14 @@ Deno.test('Action move ship not enough favor', () => {
 });
 
 Deno.test('Action move ship to non-sea', () => {
-  const playerActions = createPlayerActions();
-  const state = playerActions.getState();
+  const handler = createShipMoveHandler();
+  const state = handler.getState();
   const player = state.getCurrentPlayer();
 
   const destination = { q: 3, r: 3 };
   state.map.getHexGrid().getCell(destination)!.terrain = 'shallow';
   player.oracleDice = ['red'];
-  const result = playerActions.attemptMoveShip(
+  const result = handler.attemptMoveShip(
     player,
     destination,
     Resource.createDie('red'),
@@ -218,12 +218,12 @@ Deno.test('Action move ship to non-sea', () => {
 });
 
 Deno.test('Action move ship to wrong color (no recoloring)', () => {
-  const playerActions = createPlayerActions();
-  const state = playerActions.getState();
+  const handler = createShipMoveHandler();
+  const state = handler.getState();
   const player = state.getCurrentPlayer();
 
   player.oracleDice = ['blue'];
-  const result = playerActions.attemptMoveShip(
+  const result = handler.attemptMoveShip(
     player,
     HexGrid.CENTER,
     Resource.createDie('blue'),
@@ -236,13 +236,13 @@ Deno.test('Action move ship to wrong color (no recoloring)', () => {
 });
 
 Deno.test('Action move ship to wrong color (with recoloring)', () => {
-  const playerActions = createPlayerActions();
-  const state = playerActions.getState();
+  const handler = createShipMoveHandler();
+  const state = handler.getState();
   const player = state.getCurrentPlayer();
 
   player.favor = 1;
   player.oracleDice = ['red'];
-  const result = playerActions.attemptMoveShip(
+  const result = handler.attemptMoveShip(
     player,
     HexGrid.CENTER,
     Resource.createDie('red'),
@@ -255,14 +255,14 @@ Deno.test('Action move ship to wrong color (with recoloring)', () => {
 });
 
 Deno.test('Action move ship out of range', () => {
-  const playerActions = createPlayerActions();
-  const state = playerActions.getState();
+  const handler = createShipMoveHandler();
+  const state = handler.getState();
   const player = state.getCurrentPlayer();
 
   player.favor = 1;
   player.oracleDice = ['red'];
   player.setShipPosition({ q: 4, r: 0 });
-  const result = playerActions.attemptMoveShip(
+  const result = handler.attemptMoveShip(
     player,
     HexGrid.CENTER,
     Resource.createDie('red'),
@@ -275,10 +275,10 @@ Deno.test('Action move ship out of range', () => {
 });
 
 Deno.test('Action move ship with die success (no favor)', () => {
-  const playerActions = createPlayerActions();
-  const state = playerActions.getState();
+  const handler = createShipMoveHandler();
+  const state = handler.getState();
   const player = state.getCurrentPlayer();
-  const movementSystem = playerActions.getMovementSystem();
+  const movementSystem = handler.getMovementSystem();
 
   const from = HexGrid.CENTER;
   player.setShipPosition(from);
@@ -289,7 +289,7 @@ Deno.test('Action move ship with die success (no favor)', () => {
   assertGreater(reachable.length, 1);
   const to = reachable[0]!;
   player.oracleDice = [to.color, to.color];
-  const result = playerActions.attemptMoveShip(
+  const result = handler.attemptMoveShip(
     player,
     to,
     Resource.createDie(to.color),
@@ -303,8 +303,8 @@ Deno.test('Action move ship with die success (no favor)', () => {
 });
 
 Deno.test('Action move ship with card and favor range success', () => {
-  const playerActions = createPlayerActions();
-  const state = playerActions.getState();
+  const handler = createShipMoveHandler();
+  const state = handler.getState();
   const player = state.getCurrentPlayer();
 
   const grid = state.map.getHexGrid();
@@ -318,7 +318,7 @@ Deno.test('Action move ship with card and favor range success', () => {
   grid.getCell(to)!.color = 'red';
   player.oracleCards = ['red', 'red'];
   player.favor = 2;
-  const result = playerActions.attemptMoveShip(
+  const result = handler.attemptMoveShip(
     player,
     to,
     Resource.createCard('red'),
@@ -332,8 +332,8 @@ Deno.test('Action move ship with card and favor range success', () => {
 });
 
 Deno.test('Action move ship with card and recolor success', () => {
-  const playerActions = createPlayerActions();
-  const state = playerActions.getState();
+  const handler = createShipMoveHandler();
+  const state = handler.getState();
   const player = state.getCurrentPlayer();
 
   const grid = state.map.getHexGrid();
@@ -347,7 +347,7 @@ Deno.test('Action move ship with card and recolor success', () => {
   grid.getCell(to)!.color = 'black';
   player.oracleCards = ['red', 'red'];
   player.favor = 2;
-  const result = playerActions.attemptMoveShip(
+  const result = handler.attemptMoveShip(
     player,
     to,
     Resource.createCard('red'),
@@ -360,7 +360,7 @@ Deno.test('Action move ship with card and recolor success', () => {
   assertEquals(player.favor, 1);
   assertEquals(state.getSelectedRecoloring(), 0);
 
-  const secondCardInOneTurn = playerActions.attemptMoveShip(
+  const secondCardInOneTurn = handler.attemptMoveShip(
     player,
     to,
     Resource.createCard('red'),
