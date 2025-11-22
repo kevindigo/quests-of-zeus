@@ -29,8 +29,6 @@ export class ViewPhase {
     switch (this.gameState.getPhase()) {
       case 'action': {
         let actions = '';
-        actions +=
-          `<button id="endTurn" class="action-button secondary">End Turn</button>`;
 
         const selectedColor = selectedDie || selectedCard;
         const disabledText = selectedColor ? '' : 'disabled';
@@ -40,7 +38,9 @@ export class ViewPhase {
               class="action-button" ${disabledText}>+2 Favor</button>
             <button id="drawOracleCard" 
               class="action-button" ${disabledText}>+Oracle Card</button>
-          </div>`;
+            <button id="endTurn" class="action-button secondary">
+            End Turn</button>
+      </div>`;
 
         actions += this.getDiceAndOracleCardsContent();
         if (!actions) {
