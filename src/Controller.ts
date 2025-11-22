@@ -66,6 +66,11 @@ export class Controller {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
     console.log(`selectResource called: ${resourceType}, ${resourceColor}`);
 
+    if (resourceType == 'card' && currentPlayer.usedOracleCardThisTurn) {
+      this.showMessage('Cannot use a second oracle card in one turn');
+      return;
+    }
+
     this.gameEngine.getGameState().clearSelectedRecoloring();
     if (resourceType === 'die') {
       if (this.selectDieColor(resourceColor)) {

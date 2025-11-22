@@ -1,7 +1,5 @@
 == Short-term ==
 
-- Change message display to be a scrolling text box
-
 == Cosmetic/Usability ==
 
 - Should not be able to select a card if you have already played one this turn
@@ -21,7 +19,6 @@
   - Pink: 8 / infinity / hourglass ∞ ⌛ Ꝏ 🌸 🩷
   - Yellow: * 🔆
   - Green: Leaf 🌱
-- Better visual feedback when trying to use a second oracle card in a turn
 - Ideally sort cards by color
 - Ideally only highlight the actual selected die/card
 - Ideally unselect (clear) a die/card by clicking it again
