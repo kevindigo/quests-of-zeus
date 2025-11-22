@@ -1,5 +1,7 @@
 == Short-term ==
 
+Refactor to start passing selectedResource instead of separate die and card
+
 == Cosmetic/Usability ==
 
 - Should not be able to select a card if you have already played one this turn

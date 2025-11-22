@@ -51,6 +51,7 @@ Deno.test('Hex click - second oracle card', () => {
 
   testPlayer.usedOracleCardThisTurn = true;
   testState.setSelectedOracleCardColor('red');
+  assertEquals(testState.getSelectedOracleCardColor(), 'red');
   assertFailureContains(
     testHandler.handleHexClick(center),
     'per turn',
@@ -100,7 +101,7 @@ Deno.test('Hex click - next to good color, but click elsewhere', () => {
   testPlayer.setShipPosition(seaNeighbor.getCoordinates());
   testPlayer.oracleDice = [adjacentColor, 'green'];
   testState.setSelectedDieColor(adjacentColor);
-  
+
   const result = testHandler.handleHexClick(
     otherShrineCell.getCoordinates(),
   );

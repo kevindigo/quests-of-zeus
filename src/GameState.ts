@@ -7,14 +7,15 @@ import {
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import type {
-  CityHex,
-  CoreColor,
-  CubeHex,
-  MonsterHex,
-  Phase,
-  ShrineHex,
-  StatueHex,
+import {
+  type CityHex,
+  type CoreColor,
+  type CubeHex,
+  type MonsterHex,
+  type Phase,
+  Resource,
+  type ShrineHex,
+  type StatueHex,
 } from './types.ts';
 
 export type GameStateJson = {
@@ -28,8 +29,7 @@ export type GameStateJson = {
   cityHexes: CityHex[];
   statueHexes: StatueHex[];
   shrineHexes: ShrineHex[];
-  selectedDieColor: CoreColor | null;
-  selectedOracleCardColor: CoreColor | null;
+  selectedResource: Resource;
   selectedRecoloring: number;
 };
 
@@ -49,8 +49,7 @@ export class GameState {
     this.cityHexes = [];
     this.statueHexes = [];
     this.shrineHexes = [];
-    this.selectedDieColor = null;
-    this.selectedOracleCardColor = null;
+    this.selectedResource = Resource.none;
   }
 
   public static fromJson(rawJson: unknown): GameState {
@@ -67,8 +66,7 @@ export class GameState {
     state.cityHexes = json.cityHexes;
     state.statueHexes = json.statueHexes;
     state.shrineHexes = json.shrineHexes;
-    state.selectedDieColor = json.selectedDieColor;
-    state.selectedOracleCardColor = json.selectedOracleCardColor;
+    state.selectedResource = Resource.fromJson(json.selectedResource);
     return state;
   }
 
@@ -87,8 +85,7 @@ export class GameState {
       cityHexes: this.cityHexes,
       statueHexes: this.statueHexes,
       shrineHexes: this.shrineHexes,
-      selectedDieColor: this.selectedDieColor,
-      selectedOracleCardColor: this.selectedOracleCardColor,
+      selectedResource: this.selectedResource,
     };
   }
 
@@ -199,28 +196,36 @@ export class GameState {
     this.selectedRecoloring = 0;
   }
 
+  public getSelectedResource(): Resource {
+    return this.selectedResource;
+  }
+
   public getSelectedDieColor(): CoreColor | null {
-    return this.selectedDieColor;
+    return this.selectedResource.isDie()
+      ? this.selectedResource.getColor()
+      : null;
   }
 
   public setSelectedDieColor(color: CoreColor | null): void {
-    this.selectedDieColor = color;
+    this.selectedResource = color ? Resource.createDie(color) : Resource.none;
   }
 
   public getSelectedOracleCardColor(): CoreColor | null {
-    return this.selectedOracleCardColor;
+    return this.selectedResource.isCard()
+      ? this.selectedResource.getColor()
+      : null;
   }
 
   public setSelectedOracleCardColor(color: CoreColor | null): void {
-    this.selectedOracleCardColor = color;
+    this.selectedResource = color ? Resource.createCard(color) : Resource.none;
   }
 
   public getEffectiveSelectedColor(): CoreColor | null {
-    const selectedColor = this.getSelectedDieColor() ||
-      this.getSelectedOracleCardColor();
-    if (!selectedColor) {
+    if (!this.selectedResource.hasColor()) {
       return null;
     }
+    const selectedColor = this.selectedResource.getColor();
+
     const favorForRecoloring = this.getSelectedRecoloring();
     const effectiveColor = OracleSystem.applyRecolor(
       selectedColor,
@@ -230,9 +235,7 @@ export class GameState {
   }
 
   public clearResourceSelection(): void {
-    this.clearSelectedRecoloring();
-    this.setSelectedDieColor(null);
-    this.setSelectedOracleCardColor(null);
+    this.selectedResource = Resource.none;
   }
 
   public removeSpentResourceFromPlayer(
@@ -266,7 +269,6 @@ export class GameState {
   private cityHexes: CityHex[];
   private statueHexes: StatueHex[];
   private shrineHexes: ShrineHex[];
-  private selectedDieColor: CoreColor | null;
-  private selectedOracleCardColor: CoreColor | null;
+  private selectedResource: Resource;
   private selectedRecoloring: number;
 }

@@ -1,6 +1,6 @@
 import type { GameState } from './GameState.ts';
 import type { Player } from './Player.ts';
-import { COLOR_WHEEL, type CoreColor } from './types.ts';
+import { COLOR_WHEEL, type CoreColor, type Resource } from './types.ts';
 import { ViewPlayer } from './ViewPlayer.ts';
 
 export class ViewPhase {
@@ -8,30 +8,23 @@ export class ViewPhase {
     this.gameState = gameState;
   }
 
-  public getPhasePanelContents(
-    selectedDie: CoreColor | null,
-    selectedCard: CoreColor | null,
-  ): string {
+  public getPhasePanelContents(selectedResource: Resource): string {
     return `
         <div class="phase-info">
           <h3>Current Phase: ${this.gameState.getPhase().toUpperCase()}</h3>
           <div class="phase-actions">
-            ${this.getPhaseActionsContents(selectedDie, selectedCard)}
+            ${this.getPhaseActionsContents(selectedResource)}
           </div>
         </div>
       `;
   }
 
-  private getPhaseActionsContents(
-    selectedDie: CoreColor | null,
-    selectedCard: CoreColor | null,
-  ): string {
+  private getPhaseActionsContents(selectedResource: Resource): string {
     switch (this.gameState.getPhase()) {
       case 'action': {
         let actions = '';
 
-        const selectedColor = selectedDie || selectedCard;
-        const disabledText = selectedColor ? '' : 'disabled';
+        const disabledText = selectedResource.hasColor() ? '' : 'disabled';
         actions += `
           <div class="resource-actions" style="margin-bottom: 1rem;">
             <button id="spendResourceForFavor" 

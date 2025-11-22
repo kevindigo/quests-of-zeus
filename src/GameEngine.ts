@@ -526,18 +526,20 @@ export class GameEngine {
     const player = this.getCurrentPlayer();
     const state = this.getGameState();
     const favorSpentToRecolor = state.getSelectedRecoloring();
-    const die = state.getSelectedDieColor();
-    const card = state.getSelectedOracleCardColor();
-    const selectedColor = die || card;
+    const resource = state.getSelectedResource();
 
     state.clearResourceSelection();
-    if (!selectedColor) {
+    if (!resource.hasColor()) {
       return;
     }
 
-    const array = die ? player.oracleDice : card ? player.oracleCards : null;
+    const array = resource.isDie()
+      ? player.oracleDice
+      : resource.isCard()
+      ? player.oracleCards
+      : null;
     if (array) {
-      const at = array.indexOf(selectedColor);
+      const at = array.indexOf(resource.getColor());
       if (at >= 0) {
         array.splice(at, 1);
       }
@@ -545,7 +547,7 @@ export class GameEngine {
 
     player.favor -= favorSpentToRecolor;
 
-    if (card) {
+    if (resource.isCard()) {
       player.usedOracleCardThisTurn = true;
     }
   }

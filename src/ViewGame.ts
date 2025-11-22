@@ -152,8 +152,7 @@ export class ViewGame {
 
     const view = new ViewPhase(state);
     phaseDisplay.innerHTML = view.getPhasePanelContents(
-      state.getSelectedDieColor(),
-      state.getSelectedOracleCardColor(),
+      state.getSelectedResource(),
     );
   }
 
