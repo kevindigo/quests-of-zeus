@@ -119,9 +119,11 @@ export class ViewPhase {
     player: Player,
     selectedResource: Resource,
   ): string {
-    const useColor = selectedResource.hasColor()
-      ? selectedResource.getColor()
-      : 'red';
+    if (!selectedResource.hasColor()) {
+      return '';
+    }
+
+    const useColor = selectedResource.getColor();
 
     const currentIndex = COLOR_WHEEL.indexOf(useColor);
 
