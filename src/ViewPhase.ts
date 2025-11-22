@@ -34,12 +34,13 @@ export class ViewPhase {
 
         const selectedColor = selectedDie || selectedCard;
         const disabledText = selectedColor ? '' : 'disabled';
-        actions += `<div class="resource-actions" style="margin-top: 1rem;">
-              <button id="spendResourceForFavor" 
-                class="action-button" ${disabledText}>+2 Favor</button>
-              <button id="drawOracleCard" 
-                class="action-button" ${disabledText}>+Oracle Card</button>
-            </div>`;
+        actions += `
+          <div class="resource-actions" style="margin-bottom: 1rem;">
+            <button id="spendResourceForFavor" 
+              class="action-button" ${disabledText}>+2 Favor</button>
+            <button id="drawOracleCard" 
+              class="action-button" ${disabledText}>+Oracle Card</button>
+          </div>`;
 
         actions += this.getDiceAndOracleCardsContent();
         if (!actions) {
@@ -62,7 +63,10 @@ export class ViewPhase {
     const selectedColor = selectedDie || selectedCard;
     const content = `
       <div class="oracle-dice">
-        <h4>Oracle Dice</h4>
+        <h4>
+          Oracle Dice
+          <button id="clearDieSelection" class="action-btn secondary">Clear</button>
+        </h4>
         <div class="dice-container">
           ${
       currentPlayer.oracleDice.map((color: string) => {
@@ -77,33 +81,16 @@ export class ViewPhase {
         </div>`;
       }).join('')
     }
-                  ${
-      currentPlayer.oracleDice.length === 0
-        ? '<div class="no-dice">No dice rolled yet</div>'
-        : ''
-    }
-                </div>
-                            <br/>
-
-
-                ${
-      selectedDie && currentPlayer.oracleDice.length > 0
-        ? `<div class="selected-die-info">
-                  Selected: 
-                  <span class="color-swatch" 
-                  style="background-color: ${
-          ViewPlayer.getColorHex(selectedDie)
-        }">      ${selectedDie}
-                  </span>
-                   <button id="clearDieSelection" class="action-btn secondary">Clear</button>
-                 </div>`
-        : ''
-    }
-              </div>
-              <div class="oracle-cards">
-                <h4>Oracle Cards</h4>
-                <div class="cards-container">
-                  ${
+        </div>
+        <br/>
+        </div>
+        <div class="oracle-cards">
+          <h4>
+            Oracle Cards
+            <button id="clearOracleCardSelection" class="action-btn secondary">Clear</button>
+          </h4>
+          <div class="cards-container">
+            ${
       currentPlayer.oracleCards.length === 0
         ? '<div class="no-cards">No oracle cards</div>'
         : ''
@@ -122,25 +109,11 @@ export class ViewPhase {
         </div>`;
       }).join('')
     }
-                </div>
-                ${
-      selectedCard && currentPlayer.oracleCards.length > 0
-        ? `<div class="selected-oracle-card-info">
-                  Selected Card: 
-                  <span class="color-swatch" 
-                    style="background-color: ${
-          ViewPlayer.getColorHex(selectedCard)
-        }">
-                  </span>
-                   ${selectedCard}
-                   <button id="clearOracleCardSelection" class="action-btn secondary">Clear</button>
-                 </div>`
-        : ''
-    }
-              </div>
-              ${this.getRecolorOptionsContent(currentPlayer, selectedColor)}
-            </div>
-          `;
+          </div>
+        </div>
+        ${this.getRecolorOptionsContent(currentPlayer, selectedColor)}
+      </div>
+    `;
 
     return content;
   }
