@@ -16,9 +16,10 @@ export class ViewGame {
       console.log(`GameMessage: ${message}`);
       return;
     }
-    const messageContainer = document.getElementById('gameMessage');
-    if (messageContainer) {
-      messageContainer.textContent = message;
+    const messageTextArea = document.getElementById('gameMessage');
+    if (messageTextArea) {
+      messageTextArea.textContent += '> ' + message + '\n';
+      messageTextArea.scrollTop = messageTextArea.scrollHeight;
     }
   }
 
