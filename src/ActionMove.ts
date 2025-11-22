@@ -4,7 +4,7 @@ import { type HexCoordinates, HexGrid } from './hexmap/HexGrid.ts';
 import type { MovementSystem } from './MovementSystem.ts';
 import { OracleSystem } from './OracleSystem.ts';
 import type { Player } from './Player.ts';
-import type { CoreColor, MoveShipResult, PossibleShipMove } from './types.ts';
+import type { MoveShipResult, PossibleShipMove, Resource } from './types.ts';
 
 export class ActionMove {
   constructor(
@@ -70,8 +70,7 @@ export class ActionMove {
   public attemptMoveShip(
     player: Player,
     destination: HexCoordinates,
-    dieSpent: CoreColor | undefined,
-    cardSpent: CoreColor | undefined,
+    selectedResource: Resource,
     favorSpentToRecolor: number,
     favorSpentForRange: number,
   ): MoveShipResult {
@@ -90,19 +89,8 @@ export class ActionMove {
         error: { type: 'invalid_player', message: 'not current player' },
       };
     }
-    // validate die OR card but not both
-    if (dieSpent && cardSpent) {
-      return {
-        success: false,
-        error: {
-          type: 'both_die_and_card',
-          message: 'cannot spend both die and card',
-        },
-      };
-    }
 
-    const originalColor = dieSpent || cardSpent;
-    if (!originalColor) {
+    if (!selectedResource.hasColor()) {
       return {
         success: false,
         error: {
@@ -112,15 +100,16 @@ export class ActionMove {
       };
     }
     // validate die (if spent)
-    if (dieSpent) {
-      if (player.oracleDice.indexOf(dieSpent) < 0) {
+    if (selectedResource.isDie()) {
+      if (player.oracleDice.indexOf(selectedResource.getColor()) < 0) {
         return {
           success: false,
           error: {
             type: 'die_not_available',
-            message: `no ${dieSpent} die available in ${player.oracleDice}`,
+            message:
+              `no ${selectedResource.getColor()} die available in ${player.oracleDice}`,
             details: {
-              dieColor: originalColor,
+              dieColor: selectedResource.getColor(),
               availableDice: player.oracleDice,
             },
           },
@@ -128,15 +117,16 @@ export class ActionMove {
       }
     }
     // validate card (if spent)
-    if (cardSpent) {
-      if (player.oracleCards.indexOf(cardSpent) < 0) {
+    if (selectedResource.isCard()) {
+      if (player.oracleCards.indexOf(selectedResource.getColor()) < 0) {
         return {
           success: false,
           error: {
             type: 'card_not_available',
-            message: `no ${cardSpent} card available in ${player.oracleCards}`,
+            message:
+              `no ${selectedResource.getColor()} card available in ${player.oracleCards}`,
             details: {
-              dieColor: originalColor,
+              dieColor: selectedResource.getColor(),
               availableDice: player.oracleCards,
             },
           },
@@ -206,7 +196,7 @@ export class ActionMove {
     }
     // validate destination color matches effective color
     const effectiveColor = OracleSystem.applyRecolor(
-      originalColor,
+      selectedResource.getColor(),
       favorSpentToRecolor,
     );
     if (effectiveColor !== destinationCell?.color) {
@@ -243,10 +233,10 @@ export class ActionMove {
     player.setShipPosition(destination);
     player.favor -= favorSpentForRange;
     player.favor -= favorSpentToRecolor;
-    if (cardSpent) {
+    if (selectedResource.isCard()) {
       player.usedOracleCardThisTurn = true;
     }
-    this.state.removeSpentResourceFromPlayer(player, dieSpent, cardSpent);
+    this.state.removeSpentResourceFromPlayer(player, selectedResource);
 
     // log and return results
     return {

@@ -5,6 +5,7 @@ import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { HexMap } from '../src/hexmap/HexMap.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
 import { Player } from '../src/Player.ts';
+import { Resource } from '../src/types.ts';
 
 function createPlayerActions(): ActionMove {
   const map = new HexMap();
@@ -26,8 +27,7 @@ Deno.test('Action move ship not your turn', () => {
   const result = playerActions.attemptMoveShip(
     player,
     HexGrid.CENTER,
-    undefined,
-    undefined,
+    Resource.none,
     0,
     0,
   );
@@ -45,8 +45,7 @@ Deno.test('Action move ship wrong phase', () => {
   const result = playerActions.attemptMoveShip(
     player,
     HexGrid.CENTER,
-    undefined,
-    undefined,
+    Resource.none,
     0,
     0,
   );
@@ -66,8 +65,7 @@ Deno.test('Action move ship invalid destination coordinates', () => {
   const alreadyThere = playerActions.attemptMoveShip(
     player,
     destination,
-    'red',
-    undefined,
+    Resource.createDie('red'),
     0,
     0,
   );
@@ -84,8 +82,7 @@ Deno.test('Action move ship invalid destination coordinates', () => {
   const offMap = playerActions.attemptMoveShip(
     player,
     qIsOffMapCoordinates,
-    'red',
-    undefined,
+    Resource.createDie('red'),
     0,
     0,
   );
@@ -102,8 +99,7 @@ Deno.test('Action move ship invalid destination coordinates', () => {
   const offMap2 = playerActions.attemptMoveShip(
     player,
     rIsOffMapCoordinates,
-    'red',
-    undefined,
+    Resource.createDie('red'),
     0,
     0,
   );
@@ -122,26 +118,13 @@ Deno.test('Action move ship use die or card not both', () => {
   const noDieOrCard = playerActions.attemptMoveShip(
     player,
     HexGrid.CENTER,
-    undefined,
-    undefined,
+    Resource.none,
     0,
     0,
   );
   assertFalse(noDieOrCard.success);
   assert(noDieOrCard.error);
   assertEquals(noDieOrCard.error.type, 'no_die_or_card');
-
-  const bothDieAndCard = playerActions.attemptMoveShip(
-    player,
-    HexGrid.CENTER,
-    'red',
-    'red',
-    0,
-    0,
-  );
-  assertFalse(bothDieAndCard.success);
-  assert(bothDieAndCard.error);
-  assertEquals(bothDieAndCard.error.type, 'both_die_and_card');
 });
 
 Deno.test('Action move ship use invalid die', () => {
@@ -153,8 +136,7 @@ Deno.test('Action move ship use invalid die', () => {
   const result = playerActions.attemptMoveShip(
     player,
     HexGrid.CENTER,
-    'blue',
-    undefined,
+    Resource.createDie('blue'),
     0,
     0,
   );
@@ -174,8 +156,7 @@ Deno.test('Action move ship use invalid card', () => {
   const result = playerActions.attemptMoveShip(
     player,
     HexGrid.CENTER,
-    undefined,
-    'blue',
+    Resource.createCard('blue'),
     0,
     0,
   );
@@ -195,8 +176,7 @@ Deno.test('Action move ship not enough favor', () => {
   const tooMuchRecolor = playerActions.attemptMoveShip(
     player,
     HexGrid.CENTER,
-    'red',
-    undefined,
+    Resource.createDie('red'),
     1,
     0,
   );
@@ -207,8 +187,7 @@ Deno.test('Action move ship not enough favor', () => {
   const tooMuchRange = playerActions.attemptMoveShip(
     player,
     HexGrid.CENTER,
-    'red',
-    undefined,
+    Resource.createDie('red'),
     0,
     1,
   );
@@ -228,8 +207,7 @@ Deno.test('Action move ship to non-sea', () => {
   const result = playerActions.attemptMoveShip(
     player,
     destination,
-    'red',
-    undefined,
+    Resource.createDie('red'),
     0,
     0,
   );
@@ -248,8 +226,7 @@ Deno.test('Action move ship to wrong color (no recoloring)', () => {
   const result = playerActions.attemptMoveShip(
     player,
     HexGrid.CENTER,
-    'blue',
-    undefined,
+    Resource.createDie('blue'),
     0,
     0,
   );
@@ -268,8 +245,7 @@ Deno.test('Action move ship to wrong color (with recoloring)', () => {
   const result = playerActions.attemptMoveShip(
     player,
     HexGrid.CENTER,
-    'red',
-    undefined,
+    Resource.createDie('red'),
     1,
     0,
   );
@@ -289,8 +265,7 @@ Deno.test('Action move ship out of range', () => {
   const result = playerActions.attemptMoveShip(
     player,
     HexGrid.CENTER,
-    'red',
-    undefined,
+    Resource.createDie('red'),
     0,
     0,
   );
@@ -317,8 +292,7 @@ Deno.test('Action move ship with die success (no favor)', () => {
   const result = playerActions.attemptMoveShip(
     player,
     to,
-    to.color,
-    undefined,
+    Resource.createDie(to.color),
     0,
     0,
   );
@@ -347,8 +321,7 @@ Deno.test('Action move ship with card and favor range success', () => {
   const result = playerActions.attemptMoveShip(
     player,
     to,
-    undefined,
-    'red',
+    Resource.createCard('red'),
     0,
     1,
   );
@@ -377,8 +350,7 @@ Deno.test('Action move ship with card and recolor success', () => {
   const result = playerActions.attemptMoveShip(
     player,
     to,
-    undefined,
-    'red',
+    Resource.createCard('red'),
     1,
     0,
   );
@@ -391,8 +363,7 @@ Deno.test('Action move ship with card and recolor success', () => {
   const secondCardInOneTurn = playerActions.attemptMoveShip(
     player,
     to,
-    undefined,
-    'red',
+    Resource.createCard('red'),
     1,
     0,
   );

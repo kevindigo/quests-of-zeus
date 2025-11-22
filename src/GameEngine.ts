@@ -22,6 +22,7 @@ import type {
   Item,
   MonsterHex,
   MoveShipResult,
+  Resource,
   ShrineHex,
 } from './types.ts';
 import { COLOR_WHEEL } from './types.ts';
@@ -70,8 +71,7 @@ export class GameEngine {
     playerId: number,
     targetQ: number,
     targetR: number,
-    originalDieColor: CoreColor | undefined,
-    originalCardColor: CoreColor | undefined,
+    selectedResource: Resource,
     favorSpentToRecolor: number,
     favorSpentForRange: number,
   ): MoveShipResult {
@@ -81,8 +81,7 @@ export class GameEngine {
     return this.playerActions!.attemptMoveShip(
       player,
       destinationCoordinates,
-      originalDieColor,
-      originalCardColor,
+      selectedResource,
       favorSpentToRecolor,
       favorSpentForRange,
     );

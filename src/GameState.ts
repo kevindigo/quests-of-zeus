@@ -228,14 +228,15 @@ export class GameState {
 
   public removeSpentResourceFromPlayer(
     player: Player,
-    dieSpent: CoreColor | undefined,
-    cardSpent: CoreColor | undefined,
+    resource: Resource,
   ): ResultWithMessage {
-    const resourceArray = dieSpent ? player.oracleDice : player.oracleCards;
-    const originalColor = dieSpent || cardSpent;
-    if (!originalColor) {
+    if (!resource.hasColor()) {
       return new Failure('Impossible: no resource was selected');
     }
+    const resourceArray = resource.isDie()
+      ? player.oracleDice
+      : player.oracleCards;
+    const originalColor = resource.getColor();
     const index = resourceArray.indexOf(originalColor);
     if (index < 0) {
       return new Failure(

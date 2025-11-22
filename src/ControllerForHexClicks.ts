@@ -151,8 +151,7 @@ export class ControllerForHexClicks {
       currentPlayer.id,
       q,
       r,
-      selectedDieColor || undefined,
-      selectedOracleCardColor || undefined,
+      selectedResource,
       recoloringCost,
       favorSpentForRange,
     );
