@@ -53,16 +53,17 @@ export class ControllerForHexClicks {
 
     const currentPlayer = gameState.getCurrentPlayer();
     const selectedOracleCardColor = gameState.getSelectedOracleCardColor();
-    const selectedDieColor = gameState.getSelectedDieColor();
+    const selectedResource = gameState.getSelectedResource();
 
     if (selectedOracleCardColor && currentPlayer.usedOracleCardThisTurn) {
       return new Failure('Cannot use more than 1 oracle card per turn');
     }
     if (
-      selectedDieColor && !currentPlayer.oracleDice.includes(selectedDieColor)
+      selectedResource.isDie() &&
+      !currentPlayer.oracleDice.includes(selectedResource.getColor())
     ) {
       return new Failure(
-        `Color ${selectedDieColor} not in dice ${
+        `Color ${selectedResource.getColor()} not in dice ${
           JSON.stringify(currentPlayer.oracleDice)
         }`,
       );
@@ -139,7 +140,10 @@ export class ControllerForHexClicks {
 
     const favorSpentForRange = targetMove.favorCost;
 
-    const selectedDieColor = state.getSelectedDieColor();
+    const selectedResource = state.getSelectedResource();
+    const selectedDieColor = selectedResource.isDie()
+      ? selectedResource.getColor()
+      : null;
     const selectedOracleCardColor = state.getSelectedOracleCardColor();
     const moveResult = this.gameEngine.moveShip(
       currentPlayer.id,

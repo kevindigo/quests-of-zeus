@@ -200,12 +200,6 @@ export class GameState {
     return this.selectedResource;
   }
 
-  public getSelectedDieColor(): CoreColor | null {
-    return this.selectedResource.isDie()
-      ? this.selectedResource.getColor()
-      : null;
-  }
-
   public setSelectedDieColor(color: CoreColor | null): void {
     this.selectedResource = color ? Resource.createDie(color) : Resource.none;
   }
