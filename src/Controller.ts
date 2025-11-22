@@ -9,7 +9,7 @@ import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
-import type { CoreColor, TerrainType } from './types.ts';
+import { type CoreColor, Resource, type TerrainType } from './types.ts';
 import { ViewGame } from './ViewGame.ts';
 
 export class Controller {
@@ -66,6 +66,7 @@ export class Controller {
 
   private selectResource(resourceType: string, resourceColor: CoreColor): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const state = this.gameEngine.getGameState();
     console.log(`selectResource called: ${resourceType}, ${resourceColor}`);
 
     if (resourceType == 'card' && currentPlayer.usedOracleCardThisTurn) {
@@ -73,7 +74,17 @@ export class Controller {
       return;
     }
 
-    this.gameEngine.getGameState().clearSelectedRecoloring();
+    const resourceToSelect = (resourceType === 'die')
+      ? Resource.createDie(resourceColor)
+      : Resource.createCard(resourceColor);
+
+    const alreadySelected = state.getSelectedResource();
+    if (resourceToSelect.equals(alreadySelected)) {
+      this.clearResourceSelectionAndUpdateDisplay();
+      return;
+    }
+
+    state.clearSelectedRecoloring();
     if (resourceType === 'die') {
       if (this.selectDieColor(resourceColor)) {
         this.showMessage(`Selected ${resourceColor} die`);
@@ -259,12 +270,6 @@ export class Controller {
       this.drawOracleCard();
     } else if (target.id === 'endTurn') {
       this.endTurn();
-    } else if (target.id === 'clearResourceSelection') {
-      this.clearResourceSelectionAndUpdateDisplay();
-    } else if (target.id === 'clearDieSelection') {
-      this.clearResourceSelectionAndUpdateDisplay();
-    } else if (target.id === 'clearOracleCardSelection') {
-      this.clearResourceSelectionAndUpdateDisplay();
     } else if (target.classList.contains('die')) {
       const dieColor = target.getAttribute('data-die-color') as CoreColor;
       if (dieColor) {

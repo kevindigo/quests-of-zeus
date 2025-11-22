@@ -62,7 +62,6 @@ export class ViewPhase {
       <div class="oracle-dice">
         <h4>
           Oracle Dice
-          <button id="clearDieSelection" class="action-btn secondary">Clear</button>
         </h4>
         <div class="dice-container">
           ${
@@ -84,7 +83,6 @@ export class ViewPhase {
         <div class="oracle-cards">
           <h4>
             Oracle Cards
-            <button id="clearOracleCardSelection" class="action-btn secondary">Clear</button>
           </h4>
           <div class="cards-container">
             ${

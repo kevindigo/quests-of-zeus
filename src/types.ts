@@ -279,6 +279,10 @@ export class Resource {
     return this.color;
   }
 
+  public equals(other: Resource): boolean {
+    return (other.type === this.type && other.color === this.color);
+  }
+
   private readonly type: ResourceType;
   private readonly color: CoreColor | undefined;
 }
