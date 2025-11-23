@@ -19,7 +19,6 @@ import type {
   CityHex,
   CoreColor,
   CubeHex,
-  HexColor,
   Item,
   MonsterHex,
   MoveShipResult,
@@ -55,22 +54,6 @@ export class GameManager {
       favorSpentToRecolor,
       favorSpentForRange,
     );
-  }
-
-  public collectOffering(_playerId: number, _color: CoreColor): boolean {
-    return false;
-  }
-
-  public fightMonster(_playerId: number): boolean {
-    return false;
-  }
-
-  public buildTemple(_playerId: number): boolean {
-    return false;
-  }
-
-  public buildStatue(_playerId: number): boolean {
-    return false;
   }
 
   public spendResourceForFavor(): ResultWithMessage {
@@ -120,13 +103,6 @@ export class GameManager {
 
   public getMonsterHexes(): MonsterHex[] {
     return this.state.getMonsterHexes();
-  }
-
-  public getMonstersOnHex(q: number, r: number): HexColor[] {
-    const monsterHex = this.state.getMonsterHexes().find((mh) =>
-      mh.q === q && mh.r === r
-    );
-    return monsterHex ? monsterHex.monsterColors : [];
   }
 
   public getAvailableLandInteractions(): HexCell[] {
