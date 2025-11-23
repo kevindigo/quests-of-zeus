@@ -2,6 +2,7 @@ import { OracleSystem } from './OracleSystem.ts';
 import { type CoreColor, Resource } from './types.ts';
 
 export interface UiState {
+  reset(): void;
   getSelectedRecoloring(): number;
   setSelectedRecoloring(favorSpent: number): boolean;
   clearSelectedRecoloring(): void;
@@ -13,6 +14,11 @@ export interface UiState {
 }
 export class UiStateClass {
   public constructor() {
+    this.selectedResource = Resource.none;
+    this.selectedRecoloring = 0;
+  }
+
+  public reset(): void {
     this.selectedResource = Resource.none;
     this.selectedRecoloring = 0;
   }

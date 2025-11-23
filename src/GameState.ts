@@ -34,12 +34,9 @@ export type GameStateSnapshot = {
 };
 
 export class GameState {
-  public constructor(
-    map: HexMap,
-    players: Player[],
-  ) {
-    this.map = map;
-    this.players = players;
+  public constructor() {
+    this.map = new HexMap();
+    this.players = [];
     this.currentPlayerIndex = 0;
     this.round = 1;
     this.phase = 'setup';
@@ -54,9 +51,9 @@ export class GameState {
 
   public static fromSnapshot(snapshot: unknown): GameState {
     const json = snapshot as GameStateSnapshot;
-    const map = HexMap.fromSnapshot(json.map);
-    const players = json.players.map((player) => Player.fromSnapshot(player));
-    const state = new GameState(map, players);
+    const state = new GameState();
+    state.map = HexMap.fromSnapshot(json.map);
+    state.players = json.players.map((player) => Player.fromSnapshot(player));
     state.currentPlayerIndex = json.currentPlayerIndex;
     state.round = json.round;
     state.phase = json.phase;
@@ -105,6 +102,11 @@ export class GameState {
 
   public setCurrentPlayerIndex(newIndex: number): void {
     this.currentPlayerIndex = newIndex;
+  }
+
+  public setPlayers(players: Player[]): void {
+    this.players = players;
+    this.currentPlayerIndex = 0;
   }
 
   public getRound(): number {
@@ -199,18 +201,15 @@ export class GameState {
     return new Success('Resource was spent');
   }
 
-  // Initialize the oracle card deck
-  private resetOracleCardDeck(): void {
+  public resetOracleCardDeck(): void {
     this.oracleCardDeck = [];
     const cardColors = [...COLOR_WHEEL];
-    // The deck consists of 5 copies of each of the 6 colors (5 * 6 = 30 cards)
     for (const color of cardColors) {
       for (let i = 0; i < 5; i++) {
         this.oracleCardDeck.push(color);
       }
     }
 
-    // Shuffle the oracle card deck
     UtilityService.shuffleArray(this.oracleCardDeck);
   }
 

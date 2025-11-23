@@ -1,7 +1,7 @@
 import { assert, assertEquals, assertFalse, assertGreater } from '@std/assert';
 import { GameState } from '../src/GameState.ts';
+import { GameInitializer } from '../src/GameStateInitializer.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
-import { HexMap } from '../src/hexmap/HexMap.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
 import { Player } from '../src/Player.ts';
 import { ShipMoveHandler } from '../src/ShipMoveHandler.ts';
@@ -9,15 +9,14 @@ import { Resource } from '../src/types.ts';
 import { UiStateClass } from '../src/UiState.ts';
 
 function createShipMoveHandler(): ShipMoveHandler {
-  const map = new HexMap();
-  const centerHex = map.getCell(HexGrid.CENTER)!;
+  const state = new GameState();
+  new GameInitializer().initializeGameState(state);
+
+  const centerHex = state.map.getCell(HexGrid.CENTER)!;
   centerHex.terrain = 'sea';
   centerHex.color = 'red';
-  const player = new Player(0, 'whoever', 'blue', HexGrid.getVector(0));
-  const state = new GameState(map, [player]);
-  state.setPhase('action');
   const uiState = new UiStateClass();
-  const movementSystem = new MovementSystem(map);
+  const movementSystem = new MovementSystem(state.map);
   const shipMoveHandler = new ShipMoveHandler(state, uiState, movementSystem);
   return shipMoveHandler;
 }
@@ -174,6 +173,7 @@ Deno.test('Action move ship not enough favor', () => {
   const state = handler.getGameState();
   const player = state.getCurrentPlayer();
 
+  player.favor = 0;
   player.oracleDice = ['red'];
   const tooMuchRecolor = handler.attemptMoveShip(
     player,
@@ -327,7 +327,7 @@ Deno.test('Action move ship with card and favor range success', () => {
     0,
     1,
   );
-  assert(result.success);
+  assert(result.success, JSON.stringify(result.error));
   assertEquals(player.getShipPosition(), to);
   assertEquals(player.oracleCards.length, 1);
   assertEquals(player.favor, 1);
@@ -356,7 +356,7 @@ Deno.test('Action move ship with card and recolor success', () => {
     1,
     0,
   );
-  assert(result.success);
+  assert(result.success, JSON.stringify(result.error));
   assertEquals(player.getShipPosition(), to);
   assertEquals(player.oracleCards.length, 1);
   assertEquals(player.favor, 1);

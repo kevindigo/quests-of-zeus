@@ -1,8 +1,8 @@
 // Game initialization and setup for Quests of Zeus
-import { GameState } from './GameState.ts';
+import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import { HexMap } from './hexmap/HexMap.ts';
+import type { HexMap } from './hexmap/HexMap.ts';
 import { Player } from './Player.ts';
 import {
   CityHex,
@@ -30,22 +30,12 @@ export function findZeus(map: HexMap): HexCell {
 }
 
 export class GameInitializer {
-  /**
-   * Initialize a new game state
-   */
-  public initializeGameState(): GameState {
-    const map = new HexMap();
-
-    // Find the Zeus hex coordinates
+  public initializeGameState(state: GameState): void {
+    const map = state.map;
+    map.reset();
     const zeusCell = findZeus(map);
-
-    // Initialize players (2-4 players)
     const players = this.initializePlayers(zeusCell.getCoordinates());
-
-    const state = new GameState(
-      map,
-      players,
-    );
+    state.setPlayers([...players]);
 
     const cubeHexes = this.initializeOfferingCubes(map, players.length);
     state.setCubeHexes(cubeHexes);
@@ -58,9 +48,9 @@ export class GameInitializer {
     const shrineHexes = this.initializeShrines(map);
     state.setShrineHexes(shrineHexes);
 
-    state.setPhase('action');
+    state.resetOracleCardDeck();
 
-    return state;
+    state.setPhase('action');
   }
 
   /**

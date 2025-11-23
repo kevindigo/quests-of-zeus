@@ -18,13 +18,11 @@ export class TerrainPlacementManager {
     this.seaColorManager = seaColorManager;
   }
 
-  /**
-   * Generate a hexagon-shaped grid with radius 6
-   * for the Quests of Zeus game
-   */
-  generateGrid(): HexGrid {
-    const radius = 6;
-    const grid = new HexGrid(radius, 'sea');
+  resetGrid(grid: HexGrid): void {
+    grid.forEachCell((cell) => {
+      cell.terrain = 'sea';
+      cell.color = 'none';
+    });
 
     this.placeZeus(grid);
     this.placeCities(grid);
@@ -40,7 +38,6 @@ export class TerrainPlacementManager {
     this.setColors(grid, 'temple');
     this.setColors(grid, 'shrine');
     this.seaColorManager.assignColorsToSeaHexes(grid);
-    return grid;
   }
 
   /**

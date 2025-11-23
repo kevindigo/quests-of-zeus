@@ -20,6 +20,7 @@ export type HexMapSnapshot = {
 
 export class HexMap {
   constructor() {
+    this.grid = new HexGrid(6, 'sea');
     this.hexGridOperations = new HexGridOperations();
     this.pathfindingService = new PathfindingService(this.hexGridOperations);
     this.seaColorManager = new SeaColorManager();
@@ -28,7 +29,11 @@ export class HexMap {
       this.seaColorManager,
     );
 
-    this.grid = this.terrainPlacementManager.generateGrid();
+    this.reset();
+  }
+
+  public reset(): void {
+    this.terrainPlacementManager.resetGrid(this.grid);
   }
 
   public static fromSnapshot(json: HexMapSnapshot): HexMap {
