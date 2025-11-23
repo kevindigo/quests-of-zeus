@@ -113,7 +113,8 @@ export class MovementSystem {
     if (!isReachable) {
       return {
         isValid: false,
-        error: `Target is not reachable within ${movementRange} movement range`,
+        error: `Target ${targetQ},${targetR} is not reachable 
+            from ${currentPos.q},${currentPos.r} within ${movementRange} movement range`,
       };
     }
 
