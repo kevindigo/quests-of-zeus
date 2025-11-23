@@ -35,47 +35,31 @@ export class ControllerForHexClicks {
 
     const effectiveColor = this.gameManager.getEffectiveSelectedColor();
     if (!effectiveColor) {
-      // DEBUGGING!!!
-      {
-        const shrineHex = gameState.findShrineHexAt(coordinates);
-        if (shrineHex) {
-          console.log(
-            `handleHexClick on ${JSON.stringify(shrineHex)}`,
-          );
-        }
-      }
-      // END DEBUGGING!!!
-
       return new Failure(
         'Please select a resource (die or oracle card) first!!',
       );
     }
 
-    const currentPlayer = gameState.getCurrentPlayer();
-    // const selectedOracleCardColor = gameState.getSelectedOracleCardColor();
-    const selectedResource = this.getEngine().getSelectedResource();
+    // FixMe: I think this is where we should perform the recoloring
 
-    if (selectedResource.isCard() && currentPlayer.usedOracleCardThisTurn) {
+    const currentPlayer = gameState.getCurrentPlayer();
+    const resource = this.getEngine().getSelectedResource();
+
+    if (resource.isCard() && currentPlayer.usedOracleCardThisTurn) {
       return new Failure('Cannot use more than 1 oracle card per turn');
     }
-    if (
-      selectedResource.isDie() &&
-      !currentPlayer.oracleDice.includes(selectedResource.getColor())
-    ) {
-      return new Failure(
-        `Color ${selectedResource.getColor()} not in dice ${
-          JSON.stringify(currentPlayer.oracleDice)
-        }`,
-      );
+
+    const dice = currentPlayer.oracleDice;
+    if (resource.isDie() && !dice.includes(resource.getColor())) {
+      const color = resource.getColor();
+      return new Failure(`Color ${color} not in dice ${JSON.stringify(dice)}`);
     }
-    if (
-      selectedResource.isCard() &&
-      !currentPlayer.oracleCards.includes(selectedResource.getColor())
-    ) {
+
+    const cards = currentPlayer.oracleCards;
+    if (resource.isCard() && !cards.includes(resource.getColor())) {
+      const color = resource.getColor();
       return new Failure(
-        `Color ${selectedResource.getColor()} not in cards ${
-          JSON.stringify(currentPlayer.oracleCards)
-        }`,
+        `Color ${color} not in cards ${JSON.stringify(cards)}`,
       );
     }
 
