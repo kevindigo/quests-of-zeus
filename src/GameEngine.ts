@@ -141,32 +141,32 @@ export class GameEngine {
     }
 
     const currentPlayer =
-      this.state!.players[this.state!.getCurrentPlayerIndex()];
+      this.state.players[this.state.getCurrentPlayerIndex()];
     if (currentPlayer) {
       currentPlayer.usedOracleCardThisTurn = false;
       currentPlayer.oracleDice = newDice;
       this.clearSelectedRecoloring();
     }
 
-    const nextPlayerIndex = (this.state!.getCurrentPlayerIndex() + 1) %
-      this.state!.players.length;
+    const nextPlayerIndex = (this.state.getCurrentPlayerIndex() + 1) %
+      this.state.players.length;
 
-    this.state!.setCurrentPlayerIndex(nextPlayerIndex);
-    if (this.state!.getCurrentPlayerIndex() === 0) {
-      this.state!.advanceRound();
+    this.state.setCurrentPlayerIndex(nextPlayerIndex);
+    if (this.state.getCurrentPlayerIndex() === 0) {
+      this.state.advanceRound();
     }
-    this.state!.setPhase('action');
+    this.state.setPhase('action');
   }
 
   private getPlayerIndex(playerId: number): number {
-    return this.state!.players.findIndex((p) => p.id === playerId);
+    return this.state.players.findIndex((p) => p.id === playerId);
   }
 
   private getValidPlayer(playerId: number): Player {
-    const player = this.state!.players.find((p) => p.id === playerId);
+    const player = this.state.players.find((p) => p.id === playerId);
     if (
       !player ||
-      this.state!.getCurrentPlayerIndex() !== this.getPlayerIndex(playerId)
+      this.state.getCurrentPlayerIndex() !== this.getPlayerIndex(playerId)
     ) {
       throw new Error('Invalid player or not your turn');
     }
@@ -185,7 +185,7 @@ export class GameEngine {
   }
 
   public getCurrentPlayer(): Player {
-    const player = this.state!.players[this.state!.getCurrentPlayerIndex()];
+    const player = this.state.players[this.state.getCurrentPlayerIndex()];
     if (!player) {
       throw new Error('Current player not found');
     }
@@ -193,7 +193,7 @@ export class GameEngine {
   }
 
   public getPlayer(playerId: number): Player | undefined {
-    return this.state!.players.find((p) => p.id === playerId);
+    return this.state.players.find((p) => p.id === playerId);
   }
 
   public getUiState(): UiState {
@@ -201,19 +201,19 @@ export class GameEngine {
   }
 
   public getCityHexes(): CityHex[] {
-    return this.state!.getCityHexes();
+    return this.state.getCityHexes();
   }
 
   public getCubeHexes(): CubeHex[] {
-    return this.state!.getCubeHexes();
+    return this.state.getCubeHexes();
   }
 
   public getMonsterHexes(): MonsterHex[] {
-    return this.state!.getMonsterHexes();
+    return this.state.getMonsterHexes();
   }
 
   public getMonstersOnHex(q: number, r: number): HexColor[] {
-    const monsterHex = this.state!.getMonsterHexes().find((mh) =>
+    const monsterHex = this.state.getMonsterHexes().find((mh) =>
       mh.q === q && mh.r === r
     );
     return monsterHex ? monsterHex.monsterColors : [];
@@ -555,7 +555,7 @@ export class GameEngine {
   }
 
   public checkWinCondition(): { winner: Player | null; gameOver: boolean } {
-    const winner = this.state!.players.find((p) =>
+    const winner = this.state.players.find((p) =>
       p.completedQuestTypes.temple_offering >= 3 &&
       p.completedQuestTypes.monster >= 3 &&
       p.completedQuestTypes.statue >= 3 &&
