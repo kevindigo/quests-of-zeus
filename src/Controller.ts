@@ -14,15 +14,8 @@ import type { UiState } from './UiState.ts';
 import { ViewGame } from './ViewGame.ts';
 
 export class Controller {
-  private gameEngine: GameEngine;
-  private viewGame: ViewGame;
-
-  constructor(engine?: GameEngine) {
-    if (engine) {
-      this.gameEngine = engine;
-    } else {
-      this.gameEngine = new GameEngine();
-    }
+  constructor() {
+    this.gameEngine = new GameEngine();
     this.viewGame = new ViewGame(this.gameEngine);
   }
 
@@ -397,4 +390,7 @@ export class Controller {
       this.highlightAvailableHexElements(state);
     }
   }
+
+  private gameEngine: GameEngine;
+  private viewGame: ViewGame;
 }

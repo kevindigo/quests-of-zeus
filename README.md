@@ -72,6 +72,7 @@ and gain favor with the gods. Complete 12 quests, and return to Zeus.
 
 ```
 ├── src/
+├──── Controller.ts          # This loads the rest of the game
 ├── index.html               # Main game interface
 ├── dist/                    # Compiled JavaScript files
 ├── tests/                   # Test files
