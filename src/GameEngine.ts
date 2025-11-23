@@ -26,15 +26,15 @@ import type {
   ShrineHex,
 } from './types.ts';
 import { COLOR_WHEEL } from './types.ts';
+import { UiState } from './UiState.ts';
 
 export class GameEngine {
-  private state: GameState | null = null;
-  private gameInitializer: GameInitializer;
-  private movementSystem: MovementSystem | null = null;
-  private oracleSystem: OracleSystem | null = null;
-  private shipMoveHandler: ShipMoveHandler | null = null;
-
   constructor() {
+    this.state = null;
+    this.uiState = new UiState();
+    this.movementSystem = null;
+    this.oracleSystem = null;
+    this.shipMoveHandler = null;
     this.gameInitializer = new GameInitializer();
   }
 
@@ -230,6 +230,10 @@ export class GameEngine {
   public getPlayer(playerId: number): Player | undefined {
     this.ensureInitialized();
     return this.state!.players.find((p) => p.id === playerId);
+  }
+
+  public getUiState(): UiState {
+    return this.uiState;
   }
 
   public getCityHexes(): CityHex[] {
@@ -621,4 +625,11 @@ export class GameEngine {
       wildQuest.color = color;
     }
   }
+
+  private state: GameState | null;
+  private uiState: UiState;
+  private gameInitializer: GameInitializer;
+  private movementSystem: MovementSystem | null;
+  private oracleSystem: OracleSystem | null;
+  private shipMoveHandler: ShipMoveHandler | null;
 }
