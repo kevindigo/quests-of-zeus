@@ -1,7 +1,7 @@
 import type { HexColor, TerrainType } from '../types.ts';
 import type { HexCoordinates } from './HexGrid.ts';
 
-export type HexCellJson = {
+export type HexCellSnapshot = {
   q: number;
   r: number;
   terrain: TerrainType;
@@ -20,7 +20,7 @@ export class HexCell {
     this.color = color || 'none';
   }
 
-  public static fromJson(json: HexCellJson): HexCell {
+  public static fromSnapshot(json: HexCellSnapshot): HexCell {
     const q = json.q;
     const r = json.r;
     return new HexCell(
@@ -30,7 +30,7 @@ export class HexCell {
     );
   }
 
-  public toJson(): HexCellJson {
+  public toSnapshot(): HexCellSnapshot {
     return {
       q: this.q,
       r: this.r,

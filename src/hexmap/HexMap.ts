@@ -2,14 +2,18 @@
 
 import type { HexColor, TerrainType } from '../types.ts';
 import type { HexCell } from './HexCell.ts';
-import { type HexCoordinates, HexGrid, type HexGridJson } from './HexGrid.ts';
+import {
+  type HexCoordinates,
+  HexGrid,
+  type HexGridSnapshot,
+} from './HexGrid.ts';
 import { HexGridOperations } from './HexGridOperations.ts';
 import { PathfindingService } from './PathfindingService.ts';
 import { SeaColorManager } from './SeaColorManager.ts';
 import { TerrainPlacementManager } from './TerrainPlacementManager.ts';
 
-export type HexMapJson = {
-  grid: HexGridJson;
+export type HexMapSnapshot = {
+  grid: HexGridSnapshot;
   width: number;
   height: number;
 };
@@ -27,19 +31,19 @@ export class HexMap {
     this.grid = this.terrainPlacementManager.generateGrid();
   }
 
-  public static fromJson(json: HexMapJson): HexMap {
+  public static fromSnapshot(json: HexMapSnapshot): HexMap {
     const map = new HexMap();
     // map.width = json.width;
     // map.height = json.height;
-    map.grid = HexGrid.fromJson(json.grid);
+    map.grid = HexGrid.fromSnapshot(json.grid);
     return map;
   }
 
-  public toJson(): HexMapJson {
+  public toSnapshot(): HexMapSnapshot {
     return {
       width: this.width,
       height: this.height,
-      grid: this.grid.toJson(),
+      grid: this.grid.toSnapshot(),
     };
   }
 

@@ -246,11 +246,11 @@ export class Resource {
     return new Resource('card', color);
   }
 
-  public static toJson() {
-    return;
+  public static toSnapshot() {
+    throw new Error('Resource snapshot not implemented yet!');
   }
 
-  public static fromJson(resource: Resource): Resource {
+  public static fromSnapshot(resource: Resource): Resource {
     return new Resource(resource.type, resource.color);
   }
 

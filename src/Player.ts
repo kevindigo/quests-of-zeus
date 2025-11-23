@@ -12,7 +12,7 @@ import type {
   QuestType,
 } from './types.ts';
 
-export type PlayerJson = {
+export type PlayerSnapshot = {
   id: number;
   name: string;
   color: PlayerColorName;
@@ -52,7 +52,7 @@ export class Player {
     this.quests = [];
   }
 
-  public static fromJson(json: PlayerJson): Player {
+  public static fromSnapshot(json: PlayerSnapshot): Player {
     const player = new Player(
       json.id,
       json.name,
@@ -69,7 +69,7 @@ export class Player {
     return player;
   }
 
-  public toJson(): PlayerJson {
+  public toSnapshot(): PlayerSnapshot {
     return {
       id: this.id,
       name: this.name,

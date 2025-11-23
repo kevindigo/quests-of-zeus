@@ -1,5 +1,5 @@
 import type { TerrainType } from '../types.ts';
-import { HexCell, type HexCellJson } from './HexCell.ts';
+import { HexCell, type HexCellSnapshot } from './HexCell.ts';
 
 export type Direction = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -8,9 +8,9 @@ export type HexCoordinates = {
   r: number;
 };
 
-export type HexGridJson = {
+export type HexGridSnapshot = {
   radius: number;
-  grid: HexCellJson[][];
+  grid: HexCellSnapshot[][];
 };
 
 export class HexGrid {
@@ -27,22 +27,22 @@ export class HexGrid {
     this.grid = HexGrid.generateHexShapedGrid(this.radius, defaultTerrain);
   }
 
-  public static fromJson(json: HexGridJson): HexGrid {
+  public static fromSnapshot(json: HexGridSnapshot): HexGrid {
     const grid = new HexGrid(json.radius, 'sea');
     grid.grid = json.grid.map((column) => {
       return column.map((cell) => {
-        return HexCell.fromJson(cell);
+        return HexCell.fromSnapshot(cell);
       });
     });
     return grid;
   }
 
-  public toJson(): HexGridJson {
+  public toSnapshot(): HexGridSnapshot {
     return {
       radius: this.radius,
       grid: this.grid.map((gridColumn) => {
         return gridColumn.map((cell) => {
-          return cell.toJson();
+          return cell.toSnapshot();
         });
       }),
     };

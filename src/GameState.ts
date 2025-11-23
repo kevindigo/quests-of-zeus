@@ -1,6 +1,6 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import { HexMap, type HexMapJson } from './hexmap/HexMap.ts';
-import { Player, type PlayerJson } from './Player.ts';
+import { HexMap, type HexMapSnapshot } from './hexmap/HexMap.ts';
+import { Player, type PlayerSnapshot } from './Player.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -19,9 +19,9 @@ import {
 } from './types.ts';
 import { UtilityService } from './UtilityService.ts';
 
-export type GameStateJson = {
-  map: HexMapJson;
-  players: PlayerJson[];
+export type GameStateSnapshot = {
+  map: HexMapSnapshot;
+  players: PlayerSnapshot[];
   currentPlayerIndex: number;
   round: number;
   phase: Phase;
@@ -52,10 +52,10 @@ export class GameState {
     this.resetOracleCardDeck();
   }
 
-  public static fromJson(rawJson: unknown): GameState {
-    const json = rawJson as GameStateJson;
-    const map = HexMap.fromJson(json.map);
-    const players = json.players.map((player) => Player.fromJson(player));
+  public static fromSnapshot(snapshot: unknown): GameState {
+    const json = snapshot as GameStateSnapshot;
+    const map = HexMap.fromSnapshot(json.map);
+    const players = json.players.map((player) => Player.fromSnapshot(player));
     const state = new GameState(map, players);
     state.currentPlayerIndex = json.currentPlayerIndex;
     state.round = json.round;
@@ -69,11 +69,11 @@ export class GameState {
     return state;
   }
 
-  public toJson(): GameStateJson {
+  public toSnapshot(): GameStateSnapshot {
     return {
-      map: this.map.toJson(),
+      map: this.map.toSnapshot(),
       players: this.players.map((player) => {
-        return player.toJson();
+        return player.toSnapshot();
       }),
       currentPlayerIndex: this.currentPlayerIndex,
       round: this.round,

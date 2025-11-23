@@ -175,8 +175,8 @@ export class GameEngine {
 
   // Public getters
   public getGameStateSnapshot(): GameState {
-    return GameState.fromJson(
-      JSON.parse(JSON.stringify(this.state.toJson())),
+    return GameState.fromSnapshot(
+      JSON.parse(JSON.stringify(this.state.toSnapshot())),
     );
   }
 
