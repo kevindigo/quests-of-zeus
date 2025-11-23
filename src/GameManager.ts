@@ -87,13 +87,11 @@ export class GameManager {
     return this.engine.spendResourceForFavor(this.getGameState(), this.uiState);
   }
 
-  public spendOracleCardToDrawCard(
-    playerId: number,
-    cardColor: CoreColor,
-  ): boolean {
-    const player = this.getGameState().getPlayer(playerId);
-    const oracleSystem = new OracleSystem(this.getGameState());
-    return oracleSystem.spendOracleCardToDrawCard(player, cardColor);
+  public spendOracleCardToDrawCard(): ResultWithMessage {
+    return this.engine.spendResourceForOracleCard(
+      this.getGameState(),
+      this.getUiState(),
+    );
   }
 
   public drawOracleCard(playerId: number, dieColor: CoreColor): boolean {

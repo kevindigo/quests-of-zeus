@@ -333,10 +333,7 @@ export class Controller {
 
   private drawOracleCard(): void {
     const handler = new ControllerForBasicActions(this.gameEngine);
-    const result = handler.drawOracleCard(
-      this.getSelectedDieColor(),
-      this.getSelectedCardColor(),
-    );
+    const result = handler.drawOracleCard();
     if (result.success) {
       this.clearResourceSelection();
       this.renderGameState();

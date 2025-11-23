@@ -9,54 +9,15 @@ import type { CoreColor } from './types.ts';
 
 export class ControllerForBasicActions {
   public constructor(engine: GameManager) {
-    this.gameEngine = engine;
+    this.gameManager = engine;
   }
 
   public spendResourceForFavor(): ResultWithMessage {
-    const engine = this.gameEngine;
-    const phase = engine.getGameState().getPhase();
-    if (phase !== 'action') {
-      return new Failure(`Cannot buy favor during the ${phase} phase`);
-    }
-
-    const usingCard = engine.getSelectedResource().isCard();
-    if (usingCard && engine.getCurrentPlayer().usedOracleCardThisTurn) {
-      return new Failure(`Cannot use a second oracle card this turn`);
-    }
-    return engine.spendResourceForFavor();
+    return this.gameManager.spendResourceForFavor();
   }
 
-  public drawOracleCard(
-    dieColor: CoreColor | null,
-    cardColor: CoreColor | null,
-  ): ResultWithMessage {
-    const phase = this.gameEngine.getGameState().getPhase();
-    if (phase !== 'action') {
-      return new Failure(`Cannot buy oracle card during the ${phase} phase`);
-    }
-
-    const color = dieColor || cardColor;
-
-    if (!color) {
-      return new Failure(
-        'Please select a resource (die or oracle card) first!',
-      );
-    }
-
-    const engine = this.gameEngine;
-    const currentPlayer = engine.getCurrentPlayer();
-    const resourceType = dieColor ? 'die' : 'card';
-    const fn = dieColor
-      ? engine.drawOracleCard.bind(engine)
-      : engine.spendOracleCardToDrawCard.bind(engine);
-
-    if (fn(currentPlayer.id, color)) {
-      return new Success(`Spent ${color} ${resourceType} to gain oracle card!`);
-    }
-
-    return new Failure(
-      `Cannot spend ${resourceType} for oracle card at this time`,
-    );
+  public drawOracleCard(): ResultWithMessage {
+    return this.gameManager.spendOracleCardToDrawCard();
   }
 
   public setRecolorIntention(
@@ -72,19 +33,19 @@ export class ControllerForBasicActions {
     }
 
     if (favorCost === 0) {
-      this.gameEngine.clearSelectedRecoloring();
+      this.gameManager.clearSelectedRecoloring();
 
       return new Success('Recoloring intention cleared');
     }
 
-    const playerFavor = this.gameEngine.getCurrentPlayer().favor;
+    const playerFavor = this.gameManager.getCurrentPlayer().favor;
     if (favorCost > playerFavor) {
       return new Failure(
         `Cannot spend more favor (${favorCost}) than the player has (${playerFavor})`,
       );
     }
 
-    const success = this.gameEngine.setSelectedRecoloring(
+    const success = this.gameManager.setSelectedRecoloring(
       favorCost,
     );
 
@@ -102,5 +63,5 @@ export class ControllerForBasicActions {
     }
   }
 
-  private gameEngine: GameManager;
+  private gameManager: GameManager;
 }

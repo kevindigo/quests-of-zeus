@@ -80,14 +80,13 @@ export class OracleSystem {
       return false;
     }
 
-    // Check if player has the specified oracle card
-    if (!player.oracleCards.includes(cardColor)) {
+    const deck = this.gameState.getOracleCardDeck();
+    if (deck.length === 0) {
       return false;
     }
 
-    // Check if oracle card deck has cards
-    const deck = this.gameState.getOracleCardDeck();
-    if (deck.length === 0) {
+    // Check if player has the specified oracle card
+    if (!player.oracleCards.includes(cardColor)) {
       return false;
     }
 

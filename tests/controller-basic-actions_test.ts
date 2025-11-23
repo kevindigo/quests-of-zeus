@@ -8,16 +8,19 @@ import { ControllerForBasicActions } from '../src/ControllerForBasicActions.ts';
 import { GameManager } from '../src/GameManager.ts';
 import type { GameState } from '../src/GameState.ts';
 import type { Player } from '../src/Player.ts';
+import type { UiState } from '../src/UiState.ts';
 import { assertFailureContains } from './test-helpers.ts';
 
 let engine: GameManager;
-let state: GameState;
+let gameState: GameState;
+let uiState: UiState;
 let currentPlayer: Player;
 let handler: ControllerForBasicActions;
 
 function setup() {
   engine = new GameManager();
-  state = engine.getGameState();
+  gameState = engine.getGameState();
+  uiState = engine.getUiState();
   currentPlayer = engine.getCurrentPlayer();
   handler = new ControllerForBasicActions(engine);
 }
@@ -64,7 +67,7 @@ Deno.test('Buy favor - success with card', () => {
 
 Deno.test('Buy favor - wrong phase', () => {
   setup();
-  state.setPhase('setup');
+  gameState.setPhase('setup');
   const result = handler.spendResourceForFavor();
   assertFailureContains(result, 'phase');
 });
@@ -108,7 +111,7 @@ Deno.test('Buy favor - with card, then with card', () => {
 
 Deno.test('Buy oracle card - no resource selected', () => {
   setup();
-  const result = handler.drawOracleCard(null, null);
+  const result = handler.drawOracleCard();
   assertFailureContains(result, 'select');
 });
 
@@ -116,8 +119,9 @@ Deno.test('Buy oracle card - success with die', () => {
   setup();
   const firstDie = currentPlayer.oracleDice[0];
   assert(firstDie);
-  const result = handler.drawOracleCard(firstDie, null);
-  assert(result);
+  uiState.setSelectedDieColor(firstDie);
+  const result = handler.drawOracleCard();
+  assert(result, result.message);
   assertStringIncludes(result.message, firstDie);
   assertEquals(currentPlayer.oracleCards.length, 1);
 });
@@ -125,16 +129,18 @@ Deno.test('Buy oracle card - success with die', () => {
 Deno.test('Buy oracle card - success with card', () => {
   setup();
   currentPlayer.oracleCards = ['red'];
-  const result = handler.drawOracleCard(null, 'red');
-  assert(result);
+  uiState.setSelectedOracleCardColor('red');
+  const result = handler.drawOracleCard();
+  assert(result, result.message);
   assertStringIncludes(result.message, 'red');
   assertEquals(currentPlayer.oracleCards.length, 1);
 });
 
 Deno.test('Buy oracle card - wrong phase', () => {
   setup();
-  state.setPhase('setup');
-  const result = handler.drawOracleCard('red', null);
+  gameState.setPhase('setup');
+  uiState.setSelectedDieColor('red');
+  const result = handler.drawOracleCard();
   assertFailureContains(result, 'phase');
 });
 
@@ -142,7 +148,8 @@ Deno.test('Buy oracle card - already used an oracle card', () => {
   setup();
   currentPlayer.oracleCards = ['red'];
   currentPlayer.usedOracleCardThisTurn = true;
-  const result = handler.drawOracleCard(null, 'blue');
+  uiState.setSelectedOracleCardColor('red');
+  const result = handler.drawOracleCard();
   assertFailureContains(result, 'card');
 });
 
