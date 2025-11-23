@@ -26,6 +26,34 @@ export interface FreeGodAction extends FreeAction {
   godColor: CoreColor;
 }
 
+// ------------------ Free Regular Actions ------------------
+export interface FreeContinueMonsterFightAction extends FreeAction {
+  subType: 'continueMonsterFight';
+}
+
+export interface FreeAbandonMonsterFightAction extends FreeAction {
+  subType: 'abandonMonsterFight';
+}
+
+export interface FreeSkipTurnHealAction extends FreeAction {
+  subType: 'skipTurnHeal';
+  skipColors: [CoreColor, CoreColor, CoreColor];
+}
+
+export interface FreeUseEquipmentExtraDieAction extends FreeAction {
+  subType: 'useEquipmentExtraDie';
+}
+
+export interface FreeEndTurnAction extends FreeAction {
+  subType: 'endTurn';
+}
+
+export interface FreeRecolorAction extends FreeAction {
+  subtype: 'recolor';
+  targetResource: Resource;
+  favorToSpend: number;
+}
+
 // ------------------ Free God Actions ------------------
 export interface FreeBlueGodAction extends FreeGodAction {
   godColor: 'blue';
@@ -52,28 +80,6 @@ export interface FreeBlackGodAction extends FreeGodAction {
 
 export interface FreePinkGodAction extends FreeGodAction {
   godColor: 'pink';
-}
-
-// ------------------ Other Free Actions ------------------
-export interface FreeContinueMonsterFightAction extends FreeAction {
-  subType: 'continueMonsterFight';
-}
-
-export interface FreeAbandonMonsterFightAction extends FreeAction {
-  subType: 'abandonMonsterFight';
-}
-
-export interface FreeSkipTurnHealAction extends FreeAction {
-  subType: 'skipTurnHeal';
-  skipColors: [CoreColor, CoreColor, CoreColor];
-}
-
-export interface FreeUseEquipmentExtraDieAction extends FreeAction {
-  subType: 'useEquipmentExtraDie';
-}
-
-export interface FreeEndTurnAction extends FreeAction {
-  subType: 'endTurn';
 }
 
 // ------------------ Coupon Actions ------------------
