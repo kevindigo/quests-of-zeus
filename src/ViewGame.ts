@@ -1,4 +1,3 @@
-import type { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import { HexMapSvgGenerator } from './HexMapSvgGenerator.ts';
 import type { CityHex, CubeHex, MonsterHex } from './types.ts';
@@ -8,8 +7,9 @@ import { ViewPlayer } from './ViewPlayer.ts';
 import { ViewWelcome } from './ViewWelcome.ts';
 
 export class ViewGame {
-  public constructor(gameEngine: GameEngine) {
-    this.gameEngine = gameEngine;
+  public constructor(gameState: GameState, uiState: UiState) {
+    this.gameState = gameState;
+    this.uiState = uiState;
   }
 
   public clearMessagePanel(): void {
@@ -42,30 +42,23 @@ export class ViewGame {
   }
 
   public renderGameState(): void {
-    const gameState = this.gameEngine.getGameStateSnapshot();
-    if (gameState.getPhase() === 'setup') {
+    if (this.gameState.getPhase() === 'setup') {
       this.viewWelcome();
       return;
     }
 
     // Update player info display
-    this.updatePlayerInfo(gameState);
+    this.updatePlayerInfo(this.gameState);
 
     // Render the map with player positions
-    this.renderMap(gameState);
+    this.renderMap(this.gameState);
 
     // Update game phase display
-    this.updatePhaseDisplay(gameState, this.gameEngine.getUiState());
+    this.updatePhaseDisplay(this.gameState, this.uiState);
 
     const newGameButton = document.getElementById('newGame');
     if (newGameButton) {
       newGameButton.style.visibility = 'visible';
-    }
-
-    // Check for win condition
-    const winCondition = this.gameEngine.checkWinCondition();
-    if (winCondition.gameOver) {
-      this.showGameOver(winCondition.winner!);
     }
   }
 
@@ -156,20 +149,6 @@ export class ViewGame {
     );
   }
 
-  private showGameOver(
-    winner: { name: string; color: string },
-  ): void {
-    const message = `Game Over! ${winner.name} (${
-      winner.color.charAt(0).toUpperCase() + winner.color.slice(1)
-    }) wins!`;
-    this.showMessage(message);
-
-    // Disable further actions
-    const actionButtons = document.querySelectorAll('.action-btn');
-    actionButtons.forEach((button: Element) => {
-      (button as HTMLButtonElement).disabled = true;
-    });
-  }
-
-  private gameEngine: GameEngine;
+  private gameState: GameState;
+  private uiState: UiState;
 }

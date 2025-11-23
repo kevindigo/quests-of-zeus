@@ -16,7 +16,10 @@ import { ViewGame } from './ViewGame.ts';
 export class Controller {
   constructor() {
     this.gameEngine = new GameEngine();
-    this.viewGame = new ViewGame(this.gameEngine);
+    this.viewGame = new ViewGame(
+      this.gameEngine.getGameState(),
+      this.gameEngine.getUiState(),
+    );
   }
 
   public getUiState(): UiState {
