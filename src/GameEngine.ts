@@ -1,8 +1,8 @@
 // Quests of Zeus Game Engine - Core Orchestration
 // High-level game management and orchestration
 
-import { GameInitializer } from './GameStateInitializer.ts';
 import { GameState } from './GameState.ts';
+import { GameInitializer } from './GameStateInitializer.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
@@ -30,12 +30,10 @@ import { type UiState, UiStateClass } from './UiState.ts';
 
 export class GameEngine {
   constructor() {
+    this.gameInitializer = new GameInitializer();
     this.state = null;
     this.uiState = new UiStateClass();
-    this.movementSystem = null;
     this.oracleSystem = null;
-    this.shipMoveHandler = null;
-    this.gameInitializer = new GameInitializer();
   }
 
   public initializeGame(): GameState {
@@ -43,13 +41,7 @@ export class GameEngine {
     if (!this.state) {
       throw new Error('Initializer failed to create a game state');
     }
-    this.movementSystem = new MovementSystem(this.state.map);
     this.oracleSystem = new OracleSystem(this.state);
-    this.shipMoveHandler = new ShipMoveHandler(
-      this.state,
-      this.uiState,
-      this.movementSystem,
-    );
     return this.state;
   }
 
@@ -77,7 +69,13 @@ export class GameEngine {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
     const destinationCoordinates = { q: targetQ, r: targetR };
-    return this.shipMoveHandler!.attemptMoveShip(
+    const movementSystem = new MovementSystem(this.getGameState().map);
+    const handler = new ShipMoveHandler(
+      this.getGameState(),
+      this.getUiState(),
+      movementSystem,
+    );
+    return handler.attemptMoveShip(
       player,
       destinationCoordinates,
       selectedResource,
@@ -665,7 +663,5 @@ export class GameEngine {
   private state: GameState | null;
   private uiState: UiState;
   private gameInitializer: GameInitializer;
-  private movementSystem: MovementSystem | null;
   private oracleSystem: OracleSystem | null;
-  private shipMoveHandler: ShipMoveHandler | null;
 }
