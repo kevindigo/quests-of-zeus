@@ -1,7 +1,7 @@
 // Quests of Zeus Game Engine - Core Orchestration
 // High-level game management and orchestration
 
-import { GameInitializer } from './GameInitializer.ts';
+import { GameInitializer } from './GameStateInitializer.ts';
 import { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
