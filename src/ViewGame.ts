@@ -42,12 +42,11 @@ export class ViewGame {
   }
 
   public renderGameState(): void {
-    if (!this.gameEngine.isGameInitialized()) {
+    const gameState = this.gameEngine.getGameStateSnapshot();
+    if (gameState.getPhase() === 'setup') {
       this.viewWelcome();
       return;
     }
-
-    const gameState = this.gameEngine.getGameStateSnapshot();
 
     // Update player info display
     this.updatePlayerInfo(gameState);
