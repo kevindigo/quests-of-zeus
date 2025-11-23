@@ -11,6 +11,7 @@ import {
   testGrid,
   testPlayer,
   testState,
+  testUiState,
 } from './test-helpers.ts';
 
 function setupWithReadyShrineHex(): ShrineHex {
@@ -190,7 +191,8 @@ Deno.test('Click land - shrine card reward but oracle deck empty', () => {
   const MORE_THAN_ORACLE_DECK_CARD_COUNT = 1000;
   for (let i = 0; i < MORE_THAN_ORACLE_DECK_CARD_COUNT; ++i) {
     testPlayer.oracleDice = ['red'];
-    if (!testEngine.drawOracleCard(testPlayer.id, 'red')) {
+    testUiState.setSelectedDieColor('red');
+    if (!testEngine.spendResourceForOracleCard()) {
       break;
     }
   }

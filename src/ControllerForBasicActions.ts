@@ -17,7 +17,7 @@ export class ControllerForBasicActions {
   }
 
   public drawOracleCard(): ResultWithMessage {
-    return this.gameManager.spendOracleCardToDrawCard();
+    return this.gameManager.spendResourceForOracleCard();
   }
 
   public setRecolorIntention(

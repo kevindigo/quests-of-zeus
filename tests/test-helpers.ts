@@ -7,6 +7,7 @@ import type { HexMap } from '../src/hexmap/HexMap.ts';
 import type { Player } from '../src/Player.ts';
 import type { ResultWithMessage } from '../src/ResultWithMessage.ts';
 import type { HexColor, TerrainType } from '../src/types.ts';
+import type { UiState } from '../src/UiState.ts';
 
 export function assertFailureContains(
   result: ResultWithMessage,
@@ -21,6 +22,7 @@ export function assertFailureContains(
 
 export let testEngine: GameManager;
 export let testState: GameState;
+export let testUiState: UiState;
 export let testMap: HexMap;
 export let testGrid: HexGrid;
 export let testPlayer: Player;
@@ -28,6 +30,7 @@ export let testPlayer: Player;
 export function setupGame(): void {
   testEngine = new GameManager();
   testState = testEngine.getGameState();
+  testUiState = testEngine.getUiState();
   testMap = testState.getMap();
   testGrid = testMap.getHexGrid();
   testPlayer = testState.getCurrentPlayer();

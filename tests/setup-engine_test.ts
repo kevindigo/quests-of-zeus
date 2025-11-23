@@ -142,7 +142,7 @@ Deno.test('GameEngine - starting a new game resets the oracle card deck', () => 
   player.oracleDice = ['red'];
   const uiState = engine.getUiState();
   uiState.setSelectedDieColor('red');
-  assert(engine.drawOracleCard(player.id, 'red'));
+  assert(engine.spendResourceForOracleCard());
   assertEquals(engine.getGameState().getOracleCardDeck().length, 29);
 
   engine.startNewGame();
