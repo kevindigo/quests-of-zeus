@@ -313,9 +313,9 @@ export class Controller {
   }
 
   private startNewGame(): void {
-    this.clearMessagePanel();
     this.gameEngine.startNewGame();
     this.renderGameState();
+    this.clearMessagePanel();
     this.showMessage(
       "New game started! All players have rolled their dice. Player 1's turn begins.",
     );
