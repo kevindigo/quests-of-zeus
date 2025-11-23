@@ -1,29 +1,75 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import type { CoreColor, Resource } from './types.ts';
 
-export type ActionType = 'free' | 'coupon' | 'noTargetColor' | 'normal';
+export type ActionType =
+  | 'free'
+  | 'godEffect'
+  | 'coupon'
+  | 'anyResource'
+  | 'hex'
+  | 'miscellaneous';
 
-// Base action interface
 export interface ActionBase {
   type: ActionType;
 }
 
 export interface FreeAction extends ActionBase {
   type: 'free';
+  subtype:
+    | 'continueMonsterFight'
+    | 'abandonMonsterFight'
+    | 'skipTurnHeal'
+    | 'useEquipmentExtraDie'
+    | 'endTurn'
+    | 'recolor';
 }
 
-// God action interface
+export interface GodEffectAction extends ActionBase {
+  type: 'godEffect';
+  godColor: CoreColor;
+}
+
+export interface CouponAction extends ActionBase {
+  type: 'coupon';
+  subType:
+    | 'peek'
+    | 'godAdvance'
+    | 'grabCube'
+    | 'grabStatue'
+    | 'flipCloud';
+}
+
 export interface ResourceAction extends ActionBase {
   spend: Resource;
 }
 
-export interface ResourceColorAction extends ResourceAction {
+export interface AnyResourceAction extends ResourceAction {
+  type: 'anyResource';
+  subtype: 'gainFavor' | 'gainOracleCard' | 'gainPeekCoupons';
+}
+
+export interface ColorBasedAction extends ResourceAction {
   targetColor: CoreColor;
 }
 
-export interface FreeGodAction extends FreeAction {
-  subType: 'god';
-  godColor: CoreColor;
+export interface HexAction extends ColorBasedAction {
+  type: 'hex';
+  coordinates: HexCoordinates;
+  subType:
+    | 'shipMove'
+    | 'loadCube'
+    | 'dropCube'
+    | 'loadStatue'
+    | 'dropStatue'
+    | 'fightMonster'
+    | 'exploreShrine';
+}
+
+export interface MiscellaneousColorAction extends ResourceAction {
+  type: 'miscellaneous';
+  subType:
+    | 'heal'
+    | 'useEquipmentGainFavorCardAdvance';
 }
 
 // ------------------ Free Regular Actions ------------------
@@ -55,156 +101,143 @@ export interface FreeRecolorAction extends FreeAction {
 }
 
 // ------------------ Free God Actions ------------------
-export interface FreeBlueGodAction extends FreeGodAction {
+export interface BlueGodAction extends GodEffectAction {
   godColor: 'blue';
   coordinates: HexCoordinates;
 }
 
-export interface FreeYellowGodAction extends FreeGodAction {
+export interface YellowGodAction extends GodEffectAction {
   godColor: 'yellow';
 }
 
-export interface FreeGreenGodAction extends FreeGodAction {
+export interface GreenGodAction extends GodEffectAction {
   godColor: 'green';
 }
 
-export interface FreeRedGodAction extends FreeGodAction {
+export interface RedGodAction extends GodEffectAction {
   godColor: 'red';
 }
 
-export interface FreeBlackGodAction extends FreeGodAction {
+export interface BlackGodAction extends GodEffectAction {
   godColor: 'black';
   coordinates: HexCoordinates;
   monsterColor: CoreColor;
 }
 
-export interface FreePinkGodAction extends FreeGodAction {
+export interface PinkGodAction extends GodEffectAction {
   godColor: 'pink';
 }
 
 // ------------------ Coupon Actions ------------------
-export interface CouponPeekAction extends ActionBase {
-  type: 'coupon';
+export interface CouponPeekAction extends CouponAction {
   subType: 'peek';
   coordinates: HexCoordinates;
 }
 
-export interface CouponGodAdvanceAction extends ActionBase {
-  type: 'coupon';
+export interface CouponGodAdvanceAction extends CouponAction {
   subType: 'godAdvance';
   color: CoreColor;
 }
 
-export interface CouponGrabCubeAction extends ActionBase {
-  type: 'coupon';
+export interface CouponGrabCubeAction extends CouponAction {
   subType: 'grabCube';
   color: CoreColor;
 }
 
-export interface CouponGrabStatueAction extends ActionBase {
-  type: 'coupon';
+export interface CouponGrabStatueAction extends CouponAction {
   subType: 'grabStatue';
   color: CoreColor;
 }
 
-export interface CouponFlipCloudAction extends ActionBase {
-  type: 'coupon';
+export interface CouponFlipCloudAction extends CouponAction {
   subType: 'flipCloud';
   coordinates: HexCoordinates;
 }
 
 // ------------------ No-Target-Color Actions ------------------
-export interface NoColorGainFavorAction extends ResourceAction {
-  type: 'noTargetColor';
+export interface AnyResourceGainFavorAction extends AnyResourceAction {
   subType: 'gainFavor';
 }
 
-export interface NoColorGainOracleCardAction extends ResourceAction {
-  type: 'noTargetColor';
+export interface AnyResourceGainOracleCardAction extends AnyResourceAction {
   subType: 'gainOracleCard';
 }
 
-export interface NoColorGainPeekCouponsAction extends ResourceAction {
-  type: 'noTargetColor';
+export interface AnyResourceGainPeekCouponsAction extends AnyResourceAction {
   subType: 'gainPeekCoupons';
 }
 
-// ------------------ Color Actions ------------------
-export interface HealAction extends ResourceColorAction {
-  type: 'normal';
-  subType: 'heal';
-}
-
-export interface ShipMoveAction extends ResourceColorAction {
-  type: 'normal';
+// ------------------ Hex Actions ------------------
+export interface ShipMoveAction extends HexAction {
   subType: 'shipMove';
-  coordinates: HexCoordinates;
-  favorToRecolor: number;
   favorToExtendRange: number;
 }
 
-export interface LoadCubeAction extends ResourceColorAction {
-  type: 'normal';
+export interface LoadCubeAction extends HexAction {
   subType: 'loadCube';
-  coordinates: HexCoordinates;
 }
 
-export interface DropCubeAction extends ResourceColorAction {
-  type: 'normal';
+export interface DropCubeAction extends HexAction {
   subType: 'dropCube';
   coordinates: HexCoordinates;
 }
 
-export interface LoadStatueAction extends ResourceColorAction {
-  type: 'normal';
+export interface LoadStatueAction extends HexAction {
   subType: 'loadStatue';
   coordinates: HexCoordinates;
 }
 
-export interface DropStatueAction extends ResourceColorAction {
-  type: 'normal';
+export interface DropStatueAction extends HexAction {
   subType: 'dropStatue';
   coordinates: HexCoordinates;
 }
 
-export interface FightMonsterAction extends ResourceColorAction {
-  type: 'normal';
+export interface FightMonsterAction extends HexAction {
   subType: 'fightMonster';
   coordinates: HexCoordinates;
 }
 
-export interface ExploreShrineAction extends ResourceColorAction {
-  type: 'normal';
+export interface ExploreShrineAction extends HexAction {
   subType: 'exploreShrine';
   coordinates: HexCoordinates;
 }
 
+// ------------------ Miscellaneous Actions ------------------
+export interface HealAction extends ColorBasedAction {
+  subType: 'heal';
+}
+
 export interface UseEquipmentGainFavorCardAdvanceAction
-  extends ResourceColorAction {
-  type: 'normal';
+  extends ColorBasedAction {
   subType: 'useEquipmentGainFavorCardAdvance';
 }
 
 export type Action =
-  | FreeBlueGodAction
-  | FreeYellowGodAction
-  | FreeGreenGodAction
-  | FreeRedGodAction
-  | FreeBlackGodAction
-  | FreePinkGodAction
+  // free
   | FreeContinueMonsterFightAction
   | FreeAbandonMonsterFightAction
   | FreeSkipTurnHealAction
   | FreeUseEquipmentExtraDieAction
+  | FreeEndTurnAction
+  | FreeRecolorAction
+  // godEffect
+  | BlueGodAction
+  | YellowGodAction
+  | GreenGodAction
+  | RedGodAction
+  | BlackGodAction
+  | PinkGodAction
+  // coupon
   | CouponPeekAction
   | CouponGodAdvanceAction
   | CouponGrabCubeAction
   | CouponGrabStatueAction
   | CouponFlipCloudAction
-  | NoColorGainFavorAction
-  | NoColorGainOracleCardAction
-  | NoColorGainPeekCouponsAction
-  | HealAction
+  // noColor
+  | AnyResourceGainFavorAction
+  | AnyResourceGainOracleCardAction
+  | AnyResourceGainPeekCouponsAction
+  // Hex
   | ShipMoveAction
   | LoadCubeAction
   | DropCubeAction
@@ -212,4 +245,6 @@ export type Action =
   | DropStatueAction
   | FightMonsterAction
   | ExploreShrineAction
+  // miscellaneous
+  | HealAction
   | UseEquipmentGainFavorCardAdvanceAction;
