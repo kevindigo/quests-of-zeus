@@ -35,11 +35,9 @@ export class GameEngine {
     this.startNewGame();
   }
 
-  public startNewGame(): GameState {
+  public startNewGame(): void {
     new GameStateInitializer().initializeGameState(this.state);
     this.uiState.reset();
-
-    return this.state;
   }
 
   public rollOracleDice(playerId: number): void {

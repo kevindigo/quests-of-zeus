@@ -3,7 +3,7 @@ import { GameEngine } from '../src/GameEngine.ts';
 
 Deno.test('offering cubes configuration', () => {
   const gameEngine = new GameEngine();
-  const gameState = gameEngine.startNewGame();
+  const gameState = gameEngine.getGameState();
 
   // Check that each cube hex has exactly playerCount cubes
   const validCubeHexes = gameState.getCubeHexes().filter((ch) =>

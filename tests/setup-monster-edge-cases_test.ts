@@ -173,12 +173,10 @@ Deno.test('MonsterDistribution - statistical analysis', () => {
   );
 });
 
-// Test that algorithm handles initialization correctly
 Deno.test('MonsterDistribution - initialization robustness', () => {
-  // Test multiple sequential initializations
   for (let i = 0; i < 10; i++) {
     const engine = new GameEngine();
-    const state = engine.startNewGame();
+    const state = engine.getGameState();
 
     // Verify game state is properly initialized
     assert(state.players.length === 2, 'Should have 2 players');
