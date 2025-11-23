@@ -30,8 +30,6 @@ export function findZeus(map: HexMap): HexCell {
 }
 
 export class GameInitializer {
-  private oracleCardDeck: CoreColor[] = [];
-
   /**
    * Initialize a new game state
    */
@@ -391,12 +389,5 @@ export class GameInitializer {
       );
     }
     return (index + offset) % threshold;
-  }
-
-  /**
-   * Get the oracle card deck (for use by the main engine)
-   */
-  public getOracleCardDeck(): CoreColor[] {
-    return this.oracleCardDeck;
   }
 }
