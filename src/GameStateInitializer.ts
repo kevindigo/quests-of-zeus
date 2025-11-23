@@ -369,25 +369,4 @@ export class GameInitializer {
 
     return shrineHexes;
   }
-
-  public static getModifiedIndex(
-    parameters: {
-      threshold: number;
-      index: number;
-      shifts: number[];
-    },
-  ): number {
-    const threshold = parameters.threshold;
-    const index = parameters.index;
-    const shifts = parameters.shifts;
-
-    const chunk = index / threshold;
-    const offset = shifts[chunk];
-    if (!offset) {
-      throw new Error(
-        `index ${index} in chunk ${chunk} not found in ${shifts}`,
-      );
-    }
-    return (index + offset) % threshold;
-  }
 }
