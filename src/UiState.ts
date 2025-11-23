@@ -1,3 +1,4 @@
+import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { OracleSystem } from './OracleSystem.ts';
 import { type CoreColor, Resource } from './types.ts';
 
@@ -11,16 +12,20 @@ export interface UiState {
   setSelectedOracleCardColor(color: CoreColor): void;
   getEffectiveSelectedColor(): CoreColor | null;
   clearResourceSelection(): void;
+  getSelectedCoordinates(): HexCoordinates | null;
+  setSelectedCoordinates(coordinates: HexCoordinates): void;
 }
 export class UiStateClass {
   public constructor() {
     this.selectedResource = Resource.none;
     this.selectedRecoloring = 0;
+    this.selectedCoordinates = null;
   }
 
   public reset(): void {
     this.selectedResource = Resource.none;
     this.selectedRecoloring = 0;
+    this.selectedCoordinates = null;
   }
 
   public getSelectedRecoloring(): number {
@@ -68,6 +73,15 @@ export class UiStateClass {
     this.selectedResource = Resource.none;
   }
 
+  getSelectedCoordinates(): HexCoordinates | null {
+    return this.selectedCoordinates;
+  }
+
+  setSelectedCoordinates(coordinates: HexCoordinates): void {
+    this.selectedCoordinates = coordinates;
+  }
+
   private selectedResource: Resource;
   private selectedRecoloring: number;
+  private selectedCoordinates: HexCoordinates | null;
 }
