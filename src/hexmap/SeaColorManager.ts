@@ -5,6 +5,7 @@ import { COLOR_WHEEL } from '../types.ts';
 import { UtilityService } from '../UtilityService.ts';
 import type { HexCell } from './HexCell.ts';
 import type { HexGrid } from './HexGrid.ts';
+import type { HexMap } from './HexMap.ts';
 
 export class SeaColorManager {
   constructor() {
@@ -15,7 +16,8 @@ export class SeaColorManager {
    * This ensures no adjacent sea hexes have the same color (like map coloring algorithm)
    * and favors the color that has been used least so far for better distribution
    */
-  assignColorsToSeaHexes(grid: HexGrid): void {
+  assignColorsToSeaHexes(map: HexMap): void {
+    const grid = map.getHexGrid();
     const seaCells = grid.getCellsOfType('sea');
 
     if (seaCells.length === 0) {

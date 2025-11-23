@@ -33,7 +33,7 @@ export class HexMap {
   }
 
   public reset(): void {
-    this.terrainPlacementManager.resetGrid(this.grid);
+    this.terrainPlacementManager.resetMap(this);
   }
 
   public static fromSnapshot(json: HexMapSnapshot): HexMap {
@@ -64,30 +64,18 @@ export class HexMap {
     return this.grid;
   }
 
-  /**
-   * Get a cell at specific coordinates
-   */
   getCell(coordinates: HexCoordinates): HexCell | null {
     return this.getHexGrid().getCell(coordinates);
   }
 
-  /**
-   * Get all neighboring cells for a given cell
-   */
   getNeighbors(coordinates: HexCoordinates): HexCell[] {
     return this.getHexGrid().getNeighborsByCoordinates(coordinates);
   }
 
-  /**
-   * Get all cells of a specific terrain type
-   */
   getCellsByTerrain(terrain: TerrainType): HexCell[] {
     return this.getHexGrid().getCellsOfType(terrain);
   }
 
-  /**
-   * Set the color of a specific cell
-   */
   setCellColor(q: number, r: number, color: HexColor): void {
     const cell = this.getCell({ q, r });
     if (cell) {
@@ -95,17 +83,14 @@ export class HexMap {
     }
   }
 
-  /**
-   * Check if a cell can reach Zeus through a path of sea cells
-   */
+  public forEachCell(callback: (cell: HexCell) => void): void {
+    return this.getHexGrid().forEachCell(callback);
+  }
+
   canReachZeus(cell: HexCell, grid: HexCell[][]): boolean {
     return this.pathfindingService.canReachZeus(cell, grid);
   }
 
-  /**
-   * Check if a sea neighbor can reach zeus, considering that the candidate cell
-   * might be converted to shallows (so we exclude it from the path)
-   */
   canReachZeusFromSeaNeighbor(
     seaNeighbor: HexCell,
     candidateCell: HexCell,

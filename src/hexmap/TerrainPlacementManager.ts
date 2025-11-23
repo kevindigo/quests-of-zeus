@@ -6,6 +6,7 @@ import { UtilityService } from '../UtilityService.ts';
 import type { HexCell } from './HexCell.ts';
 import { HexGrid } from './HexGrid.ts';
 import type { HexGridOperations } from './HexGridOperations.ts';
+import type { HexMap } from './HexMap.ts';
 import { PathfindingService } from './PathfindingService.ts';
 import type { SeaColorManager } from './SeaColorManager.ts';
 
@@ -18,33 +19,34 @@ export class TerrainPlacementManager {
     this.seaColorManager = seaColorManager;
   }
 
-  resetGrid(grid: HexGrid): void {
-    grid.forEachCell((cell) => {
+  resetMap(map: HexMap): void {
+    map.forEachCell((cell) => {
       cell.terrain = 'sea';
       cell.color = 'none';
     });
 
-    this.placeZeus(grid);
-    this.placeCities(grid);
-    this.placeTerrainOfType(grid, 6, 'offerings');
-    this.placeTerrainOfType(grid, 6, 'temple');
-    this.placeTerrainOfType(grid, 6, 'statue');
-    this.placeTerrainOfType(grid, 9, 'monsters');
-    this.placeTerrainOfType(grid, 12, 'shrine');
+    this.placeZeus(map);
+    this.placeCities(map);
+    this.placeTerrainOfType(map, 6, 'offerings');
+    this.placeTerrainOfType(map, 6, 'temple');
+    this.placeTerrainOfType(map, 6, 'statue');
+    this.placeTerrainOfType(map, 9, 'monsters');
+    this.placeTerrainOfType(map, 12, 'shrine');
 
-    this.convertEdgesToShallows(grid);
-    this.convertSomeSeaToShallows(grid);
+    this.convertEdgesToShallows(map);
+    this.convertSomeSeaToShallows(map);
 
-    this.setColors(grid, 'temple');
-    this.setColors(grid, 'shrine');
-    this.seaColorManager.assignColorsToSeaHexes(grid);
+    this.setColors(map, 'temple');
+    this.setColors(map, 'shrine');
+    this.seaColorManager.assignColorsToSeaHexes(map);
   }
 
   /**
    * Place Zeus randomly in one of the neighbor hexes of the center
    * and set all neighbors of the chosen Zeus hex to sea
    */
-  private placeZeus(grid: HexGrid): void {
+  private placeZeus(map: HexMap): void {
+    const grid = map.getHexGrid();
     const randomDirection = Math.floor(Math.random() * 6);
     const zeusCoordinates = HexGrid.getVector(randomDirection);
     const zeusCell = grid.getCell(zeusCoordinates);
@@ -70,7 +72,8 @@ export class TerrainPlacementManager {
    * Place the city there, then set 2 random neighboring hexes to sea
    * Each city is randomly assigned one of the 6 fundamental colors
    */
-  private placeCities(grid: HexGrid): void {
+  private placeCities(map: HexMap): void {
+    const grid = map.getHexGrid();
     // Create a shuffled copy of the colors to assign randomly to cities
     const shuffledColors = [...COLOR_WHEEL];
     UtilityService.shuffleArray(shuffledColors);
@@ -125,10 +128,11 @@ export class TerrainPlacementManager {
   }
 
   private placeTerrainOfType(
-    grid: HexGrid,
+    map: HexMap,
     count: number,
     terrainType: TerrainType,
   ): number {
+    const grid = map.getHexGrid();
     let placed = 0;
 
     const seaCells = grid.getCellsOfType('sea');
@@ -186,7 +190,8 @@ export class TerrainPlacementManager {
     return true;
   }
 
-  private setColors(grid: HexGrid, terrainType: TerrainType): void {
+  private setColors(map: HexMap, terrainType: TerrainType): void {
+    const grid = map.getHexGrid();
     const hexesOfType = grid.getCellsOfType(terrainType);
     UtilityService.shuffleArray(hexesOfType);
     const colorCount = COLOR_WHEEL.length;
@@ -195,7 +200,8 @@ export class TerrainPlacementManager {
     });
   }
 
-  private convertEdgesToShallows(grid: HexGrid): void {
+  private convertEdgesToShallows(map: HexMap): void {
+    const grid = map.getHexGrid();
     const radius = grid.getRadius();
     const seaEdges: HexCell[] = [];
     grid.forEachCell((cell) => {
@@ -216,7 +222,8 @@ export class TerrainPlacementManager {
     });
   }
 
-  private convertSomeSeaToShallows(grid: HexGrid): void {
+  private convertSomeSeaToShallows(map: HexMap): void {
+    const grid = map.getHexGrid();
     const seaCells = grid.getCellsOfType('sea');
 
     // Shuffle sea cells for random selection
