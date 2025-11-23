@@ -108,12 +108,19 @@ export class GameEngine {
     return new Success(`Player ${currentPlayer.color} turn ended`);
   }
 
-  private spendDieOrCard(gameState: GameState, uiState: UiState): void {
+  private spendDieOrCard(
+    gameState: GameState,
+    uiState: UiState,
+  ): ResultWithMessage {
     const player = gameState.getCurrentPlayer();
     const resource = uiState.getSelectedResource();
 
     if (!resource.hasColor()) {
-      return;
+      return new Failure('Nothing selected to spend');
+    }
+
+    if (uiState.getSelectedRecoloring() > 0) {
+      return new Failure('Recoloring should already have been done earlier');
     }
 
     uiState.clearResourceSelection();
@@ -133,5 +140,7 @@ export class GameEngine {
     if (resource.isCard()) {
       player.usedOracleCardThisTurn = true;
     }
+
+    return new Success(`Resource ${JSON.stringify(resource)} was spent`);
   }
 }
