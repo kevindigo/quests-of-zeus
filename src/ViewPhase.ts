@@ -1,11 +1,13 @@
 import type { GameState } from './GameState.ts';
 import type { Player } from './Player.ts';
 import { COLOR_WHEEL, type Resource } from './types.ts';
+import type { UiState } from './UiState.ts';
 import { ViewPlayer } from './ViewPlayer.ts';
 
 export class ViewPhase {
-  public constructor(gameState: GameState) {
+  public constructor(gameState: GameState, uiState: UiState) {
     this.gameState = gameState;
+    this.uiState = uiState;
   }
 
   public getPhasePanelContents(selectedResource: Resource): string {
@@ -51,7 +53,7 @@ export class ViewPhase {
   private getDiceAndOracleCardsContent() {
     const state = this.gameState;
     const currentPlayer = state.getCurrentPlayer();
-    const selectedResource = state.getSelectedResource();
+    const selectedResource = this.uiState.getSelectedResource();
     const selectedDie = selectedResource.isDie()
       ? selectedResource.getColor()
       : null;
@@ -132,7 +134,7 @@ export class ViewPhase {
           <h4>Recolor die or card`;
 
     // Add "No Recolor" option
-    const hasRecolorIntention = this.gameState.getSelectedRecoloring() > 0;
+    const hasRecolorIntention = this.uiState.getSelectedRecoloring() > 0;
 
     const originalColorBackground = ViewPlayer.getColorHex(useColor);
     const symbol = ViewPlayer.getSymbol(useColor);
@@ -163,7 +165,7 @@ export class ViewPhase {
       const background = ViewPlayer.getColorHex(newColor);
       const symbol = ViewPlayer.getSymbol(newColor);
 
-      const isSelected = this.gameState.getSelectedRecoloring() === favorCost;
+      const isSelected = this.uiState.getSelectedRecoloring() === favorCost;
 
       options += `
           <div class="recolor-option" style="margin-bottom: 0.5rem;">
@@ -194,4 +196,5 @@ export class ViewPhase {
   }
 
   private gameState: GameState;
+  private uiState: UiState;
 }

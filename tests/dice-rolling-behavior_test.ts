@@ -81,25 +81,21 @@ Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
 Deno.test('DiceRolling - recoloring intentions cleared at end of turn', () => {
   const engine = new GameEngine();
   engine.initializeGame();
-  const gameState = engine.getGameState();
 
-  const player1 = engine.getPlayer(0);
+  const player1 = engine.getCurrentPlayer();
   assertExists(player1);
 
-  const success = gameState.setSelectedRecoloring(player1.id, 1);
+  const success = engine.setSelectedRecoloring(1);
   assert(success, 'Should be able to set recoloring intention');
 
   // Verify recoloring intention was set
-  assertEquals(gameState.getSelectedRecoloring(), 1);
+  assertEquals(engine.getSelectedRecoloring(), 1);
 
   // End Player 1's turn
   engine.endTurn();
 
-  // Player 1's recoloring intentions should be cleared
-  const player1AfterTurn = engine.getPlayer(1);
-  assertExists(player1AfterTurn);
   assertEquals(
-    gameState.getSelectedRecoloring(),
+    engine.getSelectedRecoloring(),
     0,
     "Player 1's recoloring intentions should be cleared at end of turn",
   );

@@ -44,8 +44,9 @@ function setup(): void {
   state = engine.getGameState();
   center = HexGrid.CENTER;
   player = state.getCurrentPlayer();
+  const uiState = engine.getUiState();
   const movementSystem = new MovementSystem(state.map);
-  shipMoveHandler = new ShipMoveHandler(state, movementSystem);
+  shipMoveHandler = new ShipMoveHandler(state, uiState, movementSystem);
 }
 
 Deno.test('Hex click move - no resource selected', () => {
@@ -59,7 +60,7 @@ Deno.test('Hex click move - no resource selected', () => {
 Deno.test('Hex click move - player does not have that card', () => {
   setup();
   player.oracleCards = ['green'];
-  state.setSelectedOracleCardColor('blue');
+  engine.setSelectedOracleCardColor('blue');
   assertFailureContainsAll(
     handler.handleHexClick(center),
     ['card', 'blue'],
@@ -69,7 +70,7 @@ Deno.test('Hex click move - player does not have that card', () => {
 Deno.test('Hex click move - player does not have that die', () => {
   setup();
   player.oracleDice = ['green'];
-  state.setSelectedDieColor('blue');
+  engine.setSelectedDieColor('blue');
   assertFailureContainsAll(
     handler.handleHexClick(center),
     ['dice', 'blue'],
@@ -80,7 +81,7 @@ Deno.test('Hex click move - unlisted but otherwise legal', () => {
   setup();
   const firstDie = player.oracleDice[0];
   assert(firstDie);
-  state.setSelectedDieColor(firstDie);
+  engine.setSelectedDieColor(firstDie);
   const noFavorMovesJson = JSON.stringify(
     shipMoveHandler.getAvailableMovesForColor(0),
   );
@@ -103,7 +104,7 @@ Deno.test('Hex click move - legal move but failed', () => {
   setup();
   const firstDie = player.oracleDice[0];
   assert(firstDie);
-  state.setSelectedDieColor(firstDie);
+  engine.setSelectedDieColor(firstDie);
   const availableMoves = shipMoveHandler.getAvailableMovesForColor(
     player.favor,
   );
@@ -123,7 +124,7 @@ Deno.test('Hex click move - successful', () => {
   setup();
   const firstDie = player.oracleDice[0];
   assert(firstDie);
-  state.setSelectedDieColor(firstDie);
+  engine.setSelectedDieColor(firstDie);
   const availableMoves = shipMoveHandler.getAvailableMovesForColor(
     player.favor,
   );

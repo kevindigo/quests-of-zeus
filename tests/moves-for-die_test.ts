@@ -12,6 +12,7 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
   const movementSystem = new MovementSystem(gameEngine.getGameState().map);
   const handler = new ShipMoveHandler(
     gameEngine.getGameState(),
+    gameEngine.getUiState(),
     movementSystem,
   );
 
@@ -22,7 +23,7 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  gameEngine.getGameState().setSelectedRecoloring(player.id, 0);
+  gameEngine.setSelectedRecoloring(0);
 
   // Test getting moves for a specific die color
   const movesForBlack = handler.getAvailableMovesForColor(player.favor);
@@ -50,6 +51,7 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
   const movementSystem = new MovementSystem(gameEngine.getGameState().map);
   const handler = new ShipMoveHandler(
     gameEngine.getGameState(),
+    gameEngine.getUiState(),
     movementSystem,
   );
 
@@ -58,7 +60,7 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
   // Set up deterministic test conditions
   player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 5;
-  gameEngine.getGameState().setSelectedDieColor('black');
+  gameEngine.setSelectedDieColor('black');
 
   // Get moves with different favor amounts
   const movesWithNoFavor = handler.getAvailableMovesForColor(0);
@@ -74,8 +76,9 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   const gameEngine = new GameEngine();
   gameEngine.initializeGame();
   const gameState = gameEngine.getGameState();
+  const uiState = gameEngine.getUiState();
   const movementSystem = new MovementSystem(gameState.map);
-  const handler = new ShipMoveHandler(gameState, movementSystem);
+  const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
@@ -83,17 +86,14 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  gameState.setSelectedRecoloring(player.id, 0);
+  gameEngine.setSelectedRecoloring(0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
-  const recoloringSuccess = gameState.setSelectedRecoloring(
-    player.id,
-    1,
-  );
+  const recoloringSuccess = gameEngine.setSelectedRecoloring(1);
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Get moves for black die with recoloring intention
-  gameState.setSelectedDieColor('black');
+  gameEngine.setSelectedDieColor('black');
   const movesWithRecolor = handler.getAvailableMovesForColor(
     player.favor,
   );
@@ -122,6 +122,7 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
   const movementSystem = new MovementSystem(gameEngine.getGameState().map);
   const handler = new ShipMoveHandler(
     gameEngine.getGameState(),
+    gameEngine.getUiState(),
     movementSystem,
   );
 
@@ -132,17 +133,14 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
   player.favor = 1; // Low favor
 
   // Clear any recoloring intentions that might exist from initialization
-  gameEngine.getGameState().setSelectedRecoloring(player.id, 0);
+  gameEngine.setSelectedRecoloring(0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
-  const recoloringSuccess = gameEngine.getGameState().setSelectedRecoloring(
-    player.id,
-    1,
-  );
+  const recoloringSuccess = gameEngine.setSelectedRecoloring(1);
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Get moves for black die with recoloring intention but insufficient favor
-  gameEngine.getGameState().setSelectedDieColor('pink');
+  gameEngine.setSelectedDieColor('pink');
   const movesWithRecolor = handler.getAvailableMovesForColor(
     player.favor - 1,
   );
@@ -162,8 +160,9 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   const gameEngine = new GameEngine();
   gameEngine.initializeGame();
   const gameState = gameEngine.getGameState();
+  const uiState = gameEngine.getUiState();
   const movementSystem = new MovementSystem(gameState.map);
-  const handler = new ShipMoveHandler(gameState, movementSystem);
+  const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
 
   const player = gameEngine.getCurrentPlayer();
 
@@ -172,20 +171,17 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  gameState.setSelectedRecoloring(player.id, 0);
+  gameEngine.setSelectedRecoloring(0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
-  const recoloringSuccess = gameState.setSelectedRecoloring(
-    player.id,
-    1,
-  );
+  const recoloringSuccess = gameEngine.setSelectedRecoloring(1);
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Clear recoloring intention
-  gameState.clearSelectedRecoloring();
+  gameEngine.clearSelectedRecoloring();
 
   // Get moves after clearing recoloring intention
-  gameState.setSelectedDieColor('black');
+  gameEngine.setSelectedDieColor('black');
   const movesAfterClear = handler.getAvailableMovesForColor(
     player.favor,
   );

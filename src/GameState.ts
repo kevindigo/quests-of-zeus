@@ -17,6 +17,7 @@ import {
   type ShrineHex,
   type StatueHex,
 } from './types.ts';
+import type { UiState } from './UiState.ts';
 
 export type GameStateJson = {
   map: HexMapJson;
@@ -33,7 +34,7 @@ export type GameStateJson = {
   selectedRecoloring: number;
 };
 
-export class GameState {
+export class GameState implements UiState {
   public constructor(
     map: HexMap,
     players: Player[],
@@ -180,10 +181,9 @@ export class GameState {
   }
 
   public setSelectedRecoloring(
-    playerId: number,
     favorSpent: number,
   ): boolean {
-    const player = this.getPlayer(playerId);
+    const player = this.getCurrentPlayer();
     if (player.favor < favorSpent) {
       return false;
     }

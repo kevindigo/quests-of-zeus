@@ -5,15 +5,17 @@ import type { MovementSystem } from './MovementSystem.ts';
 import { OracleSystem } from './OracleSystem.ts';
 import type { Player } from './Player.ts';
 import type { MoveShipResult, PossibleShipMove, Resource } from './types.ts';
+import type { UiState } from './UiState.ts';
 
 export class ShipMoveHandler {
   constructor(
-    private state: GameState,
+    private gameState: GameState,
+    private uiState: UiState,
     private movementSystem: MovementSystem,
   ) {}
 
-  public getState(): GameState {
-    return this.state;
+  public getGameState(): GameState {
+    return this.gameState;
   }
 
   public getMovementSystem(): MovementSystem {
@@ -23,9 +25,9 @@ export class ShipMoveHandler {
   public getAvailableMovesForColor(
     maxFavorForMovement: number,
   ): PossibleShipMove[] {
-    const player = this.state.getCurrentPlayer();
+    const player = this.gameState.getCurrentPlayer();
     const origin = player.getShipPosition();
-    const effectiveColor = this.state.getEffectiveSelectedColor();
+    const effectiveColor = this.uiState.getEffectiveSelectedColor();
 
     const availableMoves: PossibleShipMove[] = [];
     for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
@@ -75,7 +77,7 @@ export class ShipMoveHandler {
     favorSpentForRange: number,
   ): MoveShipResult {
     // validate state
-    const phase = this.state.getPhase();
+    const phase = this.gameState.getPhase();
     if (phase !== 'action') {
       return {
         success: false,
@@ -83,7 +85,7 @@ export class ShipMoveHandler {
       };
     }
     // validate player
-    if (this.state.getCurrentPlayerIndex() !== player.id) {
+    if (this.gameState.getCurrentPlayerIndex() !== player.id) {
       return {
         success: false,
         error: { type: 'invalid_player', message: 'not current player' },
@@ -156,7 +158,7 @@ export class ShipMoveHandler {
         },
       };
     }
-    const map = this.state.map;
+    const map = this.gameState.map;
     const radius = map.getHexGrid().getRadius();
     if (Math.abs(destination.q) > radius || Math.abs(destination.r) > radius) {
       return {
@@ -236,7 +238,7 @@ export class ShipMoveHandler {
     if (selectedResource.isCard()) {
       player.usedOracleCardThisTurn = true;
     }
-    this.state.removeSpentResourceFromPlayer(player, selectedResource);
+    this.gameState.removeSpentResourceFromPlayer(player, selectedResource);
 
     // log and return results
     return {

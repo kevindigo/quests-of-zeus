@@ -1,7 +1,17 @@
 import { OracleSystem } from './OracleSystem.ts';
 import { type CoreColor, Resource } from './types.ts';
 
-export class UiState {
+export interface UiState {
+  getSelectedRecoloring(): number;
+  setSelectedRecoloring(favorSpent: number): boolean;
+  clearSelectedRecoloring(): void;
+  getSelectedResource(): Resource;
+  setSelectedDieColor(color: CoreColor): void;
+  setSelectedOracleCardColor(color: CoreColor): void;
+  getEffectiveSelectedColor(): CoreColor | null;
+  clearResourceSelection(): void;
+}
+export class UiStateClass {
   public constructor() {
     this.selectedResource = Resource.none;
     this.selectedRecoloring = 0;

@@ -33,7 +33,7 @@ export class ControllerForHexClicks {
       );
     }
 
-    const effectiveColor = this.getState().getEffectiveSelectedColor();
+    const effectiveColor = this.gameEngine.getEffectiveSelectedColor();
     if (!effectiveColor) {
       // DEBUGGING!!!
       {
@@ -53,7 +53,7 @@ export class ControllerForHexClicks {
 
     const currentPlayer = gameState.getCurrentPlayer();
     // const selectedOracleCardColor = gameState.getSelectedOracleCardColor();
-    const selectedResource = gameState.getSelectedResource();
+    const selectedResource = this.getEngine().getSelectedResource();
 
     if (selectedResource.isCard() && currentPlayer.usedOracleCardThisTurn) {
       return new Failure('Cannot use more than 1 oracle card per turn');
@@ -114,13 +114,14 @@ export class ControllerForHexClicks {
   ): ResultWithMessage {
     const state = this.getState();
     const currentPlayer = state.getCurrentPlayer();
-    const effectiveColor = state.getEffectiveSelectedColor();
-    const recoloringCost = state.getSelectedRecoloring();
+    const effectiveColor = this.gameEngine.getEffectiveSelectedColor();
+    const recoloringCost = this.gameEngine.getSelectedRecoloring();
     const availableFavor = currentPlayer.favor;
     const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
     // Get available moves for the selected color and available favor
+    const uiState = this.getEngine().getUiState();
     const movementSystem = new MovementSystem(state.map);
-    const moveShipHandler = new ShipMoveHandler(state, movementSystem);
+    const moveShipHandler = new ShipMoveHandler(state, uiState, movementSystem);
     const availableMoves = moveShipHandler.getAvailableMovesForColor(
       maxFavorForMovement,
     );
@@ -140,7 +141,7 @@ export class ControllerForHexClicks {
 
     const favorSpentForRange = targetMove.favorCost;
 
-    const selectedResource = state.getSelectedResource();
+    const selectedResource = this.getEngine().getSelectedResource();
     const selectedDieColor = selectedResource.isDie()
       ? selectedResource.getColor()
       : null;
@@ -173,10 +174,10 @@ export class ControllerForHexClicks {
         targetQ: q,
         targetR: r,
         dieColor: selectedDieColor,
-        favorSpent: this.getState().getSelectedRecoloring(),
+        favorSpent: this.gameEngine.getSelectedRecoloring(),
         playerFavor: currentPlayer.favor,
         playerDice: currentPlayer.oracleDice,
-        recolorIntention: this.getState().getSelectedRecoloring(),
+        recolorIntention: this.gameEngine.getSelectedRecoloring(),
         moveResult,
       });
 

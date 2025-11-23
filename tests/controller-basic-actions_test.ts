@@ -1,4 +1,9 @@
-import { assert, assertEquals, assertStringIncludes } from '@std/assert';
+import {
+  assert,
+  assertEquals,
+  assertFalse,
+  assertStringIncludes,
+} from '@std/assert';
 import { ControllerForBasicActions } from '../src/ControllerForBasicActions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import type { GameState } from '../src/GameState.ts';
@@ -29,7 +34,7 @@ Deno.test('Buy favor - success with die', () => {
   currentPlayer.favor = 0;
   const firstDie = currentPlayer.oracleDice[0];
   assert(firstDie);
-  state.setSelectedDieColor(firstDie);
+  engine.setSelectedDieColor(firstDie);
   const result = handler.spendResourceForFavor();
   assert(result.success);
   assertStringIncludes(result.message, firstDie);
@@ -40,11 +45,18 @@ Deno.test('Buy favor - success with card', () => {
   setup();
   currentPlayer.favor = 0;
   currentPlayer.oracleCards = ['red'];
-  state.setSelectedOracleCardColor('red');
+  engine.setSelectedOracleCardColor('red');
+  assert(engine.getSelectedResource().hasColor());
+  assert(engine.getSelectedResource().isCard());
+  assertEquals(engine.getSelectedResource().getColor(), 'red');
+
   const result = handler.spendResourceForFavor();
   assert(result);
   assertStringIncludes(result.message, 'red');
   assertEquals(currentPlayer.favor, 2);
+  assertEquals(currentPlayer.oracleCards.length, 0);
+  assertFalse(engine.getSelectedResource().hasColor());
+  assertFalse(engine.getSelectedResource().hasColor());
   assert(
     currentPlayer.usedOracleCardThisTurn,
     'Should have set the used card flag',
@@ -62,7 +74,7 @@ Deno.test('Buy favor - already used an oracle card', () => {
   setup();
   currentPlayer.oracleCards = ['red'];
   currentPlayer.usedOracleCardThisTurn = true;
-  state.setSelectedOracleCardColor('blue');
+  engine.setSelectedOracleCardColor('blue');
   const result = handler.spendResourceForFavor();
   assertFailureContains(result, 'card');
 });
@@ -71,12 +83,12 @@ Deno.test('Buy favor - with card, then with die', () => {
   setup();
 
   currentPlayer.oracleCards = ['red'];
-  state.setSelectedOracleCardColor('red');
+  engine.setSelectedOracleCardColor('red');
   const spentCard = handler.spendResourceForFavor();
   assert(spentCard.success, spentCard.message);
 
   currentPlayer.oracleDice = ['red'];
-  state.setSelectedDieColor('red');
+  engine.setSelectedDieColor('red');
   const spentDie = handler.spendResourceForFavor();
   assert(spentDie.success, spentDie.message);
 });
@@ -85,12 +97,12 @@ Deno.test('Buy favor - with card, then with card', () => {
   setup();
 
   currentPlayer.oracleCards = ['red'];
-  state.setSelectedOracleCardColor('red');
+  engine.setSelectedOracleCardColor('red');
   const firstTry = handler.spendResourceForFavor();
   assert(firstTry.success, firstTry.message);
 
   currentPlayer.oracleCards = ['red'];
-  state.setSelectedOracleCardColor('red');
+  engine.setSelectedOracleCardColor('red');
   const secondTry = handler.spendResourceForFavor();
   assertFailureContains(secondTry, 'card');
 });

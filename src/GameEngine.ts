@@ -26,12 +26,15 @@ import type {
   ShrineHex,
 } from './types.ts';
 import { COLOR_WHEEL } from './types.ts';
-import { UiState } from './UiState.ts';
+import { type UiState, UiStateClass } from './UiState.ts';
 
 export class GameEngine {
   constructor() {
     this.state = null;
-    this.uiState = new UiState();
+    this.uiState = new UiStateClass();
+    console.log(
+      `GameEngine constructor: UiState ${this.uiState} is not used yet`,
+    );
     this.movementSystem = null;
     this.oracleSystem = null;
     this.shipMoveHandler = null;
@@ -48,6 +51,7 @@ export class GameEngine {
       this.gameInitializer.getOracleCardDeck(),
     );
     this.shipMoveHandler = new ShipMoveHandler(
+      this.state,
       this.state,
       this.movementSystem,
     );
@@ -110,12 +114,11 @@ export class GameEngine {
   public spendResourceForFavor(): ResultWithMessage {
     this.ensureInitialized();
     const state = this.getGameState();
-    const effectiveColor = state.getEffectiveSelectedColor();
+    const effectiveColor = this.getEffectiveSelectedColor();
     if (!effectiveColor) {
       return new Failure('Must select a die or card to gain favor');
     }
 
-    this.getGameState().clearSelectedRecoloring();
     this.spendDieOrCard();
     const player = state.getCurrentPlayer();
     player.favor += 2;
@@ -160,7 +163,7 @@ export class GameEngine {
     if (currentPlayer) {
       currentPlayer.usedOracleCardThisTurn = false;
       currentPlayer.oracleDice = newDice;
-      this.state!.clearSelectedRecoloring();
+      this.clearSelectedRecoloring();
     }
 
     const nextPlayerIndex = (this.state!.getCurrentPlayerIndex() + 1) %
@@ -233,7 +236,7 @@ export class GameEngine {
   }
 
   public getUiState(): UiState {
-    return this.uiState;
+    return this.getGameState();
   }
 
   public getCityHexes(): CityHex[] {
@@ -263,7 +266,7 @@ export class GameEngine {
     const player = this.getCurrentPlayer();
     const shipPosition = player.getShipPosition();
     const state = this.getGameState();
-    const color = state.getEffectiveSelectedColor();
+    const color = this.getEffectiveSelectedColor();
     if (!color) {
       return [];
     }
@@ -288,7 +291,7 @@ export class GameEngine {
   }
 
   private isShrineAvailable(cell: HexCell): boolean {
-    const effectiveColor = this.getGameState().getEffectiveSelectedColor();
+    const effectiveColor = this.getEffectiveSelectedColor();
     if (cell.color !== effectiveColor) {
       return false;
     }
@@ -311,7 +314,7 @@ export class GameEngine {
   public activateShrine(
     coordinates: HexCoordinates,
   ): ResultWithMessage {
-    const effectiveColor = this.getGameState().getEffectiveSelectedColor();
+    const effectiveColor = this.getEffectiveSelectedColor();
     if (!effectiveColor) {
       return new Failure('Must select a die or card');
     }
@@ -368,7 +371,7 @@ export class GameEngine {
     if (!quest) {
       return new Success('Impossible: no remaining incomplete shrine quests');
     }
-    this.spendDieOrCard();
+    this.spendColorSpecificDieOrCard();
     shrineHex.status = 'filled';
     quest.isCompleted = true;
     return new Success('Built shrine - QUEST REWARD NOT GRANTED!');
@@ -397,7 +400,7 @@ export class GameEngine {
         );
     }
 
-    this.spendDieOrCard();
+    this.spendColorSpecificDieOrCard();
     return new Success(message ?? 'flipped but no reward granted');
   }
 
@@ -438,7 +441,7 @@ export class GameEngine {
         `Impossible: ${JSON.stringify(coordinates)} is not an offering`,
       );
     }
-    const effectiveColor = state.getEffectiveSelectedColor();
+    const effectiveColor = this.getEffectiveSelectedColor();
     if (!effectiveColor) {
       return new Failure('Impossible: No resource was selected');
     }
@@ -452,7 +455,7 @@ export class GameEngine {
     if (!removalResult.success) {
       return removalResult;
     }
-    this.spendDieOrCard();
+    this.spendColorSpecificDieOrCard();
 
     return new Success(`Loaded ${effectiveColor} cube`);
   }
@@ -496,7 +499,7 @@ export class GameEngine {
   }
 
   public activateTemple(_coordinates: HexCoordinates): ResultWithMessage {
-    const color = this.getGameState().getEffectiveSelectedColor();
+    const color = this.getEffectiveSelectedColor();
     if (!color) {
       return new Failure('No resource selected');
     }
@@ -516,7 +519,7 @@ export class GameEngine {
     }
     quest.isCompleted = true;
 
-    this.spendDieOrCard();
+    this.spendColorSpecificDieOrCard();
 
     player.favor += 3;
 
@@ -525,16 +528,22 @@ export class GameEngine {
     );
   }
 
+  public spendColorSpecificDieOrCard(): void {
+    const player = this.getCurrentPlayer();
+    const favorSpentToRecolor = this.getSelectedRecoloring();
+    player.favor -= favorSpentToRecolor;
+    this.spendDieOrCard();
+  }
+
   public spendDieOrCard(): void {
     const player = this.getCurrentPlayer();
-    const state = this.getGameState();
-    const favorSpentToRecolor = state.getSelectedRecoloring();
-    const resource = state.getSelectedResource();
+    const resource = this.getGameState().getSelectedResource();
 
-    state.clearResourceSelection();
     if (!resource.hasColor()) {
       return;
     }
+
+    this.clearResourceSelection();
 
     const array = resource.isDie()
       ? player.oracleDice
@@ -548,11 +557,43 @@ export class GameEngine {
       }
     }
 
-    player.favor -= favorSpentToRecolor;
-
     if (resource.isCard()) {
       player.usedOracleCardThisTurn = true;
     }
+  }
+
+  public getSelectedRecoloring(): number {
+    return this.getGameState().getSelectedRecoloring();
+  }
+
+  public setSelectedRecoloring(
+    favorSpent: number,
+  ): boolean {
+    return this.getGameState().setSelectedRecoloring(favorSpent);
+  }
+
+  public clearSelectedRecoloring(): void {
+    this.getGameState().clearSelectedRecoloring();
+  }
+
+  public getSelectedResource(): Resource {
+    return this.getGameState().getSelectedResource();
+  }
+
+  public setSelectedDieColor(color: CoreColor): void {
+    return this.getGameState().setSelectedDieColor(color);
+  }
+
+  public setSelectedOracleCardColor(color: CoreColor): void {
+    this.getGameState().setSelectedOracleCardColor(color);
+  }
+
+  public getEffectiveSelectedColor(): CoreColor | null {
+    return this.getGameState().getEffectiveSelectedColor();
+  }
+
+  public clearResourceSelection(): void {
+    return this.getGameState().clearResourceSelection();
   }
 
   public checkWinCondition(): { winner: Player | null; gameOver: boolean } {

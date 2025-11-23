@@ -6,7 +6,6 @@ import {
   setupGame,
   testEngine,
   testPlayer,
-  testState,
 } from './test-helpers.ts';
 
 Deno.test('Spend Die for Favor - basic functionality', () => {
@@ -20,14 +19,14 @@ Deno.test('Spend Die for Favor - basic functionality', () => {
   const initialColorCount =
     testPlayer.oracleDice.filter((color: string) => color === dieColor).length;
 
-  testState.setSelectedDieColor(dieColor);
+  testEngine.setSelectedDieColor(dieColor);
 
   const result = testEngine.spendResourceForFavor();
 
   assert(result.success, 'Should successfully spend die for favor');
   assertEquals(testPlayer.favor, initialFavor + 2, 'Should gain 2 favor');
   assertEquals(testPlayer.oracleDice.length, initialDiceCount - 1);
-  assertFalse(testState.getEffectiveSelectedColor());
+  assertFalse(testEngine.getEffectiveSelectedColor());
 
   const finalColorCount =
     testPlayer.oracleDice.filter((color: string) => color === dieColor).length;
@@ -49,7 +48,7 @@ Deno.test('Spend Die for Favor - turn continues after spending', () => {
   setupGame();
   const dieColor = testPlayer.oracleDice[0];
   assert(dieColor);
-  testState.setSelectedDieColor(dieColor);
+  testEngine.setSelectedDieColor(dieColor);
   const result = testEngine.spendResourceForFavor();
   assert(result.success, 'Should successfully spend die for favor');
 
@@ -65,8 +64,8 @@ Deno.test('Spend recolored die for favor - should use as unrecolored', () => {
 
   const dieColor = testPlayer.oracleDice[0];
   assert(dieColor);
-  testState.setSelectedDieColor(dieColor);
-  testState.setSelectedRecoloring(testPlayer.id, existingFavor);
+  testEngine.setSelectedDieColor(dieColor);
+  testEngine.setSelectedRecoloring(existingFavor);
 
   const result = testEngine.spendResourceForFavor();
   assert(result.success, 'Should successfully spend die for favor');
@@ -86,7 +85,7 @@ Deno.test('Spend card for Favor - basic functionality', () => {
     testPlayer.oracleCards.filter((color: string) => color === selectedColor)
       .length;
 
-  testState.setSelectedOracleCardColor(selectedColor);
+  testEngine.setSelectedOracleCardColor(selectedColor);
 
   const result = testEngine.spendResourceForFavor();
 
@@ -116,7 +115,7 @@ Deno.test('Spend card for Favor - turn continues after spending', () => {
   setupGame();
   const selectedColor = 'red';
   testPlayer.oracleCards = [selectedColor];
-  testState.setSelectedOracleCardColor(selectedColor);
+  testEngine.setSelectedOracleCardColor(selectedColor);
 
   const result = testEngine.spendResourceForFavor();
   assert(result.success, 'Should successfully spend die for favor');
@@ -131,12 +130,10 @@ Deno.test('Spend recolored card for favor - should use as unrecolored', () => {
   setupGame();
   const existingFavor = testPlayer.favor;
 
-  const gameState = testEngine.getGameState();
-
   const selectedColor = 'red';
   testPlayer.oracleCards = ['red'];
-  testState.setSelectedOracleCardColor(selectedColor);
-  gameState.setSelectedRecoloring(testPlayer.id, existingFavor);
+  testEngine.setSelectedOracleCardColor(selectedColor);
+  testEngine.setSelectedRecoloring(existingFavor);
 
   const result = testEngine.spendResourceForFavor();
   assert(result.success, 'Should successfully spend die for favor');

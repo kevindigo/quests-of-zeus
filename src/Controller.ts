@@ -10,6 +10,7 @@ import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
 import { ShipMoveHandler } from './ShipMoveHandler.ts';
 import { type CoreColor, Resource, type TerrainType } from './types.ts';
+import type { UiState } from './UiState.ts';
 import { ViewGame } from './ViewGame.ts';
 
 export class Controller {
@@ -25,36 +26,37 @@ export class Controller {
     this.viewGame = new ViewGame(this.gameEngine);
   }
 
+  public getUiState(): UiState {
+    return this.gameEngine.getUiState();
+  }
   public initializeGameUI(): void {
     this.viewGame.viewWelcome();
     this.setupEventListeners();
   }
 
   public clearResourceSelection(): void {
-    this.gameEngine.getGameState().clearResourceSelection();
+    this.gameEngine.clearResourceSelection();
   }
 
   public getSelectedDieColor(): CoreColor | null {
-    const selected = this.gameEngine.getGameState().getSelectedResource();
+    const selected = this.gameEngine.getSelectedResource();
     return selected.isDie() ? selected.getColor() : null;
   }
 
   public getSelectedCardColor(): CoreColor | null {
-    const selected = this.gameEngine.getGameState().getSelectedResource();
+    const selected = this.gameEngine.getSelectedResource();
     return selected.isCard() ? selected.getColor() : null;
   }
 
   public selectDieColor(color: CoreColor): boolean {
-    const state = this.gameEngine.getGameState();
-    state.clearResourceSelection();
-    state.setSelectedDieColor(color);
+    this.gameEngine.clearResourceSelection();
+    this.gameEngine.setSelectedDieColor(color);
     return true;
   }
 
   public selectCardColor(color: CoreColor): boolean {
-    const state = this.gameEngine.getGameState();
-    state.clearResourceSelection();
-    state.setSelectedOracleCardColor(color);
+    this.gameEngine.clearResourceSelection();
+    this.gameEngine.setSelectedOracleCardColor(color);
     return true;
   }
 
@@ -66,7 +68,6 @@ export class Controller {
 
   private selectResource(resourceType: string, resourceColor: CoreColor): void {
     const currentPlayer = this.gameEngine.getCurrentPlayer();
-    const state = this.gameEngine.getGameState();
     console.log(`selectResource called: ${resourceType}, ${resourceColor}`);
 
     if (resourceType == 'card' && currentPlayer.usedOracleCardThisTurn) {
@@ -78,13 +79,13 @@ export class Controller {
       ? Resource.createDie(resourceColor)
       : Resource.createCard(resourceColor);
 
-    const alreadySelected = state.getSelectedResource();
+    const alreadySelected = this.gameEngine.getSelectedResource();
     if (resourceToSelect.equals(alreadySelected)) {
       this.clearResourceSelectionAndUpdateDisplay();
       return;
     }
 
-    state.clearSelectedRecoloring();
+    this.gameEngine.clearSelectedRecoloring();
     if (resourceType === 'die') {
       if (this.selectDieColor(resourceColor)) {
         this.showMessage(`Selected ${resourceColor} die`);
@@ -177,12 +178,16 @@ export class Controller {
     gameState: GameState,
   ): void {
     const currentPlayer = gameState.getCurrentPlayer();
-    const favorForRecoloring = gameState.getSelectedRecoloring();
+    const favorForRecoloring = this.gameEngine.getSelectedRecoloring();
     const favorAvailableForRange = currentPlayer.favor - favorForRecoloring;
 
     // Get available moves for the selected die color and available favor
     const movementSystem = new MovementSystem(gameState.map);
-    const shipMoveHandler = new ShipMoveHandler(gameState, movementSystem);
+    const shipMoveHandler = new ShipMoveHandler(
+      gameState,
+      this.getUiState(),
+      movementSystem,
+    );
     const availableMoves = shipMoveHandler.getAvailableMovesForColor(
       favorAvailableForRange,
     );

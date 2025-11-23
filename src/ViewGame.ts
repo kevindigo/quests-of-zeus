@@ -2,6 +2,7 @@ import type { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import { HexMapSvgGenerator } from './HexMapSvgGenerator.ts';
 import type { CityHex, CubeHex, MonsterHex } from './types.ts';
+import type { UiState } from './UiState.ts';
 import { ViewPhase } from './ViewPhase.ts';
 import { ViewPlayer } from './ViewPlayer.ts';
 import { ViewWelcome } from './ViewWelcome.ts';
@@ -55,7 +56,7 @@ export class ViewGame {
     this.renderMap(gameState);
 
     // Update game phase display
-    this.updatePhaseDisplay(gameState);
+    this.updatePhaseDisplay(gameState, this.gameEngine.getUiState());
 
     const newGameButton = document.getElementById('newGame');
     if (newGameButton) {
@@ -146,13 +147,13 @@ export class ViewGame {
     }
   }
 
-  private updatePhaseDisplay(state: GameState): void {
+  private updatePhaseDisplay(gameState: GameState, uiState: UiState): void {
     const phaseDisplay = document.getElementById('phaseDisplay');
     if (!phaseDisplay) return;
 
-    const view = new ViewPhase(state);
+    const view = new ViewPhase(gameState, uiState);
     phaseDisplay.innerHTML = view.getPhasePanelContents(
-      state.getSelectedResource(),
+      uiState.getSelectedResource(),
     );
   }
 

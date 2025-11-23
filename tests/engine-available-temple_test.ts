@@ -2,13 +2,7 @@ import { assertEquals } from '@std/assert';
 import { assert } from '@std/assert/assert';
 import type { HexCell } from '../src/hexmap/HexCell.ts';
 import type { CoreColor, Item } from '../src/types.ts';
-import {
-  setupGame,
-  testEngine,
-  testGrid,
-  testPlayer,
-  testState,
-} from './test-helpers.ts';
+import { setupGame, testEngine, testGrid, testPlayer } from './test-helpers.ts';
 
 function setupWithRedCubeNextToRedTemple(): HexCell {
   setupGame();
@@ -34,7 +28,7 @@ function putShipNextToTemple(color: CoreColor): HexCell {
 Deno.test('Engine available temple - wrong color die', () => {
   const redTempleCell = setupWithRedCubeNextToRedTemple();
   testPlayer.oracleDice = ['blue'];
-  testState.setSelectedDieColor('blue');
+  testEngine.setSelectedDieColor('blue');
   const lands = testEngine.getAvailableLandInteractions();
   const foundTempleCell = lands.find(
     (cell) => {
@@ -48,7 +42,7 @@ Deno.test('Engine available temple - no matching cube', () => {
   setupWithRedCubeNextToRedTemple();
   const blueTempleCell = putShipNextToTemple('blue');
   testPlayer.oracleDice = ['blue'];
-  testState.setSelectedDieColor('blue');
+  testEngine.setSelectedDieColor('blue');
   const foundTempleCell = testEngine.getAvailableLandInteractions().find(
     (cell) => {
       return cell.q === blueTempleCell.q && cell.r === blueTempleCell.r;
@@ -60,7 +54,7 @@ Deno.test('Engine available temple - no matching cube', () => {
 Deno.test('Engine available temple - all correct', () => {
   const redTempleCell = setupWithRedCubeNextToRedTemple();
   testPlayer.oracleDice = ['red'];
-  testState.setSelectedDieColor('red');
+  testEngine.setSelectedDieColor('red');
   const lands = testEngine.getAvailableLandInteractions();
   const foundTempleCell = lands.find(
     (cell) => {

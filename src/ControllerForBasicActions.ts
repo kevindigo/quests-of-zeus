@@ -19,7 +19,7 @@ export class ControllerForBasicActions {
       return new Failure(`Cannot buy favor during the ${phase} phase`);
     }
 
-    const usingCard = engine.getGameState().getSelectedResource().isCard();
+    const usingCard = engine.getSelectedResource().isCard();
     if (usingCard && engine.getCurrentPlayer().usedOracleCardThisTurn) {
       return new Failure(`Cannot use a second oracle card this turn`);
     }
@@ -71,15 +71,12 @@ export class ControllerForBasicActions {
       );
     }
 
-    const state = this.gameEngine.getGameState();
-    const playerId = this.gameEngine.getCurrentPlayer().id;
     if (favorCost === 0) {
-      state.clearSelectedRecoloring();
+      this.gameEngine.clearSelectedRecoloring();
 
       return new Success('Recoloring intention cleared');
     } else {
-      const success = state.setSelectedRecoloring(
-        playerId,
+      const success = this.gameEngine.setSelectedRecoloring(
         favorCost,
       );
 
