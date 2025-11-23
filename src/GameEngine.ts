@@ -33,7 +33,6 @@ export class GameEngine {
     this.gameInitializer = new GameInitializer();
     this.state = null;
     this.uiState = new UiStateClass();
-    this.oracleSystem = null;
   }
 
   public initializeGame(): GameState {
@@ -41,7 +40,7 @@ export class GameEngine {
     if (!this.state) {
       throw new Error('Initializer failed to create a game state');
     }
-    this.oracleSystem = new OracleSystem(this.state);
+
     return this.state;
   }
 
@@ -125,13 +124,15 @@ export class GameEngine {
   ): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
-    return this.oracleSystem!.spendOracleCardToDrawCard(player, cardColor);
+    const oracleSystem = new OracleSystem(this.getGameState());
+    return oracleSystem.spendOracleCardToDrawCard(player, cardColor);
   }
 
   public drawOracleCard(playerId: number, dieColor: CoreColor): boolean {
     this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
-    return this.oracleSystem!.drawOracleCard(player, dieColor);
+    const oracleSystem = new OracleSystem(this.getGameState());
+    return oracleSystem.drawOracleCard(player, dieColor);
   }
 
   public canPlaceStatueOnCity(_playerId: number): boolean {
@@ -378,7 +379,8 @@ export class GameEngine {
         message = 'Discovered shrine; gained favor';
         break;
       case 'card': {
-        const card = this.oracleSystem?.takeOracleCardFromDeck();
+        const oracleSystem = new OracleSystem(this.getGameState());
+        const card = oracleSystem.takeOracleCardFromDeck();
         if (card) {
           player.oracleCards.push(card);
           message = 'Discovered shrine; gained oracle card';
@@ -663,5 +665,4 @@ export class GameEngine {
   private state: GameState | null;
   private uiState: UiState;
   private gameInitializer: GameInitializer;
-  private oracleSystem: OracleSystem | null;
 }
