@@ -44,7 +44,7 @@ function setup(): void {
   center = HexGrid.CENTER;
   player = state.getCurrentPlayer();
   const uiState = engine.getUiState();
-  const movementSystem = new MovementSystem(state.map);
+  const movementSystem = new MovementSystem(state.getMap());
   shipMoveHandler = new ShipMoveHandler(state, uiState, movementSystem);
 }
 

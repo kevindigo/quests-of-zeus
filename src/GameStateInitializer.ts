@@ -31,7 +31,7 @@ export function findZeus(map: HexMap): HexCell {
 
 export class GameStateInitializer {
   public initializeGameState(state: GameState): void {
-    const map = state.map;
+    const map = state.getMap();
     map.reset();
     const zeusCell = findZeus(map);
     const players = this.initializePlayers(zeusCell.getCoordinates());

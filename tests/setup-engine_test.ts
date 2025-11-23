@@ -8,7 +8,7 @@ Deno.test('GameEngine setup - initialization', () => {
   // Initialize the game
   const state = engine.getGameState();
 
-  assert(state.map);
+  assert(state.getMap());
   assertEquals(state.getPlayerCount(), 2);
   assertEquals(state.getRound(), 1);
   assertEquals(state.getPhase(), 'action'); // Game starts in action phase since dice are already rolled
@@ -92,7 +92,7 @@ Deno.test('GameEngine - all players start on Zeus hex', () => {
 
   // Find the Zeus hex in the map
   const state = engine.getGameState();
-  const zeusCells = state.map.getCellsByTerrain('zeus');
+  const zeusCells = state.getMap().getCellsByTerrain('zeus');
   assertEquals(zeusCells.length, 1, 'There should be exactly one Zeus hex');
 
   const zeusCell = zeusCells[0]!;
@@ -118,13 +118,13 @@ Deno.test('GameEngine - all players start on Zeus hex', () => {
   );
 
   // Verify the starting position is actually a Zeus hex
-  const player1Cell = state.map.getCell(
+  const player1Cell = state.getMap().getCell(
     player1.getShipPosition(),
   );
   assert(player1Cell);
   assertEquals(player1Cell.terrain, 'zeus', 'Player 1 should be on a Zeus hex');
 
-  const player2Cell = state.map.getCell(
+  const player2Cell = state.getMap().getCell(
     player2.getShipPosition(),
   );
   assert(player2Cell);

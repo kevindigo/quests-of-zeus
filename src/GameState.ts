@@ -84,6 +84,10 @@ export class GameState {
     };
   }
 
+  public getMap(): HexMap {
+    return this.map;
+  }
+
   public getPlayerCount(): number {
     return this.players.length;
   }
@@ -217,7 +221,7 @@ export class GameState {
     UtilityService.shuffleArray(this.oracleCardDeck);
   }
 
-  public map: HexMap;
+  private map: HexMap;
   private players: Player[];
   private currentPlayerIndex: number;
   private round: number;

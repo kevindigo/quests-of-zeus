@@ -8,7 +8,7 @@ import type { CoreColor } from '../src/types.ts';
 
 Deno.test('getAvailableMovesForDie - basic functionality', () => {
   const gameEngine = new GameEngine();
-  const movementSystem = new MovementSystem(gameEngine.getGameState().map);
+  const movementSystem = new MovementSystem(gameEngine.getGameState().getMap());
   const handler = new ShipMoveHandler(
     gameEngine.getGameState(),
     gameEngine.getUiState(),
@@ -46,7 +46,7 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
 
 Deno.test('getAvailableMovesForDie - favor spending', () => {
   const gameEngine = new GameEngine();
-  const movementSystem = new MovementSystem(gameEngine.getGameState().map);
+  const movementSystem = new MovementSystem(gameEngine.getGameState().getMap());
   const handler = new ShipMoveHandler(
     gameEngine.getGameState(),
     gameEngine.getUiState(),
@@ -74,7 +74,7 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   const gameEngine = new GameEngine();
   const gameState = gameEngine.getGameState();
   const uiState = gameEngine.getUiState();
-  const movementSystem = new MovementSystem(gameState.map);
+  const movementSystem = new MovementSystem(gameState.getMap());
   const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
   const player = gameEngine.getCurrentPlayer();
 
@@ -96,14 +96,14 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   );
 
   // Should have moves that require pink sea tiles (since black die can be recolored to pink)
-  const pinkSeaTiles = gameState.map.getCellsByTerrain('sea').filter((cell) =>
-    cell.color === 'pink'
-  );
+  const pinkSeaTiles = gameState.getMap().getCellsByTerrain('sea').filter((
+    cell,
+  ) => cell.color === 'pink');
   assertGreater(pinkSeaTiles.length, 0);
 
   // Check that we have moves to pink sea tiles
   const movesToPinkTiles = movesWithRecolor.filter((move) => {
-    const cell = gameState.map.getCell({ q: move.q, r: move.r });
+    const cell = gameState.getMap().getCell({ q: move.q, r: move.r });
     return cell && cell.color === 'pink';
   });
 
@@ -115,7 +115,7 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
 
 Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
   const gameEngine = new GameEngine();
-  const movementSystem = new MovementSystem(gameEngine.getGameState().map);
+  const movementSystem = new MovementSystem(gameEngine.getGameState().getMap());
   const handler = new ShipMoveHandler(
     gameEngine.getGameState(),
     gameEngine.getUiState(),
@@ -156,7 +156,7 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   const gameEngine = new GameEngine();
   const gameState = gameEngine.getGameState();
   const uiState = gameEngine.getUiState();
-  const movementSystem = new MovementSystem(gameState.map);
+  const movementSystem = new MovementSystem(gameState.getMap());
   const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
 
   const player = gameEngine.getCurrentPlayer();
@@ -183,7 +183,7 @@ Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
 
   // Should only have moves to black sea tiles now
   const movesToBlackTiles = movesAfterClear.filter((move) => {
-    const cell = gameState.map.getCell({ q: move.q, r: move.r });
+    const cell = gameState.getMap().getCell({ q: move.q, r: move.r });
     return cell && cell.color === 'black';
   });
 

@@ -5,7 +5,7 @@ import { GameEngine } from '../src/GameEngine.ts';
 Deno.test('Cities - must have 2 adjacent sea spaces', () => {
   const engine = new GameEngine();
   const state = engine.getGameState();
-  const map = state.map;
+  const map = state.getMap();
   const grid = map.getHexGrid();
 
   const cityCells = grid.getCellsOfType('city');

@@ -79,7 +79,7 @@ export class ControllerForHexClicks {
       );
     }
 
-    const cell = this.gameEngine.getGameState().map.getCell(coordinates);
+    const cell = this.gameEngine.getGameState().getMap().getCell(coordinates);
     if (!cell) {
       return new Failure(`No cell found at ${JSON.stringify(coordinates)}`);
     }
@@ -120,7 +120,7 @@ export class ControllerForHexClicks {
     const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
     // Get available moves for the selected color and available favor
     const uiState = this.getEngine().getUiState();
-    const movementSystem = new MovementSystem(state.map);
+    const movementSystem = new MovementSystem(state.getMap());
     const moveShipHandler = new ShipMoveHandler(state, uiState, movementSystem);
     const availableMoves = moveShipHandler.getAvailableMovesForColor(
       maxFavorForMovement,

@@ -48,7 +48,7 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   // Get available moves for black die with recoloring intention
   gameEngine.setSelectedDieColor('black');
   const uiState = gameEngine.getUiState();
-  const movementSystem = new MovementSystem(gameState.map);
+  const movementSystem = new MovementSystem(gameState.getMap());
   const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
   const availableMoves = handler.getAvailableMovesForColor(
     player.favor - 1,
@@ -56,7 +56,7 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
 
   // Should have moves that require pink sea tiles (since black die can be recolored to pink)
   const movesToPinkTiles = availableMoves.filter((move) => {
-    const cell = gameState.map.getCell({ q: move.q, r: move.r });
+    const cell = gameState.getMap().getCell({ q: move.q, r: move.r });
     return cell && cell.color === 'pink';
   });
 
@@ -101,7 +101,7 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
   gameEngine.setSelectedDieColor('blue');
   const state = gameEngine.getGameState();
   const uiState = gameEngine.getUiState();
-  const movementSystem = new MovementSystem(state.map);
+  const movementSystem = new MovementSystem(state.getMap());
   const handler = new ShipMoveHandler(state, uiState, movementSystem);
   const movesWithHighRecolor = handler.getAvailableMovesForColor(
     player.favor - 2,
@@ -136,7 +136,7 @@ Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () =>
 
   gameEngine.setSelectedDieColor('black');
   const uiState = gameEngine.getUiState();
-  const movementSystem = new MovementSystem(gameState.map);
+  const movementSystem = new MovementSystem(gameState.getMap());
   const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
   const movesWithoutRecolor = handler.getAvailableMovesForColor(
     player.favor,
@@ -144,7 +144,7 @@ Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () =>
 
   // Should only have moves to black sea tiles
   const movesToBlackTiles = movesWithoutRecolor.filter((move) => {
-    const cell = gameState.map.getCell({ q: move.q, r: move.r });
+    const cell = gameState.getMap().getCell({ q: move.q, r: move.r });
     return cell && cell.color === 'black';
   });
 

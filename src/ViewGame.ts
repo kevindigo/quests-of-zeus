@@ -77,7 +77,7 @@ export class ViewGame {
     const hexMapContainer = document.getElementById('hexMapSVG');
     if (!hexMapContainer) return;
 
-    const grid = gameState.map.getHexGrid();
+    const grid = gameState.getMap().getHexGrid();
     console.log('Grid structure:', grid);
     console.log('Grid length:', grid.getRadius());
 

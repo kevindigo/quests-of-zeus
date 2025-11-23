@@ -158,7 +158,7 @@ export class ShipMoveHandler {
         },
       };
     }
-    const map = this.gameState.map;
+    const map = this.gameState.getMap();
     const radius = map.getHexGrid().getRadius();
     if (Math.abs(destination.q) > radius || Math.abs(destination.r) > radius) {
       return {

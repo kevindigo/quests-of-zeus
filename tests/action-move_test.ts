@@ -12,11 +12,11 @@ function createShipMoveHandler(): ShipMoveHandler {
   const state = new GameState();
   new GameStateInitializer().initializeGameState(state);
 
-  const centerHex = state.map.getCell(HexGrid.CENTER)!;
+  const centerHex = state.getMap().getCell(HexGrid.CENTER)!;
   centerHex.terrain = 'sea';
   centerHex.color = 'red';
   const uiState = new UiStateClass();
-  const movementSystem = new MovementSystem(state.map);
+  const movementSystem = new MovementSystem(state.getMap());
   const shipMoveHandler = new ShipMoveHandler(state, uiState, movementSystem);
   return shipMoveHandler;
 }
@@ -77,7 +77,7 @@ Deno.test('Action move ship invalid destination coordinates', () => {
   assertEquals(alreadyThere.error.details?.targetR, destination.r);
 
   const qIsOffMapCoordinates = {
-    q: state.map.getHexGrid().getRadius() + 1,
+    q: state.getMap().getHexGrid().getRadius() + 1,
     r: 0,
   };
   const offMap = handler.attemptMoveShip(
@@ -95,7 +95,7 @@ Deno.test('Action move ship invalid destination coordinates', () => {
 
   const rIsOffMapCoordinates = {
     q: 0,
-    r: -(state.map.getHexGrid().getRadius() + 1),
+    r: -(state.getMap().getHexGrid().getRadius() + 1),
   };
   const offMap2 = handler.attemptMoveShip(
     player,
@@ -204,7 +204,7 @@ Deno.test('Action move ship to non-sea', () => {
   const player = state.getCurrentPlayer();
 
   const destination = { q: 3, r: 3 };
-  state.map.getHexGrid().getCell(destination)!.terrain = 'shallow';
+  state.getMap().getHexGrid().getCell(destination)!.terrain = 'shallow';
   player.oracleDice = ['red'];
   const result = handler.attemptMoveShip(
     player,
@@ -309,7 +309,7 @@ Deno.test('Action move ship with card and favor range success', () => {
   const state = handler.getGameState();
   const player = state.getCurrentPlayer();
 
-  const grid = state.map.getHexGrid();
+  const grid = state.getMap().getHexGrid();
   grid.forEachCell((cell) => {
     cell.terrain = 'sea';
     cell.color = 'blue';
@@ -338,7 +338,7 @@ Deno.test('Action move ship with card and recolor success', () => {
   const state = handler.getGameState();
   const player = state.getCurrentPlayer();
 
-  const grid = state.map.getHexGrid();
+  const grid = state.getMap().getHexGrid();
   grid.forEachCell((cell) => {
     cell.terrain = 'sea';
     cell.color = 'blue';

@@ -50,7 +50,7 @@ export class GameEngine {
   ): MoveShipResult {
     const player = this.getGameState().getPlayer(playerId);
     const destinationCoordinates = { q: targetQ, r: targetR };
-    const movementSystem = new MovementSystem(this.getGameState().map);
+    const movementSystem = new MovementSystem(this.getGameState().getMap());
     const handler = new ShipMoveHandler(
       this.getGameState(),
       this.getUiState(),
@@ -191,7 +191,7 @@ export class GameEngine {
       return [];
     }
 
-    const map = state.map;
+    const map = state.getMap();
     const neighbors = map.getNeighbors(shipPosition);
 
     const availables = neighbors.filter((cell) => {

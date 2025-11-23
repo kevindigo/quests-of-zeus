@@ -178,7 +178,7 @@ export class Controller {
     const favorAvailableForRange = currentPlayer.favor - favorForRecoloring;
 
     // Get available moves for the selected die color and available favor
-    const movementSystem = new MovementSystem(gameState.map);
+    const movementSystem = new MovementSystem(gameState.getMap());
     const shipMoveHandler = new ShipMoveHandler(
       gameState,
       this.getUiState(),
