@@ -1,12 +1,11 @@
 // Oracle card and recoloring logic for Quests of Zeus
+import type { GameState } from './GameState.ts';
 import type { Player } from './Player.ts';
-import { COLOR_WHEEL, type CoreColor, type HexColor } from './types.ts';
+import { COLOR_WHEEL, type CoreColor } from './types.ts';
 
 export class OracleSystem {
-  private oracleCardDeck: CoreColor[] = [];
-
-  constructor(oracleCardDeck: CoreColor[]) {
-    this.oracleCardDeck = oracleCardDeck;
+  constructor(gameState: GameState) {
+    this.gameState = gameState;
   }
 
   public static applyRecolor(original: CoreColor, favor: number): CoreColor {
@@ -20,10 +19,11 @@ export class OracleSystem {
   }
 
   public takeOracleCardFromDeck(): CoreColor | undefined {
-    if (!this.oracleCardDeck || this.oracleCardDeck.length === 0) {
+    const deck = this.gameState.getOracleCardDeck();
+    if (deck.length === 0) {
       return undefined;
     }
-    return this.oracleCardDeck.pop();
+    return deck.pop();
   }
 
   /**
@@ -31,7 +31,8 @@ export class OracleSystem {
    * The oracle card is drawn from the deck and added to the player's hand
    */
   public drawOracleCard(player: Player, dieColor: CoreColor): boolean {
-    if (!this.oracleCardDeck || this.oracleCardDeck.length === 0) {
+    const deck = this.gameState.getOracleCardDeck();
+    if (deck.length === 0) {
       return false;
     }
 
@@ -54,7 +55,7 @@ export class OracleSystem {
     }
 
     // Draw top oracle card from deck
-    const card = this.oracleCardDeck.pop();
+    const card = deck.pop();
     if (!card) {
       console.warn('Oracle card deck is empty when trying to draw card.');
       return false;
@@ -85,7 +86,8 @@ export class OracleSystem {
     }
 
     // Check if oracle card deck has cards
-    if (!this.oracleCardDeck || this.oracleCardDeck.length === 0) {
+    const deck = this.gameState.getOracleCardDeck();
+    if (deck.length === 0) {
       return false;
     }
 
@@ -104,7 +106,7 @@ export class OracleSystem {
     }
 
     // Draw top oracle card from deck
-    const newCard = this.oracleCardDeck.pop();
+    const newCard = deck.pop();
     if (!newCard) {
       console.warn('Oracle card deck is empty when trying to draw card.');
       return false;
@@ -119,10 +121,5 @@ export class OracleSystem {
     return true;
   }
 
-  /**
-   * Get the current oracle card deck
-   */
-  public getOracleCardDeck(): HexColor[] {
-    return this.oracleCardDeck;
-  }
+  private gameState: GameState;
 }

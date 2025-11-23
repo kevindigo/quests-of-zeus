@@ -44,9 +44,7 @@ export class GameEngine {
       throw new Error('Initializer failed to create a game state');
     }
     this.movementSystem = new MovementSystem(this.state.map);
-    this.oracleSystem = new OracleSystem(
-      this.gameInitializer.getOracleCardDeck(),
-    );
+    this.oracleSystem = new OracleSystem(this.state);
     this.shipMoveHandler = new ShipMoveHandler(
       this.state,
       this.uiState,

@@ -6,15 +6,18 @@ import {
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import type {
-  CityHex,
-  CubeHex,
-  MonsterHex,
-  Phase,
-  Resource,
-  ShrineHex,
-  StatueHex,
+import {
+  type CityHex,
+  COLOR_WHEEL,
+  type CoreColor,
+  type CubeHex,
+  type MonsterHex,
+  type Phase,
+  type Resource,
+  type ShrineHex,
+  type StatueHex,
 } from './types.ts';
+import { UtilityService } from './UtilityService.ts';
 
 export type GameStateJson = {
   map: HexMapJson;
@@ -27,6 +30,7 @@ export type GameStateJson = {
   cityHexes: CityHex[];
   statueHexes: StatueHex[];
   shrineHexes: ShrineHex[];
+  oracleCardDeck: CoreColor[];
 };
 
 export class GameState {
@@ -44,6 +48,8 @@ export class GameState {
     this.cityHexes = [];
     this.statueHexes = [];
     this.shrineHexes = [];
+    this.oracleCardDeck = [];
+    this.resetOracleCardDeck();
   }
 
   public static fromJson(rawJson: unknown): GameState {
@@ -59,6 +65,7 @@ export class GameState {
     state.cityHexes = json.cityHexes;
     state.statueHexes = json.statueHexes;
     state.shrineHexes = json.shrineHexes;
+    state.oracleCardDeck = json.oracleCardDeck;
     return state;
   }
 
@@ -76,6 +83,7 @@ export class GameState {
       cityHexes: this.cityHexes,
       statueHexes: this.statueHexes,
       shrineHexes: this.shrineHexes,
+      oracleCardDeck: this.oracleCardDeck,
     };
   }
 
@@ -165,6 +173,10 @@ export class GameState {
     });
   }
 
+  public getOracleCardDeck(): CoreColor[] {
+    return this.oracleCardDeck;
+  }
+
   public removeSpentResourceFromPlayer(
     player: Player,
     resource: Resource,
@@ -187,6 +199,21 @@ export class GameState {
     return new Success('Resource was spent');
   }
 
+  // Initialize the oracle card deck
+  private resetOracleCardDeck(): void {
+    this.oracleCardDeck = [];
+    const cardColors = [...COLOR_WHEEL];
+    // The deck consists of 5 copies of each of the 6 colors (5 * 6 = 30 cards)
+    for (const color of cardColors) {
+      for (let i = 0; i < 5; i++) {
+        this.oracleCardDeck.push(color);
+      }
+    }
+
+    // Shuffle the oracle card deck
+    UtilityService.shuffleArray(this.oracleCardDeck);
+  }
+
   public map: HexMap;
   public players: Player[];
   private currentPlayerIndex: number;
@@ -197,4 +224,5 @@ export class GameState {
   private cityHexes: CityHex[];
   private statueHexes: StatueHex[];
   private shrineHexes: ShrineHex[];
+  private oracleCardDeck: CoreColor[];
 }

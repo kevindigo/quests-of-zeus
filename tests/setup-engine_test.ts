@@ -153,3 +153,22 @@ Deno.test('GameEngine - all players start on Zeus hex', () => {
   assert(player2Cell);
   assertEquals(player2Cell.terrain, 'zeus', 'Player 2 should be on a Zeus hex');
 });
+
+Deno.test('GameEngine - initializes oracle card deck', () => {
+  const engine = new GameEngine();
+  engine.initializeGame();
+  assertEquals(engine.getGameState().getOracleCardDeck().length, 30);
+});
+
+Deno.test('GameEngine - starting a new game resets the oracle card deck', () => {
+  const engine = new GameEngine();
+  engine.initializeGame();
+  const player = engine.getCurrentPlayer();
+  player.oracleDice = ['red'];
+  const uiState = engine.getUiState();
+  uiState.setSelectedDieColor('red');
+  assert(engine.drawOracleCard(player.id, 'red'));
+  assertEquals(engine.getGameState().getOracleCardDeck().length, 29);
+  engine.initializeGame();
+  assertEquals(engine.getGameState().getOracleCardDeck().length, 30);
+});

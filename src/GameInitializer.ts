@@ -44,9 +44,6 @@ export class GameInitializer {
     // Initialize players (2-4 players)
     const players = this.initializePlayers(zeusCell.getCoordinates());
 
-    // Initialize the oracle card deck
-    this.initializeOracleCardDeck();
-
     const state = new GameState(
       map,
       players,
@@ -153,23 +150,6 @@ export class GameInitializer {
     }
 
     player.oracleDice = initialDice;
-  }
-
-  /**
-   * Initialize the oracle card deck
-   */
-  private initializeOracleCardDeck(): void {
-    this.oracleCardDeck = [];
-    const cardColors = [...COLOR_WHEEL];
-    // The deck consists of 5 copies of each of the 6 colors (5 * 6 = 30 cards)
-    for (const color of cardColors) {
-      for (let i = 0; i < 5; i++) {
-        this.oracleCardDeck.push(color);
-      }
-    }
-
-    // Shuffle the oracle card deck
-    UtilityService.shuffleArray(this.oracleCardDeck);
   }
 
   /**
