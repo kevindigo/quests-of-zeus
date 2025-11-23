@@ -26,7 +26,6 @@ import type {
   Resource,
   ShrineHex,
 } from './types.ts';
-import { COLOR_WHEEL } from './types.ts';
 import { type UiState, UiStateClass } from './UiState.ts';
 
 export class GameManager {
@@ -94,31 +93,8 @@ export class GameManager {
     );
   }
 
-  public endTurn(): void {
-    const newDice: CoreColor[] = [];
-    for (let i = 0; i < 3; i++) {
-      const randomColor =
-        COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
-      if (randomColor) {
-        newDice.push(randomColor);
-      }
-    }
-
-    const currentPlayer = this.state.getCurrentPlayer();
-    if (currentPlayer) {
-      currentPlayer.usedOracleCardThisTurn = false;
-      currentPlayer.oracleDice = newDice;
-      this.clearSelectedRecoloring();
-    }
-
-    const nextPlayerIndex = (this.state.getCurrentPlayerIndex() + 1) %
-      this.state.getPlayerCount();
-
-    this.state.setCurrentPlayerIndex(nextPlayerIndex);
-    if (this.state.getCurrentPlayerIndex() === 0) {
-      this.state.advanceRound();
-    }
-    this.state.setPhase('action');
+  public endTurn(): ResultWithMessage {
+    return this.engine.endTurn(this.getGameState(), this.getUiState());
   }
 
   public getGameStateSnapshot(): GameState {

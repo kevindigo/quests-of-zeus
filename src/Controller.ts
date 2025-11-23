@@ -357,11 +357,9 @@ export class Controller {
   private endTurn(): void {
     this.clearResourceSelection();
 
-    this.gameEngine.endTurn();
+    const result = this.gameEngine.endTurn();
 
-    this.showMessage(
-      'Turn ended. Dice re-rolled for the previous player.',
-    );
+    this.showMessage(result.message);
 
     this.renderGameState();
   }
