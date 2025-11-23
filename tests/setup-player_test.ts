@@ -1,8 +1,8 @@
 import { assertEquals } from '@std/assert';
-import { GameEngine } from '../src/GameEngine.ts';
+import { GameManager } from '../src/GameManager.ts';
 
 Deno.test('Setup player - favor', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
 
   const state = engine.getGameState();
   assertEquals(state.getPlayerCount(), 2);
@@ -14,7 +14,7 @@ Deno.test('Setup player - favor', () => {
 });
 
 Deno.test('Setup player - storage', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
   const state = engine.getGameState();
   for (let playerId = 0; playerId < state.getPlayerCount(); ++playerId) {
     const player = state.getPlayer(playerId);

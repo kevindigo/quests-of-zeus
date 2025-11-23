@@ -1,8 +1,8 @@
 import { assertEquals } from '@std/assert';
-import { GameEngine } from '../src/GameEngine.ts';
+import { GameManager } from '../src/GameManager.ts';
 
 Deno.test('offering cubes configuration', () => {
-  const gameEngine = new GameEngine();
+  const gameEngine = new GameManager();
   const gameState = gameEngine.getGameState();
 
   // Check that each cube hex has exactly playerCount cubes

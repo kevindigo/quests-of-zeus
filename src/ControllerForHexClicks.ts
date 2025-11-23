@@ -1,4 +1,4 @@
-import type { GameEngine } from './GameEngine.ts';
+import type { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
@@ -11,11 +11,11 @@ import { ShipMoveHandler } from './ShipMoveHandler.ts';
 import type { MoveShipResult } from './types.ts';
 
 export class ControllerForHexClicks {
-  public constructor(engine: GameEngine) {
+  public constructor(engine: GameManager) {
     this.gameEngine = engine;
   }
 
-  public getEngine(): GameEngine {
+  public getEngine(): GameManager {
     return this.gameEngine;
   }
 
@@ -277,5 +277,5 @@ export class ControllerForHexClicks {
     }
   }
 
-  private gameEngine: GameEngine;
+  private gameEngine: GameManager;
 }

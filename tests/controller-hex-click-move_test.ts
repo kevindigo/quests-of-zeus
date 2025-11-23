@@ -5,7 +5,7 @@ import {
   assertStringIncludes,
 } from '@std/assert';
 import { ControllerForHexClicks } from '../src/ControllerForHexClicks.ts';
-import { GameEngine } from '../src/GameEngine.ts';
+import { GameManager } from '../src/GameManager.ts';
 import type { GameState } from '../src/GameState.ts';
 import { type HexCoordinates, HexGrid } from '../src/hexmap/HexGrid.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
@@ -30,7 +30,7 @@ function assertFailureContainsAll(
   });
 }
 
-let engine: GameEngine;
+let engine: GameManager;
 let handler: ControllerForHexClicks;
 let state: GameState;
 let center: HexCoordinates;
@@ -38,7 +38,7 @@ let player: Player;
 let shipMoveHandler: ShipMoveHandler;
 
 function setup(): void {
-  engine = new GameEngine();
+  engine = new GameManager();
   handler = new ControllerForHexClicks(engine);
   state = engine.getGameState();
   center = HexGrid.CENTER;

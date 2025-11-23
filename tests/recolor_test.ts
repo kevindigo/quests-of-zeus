@@ -1,13 +1,13 @@
 // Unit test for recoloring favor calculation in extra range moves
 
 import { assert, assertEquals } from '@std/assert';
-import { GameEngine } from '../src/GameEngine.ts';
+import { GameManager } from '../src/GameManager.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
 import { ShipMoveHandler } from '../src/ShipMoveHandler.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
-  const gameEngine = new GameEngine();
+  const gameEngine = new GameManager();
 
   const player = gameEngine.getCurrentPlayer();
 
@@ -30,7 +30,7 @@ Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
 });
 
 Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
-  const gameEngine = new GameEngine();
+  const gameEngine = new GameManager();
 
   const player = gameEngine.getCurrentPlayer();
 
@@ -77,7 +77,7 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
 });
 
 Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
-  const gameEngine = new GameEngine();
+  const gameEngine = new GameManager();
 
   const player = gameEngine.getCurrentPlayer();
 
@@ -120,7 +120,7 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
 });
 
 Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () => {
-  const gameEngine = new GameEngine();
+  const gameEngine = new GameManager();
 
   const player = gameEngine.getCurrentPlayer();
 

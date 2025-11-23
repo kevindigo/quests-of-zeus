@@ -28,7 +28,7 @@ import type {
 import { COLOR_WHEEL } from './types.ts';
 import { type UiState, UiStateClass } from './UiState.ts';
 
-export class GameEngine {
+export class GameManager {
   constructor() {
     this.state = new GameState();
     this.uiState = new UiStateClass();

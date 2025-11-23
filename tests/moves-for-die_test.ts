@@ -1,13 +1,13 @@
 // Tests for the new getAvailableMovesForDie method
 
 import { assert, assertEquals, assertGreater } from '@std/assert';
-import { GameEngine } from '../src/GameEngine.ts';
+import { GameManager } from '../src/GameManager.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
 import { ShipMoveHandler } from '../src/ShipMoveHandler.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('getAvailableMovesForDie - basic functionality', () => {
-  const gameEngine = new GameEngine();
+  const gameEngine = new GameManager();
   const movementSystem = new MovementSystem(gameEngine.getGameState().getMap());
   const handler = new ShipMoveHandler(
     gameEngine.getGameState(),
@@ -45,7 +45,7 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
 });
 
 Deno.test('getAvailableMovesForDie - favor spending', () => {
-  const gameEngine = new GameEngine();
+  const gameEngine = new GameManager();
   const movementSystem = new MovementSystem(gameEngine.getGameState().getMap());
   const handler = new ShipMoveHandler(
     gameEngine.getGameState(),
@@ -71,7 +71,7 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
 });
 
 Deno.test('getAvailableMovesForDie - recoloring intention', () => {
-  const gameEngine = new GameEngine();
+  const gameEngine = new GameManager();
   const gameState = gameEngine.getGameState();
   const uiState = gameEngine.getUiState();
   const movementSystem = new MovementSystem(gameState.getMap());
@@ -114,7 +114,7 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
 });
 
 Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
-  const gameEngine = new GameEngine();
+  const gameEngine = new GameManager();
   const movementSystem = new MovementSystem(gameEngine.getGameState().getMap());
   const handler = new ShipMoveHandler(
     gameEngine.getGameState(),
@@ -153,7 +153,7 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
 });
 
 Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
-  const gameEngine = new GameEngine();
+  const gameEngine = new GameManager();
   const gameState = gameEngine.getGameState();
   const uiState = gameEngine.getUiState();
   const movementSystem = new MovementSystem(gameState.getMap());

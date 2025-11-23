@@ -1,10 +1,10 @@
 import type { Action } from './actions.ts';
-import type { GameEngine } from './GameEngine.ts';
+import type { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import { Failure, type ResultWithMessage } from './ResultWithMessage.ts';
 
 export class ActionResolver {
-  public constructor(engine: GameEngine) {
+  public constructor(engine: GameManager) {
     this.engine = engine;
     console.log(`Just here to avoid a compiler error: ${this.engine}`);
   }
@@ -18,8 +18,8 @@ export class ActionResolver {
   }
 
   public isTerminal(_state: GameState): boolean {
-    return true;
+    return false;
   }
 
-  private readonly engine: GameEngine;
+  private readonly engine: GameManager;
 }

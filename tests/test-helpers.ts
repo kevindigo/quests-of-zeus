@@ -1,5 +1,5 @@
 import { assert, assertFalse, assertStringIncludes } from '@std/assert';
-import { GameEngine } from '../src/GameEngine.ts';
+import { GameManager } from '../src/GameManager.ts';
 import type { GameState } from '../src/GameState.ts';
 import type { HexCell } from '../src/hexmap/HexCell.ts';
 import type { HexGrid } from '../src/hexmap/HexGrid.ts';
@@ -19,14 +19,14 @@ export function assertFailureContains(
   assertStringIncludes(result.message, fragment);
 }
 
-export let testEngine: GameEngine;
+export let testEngine: GameManager;
 export let testState: GameState;
 export let testMap: HexMap;
 export let testGrid: HexGrid;
 export let testPlayer: Player;
 
 export function setupGame(): void {
-  testEngine = new GameEngine();
+  testEngine = new GameManager();
   testState = testEngine.getGameState();
   testMap = testState.getMap();
   testGrid = testMap.getHexGrid();

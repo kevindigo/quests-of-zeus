@@ -1,11 +1,11 @@
 // Test for city statue functionality
 
 import { assert, assertEquals } from '@std/assert';
-import { GameEngine } from '../src/GameEngine.ts';
+import { GameManager } from '../src/GameManager.ts';
 import { COLOR_WHEEL } from '../src/types.ts';
 
 Deno.test('City Statue Functionality - Basic Operations', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
   const cities = engine.getCityHexes();
 
   assertEquals(

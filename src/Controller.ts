@@ -3,7 +3,7 @@
 
 import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
-import { GameEngine } from './GameEngine.ts';
+import { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
@@ -15,7 +15,7 @@ import { ViewGame } from './ViewGame.ts';
 
 export class Controller {
   constructor() {
-    this.gameEngine = new GameEngine();
+    this.gameEngine = new GameManager();
     this.viewGame = new ViewGame(
       this.gameEngine.getGameState(),
       this.gameEngine.getUiState(),
@@ -390,6 +390,6 @@ export class Controller {
     }
   }
 
-  private gameEngine: GameEngine;
+  private gameEngine: GameManager;
   private viewGame: ViewGame;
 }

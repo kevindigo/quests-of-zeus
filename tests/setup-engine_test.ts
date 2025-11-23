@@ -1,9 +1,9 @@
 import { assert } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
-import { GameEngine } from '../src/GameEngine.ts';
+import { GameManager } from '../src/GameManager.ts';
 
 Deno.test('GameEngine setup - initialization', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
 
   // Initialize the game
   const state = engine.getGameState();
@@ -24,7 +24,7 @@ Deno.test('GameEngine setup - initialization', () => {
 });
 
 Deno.test('GameEngine setup - player creation', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
 
   const player1 = engine.getPlayer(0);
   const player2 = engine.getPlayer(1);
@@ -43,7 +43,7 @@ Deno.test('GameEngine setup - player creation', () => {
 });
 
 Deno.test('GameEngine setup - roll dice during setup', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
 
   const player = engine.getPlayer(0);
   assert(player);
@@ -51,7 +51,7 @@ Deno.test('GameEngine setup - roll dice during setup', () => {
 });
 
 Deno.test('GameEngine setup - initialize shield', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
 
   const player1 = engine.getPlayer(0);
   const player2 = engine.getPlayer(1);
@@ -81,7 +81,7 @@ Deno.test('GameEngine setup - initialize shield', () => {
 });
 
 Deno.test('GameEngine - all players start on Zeus hex', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
 
   // Get all players
   const player1 = engine.getPlayer(0);
@@ -132,12 +132,12 @@ Deno.test('GameEngine - all players start on Zeus hex', () => {
 });
 
 Deno.test('GameEngine - initializes oracle card deck', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
   assertEquals(engine.getGameState().getOracleCardDeck().length, 30);
 });
 
 Deno.test('GameEngine - starting a new game resets the oracle card deck', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
   const player = engine.getCurrentPlayer();
   player.oracleDice = ['red'];
   const uiState = engine.getUiState();

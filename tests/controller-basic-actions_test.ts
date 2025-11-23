@@ -5,18 +5,18 @@ import {
   assertStringIncludes,
 } from '@std/assert';
 import { ControllerForBasicActions } from '../src/ControllerForBasicActions.ts';
-import { GameEngine } from '../src/GameEngine.ts';
+import { GameManager } from '../src/GameManager.ts';
 import type { GameState } from '../src/GameState.ts';
 import type { Player } from '../src/Player.ts';
 import { assertFailureContains } from './test-helpers.ts';
 
-let engine: GameEngine;
+let engine: GameManager;
 let state: GameState;
 let currentPlayer: Player;
 let handler: ControllerForBasicActions;
 
 function setup() {
-  engine = new GameEngine();
+  engine = new GameManager();
   state = engine.getGameState();
   currentPlayer = engine.getCurrentPlayer();
   handler = new ControllerForBasicActions(engine);

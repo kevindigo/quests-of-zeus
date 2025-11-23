@@ -1,11 +1,11 @@
 // Tests for the new dice rolling behavior (dice rolled at end of turn)
 
 import { assert, assertEquals, assertExists } from '@std/assert';
-import { GameEngine } from '../src/GameEngine.ts';
+import { GameManager } from '../src/GameManager.ts';
 import type { HexColor } from '../src/types.ts';
 
 Deno.test('DiceRolling - all players start with dice rolled', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
 
   // Initialize the game
   const state = engine.getGameState();
@@ -35,7 +35,7 @@ Deno.test('DiceRolling - all players start with dice rolled', () => {
 });
 
 Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
 
   const initialState = engine.getGameState();
   assertExists(initialState.getPlayer(0));
@@ -78,7 +78,7 @@ Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
 });
 
 Deno.test('DiceRolling - recoloring intentions cleared at end of turn', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
 
   const player1 = engine.getCurrentPlayer();
   assertExists(player1);
@@ -100,7 +100,7 @@ Deno.test('DiceRolling - recoloring intentions cleared at end of turn', () => {
 });
 
 Deno.test('DiceRolling - round advances when all players have taken turns', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
 
   const initialState = engine.getGameState();
   assertEquals(initialState.getRound(), 1, 'Game should start at round 1');
@@ -132,7 +132,7 @@ Deno.test('DiceRolling - round advances when all players have taken turns', () =
 });
 
 Deno.test('DiceRolling - dice are valid colors after rolling', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
 
   const state = engine.getGameState();
   const validColors: HexColor[] = [
@@ -176,7 +176,7 @@ Deno.test('DiceRolling - dice are valid colors after rolling', () => {
 });
 
 Deno.test('DiceRolling - next player always has dice ready', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
 
   // Simulate multiple turns and verify next player always has dice
   for (let turn = 0; turn < 5; turn++) {

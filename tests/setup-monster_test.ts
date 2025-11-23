@@ -5,12 +5,12 @@
  */
 
 import { assert, assertEquals } from '@std/assert';
-import { GameEngine } from '../src/GameEngine.ts';
+import { GameManager } from '../src/GameManager.ts';
 import { COLOR_WHEEL } from '../src/types.ts';
 
 // Helper function to run distribution tests
 function runDistributionTests(
-  engine: GameEngine,
+  engine: GameManager,
   runNumber?: number,
 ): void {
   const monsterHexes = engine.getMonsterHexes();
@@ -88,7 +88,7 @@ function runDistributionTests(
 
 // Basic distribution test with 2 players
 Deno.test('MonsterDistribution - basic distribution with 2 players', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
   runDistributionTests(engine);
 });
 
@@ -97,14 +97,14 @@ Deno.test('MonsterDistribution - distribution consistency', () => {
   const testRuns = 10;
 
   for (let run = 0; run < testRuns; run++) {
-    const engine = new GameEngine();
+    const engine = new GameManager();
     runDistributionTests(engine, run + 1);
   }
 });
 
 // Test edge cases
 Deno.test('MonsterDistribution - edge cases', () => {
-  const engine = new GameEngine();
+  const engine = new GameManager();
   runDistributionTests(engine);
 });
 
@@ -113,7 +113,7 @@ Deno.test('MonsterDistribution - algorithm completeness', () => {
   // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 10; run++) {
-    const engine = new GameEngine();
+    const engine = new GameManager();
     runDistributionTests(engine, run + 1);
   }
 });
@@ -123,7 +123,7 @@ Deno.test('MonsterDistribution - even distribution across runs', () => {
   // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 20; run++) {
-    const engine = new GameEngine();
+    const engine = new GameManager();
     const monsterHexes = engine.getMonsterHexes();
 
     const monstersPerHex = monsterHexes.map((
@@ -145,7 +145,7 @@ Deno.test('MonsterDistribution - color distribution consistency', () => {
   // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 5; run++) {
-    const engine = new GameEngine();
+    const engine = new GameManager();
     const monsterHexes = engine.getMonsterHexes();
 
     // Count colors
@@ -174,7 +174,7 @@ Deno.test('MonsterDistribution - max monsters per hex', () => {
   // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 10; run++) {
-    const engine = new GameEngine();
+    const engine = new GameManager();
     const monsterHexes = engine.getMonsterHexes();
 
     const maxMonsters = Math.max(
@@ -203,7 +203,7 @@ Deno.test('MonsterDistribution - actual player count (2 players)', () => {
   // So sorted distribution pattern should always be "111111222"
 
   for (let run = 0; run < 50; run++) {
-    const engine = new GameEngine();
+    const engine = new GameManager();
     const monsterHexes = engine.getMonsterHexes();
 
     const monstersPerHex = monsterHexes.map((

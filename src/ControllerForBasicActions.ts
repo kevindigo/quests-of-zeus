@@ -1,4 +1,4 @@
-import type { GameEngine } from './GameEngine.ts';
+import type { GameManager } from './GameManager.ts';
 import { OracleSystem } from './OracleSystem.ts';
 import {
   Failure,
@@ -8,7 +8,7 @@ import {
 import type { CoreColor } from './types.ts';
 
 export class ControllerForBasicActions {
-  public constructor(engine: GameEngine) {
+  public constructor(engine: GameManager) {
     this.gameEngine = engine;
   }
 
@@ -102,5 +102,5 @@ export class ControllerForBasicActions {
     }
   }
 
-  private gameEngine: GameEngine;
+  private gameEngine: GameManager;
 }

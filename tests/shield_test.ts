@@ -1,8 +1,8 @@
 import { assert, assertEquals } from '@std/assert';
-import { GameEngine } from '../src/GameEngine.ts';
+import { GameManager } from '../src/GameManager.ts';
 
 Deno.test('Shield resource - players start with 0 shield', () => {
-  const gameEngine = new GameEngine();
+  const gameEngine = new GameManager();
 
   const gameState = gameEngine.getGameState().toSnapshot();
 
@@ -16,7 +16,7 @@ Deno.test('Shield resource - players start with 0 shield', () => {
 });
 
 Deno.test('Shield resource - shield is serialized in game state', () => {
-  const gameEngine = new GameEngine();
+  const gameEngine = new GameManager();
 
   const gameState = gameEngine.getGameState().toSnapshot();
 
