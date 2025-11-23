@@ -5,23 +5,25 @@ export type ActionType = 'free' | 'coupon' | 'noTargetColor' | 'normal';
 
 // Base action interface
 export interface ActionBase {
-  type: ActionType; // general category
-  playerId: number; // who performs the action
+  type: ActionType;
+}
+
+export interface FreeAction extends ActionBase {
+  type: 'free';
 }
 
 // God action interface
-export interface FreeGodAction extends ActionBase {
-  type: 'free';
-  subType: 'god';
-  godColor: CoreColor;
-}
-
 export interface ResourceAction extends ActionBase {
   spend: Resource;
 }
 
 export interface ResourceColorAction extends ResourceAction {
   targetColor: CoreColor;
+}
+
+export interface FreeGodAction extends FreeAction {
+  subType: 'god';
+  godColor: CoreColor;
 }
 
 // ------------------ Free God Actions ------------------
@@ -53,25 +55,25 @@ export interface FreePinkGodAction extends FreeGodAction {
 }
 
 // ------------------ Other Free Actions ------------------
-export interface FreeContinueMonsterFightAction extends ActionBase {
-  type: 'free';
+export interface FreeContinueMonsterFightAction extends FreeAction {
   subType: 'continueMonsterFight';
 }
 
-export interface FreeAbandonMonsterFightAction extends ActionBase {
-  type: 'free';
+export interface FreeAbandonMonsterFightAction extends FreeAction {
   subType: 'abandonMonsterFight';
 }
 
-export interface FreeSkipTurnHealAction extends ActionBase {
-  type: 'free';
+export interface FreeSkipTurnHealAction extends FreeAction {
   subType: 'skipTurnHeal';
   skipColors: [CoreColor, CoreColor, CoreColor];
 }
 
-export interface FreeUseEquipmentExtraDieAction extends ActionBase {
-  type: 'free';
+export interface FreeUseEquipmentExtraDieAction extends FreeAction {
   subType: 'useEquipmentExtraDie';
+}
+
+export interface FreeEndTurnAction extends FreeAction {
+  subType: 'endTurn';
 }
 
 // ------------------ Coupon Actions ------------------
