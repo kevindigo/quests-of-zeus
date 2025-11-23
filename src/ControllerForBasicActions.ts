@@ -75,23 +75,30 @@ export class ControllerForBasicActions {
       this.gameEngine.clearSelectedRecoloring();
 
       return new Success('Recoloring intention cleared');
-    } else {
-      const success = this.gameEngine.setSelectedRecoloring(
-        favorCost,
-      );
+    }
 
-      if (success) {
-        const resourceType = dieColor ? 'die' : 'oracle card';
-        const newColor = OracleSystem.applyRecolor(selectedColor, favorCost);
-        return {
-          success,
-          message: `${
-            resourceType.charAt(0).toUpperCase() + resourceType.slice(1)
-          } will be recolored from ${selectedColor} to ${newColor} when used (${favorCost} favor will be spent)`,
-        };
-      } else {
-        return new Failure('Failed to set recoloring intention');
-      }
+    const playerFavor = this.gameEngine.getCurrentPlayer().favor;
+    if (favorCost > playerFavor) {
+      return new Failure(
+        `Cannot spend more favor (${favorCost}) than the player has (${playerFavor})`,
+      );
+    }
+
+    const success = this.gameEngine.setSelectedRecoloring(
+      favorCost,
+    );
+
+    if (success) {
+      const resourceType = dieColor ? 'die' : 'oracle card';
+      const newColor = OracleSystem.applyRecolor(selectedColor, favorCost);
+      return {
+        success,
+        message: `${
+          resourceType.charAt(0).toUpperCase() + resourceType.slice(1)
+        } will be recolored from ${selectedColor} to ${newColor} when used (${favorCost} favor will be spent)`,
+      };
+    } else {
+      return new Failure('Failed to set recoloring intention');
     }
   }
 

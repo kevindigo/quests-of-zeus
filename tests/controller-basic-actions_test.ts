@@ -188,5 +188,5 @@ Deno.test('Recolor - not enough favor', () => {
     'red',
     null,
   );
-  assertFailureContains(result, 'Failed');
+  assertFailureContains(result, 'more favor');
 });
