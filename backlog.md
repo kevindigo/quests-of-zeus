@@ -1,6 +1,7 @@
 == Short-term ==
 
 - Work on implementing ActionResolver
+  - Split recoloring out as a separate thing from ship move
 
 == Cosmetic/Usability ==
 
