@@ -3,7 +3,6 @@ import type { GameState } from './GameState.ts';
 import { type HexCoordinates, HexGrid } from './hexmap/HexGrid.ts';
 import type { MovementSystem } from './MovementSystem.ts';
 import { OracleSystem } from './OracleSystem.ts';
-import type { Player } from './Player.ts';
 import type { MoveShipResult, PossibleShipMove, Resource } from './types.ts';
 import type { UiState } from './UiState.ts';
 
@@ -70,7 +69,6 @@ export class ShipMoveHandler {
   }
 
   public attemptMoveShip(
-    player: Player,
     destination: HexCoordinates,
     selectedResource: Resource,
     favorSpentToRecolor: number,
@@ -85,6 +83,7 @@ export class ShipMoveHandler {
       };
     }
     // validate player
+    const player = this.gameState.getCurrentPlayer();
     if (this.gameState.getCurrentPlayerIndex() !== player.id) {
       return {
         success: false,
