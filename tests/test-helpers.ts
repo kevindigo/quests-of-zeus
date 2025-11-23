@@ -12,7 +12,10 @@ export function assertFailureContains(
   result: ResultWithMessage,
   fragment: string,
 ): void {
-  assertFalse(result.success, 'Should not have succeeded');
+  assertFalse(
+    result.success,
+    `Should not have succeeded. Success message: ${result.message}`,
+  );
   assertStringIncludes(result.message, fragment);
 }
 
