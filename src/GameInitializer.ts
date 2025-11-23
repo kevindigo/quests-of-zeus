@@ -35,7 +35,7 @@ export class GameInitializer {
   /**
    * Initialize a new game state
    */
-  public initializeGame(): GameState {
+  public initializeGameState(): GameState {
     const map = new HexMap();
 
     // Find the Zeus hex coordinates

@@ -39,7 +39,7 @@ export class GameEngine {
   }
 
   public initializeGame(): GameState {
-    this.state = this.gameInitializer.initializeGame();
+    this.state = this.gameInitializer.initializeGameState();
     if (!this.state) {
       throw new Error('Initializer failed to create a game state');
     }
