@@ -153,8 +153,6 @@ export class ControllerForHexClicks {
       ? selectedResource.getColor()
       : null;
     const moveResult = this.gameManager.moveShip(
-      q,
-      r,
       selectedResource,
       recoloringCost,
       favorSpentForRange,

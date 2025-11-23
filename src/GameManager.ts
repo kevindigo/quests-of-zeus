@@ -42,13 +42,10 @@ export class GameManager {
   }
 
   public moveShip(
-    targetQ: number,
-    targetR: number,
     selectedResource: Resource,
     favorSpentToRecolor: number,
     favorSpentForRange: number,
   ): MoveShipResult {
-    const destinationCoordinates = { q: targetQ, r: targetR };
     const movementSystem = new MovementSystem(this.getGameState().getMap());
     const handler = new ShipMoveHandler(
       this.getGameState(),
@@ -56,7 +53,6 @@ export class GameManager {
       movementSystem,
     );
     return handler.attemptMoveShip(
-      destinationCoordinates,
       selectedResource,
       favorSpentToRecolor,
       favorSpentForRange,

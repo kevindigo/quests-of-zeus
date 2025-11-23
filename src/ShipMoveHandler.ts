@@ -1,6 +1,6 @@
 // Player action implementations for Quests of Zeus
 import type { GameState } from './GameState.ts';
-import { type HexCoordinates, HexGrid } from './hexmap/HexGrid.ts';
+import { HexGrid } from './hexmap/HexGrid.ts';
 import type { MovementSystem } from './MovementSystem.ts';
 import { OracleSystem } from './OracleSystem.ts';
 import type { MoveShipResult, PossibleShipMove, Resource } from './types.ts';
@@ -15,6 +15,10 @@ export class ShipMoveHandler {
 
   public getGameState(): GameState {
     return this.gameState;
+  }
+
+  public getUiState(): UiState {
+    return this.uiState;
   }
 
   public getMovementSystem(): MovementSystem {
@@ -69,7 +73,6 @@ export class ShipMoveHandler {
   }
 
   public attemptMoveShip(
-    destination: HexCoordinates,
     selectedResource: Resource,
     favorSpentToRecolor: number,
     favorSpentForRange: number,
@@ -145,6 +148,14 @@ export class ShipMoveHandler {
     }
 
     // validate destination coordinates
+    const destination = this.uiState.getSelectedCoordinates();
+    if (!destination) {
+      return {
+        success: false,
+        error: { type: 'unknown', message: 'Destination was null' },
+      };
+    }
+
     if (
       JSON.stringify(destination) === JSON.stringify(player.getShipPosition())
     ) {
