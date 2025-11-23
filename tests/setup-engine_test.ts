@@ -9,18 +9,18 @@ Deno.test('GameEngine setup - initialization', () => {
   const state = engine.getGameState();
 
   assert(state.map);
-  assertEquals(state.players.length, 2);
+  assertEquals(state.getPlayerCount(), 2);
   assertEquals(state.getRound(), 1);
   assertEquals(state.getPhase(), 'action'); // Game starts in action phase since dice are already rolled
 
-  // All players should start with dice already rolled
-  state.players.forEach((player) => {
+  for (let playerId = 0; playerId < state.getPlayerCount(); ++playerId) {
+    const player = state.getPlayer(playerId);
     assertEquals(
       player.oracleDice.length,
       3,
       'Each player should start with 3 dice',
     );
-  });
+  }
 });
 
 Deno.test('GameEngine setup - player creation', () => {
@@ -63,8 +63,8 @@ Deno.test('GameEngine setup - initialize shield', () => {
   assertEquals(player2.shield, 0, 'Player 2 shield should be 0');
 
   const gameState = engine.getGameState();
-  const serializedPlayer1 = gameState.players.find((p) => p.id === player1.id);
-  const serializedPlayer2 = gameState.players.find((p) => p.id === player2.id);
+  const serializedPlayer1 = gameState.getPlayer(player1.id);
+  const serializedPlayer2 = gameState.getPlayer(player2.id);
 
   assert(serializedPlayer1);
   assert(serializedPlayer2);

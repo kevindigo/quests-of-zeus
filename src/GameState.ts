@@ -84,6 +84,10 @@ export class GameState {
     };
   }
 
+  public getPlayerCount(): number {
+    return this.players.length;
+  }
+
   public getPlayer(index: number): Player {
     const player = this.players[index];
     if (!player) {
@@ -214,7 +218,7 @@ export class GameState {
   }
 
   public map: HexMap;
-  public players: Player[];
+  private players: Player[];
   private currentPlayerIndex: number;
   private round: number;
   private phase: Phase;

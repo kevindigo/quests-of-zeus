@@ -20,7 +20,7 @@ function setupGameNextToRedCube(): CubeHex {
   });
   assertEquals(
     hexesWithRed.length,
-    testState.players.length,
+    testState.getPlayerCount(),
     'red cube hex count',
   );
   const cubeHex = hexesWithRed[0];

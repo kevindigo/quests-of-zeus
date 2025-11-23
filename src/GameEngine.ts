@@ -40,18 +40,6 @@ export class GameEngine {
     this.uiState.reset();
   }
 
-  public rollOracleDice(playerId: number): void {
-    const player = this.getValidPlayer(playerId);
-    const dice: CoreColor[] = [];
-    for (let i = 0; i < 3; i++) {
-      const randomColor =
-        COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
-      dice.push(randomColor!);
-    }
-
-    player.oracleDice = dice;
-  }
-
   public moveShip(
     playerId: number,
     targetQ: number,
@@ -60,7 +48,7 @@ export class GameEngine {
     favorSpentToRecolor: number,
     favorSpentForRange: number,
   ): MoveShipResult {
-    const player = this.getValidPlayer(playerId);
+    const player = this.getGameState().getPlayer(playerId);
     const destinationCoordinates = { q: targetQ, r: targetR };
     const movementSystem = new MovementSystem(this.getGameState().map);
     const handler = new ShipMoveHandler(
@@ -111,13 +99,13 @@ export class GameEngine {
     playerId: number,
     cardColor: CoreColor,
   ): boolean {
-    const player = this.getValidPlayer(playerId);
+    const player = this.getGameState().getPlayer(playerId);
     const oracleSystem = new OracleSystem(this.getGameState());
     return oracleSystem.spendOracleCardToDrawCard(player, cardColor);
   }
 
   public drawOracleCard(playerId: number, dieColor: CoreColor): boolean {
-    const player = this.getValidPlayer(playerId);
+    const player = this.getGameState().getPlayer(playerId);
     const oracleSystem = new OracleSystem(this.getGameState());
     return oracleSystem.drawOracleCard(player, dieColor);
   }
@@ -136,8 +124,7 @@ export class GameEngine {
       }
     }
 
-    const currentPlayer =
-      this.state.players[this.state.getCurrentPlayerIndex()];
+    const currentPlayer = this.state.getCurrentPlayer();
     if (currentPlayer) {
       currentPlayer.usedOracleCardThisTurn = false;
       currentPlayer.oracleDice = newDice;
@@ -145,7 +132,7 @@ export class GameEngine {
     }
 
     const nextPlayerIndex = (this.state.getCurrentPlayerIndex() + 1) %
-      this.state.players.length;
+      this.state.getPlayerCount();
 
     this.state.setCurrentPlayerIndex(nextPlayerIndex);
     if (this.state.getCurrentPlayerIndex() === 0) {
@@ -154,22 +141,6 @@ export class GameEngine {
     this.state.setPhase('action');
   }
 
-  private getPlayerIndex(playerId: number): number {
-    return this.state.players.findIndex((p) => p.id === playerId);
-  }
-
-  private getValidPlayer(playerId: number): Player {
-    const player = this.state.players.find((p) => p.id === playerId);
-    if (
-      !player ||
-      this.state.getCurrentPlayerIndex() !== this.getPlayerIndex(playerId)
-    ) {
-      throw new Error('Invalid player or not your turn');
-    }
-    return player;
-  }
-
-  // Public getters
   public getGameStateSnapshot(): GameState {
     return GameState.fromSnapshot(
       JSON.parse(JSON.stringify(this.state.toSnapshot())),
@@ -181,15 +152,11 @@ export class GameEngine {
   }
 
   public getCurrentPlayer(): Player {
-    const player = this.state.players[this.state.getCurrentPlayerIndex()];
-    if (!player) {
-      throw new Error('Current player not found');
-    }
-    return player;
+    return this.state.getCurrentPlayer();
   }
 
-  public getPlayer(playerId: number): Player | undefined {
-    return this.state.players.find((p) => p.id === playerId);
+  public getPlayer(playerId: number): Player {
+    return this.state.getPlayer(playerId);
   }
 
   public getUiState(): UiState {
@@ -548,19 +515,6 @@ export class GameEngine {
 
   public clearResourceSelection(): void {
     return this.uiState.clearResourceSelection();
-  }
-
-  public checkWinCondition(): { winner: Player | null; gameOver: boolean } {
-    const winner = this.state.players.find((p) =>
-      p.completedQuestTypes.temple_offering >= 3 &&
-      p.completedQuestTypes.monster >= 3 &&
-      p.completedQuestTypes.statue >= 3 &&
-      p.completedQuestTypes.shrine >= 3
-    );
-    return {
-      winner: winner || null,
-      gameOver: !!winner,
-    };
   }
 
   private isNeededForQuest(item: Item): boolean {

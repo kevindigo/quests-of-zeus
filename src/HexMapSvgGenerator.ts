@@ -332,14 +332,15 @@ export class HexMapSvgGenerator {
     y: number,
     cellSize: number,
   ): string {
-    const players = gameState.players;
+    const playerCount = gameState.getPlayerCount();
     let content = '';
-    if (!players) {
+    if (playerCount === 0) {
       return content;
     }
 
     const radius = cellSize / 4;
-    players.forEach((player) => {
+    for (let playerId = 0; playerId < playerCount; ++playerId) {
+      const player = gameState.getPlayer(playerId);
       const position = player.getShipPosition();
       if (
         cellCoordinates.q === position.q && cellCoordinates.r === position.r
@@ -358,7 +359,7 @@ export class HexMapSvgGenerator {
             fill="${player.color}"
         />`;
       }
-    });
+    }
 
     return content;
   }

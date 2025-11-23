@@ -11,11 +11,12 @@ Deno.test('DiceRolling - all players start with dice rolled', () => {
   const state = engine.getGameState();
 
   // All players should start with dice already rolled
-  state.players.forEach((player, index) => {
+  for (let playerId = 0; playerId < state.getPlayerCount(); ++playerId) {
+    const player = state.getPlayer(playerId);
     assertEquals(
       player.oracleDice.length,
       3,
-      `Player ${index + 1} should start with 3 dice rolled`,
+      `Player ${playerId + 1} should start with 3 dice rolled`,
     );
 
     // Each die should be a valid color
@@ -23,11 +24,11 @@ Deno.test('DiceRolling - all players start with dice rolled', () => {
       assert(
         ['red', 'pink', 'blue', 'black', 'green', 'yellow'].includes(dieColor),
         `Player ${
-          index + 1
+          playerId + 1
         } die ${dieIndex} should be a valid color, got ${dieColor}`,
       );
     });
-  });
+  }
 
   // Game should start in action phase since dice are already rolled
   assertEquals(state.getPhase(), 'action', 'Game should start in action phase');
@@ -37,11 +38,11 @@ Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
   const engine = new GameEngine();
 
   const initialState = engine.getGameState();
-  assertExists(initialState.players[0]);
-  assertExists(initialState.players[1]);
+  assertExists(initialState.getPlayer(0));
+  assertExists(initialState.getPlayer(1));
 
-  assertEquals(initialState.players[0].oracleDice.length, 3);
-  assertEquals(initialState.players[1].oracleDice.length, 3);
+  assertEquals(initialState.getPlayer(0).oracleDice.length, 3);
+  assertEquals(initialState.getPlayer(1).oracleDice.length, 3);
 
   // Player 1 should be current player initially
   assertEquals(
@@ -50,7 +51,7 @@ Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
     'Player 1 should be current player initially',
   );
 
-  initialState.players[0].oracleDice = [];
+  initialState.getPlayer(0).oracleDice = [];
 
   // End Player 1's turn
   engine.endTurn();
@@ -72,8 +73,8 @@ Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
   );
 
   // Player 1 should have new dice rolled
-  assert(stateAfterEndTurn.players[0]);
-  assertEquals(stateAfterEndTurn.players[0].oracleDice.length, 3);
+  assert(stateAfterEndTurn.getPlayer(0));
+  assertEquals(stateAfterEndTurn.getPlayer(0).oracleDice.length, 3);
 });
 
 Deno.test('DiceRolling - recoloring intentions cleared at end of turn', () => {
@@ -143,33 +144,34 @@ Deno.test('DiceRolling - dice are valid colors after rolling', () => {
     'yellow',
   ];
 
-  // Check all players' dice are valid colors
-  state.players.forEach((player, playerIndex) => {
+  for (let playerId = 0; playerId < state.getPlayerCount(); ++playerId) {
+    const player = state.getPlayer(playerId);
     player.oracleDice.forEach((dieColor, dieIndex) => {
       assert(
         validColors.includes(dieColor),
         `Player ${
-          playerIndex + 1
+          playerId + 1
         } die ${dieIndex} should be valid color, got ${dieColor}`,
       );
     });
-  });
+  }
 
   // End a few turns and verify dice remain valid
   for (let i = 0; i < 3; i++) {
     engine.endTurn();
     const newState = engine.getGameState();
 
-    newState.players.forEach((player, playerIndex) => {
+    for (let playerId = 0; playerId < newState.getPlayerCount(); ++playerId) {
+      const player = newState.getPlayer(playerId);
       player.oracleDice.forEach((dieColor, dieIndex) => {
         assert(
           validColors.includes(dieColor),
           `Player ${
-            playerIndex + 1
+            playerId + 1
           } die ${dieIndex} should be valid color after endTurn, got ${dieColor}`,
         );
       });
-    });
+    }
   }
 });
 
@@ -179,8 +181,7 @@ Deno.test('DiceRolling - next player always has dice ready', () => {
   // Simulate multiple turns and verify next player always has dice
   for (let turn = 0; turn < 5; turn++) {
     const currentState = engine.getGameState();
-    const currentPlayer =
-      currentState.players[currentState.getCurrentPlayerIndex()];
+    const currentPlayer = currentState.getCurrentPlayer();
 
     // Current player should have dice
     assertEquals(
@@ -193,7 +194,7 @@ Deno.test('DiceRolling - next player always has dice ready', () => {
     engine.endTurn();
 
     const nextState = engine.getGameState();
-    const nextPlayer = nextState.players[nextState.getCurrentPlayerIndex()];
+    const nextPlayer = nextState.getCurrentPlayer();
 
     // Next player should have dice ready
     assertEquals(

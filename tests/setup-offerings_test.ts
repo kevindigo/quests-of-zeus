@@ -6,14 +6,14 @@ Deno.test('offering cubes configuration', () => {
   const gameState = gameEngine.getGameState();
 
   // Check that each cube hex has exactly playerCount cubes
-  const validCubeHexes = gameState.getCubeHexes().filter((ch) =>
-    ch.cubeColors.length === gameState.players.length
-  );
+  const validCubeHexes = gameState.getCubeHexes().filter((ch) => {
+    return ch.cubeColors.length === gameState.getPlayerCount();
+  });
 
   assertEquals(
     validCubeHexes.length,
     6,
-    `Expected all 6 offerings hexes to have exactly ${gameState.players.length} cubes, but found ${validCubeHexes.length} valid hexes`,
+    `Expected all 6 offerings hexes to have exactly ${gameState.getPlayerCount()} cubes, but found ${validCubeHexes.length} valid hexes`,
   );
 
   // Check that all 6 colors are represented (each color should appear playerCount times)
@@ -23,7 +23,7 @@ Deno.test('offering cubes configuration', () => {
     colorCounts[color] = (colorCounts[color] || 0) + 1;
   });
 
-  const expectedColorCount = gameState.players.length;
+  const expectedColorCount = gameState.getPlayerCount();
   const correctColorCounts = Object.values(colorCounts).filter((count) =>
     count === expectedColorCount
   );

@@ -176,7 +176,7 @@ Deno.test('MonsterDistribution - initialization robustness', () => {
     const state = engine.getGameState();
 
     // Verify game state is properly initialized
-    assert(state.players.length === 2, 'Should have 2 players');
+    assertEquals(state.getPlayerCount(), 2, 'Should have 2 players');
     assert(state.map !== undefined, 'Hex map should be initialized');
 
     const monsterHexes = engine.getMonsterHexes();
