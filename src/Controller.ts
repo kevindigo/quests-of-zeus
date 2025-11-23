@@ -252,8 +252,6 @@ export class Controller {
   }
 
   private handleButtonClick(event: Event): void {
-    if (!this.gameEngine.isGameInitialized()) return;
-
     const target = event.target as HTMLElement;
     console.log(
       'Click event detected on:',
@@ -291,8 +289,6 @@ export class Controller {
   }
 
   private handleHexClickEvent(event: Event): void {
-    if (!this.gameEngine.isGameInitialized()) return;
-
     const customEvent = event as CustomEvent<
       { q: number; r: number; terrain: TerrainType }
     >;
@@ -315,7 +311,7 @@ export class Controller {
 
   private startNewGame(): void {
     this.clearMessagePanel();
-    this.gameEngine.initializeGame();
+    this.gameEngine.createGameState();
     this.renderGameState();
     this.showMessage(
       "New game started! All players have rolled their dice. Player 1's turn begins.",

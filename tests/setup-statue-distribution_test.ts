@@ -4,7 +4,7 @@ import { COLOR_WHEEL, type CoreColor } from '../src/types.ts';
 
 Deno.test('Statue base distribution - 6 with 3 on each', () => {
   const engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
   const state = engine.getGameState();
   const statueHexes = state.getStatueHexes();
 
@@ -16,7 +16,7 @@ Deno.test('Statue base distribution - 6 with 3 on each', () => {
 
 Deno.test('Statue base distribution - no duplicates on a hex', () => {
   const engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
   const state = engine.getGameState();
   const statueHexes = state.getStatueHexes();
 
@@ -31,7 +31,7 @@ Deno.test('Statue base distribution - no duplicates on a hex', () => {
 
 Deno.test('Statue base distribution - exactly 3 of each color in total', () => {
   const engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
   const state = engine.getGameState();
   const statueHexes = state.getStatueHexes();
 

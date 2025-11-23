@@ -8,7 +8,7 @@ Deno.test('DiceRolling - all players start with dice rolled', () => {
   const engine = new GameEngine();
 
   // Initialize the game
-  engine.initializeGame();
+  engine.createGameState();
   const state = engine.getGameState();
 
   // All players should start with dice already rolled
@@ -36,7 +36,7 @@ Deno.test('DiceRolling - all players start with dice rolled', () => {
 
 Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
   const engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
 
   const initialState = engine.getGameState();
   assertExists(initialState.players[0]);
@@ -80,7 +80,7 @@ Deno.test('DiceRolling - dice rolled for next player at end of turn', () => {
 
 Deno.test('DiceRolling - recoloring intentions cleared at end of turn', () => {
   const engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
 
   const player1 = engine.getCurrentPlayer();
   assertExists(player1);
@@ -103,7 +103,7 @@ Deno.test('DiceRolling - recoloring intentions cleared at end of turn', () => {
 
 Deno.test('DiceRolling - round advances when all players have taken turns', () => {
   const engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
 
   const initialState = engine.getGameState();
   assertEquals(initialState.getRound(), 1, 'Game should start at round 1');
@@ -136,7 +136,7 @@ Deno.test('DiceRolling - round advances when all players have taken turns', () =
 
 Deno.test('DiceRolling - dice are valid colors after rolling', () => {
   const engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
 
   const state = engine.getGameState();
   const validColors: HexColor[] = [
@@ -180,7 +180,7 @@ Deno.test('DiceRolling - dice are valid colors after rolling', () => {
 
 Deno.test('DiceRolling - next player always has dice ready', () => {
   const engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
 
   // Simulate multiple turns and verify next player always has dice
   for (let turn = 0; turn < 5; turn++) {

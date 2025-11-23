@@ -17,7 +17,7 @@ let handler: ControllerForBasicActions;
 
 function setup() {
   engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
   state = engine.getGameState();
   currentPlayer = engine.getCurrentPlayer();
   handler = new ControllerForBasicActions(engine);

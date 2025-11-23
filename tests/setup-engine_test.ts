@@ -5,11 +5,8 @@ import { GameEngine } from '../src/GameEngine.ts';
 Deno.test('GameEngine setup - initialization', () => {
   const engine = new GameEngine();
 
-  // Game should not be initialized by default
-  assertEquals(engine.isGameInitialized(), false);
-
   // Initialize the game
-  engine.initializeGame();
+  engine.createGameState();
   const state = engine.getGameState();
 
   assert(state.map);
@@ -25,27 +22,12 @@ Deno.test('GameEngine setup - initialization', () => {
       'Each player should start with 3 dice',
     );
   });
-
-  // Now game should be initialized
-  assertEquals(engine.isGameInitialized(), true);
 });
 
 Deno.test('GameEngine setup - player creation', () => {
   const engine = new GameEngine();
 
-  // Should throw error when game is not initialized
-  try {
-    engine.getPlayer(0);
-    assert(false, 'Should have thrown error');
-  } catch (error: unknown) {
-    assertEquals(
-      (error as Error).message,
-      'Game not initialized. Call initializeGame() first.',
-    );
-  }
-
-  // Initialize the game
-  engine.initializeGame();
+  engine.createGameState();
   const player1 = engine.getPlayer(0);
   const player2 = engine.getPlayer(1);
 
@@ -64,7 +46,7 @@ Deno.test('GameEngine setup - player creation', () => {
 
 Deno.test('GameEngine setup - roll dice during setup', () => {
   const engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
 
   const player = engine.getPlayer(0);
   assert(player);
@@ -73,7 +55,7 @@ Deno.test('GameEngine setup - roll dice during setup', () => {
 
 Deno.test('GameEngine setup - initialize shield', () => {
   const engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
 
   const player1 = engine.getPlayer(0);
   const player2 = engine.getPlayer(1);
@@ -104,7 +86,7 @@ Deno.test('GameEngine setup - initialize shield', () => {
 
 Deno.test('GameEngine - all players start on Zeus hex', () => {
   const engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
 
   // Get all players
   const player1 = engine.getPlayer(0);
@@ -156,19 +138,19 @@ Deno.test('GameEngine - all players start on Zeus hex', () => {
 
 Deno.test('GameEngine - initializes oracle card deck', () => {
   const engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
   assertEquals(engine.getGameState().getOracleCardDeck().length, 30);
 });
 
 Deno.test('GameEngine - starting a new game resets the oracle card deck', () => {
   const engine = new GameEngine();
-  engine.initializeGame();
+  engine.createGameState();
   const player = engine.getCurrentPlayer();
   player.oracleDice = ['red'];
   const uiState = engine.getUiState();
   uiState.setSelectedDieColor('red');
   assert(engine.drawOracleCard(player.id, 'red'));
   assertEquals(engine.getGameState().getOracleCardDeck().length, 29);
-  engine.initializeGame();
+  engine.createGameState();
   assertEquals(engine.getGameState().getOracleCardDeck().length, 30);
 });

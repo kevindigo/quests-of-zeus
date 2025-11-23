@@ -27,7 +27,7 @@ export let testPlayer: Player;
 
 export function setupGame(): void {
   testEngine = new GameEngine();
-  testEngine.initializeGame();
+  testEngine.createGameState();
   testState = testEngine.getGameState();
   testMap = testState.map;
   testGrid = testMap.getHexGrid();

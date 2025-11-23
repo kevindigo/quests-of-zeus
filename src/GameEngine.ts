@@ -30,11 +30,11 @@ import { type UiState, UiStateClass } from './UiState.ts';
 
 export class GameEngine {
   constructor() {
-    this.state = null;
+    this.state = this.createGameState();
     this.uiState = new UiStateClass();
   }
 
-  public initializeGame(): GameState {
+  public createGameState(): GameState {
     const gameInitializer = new GameInitializer();
     this.state = gameInitializer.initializeGameState();
     if (!this.state) {
@@ -193,25 +193,18 @@ export class GameEngine {
 
   // Game status
   public isGameInitialized(): boolean {
-    return this.state !== null;
+    return true;
   }
 
   // Public getters
   public getGameStateSnapshot(): GameState {
     this.ensureInitialized();
-    if (!this.state) {
-      throw new Error(`Cannot getGameState because state is null`);
-    }
     return GameState.fromJson(
       JSON.parse(JSON.stringify(this.state.toJson())),
     );
   }
 
   public getGameState(): GameState {
-    this.ensureInitialized();
-    if (!this.state) {
-      throw new Error(`Cannot getGameState because state is null`);
-    }
     return this.state;
   }
 
@@ -662,6 +655,6 @@ export class GameEngine {
     }
   }
 
-  private state: GameState | null;
+  private state: GameState;
   private uiState: UiState;
 }
