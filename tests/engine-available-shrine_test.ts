@@ -6,10 +6,10 @@ import {
   putPlayerNextTo,
   setupGame,
   testGameManager,
+  testGameState,
   testGrid,
   testMap,
   testPlayer,
-  testState,
 } from './test-helpers.ts';
 
 Deno.test('Available land - nothing available from zeus', () => {
@@ -57,7 +57,7 @@ Deno.test('Available land - shrine already completed', () => {
   const shrineCell = findFirstCellWithTerrainAndColor('shrine', color);
   putPlayerNextTo(shrineCell);
 
-  const shrineHex = testState.findShrineHexAt(shrineCell.getCoordinates());
+  const shrineHex = testGameState.findShrineHexAt(shrineCell.getCoordinates());
   assert(shrineHex);
   shrineHex.status = 'filled';
 
@@ -71,7 +71,7 @@ Deno.test('Available land - shrine already completed', () => {
 
 Deno.test('Available land - shrine already flipped and not ours', () => {
   setupGame();
-  const shrineHex = testState.getShrineHexes().find((sh) => {
+  const shrineHex = testGameState.getShrineHexes().find((sh) => {
     return sh.owner !== testPlayer.color;
   });
   assert(shrineHex);
@@ -93,7 +93,7 @@ Deno.test('Available land - shrine already flipped and not ours', () => {
 
 Deno.test('Available land - shrine already flipped and is ours', () => {
   setupGame();
-  const shrineHex = testState.getShrineHexes().find((sh) => {
+  const shrineHex = testGameState.getShrineHexes().find((sh) => {
     return sh.owner === testPlayer.color;
   });
   assert(shrineHex);

@@ -21,7 +21,7 @@ export function assertFailureContains(
 }
 
 export let testGameManager: GameManager;
-export let testState: GameState;
+export let testGameState: GameState;
 export let testUiState: UiState;
 export let testMap: HexMap;
 export let testGrid: HexGrid;
@@ -29,11 +29,11 @@ export let testPlayer: Player;
 
 export function setupGame(): void {
   testGameManager = new GameManager();
-  testState = testGameManager.getGameState();
+  testGameState = testGameManager.getGameState();
   testUiState = testGameManager.getUiState();
-  testMap = testState.getMap();
+  testMap = testGameState.getMap();
   testGrid = testMap.getHexGrid();
-  testPlayer = testState.getCurrentPlayer();
+  testPlayer = testGameState.getCurrentPlayer();
 }
 
 export function putPlayerNextTo(cell: HexCell): void {

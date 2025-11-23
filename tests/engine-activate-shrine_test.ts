@@ -8,9 +8,9 @@ import {
   putPlayerNextTo,
   setupGame,
   testGameManager,
+  testGameState,
   testGrid,
   testPlayer,
-  testState,
   testUiState,
 } from './test-helpers.ts';
 
@@ -21,7 +21,7 @@ function setupWithReadyShrineHex(): ShrineHex {
   const shrineCell = findFirstCellWithTerrainAndColor('shrine', color);
   putPlayerNextTo(shrineCell);
 
-  const shrineHex = testState.findShrineHexAt(shrineCell.getCoordinates());
+  const shrineHex = testGameState.findShrineHexAt(shrineCell.getCoordinates());
   assert(shrineHex, 'Failed to find our ShrineHex');
   return shrineHex;
 }
@@ -119,7 +119,7 @@ Deno.test('Click land - shrine visible and ours (die)', () => {
 
 Deno.test('Click land - shrine hidden and favor reward (die)', () => {
   setupGame();
-  const shrineHexes = testState.getShrineHexes();
+  const shrineHexes = testGameState.getShrineHexes();
   const shrineHex = shrineHexes.find((sh) => {
     return sh.owner !== testPlayer.color && sh.reward === 'favor';
   });
@@ -146,7 +146,7 @@ Deno.test('Click land - shrine hidden and favor reward (die)', () => {
 
 Deno.test('Click land - shrine hidden and card reward (die)', () => {
   setupGame();
-  const shrineHexes = testState.getShrineHexes();
+  const shrineHexes = testGameState.getShrineHexes();
   const shrineHex = shrineHexes.find((sh) => {
     return sh.owner !== testPlayer.color && sh.reward === 'card';
   });
@@ -175,7 +175,7 @@ Deno.test('Click land - shrine hidden and card reward (die)', () => {
 
 Deno.test('Click land - shrine card reward but oracle deck empty', () => {
   setupGame();
-  const shrineHexes = testState.getShrineHexes();
+  const shrineHexes = testGameState.getShrineHexes();
   const shrineHex = shrineHexes.find((sh) => {
     return sh.owner !== testPlayer.color && sh.reward === 'card';
   });

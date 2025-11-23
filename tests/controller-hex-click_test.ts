@@ -14,9 +14,9 @@ import type { CubeHex } from '../src/types.ts';
 import {
   setupGame,
   testGameManager,
+  testGameState,
   testGrid,
   testPlayer,
-  testState,
 } from './test-helpers.ts';
 
 function assertFailureContains(
@@ -39,7 +39,7 @@ function setupWithController(): void {
 Deno.test('Hex click - wrong phase', () => {
   setupWithController();
 
-  testState.setPhase('setup');
+  testGameState.setPhase('setup');
   assertFailureContains(
     testHandler.handleHexClick(center),
     'phase',
@@ -138,7 +138,7 @@ Deno.test('Hex click - available my hidden shrine (die)', () => {
   assert(seaNeighbor);
   testPlayer.setShipPosition(seaNeighbor.getCoordinates());
 
-  const shrineHex = testState.getShrineHexes().find((hex) => {
+  const shrineHex = testGameState.getShrineHexes().find((hex) => {
     return hex.q === shrineCell.q && hex.r === shrineCell.r;
   });
   assert(shrineHex);
@@ -157,14 +157,14 @@ Deno.test('Hex click - available my hidden shrine (die)', () => {
 /********************** Offering tests ****************************/
 function setupGameNextToRedCube(): CubeHex {
   setupWithController();
-  const cubeHexes = testState.getCubeHexes();
+  const cubeHexes = testGameState.getCubeHexes();
   assertEquals(cubeHexes.length, 6);
   const hexesWithRed = cubeHexes.filter((hex) => {
     return (hex.cubeColors.indexOf('red') >= 0);
   });
   assertEquals(
     hexesWithRed.length,
-    testState.getPlayerCount(),
+    testGameState.getPlayerCount(),
     'red cube hex count',
   );
   const cubeHex = hexesWithRed[0];

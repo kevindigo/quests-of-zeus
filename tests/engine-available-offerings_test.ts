@@ -6,21 +6,21 @@ import { COLOR_WHEEL, type CubeHex, type Item } from '../src/types.ts';
 import {
   setupGame,
   testGameManager,
+  testGameState,
   testGrid,
   testPlayer,
-  testState,
 } from './test-helpers.ts';
 
 function setupGameNextToRedCube(): CubeHex {
   setupGame();
-  const cubeHexes = testState.getCubeHexes();
+  const cubeHexes = testGameState.getCubeHexes();
   assertEquals(cubeHexes.length, 6);
   const hexesWithRed = cubeHexes.filter((hex) => {
     return (hex.cubeColors.indexOf('red') >= 0);
   });
   assertEquals(
     hexesWithRed.length,
-    testState.getPlayerCount(),
+    testGameState.getPlayerCount(),
     'red cube hex count',
   );
   const cubeHex = hexesWithRed[0];
