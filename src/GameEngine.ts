@@ -30,13 +30,13 @@ import { type UiState, UiStateClass } from './UiState.ts';
 
 export class GameEngine {
   constructor() {
-    this.gameInitializer = new GameInitializer();
     this.state = null;
     this.uiState = new UiStateClass();
   }
 
   public initializeGame(): GameState {
-    this.state = this.gameInitializer.initializeGameState();
+    const gameInitializer = new GameInitializer();
+    this.state = gameInitializer.initializeGameState();
     if (!this.state) {
       throw new Error('Initializer failed to create a game state');
     }
@@ -664,5 +664,4 @@ export class GameEngine {
 
   private state: GameState | null;
   private uiState: UiState;
-  private gameInitializer: GameInitializer;
 }
