@@ -8,7 +8,7 @@ import type { CoreColor } from '../src/types.ts';
 
 Deno.test('getAvailableMovesForDie - basic functionality', () => {
   const gameEngine = new GameEngine();
-  gameEngine.createGameState();
+  gameEngine.startNewGame();
   const movementSystem = new MovementSystem(gameEngine.getGameState().map);
   const handler = new ShipMoveHandler(
     gameEngine.getGameState(),
@@ -47,7 +47,7 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
 
 Deno.test('getAvailableMovesForDie - favor spending', () => {
   const gameEngine = new GameEngine();
-  gameEngine.createGameState();
+  gameEngine.startNewGame();
   const movementSystem = new MovementSystem(gameEngine.getGameState().map);
   const handler = new ShipMoveHandler(
     gameEngine.getGameState(),
@@ -74,7 +74,7 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
 
 Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   const gameEngine = new GameEngine();
-  gameEngine.createGameState();
+  gameEngine.startNewGame();
   const gameState = gameEngine.getGameState();
   const uiState = gameEngine.getUiState();
   const movementSystem = new MovementSystem(gameState.map);
@@ -118,7 +118,7 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
 
 Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
   const gameEngine = new GameEngine();
-  gameEngine.createGameState();
+  gameEngine.startNewGame();
   const movementSystem = new MovementSystem(gameEngine.getGameState().map);
   const handler = new ShipMoveHandler(
     gameEngine.getGameState(),
@@ -158,7 +158,7 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
 
 Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
   const gameEngine = new GameEngine();
-  gameEngine.createGameState();
+  gameEngine.startNewGame();
   const gameState = gameEngine.getGameState();
   const uiState = gameEngine.getUiState();
   const movementSystem = new MovementSystem(gameState.map);

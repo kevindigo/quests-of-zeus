@@ -3,7 +3,7 @@ import { GameEngine } from '../src/GameEngine.ts';
 
 Deno.test('Shield resource - players start with 0 shield', () => {
   const gameEngine = new GameEngine();
-  gameEngine.createGameState();
+  gameEngine.startNewGame();
 
   const gameState = gameEngine.getGameState();
 
@@ -26,7 +26,7 @@ Deno.test('Shield resource - players start with 0 shield', () => {
 
 Deno.test('Shield resource - shield is serialized in game state', () => {
   const gameEngine = new GameEngine();
-  gameEngine.createGameState();
+  gameEngine.startNewGame();
 
   const gameState = gameEngine.getGameState();
 
@@ -45,7 +45,7 @@ Deno.test('Shield resource - shield is serialized in game state', () => {
 
 Deno.test('Shield resource - shield can be modified', () => {
   const gameEngine = new GameEngine();
-  gameEngine.createGameState();
+  gameEngine.startNewGame();
 
   const gameState = gameEngine.getGameState();
   const player = gameState.players[0]!;

@@ -32,12 +32,11 @@ export class GameEngine {
   constructor() {
     this.state = new GameState();
     this.uiState = new UiStateClass();
-    this.createGameState();
+    this.startNewGame();
   }
 
-  public createGameState(): GameState {
-    const initializer = new GameStateInitializer();
-    initializer.initializeGameState(this.state);
+  public startNewGame(): GameState {
+    new GameStateInitializer().initializeGameState(this.state);
     this.uiState.reset();
 
     return this.state;

@@ -6,7 +6,7 @@ import { COLOR_WHEEL } from '../src/types.ts';
 
 Deno.test('City Statue Functionality - Basic Operations', () => {
   const engine = new GameEngine();
-  engine.createGameState();
+  engine.startNewGame();
   const cities = engine.getCityHexes();
 
   assertEquals(

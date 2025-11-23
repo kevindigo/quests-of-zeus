@@ -6,7 +6,7 @@ import type { HexColor } from '../src/types.ts';
 
 Deno.test('Quests - Each player has 12 quests, not yet completed', () => {
   const engine = new GameEngine();
-  engine.createGameState();
+  engine.startNewGame();
   const state = engine.getGameState();
 
   state.players.forEach((player) => {
@@ -20,7 +20,7 @@ Deno.test('Quests - Each player has 12 quests, not yet completed', () => {
 
 Deno.test('Quests - Each player has 3 shrine quests', () => {
   const engine = new GameEngine();
-  engine.createGameState();
+  engine.startNewGame();
   const state = engine.getGameState();
 
   state.players.forEach((player) => {
@@ -38,7 +38,7 @@ Deno.test('Quests - Each player has 3 shrine quests', () => {
 
 Deno.test('Quests - Each player has 3 statue quests', () => {
   const engine = new GameEngine();
-  engine.createGameState();
+  engine.startNewGame();
   const state = engine.getGameState();
 
   state.players.forEach((player) => {
@@ -56,7 +56,7 @@ Deno.test('Quests - Each player has 3 statue quests', () => {
 
 Deno.test('Quests = Each player has 3 temple quests', () => {
   const engine = new GameEngine();
-  engine.createGameState();
+  engine.startNewGame();
   const state = engine.getGameState();
 
   const colorsAcrossPlayers: Set<HexColor> = new Set();
@@ -87,7 +87,7 @@ Deno.test('Quests = Each player has 3 temple quests', () => {
 
 Deno.test('Quests = Each player has 3 monster quests', () => {
   const engine = new GameEngine();
-  engine.createGameState();
+  engine.startNewGame();
   const state = engine.getGameState();
 
   const colorsAcrossPlayers: Set<HexColor> = new Set();
@@ -118,7 +118,7 @@ Deno.test('Quests = Each player has 3 monster quests', () => {
 
 Deno.test('Quest - monster and temple quest colors should not overlap', () => {
   const engine = new GameEngine();
-  engine.createGameState();
+  engine.startNewGame();
   const state = engine.getGameState();
 
   const colorsAcrossPlayers: Set<HexColor> = new Set();
@@ -146,7 +146,7 @@ Deno.test('Quest - monster and temple quest colors should not overlap', () => {
 
 Deno.test('Quest - monster and temple quest colors should not contain red or green', () => {
   const engine = new GameEngine();
-  engine.createGameState();
+  engine.startNewGame();
   const player = engine.getCurrentPlayer();
   const monsterAndTempleQuests = player.getQuests().filter((quest) => {
     return quest.type === 'monster' || quest.type === 'temple';

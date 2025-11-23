@@ -15,7 +15,7 @@ Deno.test('MonsterDistribution - algorithm performance', () => {
   const iterations = 50;
   for (let i = 0; i < iterations; i++) {
     const engine = new GameEngine();
-    engine.createGameState();
+    engine.startNewGame();
     const monsterHexes = engine.getMonsterHexes();
 
     // Basic validation
@@ -47,7 +47,7 @@ Deno.test('MonsterDistribution - always valid results', () => {
   for (let run = 0; run < testRuns; run++) {
     try {
       const engine = new GameEngine();
-      engine.createGameState();
+      engine.startNewGame();
       const monsterHexes = engine.getMonsterHexes();
 
       // All constraints must be satisfied
@@ -119,7 +119,7 @@ Deno.test('MonsterDistribution - statistical analysis', () => {
 
   for (let run = 0; run < runs; run++) {
     const engine = new GameEngine();
-    engine.createGameState();
+    engine.startNewGame();
     const monsterHexes = engine.getMonsterHexes();
 
     const monstersPerHex = monsterHexes.map((
@@ -178,7 +178,7 @@ Deno.test('MonsterDistribution - initialization robustness', () => {
   // Test multiple sequential initializations
   for (let i = 0; i < 10; i++) {
     const engine = new GameEngine();
-    const state = engine.createGameState();
+    const state = engine.startNewGame();
 
     // Verify game state is properly initialized
     assert(state.players.length === 2, 'Should have 2 players');

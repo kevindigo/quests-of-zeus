@@ -39,7 +39,7 @@ let shipMoveHandler: ShipMoveHandler;
 
 function setup(): void {
   engine = new GameEngine();
-  engine.createGameState();
+  engine.startNewGame();
   handler = new ControllerForHexClicks(engine);
   state = engine.getGameState();
   center = HexGrid.CENTER;
