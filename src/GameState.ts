@@ -1,23 +1,20 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMap, type HexMapJson } from './hexmap/HexMap.ts';
-import { OracleSystem } from './OracleSystem.ts';
 import { Player, type PlayerJson } from './Player.ts';
 import {
   Failure,
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import {
-  type CityHex,
-  type CoreColor,
-  type CubeHex,
-  type MonsterHex,
-  type Phase,
+import type {
+  CityHex,
+  CubeHex,
+  MonsterHex,
+  Phase,
   Resource,
-  type ShrineHex,
-  type StatueHex,
+  ShrineHex,
+  StatueHex,
 } from './types.ts';
-import type { UiState } from './UiState.ts';
 
 export type GameStateJson = {
   map: HexMapJson;
@@ -30,11 +27,9 @@ export type GameStateJson = {
   cityHexes: CityHex[];
   statueHexes: StatueHex[];
   shrineHexes: ShrineHex[];
-  selectedResource: Resource;
-  selectedRecoloring: number;
 };
 
-export class GameState implements UiState {
+export class GameState {
   public constructor(
     map: HexMap,
     players: Player[],
@@ -42,7 +37,6 @@ export class GameState implements UiState {
     this.map = map;
     this.players = players;
     this.currentPlayerIndex = 0;
-    this.selectedRecoloring = 0;
     this.round = 1;
     this.phase = 'setup';
     this.cubeHexes = [];
@@ -50,7 +44,6 @@ export class GameState implements UiState {
     this.cityHexes = [];
     this.statueHexes = [];
     this.shrineHexes = [];
-    this.selectedResource = Resource.none;
   }
 
   public static fromJson(rawJson: unknown): GameState {
@@ -59,7 +52,6 @@ export class GameState implements UiState {
     const players = json.players.map((player) => Player.fromJson(player));
     const state = new GameState(map, players);
     state.currentPlayerIndex = json.currentPlayerIndex;
-    state.selectedRecoloring = json.selectedRecoloring;
     state.round = json.round;
     state.phase = json.phase;
     state.cubeHexes = json.cubeHexes;
@@ -67,7 +59,6 @@ export class GameState implements UiState {
     state.cityHexes = json.cityHexes;
     state.statueHexes = json.statueHexes;
     state.shrineHexes = json.shrineHexes;
-    state.selectedResource = Resource.fromJson(json.selectedResource);
     return state;
   }
 
@@ -78,7 +69,6 @@ export class GameState implements UiState {
         return player.toJson();
       }),
       currentPlayerIndex: this.currentPlayerIndex,
-      selectedRecoloring: this.selectedRecoloring,
       round: this.round,
       phase: this.phase,
       cubeHexes: this.cubeHexes,
@@ -86,7 +76,6 @@ export class GameState implements UiState {
       cityHexes: this.cityHexes,
       statueHexes: this.statueHexes,
       shrineHexes: this.shrineHexes,
-      selectedResource: this.selectedResource,
     };
   }
 
@@ -176,56 +165,6 @@ export class GameState implements UiState {
     });
   }
 
-  public getSelectedRecoloring(): number {
-    return this.selectedRecoloring || 0;
-  }
-
-  public setSelectedRecoloring(
-    favorSpent: number,
-  ): boolean {
-    const player = this.getCurrentPlayer();
-    if (player.favor < favorSpent) {
-      return false;
-    }
-
-    this.selectedRecoloring = favorSpent;
-    return true;
-  }
-
-  public clearSelectedRecoloring(): void {
-    this.selectedRecoloring = 0;
-  }
-
-  public getSelectedResource(): Resource {
-    return this.selectedResource;
-  }
-
-  public setSelectedDieColor(color: CoreColor | null): void {
-    this.selectedResource = color ? Resource.createDie(color) : Resource.none;
-  }
-
-  public setSelectedOracleCardColor(color: CoreColor | null): void {
-    this.selectedResource = color ? Resource.createCard(color) : Resource.none;
-  }
-
-  public getEffectiveSelectedColor(): CoreColor | null {
-    if (!this.selectedResource.hasColor()) {
-      return null;
-    }
-    const selectedColor = this.selectedResource.getColor();
-
-    const favorForRecoloring = this.getSelectedRecoloring();
-    const effectiveColor = OracleSystem.applyRecolor(
-      selectedColor,
-      favorForRecoloring,
-    );
-    return effectiveColor;
-  }
-
-  public clearResourceSelection(): void {
-    this.selectedResource = Resource.none;
-  }
-
   public removeSpentResourceFromPlayer(
     player: Player,
     resource: Resource,
@@ -258,6 +197,4 @@ export class GameState implements UiState {
   private cityHexes: CityHex[];
   private statueHexes: StatueHex[];
   private shrineHexes: ShrineHex[];
-  private selectedResource: Resource;
-  private selectedRecoloring: number;
 }

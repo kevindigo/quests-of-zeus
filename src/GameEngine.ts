@@ -32,9 +32,6 @@ export class GameEngine {
   constructor() {
     this.state = null;
     this.uiState = new UiStateClass();
-    console.log(
-      `GameEngine constructor: UiState ${this.uiState} is not used yet`,
-    );
     this.movementSystem = null;
     this.oracleSystem = null;
     this.shipMoveHandler = null;
@@ -52,7 +49,7 @@ export class GameEngine {
     );
     this.shipMoveHandler = new ShipMoveHandler(
       this.state,
-      this.state,
+      this.uiState,
       this.movementSystem,
     );
     return this.state;
@@ -236,7 +233,7 @@ export class GameEngine {
   }
 
   public getUiState(): UiState {
-    return this.getGameState();
+    return this.uiState;
   }
 
   public getCityHexes(): CityHex[] {
@@ -537,7 +534,7 @@ export class GameEngine {
 
   public spendDieOrCard(): void {
     const player = this.getCurrentPlayer();
-    const resource = this.getGameState().getSelectedResource();
+    const resource = this.getSelectedResource();
 
     if (!resource.hasColor()) {
       return;
@@ -563,37 +560,37 @@ export class GameEngine {
   }
 
   public getSelectedRecoloring(): number {
-    return this.getGameState().getSelectedRecoloring();
+    return this.uiState.getSelectedRecoloring();
   }
 
   public setSelectedRecoloring(
     favorSpent: number,
   ): boolean {
-    return this.getGameState().setSelectedRecoloring(favorSpent);
+    return this.uiState.setSelectedRecoloring(favorSpent);
   }
 
   public clearSelectedRecoloring(): void {
-    this.getGameState().clearSelectedRecoloring();
+    this.uiState.clearSelectedRecoloring();
   }
 
   public getSelectedResource(): Resource {
-    return this.getGameState().getSelectedResource();
+    return this.uiState.getSelectedResource();
   }
 
   public setSelectedDieColor(color: CoreColor): void {
-    return this.getGameState().setSelectedDieColor(color);
+    return this.uiState.setSelectedDieColor(color);
   }
 
   public setSelectedOracleCardColor(color: CoreColor): void {
-    this.getGameState().setSelectedOracleCardColor(color);
+    this.uiState.setSelectedOracleCardColor(color);
   }
 
   public getEffectiveSelectedColor(): CoreColor | null {
-    return this.getGameState().getEffectiveSelectedColor();
+    return this.uiState.getEffectiveSelectedColor();
   }
 
   public clearResourceSelection(): void {
-    return this.getGameState().clearResourceSelection();
+    return this.uiState.clearResourceSelection();
   }
 
   public checkWinCondition(): { winner: Player | null; gameOver: boolean } {
