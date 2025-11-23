@@ -11,12 +11,12 @@ import { ShipMoveHandler } from './ShipMoveHandler.ts';
 import type { MoveShipResult } from './types.ts';
 
 export class ControllerForHexClicks {
-  public constructor(engine: GameManager) {
-    this.gameEngine = engine;
+  public constructor(manager: GameManager) {
+    this.gameManager = manager;
   }
 
   public getEngine(): GameManager {
-    return this.gameEngine;
+    return this.gameManager;
   }
 
   private getState(): GameState {
@@ -26,14 +26,14 @@ export class ControllerForHexClicks {
   public handleHexClick(
     coordinates: HexCoordinates,
   ): ResultWithMessage {
-    const gameState = this.gameEngine.getGameStateSnapshot();
+    const gameState = this.gameManager.getGameStateSnapshot();
     if (gameState.getPhase() !== 'action') {
       return new Failure(
         `Cannot click hexes during the ${gameState.getPhase()} phase`,
       );
     }
 
-    const effectiveColor = this.gameEngine.getEffectiveSelectedColor();
+    const effectiveColor = this.gameManager.getEffectiveSelectedColor();
     if (!effectiveColor) {
       // DEBUGGING!!!
       {
@@ -79,7 +79,9 @@ export class ControllerForHexClicks {
       );
     }
 
-    const cell = this.gameEngine.getGameState().getMap().getCell(coordinates);
+    this.gameManager.getUiState().setSelectedCoordinates(coordinates);
+
+    const cell = this.gameManager.getGameState().getMap().getCell(coordinates);
     if (!cell) {
       return new Failure(`No cell found at ${JSON.stringify(coordinates)}`);
     }
@@ -87,7 +89,7 @@ export class ControllerForHexClicks {
     const terrain = cell.terrain;
     switch (terrain) {
       case 'sea': {
-        return this.handleMoveWithDieOrCard(coordinates);
+        return this.handleMoveWithDieOrCard();
       }
       case 'shrine': {
         return this.handleShrineWithDieOrCard(
@@ -109,13 +111,11 @@ export class ControllerForHexClicks {
     }
   }
 
-  private handleMoveWithDieOrCard(
-    coordinates: HexCoordinates,
-  ): ResultWithMessage {
+  private handleMoveWithDieOrCard(): ResultWithMessage {
     const state = this.getState();
     const currentPlayer = state.getCurrentPlayer();
-    const effectiveColor = this.gameEngine.getEffectiveSelectedColor();
-    const recoloringCost = this.gameEngine.getSelectedRecoloring();
+    const effectiveColor = this.gameManager.getEffectiveSelectedColor();
+    const recoloringCost = this.gameManager.getSelectedRecoloring();
     const availableFavor = currentPlayer.favor;
     const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
     // Get available moves for the selected color and available favor
@@ -126,6 +126,10 @@ export class ControllerForHexClicks {
       maxFavorForMovement,
     );
 
+    const coordinates = uiState.getSelectedCoordinates();
+    if (!coordinates) {
+      return new Failure('Move was not given any destination coordinates');
+    }
     const q = coordinates.q;
     const r = coordinates.r;
     const targetMove = availableMoves.find((move) =>
@@ -134,7 +138,7 @@ export class ControllerForHexClicks {
 
     if (!targetMove) {
       return new Failure(
-        `Cannot move to this hex using ${effectiveColor}!` +
+        `Cannot move to this hex using ${effectiveColor}! ` +
           'Must be a sea hex within range of matching color.',
       );
     }
@@ -148,7 +152,7 @@ export class ControllerForHexClicks {
     const selectedOracleCardColor = selectedResource.isCard()
       ? selectedResource.getColor()
       : null;
-    const moveResult = this.gameEngine.moveShip(
+    const moveResult = this.gameManager.moveShip(
       currentPlayer.id,
       q,
       r,
@@ -174,10 +178,10 @@ export class ControllerForHexClicks {
         targetQ: q,
         targetR: r,
         dieColor: selectedDieColor,
-        favorSpent: this.gameEngine.getSelectedRecoloring(),
+        favorSpent: this.gameManager.getSelectedRecoloring(),
         playerFavor: currentPlayer.favor,
         playerDice: currentPlayer.oracleDice,
-        recolorIntention: this.gameEngine.getSelectedRecoloring(),
+        recolorIntention: this.gameManager.getSelectedRecoloring(),
         moveResult,
       });
 
@@ -277,5 +281,5 @@ export class ControllerForHexClicks {
     }
   }
 
-  private gameEngine: GameManager;
+  private gameManager: GameManager;
 }
