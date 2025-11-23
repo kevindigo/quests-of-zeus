@@ -45,7 +45,6 @@ export class GameEngine {
   }
 
   public rollOracleDice(playerId: number): void {
-    this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
     const dice: CoreColor[] = [];
     for (let i = 0; i < 3; i++) {
@@ -65,7 +64,6 @@ export class GameEngine {
     favorSpentToRecolor: number,
     favorSpentForRange: number,
   ): MoveShipResult {
-    this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
     const destinationCoordinates = { q: targetQ, r: targetR };
     const movementSystem = new MovementSystem(this.getGameState().map);
@@ -84,27 +82,22 @@ export class GameEngine {
   }
 
   public collectOffering(_playerId: number, _color: CoreColor): boolean {
-    this.ensureInitialized();
     return false;
   }
 
   public fightMonster(_playerId: number): boolean {
-    this.ensureInitialized();
     return false;
   }
 
   public buildTemple(_playerId: number): boolean {
-    this.ensureInitialized();
     return false;
   }
 
   public buildStatue(_playerId: number): boolean {
-    this.ensureInitialized();
     return false;
   }
 
   public spendResourceForFavor(): ResultWithMessage {
-    this.ensureInitialized();
     const state = this.getGameState();
     const effectiveColor = this.getEffectiveSelectedColor();
     if (!effectiveColor) {
@@ -122,27 +115,22 @@ export class GameEngine {
     playerId: number,
     cardColor: CoreColor,
   ): boolean {
-    this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
     const oracleSystem = new OracleSystem(this.getGameState());
     return oracleSystem.spendOracleCardToDrawCard(player, cardColor);
   }
 
   public drawOracleCard(playerId: number, dieColor: CoreColor): boolean {
-    this.ensureInitialized();
     const player = this.getValidPlayer(playerId);
     const oracleSystem = new OracleSystem(this.getGameState());
     return oracleSystem.drawOracleCard(player, dieColor);
   }
 
   public canPlaceStatueOnCity(_playerId: number): boolean {
-    this.ensureInitialized();
     return false;
   }
 
   public endTurn(): void {
-    this.ensureInitialized();
-
     const newDice: CoreColor[] = [];
     for (let i = 0; i < 3; i++) {
       const randomColor =
@@ -174,12 +162,6 @@ export class GameEngine {
     return this.state!.players.findIndex((p) => p.id === playerId);
   }
 
-  private ensureInitialized(): void {
-    if (!this.state) {
-      throw new Error('Game not initialized. Call initializeGame() first.');
-    }
-  }
-
   private getValidPlayer(playerId: number): Player {
     const player = this.state!.players.find((p) => p.id === playerId);
     if (
@@ -191,14 +173,8 @@ export class GameEngine {
     return player;
   }
 
-  // Game status
-  public isGameInitialized(): boolean {
-    return true;
-  }
-
   // Public getters
   public getGameStateSnapshot(): GameState {
-    this.ensureInitialized();
     return GameState.fromJson(
       JSON.parse(JSON.stringify(this.state.toJson())),
     );
@@ -209,7 +185,6 @@ export class GameEngine {
   }
 
   public getCurrentPlayer(): Player {
-    this.ensureInitialized();
     const player = this.state!.players[this.state!.getCurrentPlayerIndex()];
     if (!player) {
       throw new Error('Current player not found');
@@ -218,7 +193,6 @@ export class GameEngine {
   }
 
   public getPlayer(playerId: number): Player | undefined {
-    this.ensureInitialized();
     return this.state!.players.find((p) => p.id === playerId);
   }
 
@@ -227,22 +201,18 @@ export class GameEngine {
   }
 
   public getCityHexes(): CityHex[] {
-    this.ensureInitialized();
     return this.state!.getCityHexes();
   }
 
   public getCubeHexes(): CubeHex[] {
-    this.ensureInitialized();
     return this.state!.getCubeHexes();
   }
 
   public getMonsterHexes(): MonsterHex[] {
-    this.ensureInitialized();
     return this.state!.getMonsterHexes();
   }
 
   public getMonstersOnHex(q: number, r: number): HexColor[] {
-    this.ensureInitialized();
     const monsterHex = this.state!.getMonsterHexes().find((mh) =>
       mh.q === q && mh.r === r
     );
@@ -585,7 +555,6 @@ export class GameEngine {
   }
 
   public checkWinCondition(): { winner: Player | null; gameOver: boolean } {
-    this.ensureInitialized();
     const winner = this.state!.players.find((p) =>
       p.completedQuestTypes.temple_offering >= 3 &&
       p.completedQuestTypes.monster >= 3 &&
