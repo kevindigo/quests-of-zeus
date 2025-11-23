@@ -1,6 +1,6 @@
 import { assert, assertEquals, assertFalse, assertGreater } from '@std/assert';
 import { GameState } from '../src/GameState.ts';
-import { GameInitializer } from '../src/GameStateInitializer.ts';
+import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
 import { Player } from '../src/Player.ts';
@@ -10,7 +10,7 @@ import { UiStateClass } from '../src/UiState.ts';
 
 function createShipMoveHandler(): ShipMoveHandler {
   const state = new GameState();
-  new GameInitializer().initializeGameState(state);
+  new GameStateInitializer().initializeGameState(state);
 
   const centerHex = state.map.getCell(HexGrid.CENTER)!;
   centerHex.terrain = 'sea';

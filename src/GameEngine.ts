@@ -2,7 +2,7 @@
 // High-level game management and orchestration
 
 import { GameState } from './GameState.ts';
-import { GameInitializer } from './GameStateInitializer.ts';
+import { GameStateInitializer } from './GameStateInitializer.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
@@ -36,8 +36,8 @@ export class GameEngine {
   }
 
   public createGameState(): GameState {
-    const gameInitializer = new GameInitializer();
-    gameInitializer.initializeGameState(this.state);
+    const initializer = new GameStateInitializer();
+    initializer.initializeGameState(this.state);
     this.uiState.reset();
 
     return this.state;

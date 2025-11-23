@@ -29,7 +29,7 @@ export function findZeus(map: HexMap): HexCell {
   throw new Error('Zeus not found in map!');
 }
 
-export class GameInitializer {
+export class GameStateInitializer {
   public initializeGameState(state: GameState): void {
     const map = state.map;
     map.reset();
