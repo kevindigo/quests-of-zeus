@@ -6,7 +6,6 @@ Deno.test('GameEngine setup - initialization', () => {
   const engine = new GameEngine();
 
   // Initialize the game
-  engine.startNewGame();
   const state = engine.getGameState();
 
   assert(state.map);
@@ -27,7 +26,6 @@ Deno.test('GameEngine setup - initialization', () => {
 Deno.test('GameEngine setup - player creation', () => {
   const engine = new GameEngine();
 
-  engine.startNewGame();
   const player1 = engine.getPlayer(0);
   const player2 = engine.getPlayer(1);
 
@@ -46,7 +44,6 @@ Deno.test('GameEngine setup - player creation', () => {
 
 Deno.test('GameEngine setup - roll dice during setup', () => {
   const engine = new GameEngine();
-  engine.startNewGame();
 
   const player = engine.getPlayer(0);
   assert(player);
@@ -55,7 +52,6 @@ Deno.test('GameEngine setup - roll dice during setup', () => {
 
 Deno.test('GameEngine setup - initialize shield', () => {
   const engine = new GameEngine();
-  engine.startNewGame();
 
   const player1 = engine.getPlayer(0);
   const player2 = engine.getPlayer(1);
@@ -86,7 +82,6 @@ Deno.test('GameEngine setup - initialize shield', () => {
 
 Deno.test('GameEngine - all players start on Zeus hex', () => {
   const engine = new GameEngine();
-  engine.startNewGame();
 
   // Get all players
   const player1 = engine.getPlayer(0);
@@ -138,19 +133,18 @@ Deno.test('GameEngine - all players start on Zeus hex', () => {
 
 Deno.test('GameEngine - initializes oracle card deck', () => {
   const engine = new GameEngine();
-  engine.startNewGame();
   assertEquals(engine.getGameState().getOracleCardDeck().length, 30);
 });
 
 Deno.test('GameEngine - starting a new game resets the oracle card deck', () => {
   const engine = new GameEngine();
-  engine.startNewGame();
   const player = engine.getCurrentPlayer();
   player.oracleDice = ['red'];
   const uiState = engine.getUiState();
   uiState.setSelectedDieColor('red');
   assert(engine.drawOracleCard(player.id, 'red'));
   assertEquals(engine.getGameState().getOracleCardDeck().length, 29);
+
   engine.startNewGame();
   assertEquals(engine.getGameState().getOracleCardDeck().length, 30);
 });

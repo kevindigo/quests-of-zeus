@@ -4,7 +4,6 @@ import { GameEngine } from '../src/GameEngine.ts';
 // NOTE: This test is not deterministic, but if it ever fails, that's a problem
 Deno.test('Cities - must have 2 adjacent sea spaces', () => {
   const engine = new GameEngine();
-  engine.startNewGame();
   const state = engine.getGameState();
   const map = state.map;
   const grid = map.getHexGrid();

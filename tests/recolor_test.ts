@@ -8,7 +8,6 @@ import type { CoreColor } from '../src/types.ts';
 
 Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
   const gameEngine = new GameEngine();
-  gameEngine.startNewGame();
 
   const player = gameEngine.getCurrentPlayer();
 
@@ -32,7 +31,6 @@ Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
 
 Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   const gameEngine = new GameEngine();
-  gameEngine.startNewGame();
 
   const player = gameEngine.getCurrentPlayer();
 
@@ -80,7 +78,6 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
 
 Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
   const gameEngine = new GameEngine();
-  gameEngine.startNewGame();
 
   const player = gameEngine.getCurrentPlayer();
 
@@ -124,7 +121,6 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
 
 Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () => {
   const gameEngine = new GameEngine();
-  gameEngine.startNewGame();
 
   const player = gameEngine.getCurrentPlayer();
 

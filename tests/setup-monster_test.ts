@@ -89,7 +89,6 @@ function runDistributionTests(
 // Basic distribution test with 2 players
 Deno.test('MonsterDistribution - basic distribution with 2 players', () => {
   const engine = new GameEngine();
-  engine.startNewGame();
   runDistributionTests(engine);
 });
 
@@ -99,7 +98,6 @@ Deno.test('MonsterDistribution - distribution consistency', () => {
 
   for (let run = 0; run < testRuns; run++) {
     const engine = new GameEngine();
-    engine.startNewGame();
     runDistributionTests(engine, run + 1);
   }
 });
@@ -107,7 +105,6 @@ Deno.test('MonsterDistribution - distribution consistency', () => {
 // Test edge cases
 Deno.test('MonsterDistribution - edge cases', () => {
   const engine = new GameEngine();
-  engine.startNewGame();
   runDistributionTests(engine);
 });
 
@@ -117,7 +114,6 @@ Deno.test('MonsterDistribution - algorithm completeness', () => {
 
   for (let run = 0; run < 10; run++) {
     const engine = new GameEngine();
-    engine.startNewGame();
     runDistributionTests(engine, run + 1);
   }
 });
@@ -128,7 +124,6 @@ Deno.test('MonsterDistribution - even distribution across runs', () => {
 
   for (let run = 0; run < 20; run++) {
     const engine = new GameEngine();
-    engine.startNewGame();
     const monsterHexes = engine.getMonsterHexes();
 
     const monstersPerHex = monsterHexes.map((
@@ -151,7 +146,6 @@ Deno.test('MonsterDistribution - color distribution consistency', () => {
 
   for (let run = 0; run < 5; run++) {
     const engine = new GameEngine();
-    engine.startNewGame();
     const monsterHexes = engine.getMonsterHexes();
 
     // Count colors
@@ -181,7 +175,6 @@ Deno.test('MonsterDistribution - max monsters per hex', () => {
 
   for (let run = 0; run < 10; run++) {
     const engine = new GameEngine();
-    engine.startNewGame();
     const monsterHexes = engine.getMonsterHexes();
 
     const maxMonsters = Math.max(
@@ -211,7 +204,6 @@ Deno.test('MonsterDistribution - actual player count (2 players)', () => {
 
   for (let run = 0; run < 50; run++) {
     const engine = new GameEngine();
-    engine.startNewGame();
     const monsterHexes = engine.getMonsterHexes();
 
     const monstersPerHex = monsterHexes.map((

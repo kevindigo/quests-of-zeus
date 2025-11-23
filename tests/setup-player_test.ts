@@ -3,7 +3,6 @@ import { GameEngine } from '../src/GameEngine.ts';
 
 Deno.test('Setup player - favor', () => {
   const engine = new GameEngine();
-  engine.startNewGame();
 
   const state = engine.getGameState();
   assertEquals(state.players.length, 2);
@@ -15,7 +14,6 @@ Deno.test('Setup player - favor', () => {
 
 Deno.test('Setup player - storage', () => {
   const engine = new GameEngine();
-  engine.startNewGame();
   engine.getGameState().players.forEach((player) => {
     assertEquals(player.getItemCapacity(), 2);
     assertEquals(player.getItemCount(), 0);

@@ -10,7 +10,6 @@ Deno.test('Controller - die selection', () => {
 
   // Initialize a game engine directly for testing
   const engine = new GameEngine();
-  engine.startNewGame();
 
   // Game now starts with dice already rolled
   const player = engine.getPlayer(1);
