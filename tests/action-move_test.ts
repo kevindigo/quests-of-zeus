@@ -4,7 +4,6 @@ import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
 import { ShipMoveHandler } from '../src/ShipMoveHandler.ts';
-import { Resource } from '../src/types.ts';
 import { UiStateClass } from '../src/UiState.ts';
 
 function createShipMoveHandler(): ShipMoveHandler {
@@ -27,7 +26,6 @@ Deno.test('Action move ship wrong phase', () => {
   state.setPhase('setup');
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
   const result = handler.attemptMoveShip(
-    Resource.none,
     0,
     0,
   );
@@ -44,9 +42,10 @@ Deno.test('Action move ship invalid destination coordinates', () => {
 
   player.oracleDice = ['red'];
   const destination = player.getShipPosition();
-  handler.getUiState().setSelectedCoordinates(destination);
+  const uiState = handler.getUiState();
+  uiState.setSelectedCoordinates(destination);
+  uiState.setSelectedDieColor('red');
   const alreadyThere = handler.attemptMoveShip(
-    Resource.createDie('red'),
     0,
     0,
   );
@@ -60,9 +59,9 @@ Deno.test('Action move ship invalid destination coordinates', () => {
     q: state.getMap().getHexGrid().getRadius() + 1,
     r: 0,
   };
-  handler.getUiState().setSelectedCoordinates(qIsOffMapCoordinates);
+  uiState.setSelectedCoordinates(qIsOffMapCoordinates);
+  uiState.setSelectedDieColor('red');
   const offMap = handler.attemptMoveShip(
-    Resource.createDie('red'),
     0,
     0,
   );
@@ -76,9 +75,9 @@ Deno.test('Action move ship invalid destination coordinates', () => {
     q: 0,
     r: -(state.getMap().getHexGrid().getRadius() + 1),
   };
-  handler.getUiState().setSelectedCoordinates(rIsOffMapCoordinates);
+  uiState.setSelectedCoordinates(rIsOffMapCoordinates);
+  uiState.setSelectedDieColor('red');
   const offMap2 = handler.attemptMoveShip(
-    Resource.createDie('red'),
     0,
     0,
   );
@@ -94,7 +93,6 @@ Deno.test('Action move ship use die or card not both', () => {
 
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
   const noDieOrCard = handler.attemptMoveShip(
-    Resource.none,
     0,
     0,
   );
@@ -110,8 +108,8 @@ Deno.test('Action move ship use invalid die', () => {
 
   player.oracleDice = ['red'];
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
+  handler.getUiState().setSelectedDieColor('blue');
   const result = handler.attemptMoveShip(
-    Resource.createDie('blue'),
     0,
     0,
   );
@@ -129,8 +127,8 @@ Deno.test('Action move ship use invalid card', () => {
 
   player.oracleCards = ['red'];
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
+  handler.getUiState().setSelectedOracleCardColor('blue');
   const result = handler.attemptMoveShip(
-    Resource.createCard('blue'),
     0,
     0,
   );
@@ -149,8 +147,8 @@ Deno.test('Action move ship not enough favor', () => {
   player.favor = 0;
   player.oracleDice = ['red'];
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
+  handler.getUiState().setSelectedDieColor('red');
   const tooMuchRecolor = handler.attemptMoveShip(
-    Resource.createDie('red'),
     1,
     0,
   );
@@ -159,8 +157,8 @@ Deno.test('Action move ship not enough favor', () => {
   assertEquals(tooMuchRecolor.error.type, 'not_enough_favor');
 
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
+  handler.getUiState().setSelectedDieColor('red');
   const tooMuchRange = handler.attemptMoveShip(
-    Resource.createDie('red'),
     0,
     1,
   );
@@ -178,8 +176,8 @@ Deno.test('Action move ship to non-sea', () => {
   state.getMap().getHexGrid().getCell(destination)!.terrain = 'shallow';
   player.oracleDice = ['red'];
   handler.getUiState().setSelectedCoordinates(destination);
+  handler.getUiState().setSelectedDieColor('red');
   const result = handler.attemptMoveShip(
-    Resource.createDie('red'),
     0,
     0,
   );
@@ -196,8 +194,8 @@ Deno.test('Action move ship to wrong color (no recoloring)', () => {
 
   player.oracleDice = ['blue'];
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
+  handler.getUiState().setSelectedDieColor('blue');
   const result = handler.attemptMoveShip(
-    Resource.createDie('blue'),
     0,
     0,
   );
@@ -214,8 +212,8 @@ Deno.test('Action move ship to wrong color (with recoloring)', () => {
   player.favor = 1;
   player.oracleDice = ['red'];
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
+  handler.getUiState().setSelectedDieColor('red');
   const result = handler.attemptMoveShip(
-    Resource.createDie('red'),
     1,
     0,
   );
@@ -233,8 +231,8 @@ Deno.test('Action move ship out of range', () => {
   player.oracleDice = ['red'];
   player.setShipPosition({ q: 4, r: 0 });
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
+  handler.getUiState().setSelectedDieColor('red');
   const result = handler.attemptMoveShip(
-    Resource.createDie('red'),
     0,
     0,
   );
@@ -259,8 +257,8 @@ Deno.test('Action move ship with die success (no favor)', () => {
   const to = reachable[0]!;
   player.oracleDice = [to.color, to.color];
   handler.getUiState().setSelectedCoordinates(to);
+  handler.getUiState().setSelectedDieColor(to.color);
   const result = handler.attemptMoveShip(
-    Resource.createDie(to.color),
     0,
     0,
   );
@@ -287,8 +285,8 @@ Deno.test('Action move ship with card and favor range success', () => {
   player.oracleCards = ['red', 'red'];
   player.favor = 2;
   handler.getUiState().setSelectedCoordinates(to);
+  handler.getUiState().setSelectedOracleCardColor('red');
   const result = handler.attemptMoveShip(
-    Resource.createCard('red'),
     0,
     1,
   );
@@ -315,8 +313,8 @@ Deno.test('Action move ship with card and recolor success', () => {
   player.oracleCards = ['red', 'red'];
   player.favor = 2;
   handler.getUiState().setSelectedCoordinates(to);
+  handler.getUiState().setSelectedOracleCardColor('red');
   const result = handler.attemptMoveShip(
-    Resource.createCard('red'),
     1,
     0,
   );
@@ -327,8 +325,8 @@ Deno.test('Action move ship with card and recolor success', () => {
   assertEquals(handler.getUiState().getSelectedRecoloring(), 0);
 
   handler.getUiState().setSelectedCoordinates(to);
+  handler.getUiState().setSelectedOracleCardColor('red');
   const secondCardInOneTurn = handler.attemptMoveShip(
-    Resource.createCard('red'),
     1,
     0,
   );

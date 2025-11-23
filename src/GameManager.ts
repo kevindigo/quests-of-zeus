@@ -42,7 +42,6 @@ export class GameManager {
   }
 
   public moveShip(
-    selectedResource: Resource,
     favorSpentToRecolor: number,
     favorSpentForRange: number,
   ): MoveShipResult {
@@ -53,7 +52,6 @@ export class GameManager {
       movementSystem,
     );
     return handler.attemptMoveShip(
-      selectedResource,
       favorSpentToRecolor,
       favorSpentForRange,
     );

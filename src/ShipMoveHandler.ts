@@ -3,7 +3,7 @@ import type { GameState } from './GameState.ts';
 import { HexGrid } from './hexmap/HexGrid.ts';
 import type { MovementSystem } from './MovementSystem.ts';
 import { OracleSystem } from './OracleSystem.ts';
-import type { MoveShipResult, PossibleShipMove, Resource } from './types.ts';
+import type { MoveShipResult, PossibleShipMove } from './types.ts';
 import type { UiState } from './UiState.ts';
 
 export class ShipMoveHandler {
@@ -73,7 +73,6 @@ export class ShipMoveHandler {
   }
 
   public attemptMoveShip(
-    selectedResource: Resource,
     favorSpentToRecolor: number,
     favorSpentForRange: number,
   ): MoveShipResult {
@@ -94,6 +93,7 @@ export class ShipMoveHandler {
       };
     }
 
+    const selectedResource = this.uiState.getSelectedResource();
     if (!selectedResource.hasColor()) {
       return {
         success: false,
