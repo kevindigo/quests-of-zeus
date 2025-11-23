@@ -2,7 +2,12 @@ import { assertEquals } from '@std/assert';
 import { assert } from '@std/assert/assert';
 import type { HexCell } from '../src/hexmap/HexCell.ts';
 import type { CoreColor, Item } from '../src/types.ts';
-import { setupGame, testEngine, testGrid, testPlayer } from './test-helpers.ts';
+import {
+  setupGame,
+  testGameManager,
+  testGrid,
+  testPlayer,
+} from './test-helpers.ts';
 
 function setupWithRedCubeNextToRedTemple(): HexCell {
   setupGame();
@@ -28,8 +33,8 @@ function putShipNextToTemple(color: CoreColor): HexCell {
 Deno.test('Engine available temple - wrong color die', () => {
   const redTempleCell = setupWithRedCubeNextToRedTemple();
   testPlayer.oracleDice = ['blue'];
-  testEngine.setSelectedDieColor('blue');
-  const lands = testEngine.getAvailableLandInteractions();
+  testGameManager.setSelectedDieColor('blue');
+  const lands = testGameManager.getAvailableLandInteractions();
   const foundTempleCell = lands.find(
     (cell) => {
       return cell.q === redTempleCell.q && cell.r === redTempleCell.r;
@@ -42,8 +47,8 @@ Deno.test('Engine available temple - no matching cube', () => {
   setupWithRedCubeNextToRedTemple();
   const blueTempleCell = putShipNextToTemple('blue');
   testPlayer.oracleDice = ['blue'];
-  testEngine.setSelectedDieColor('blue');
-  const foundTempleCell = testEngine.getAvailableLandInteractions().find(
+  testGameManager.setSelectedDieColor('blue');
+  const foundTempleCell = testGameManager.getAvailableLandInteractions().find(
     (cell) => {
       return cell.q === blueTempleCell.q && cell.r === blueTempleCell.r;
     },
@@ -54,8 +59,8 @@ Deno.test('Engine available temple - no matching cube', () => {
 Deno.test('Engine available temple - all correct', () => {
   const redTempleCell = setupWithRedCubeNextToRedTemple();
   testPlayer.oracleDice = ['red'];
-  testEngine.setSelectedDieColor('red');
-  const lands = testEngine.getAvailableLandInteractions();
+  testGameManager.setSelectedDieColor('red');
+  const lands = testGameManager.getAvailableLandInteractions();
   const foundTempleCell = lands.find(
     (cell) => {
       return cell.q === redTempleCell.q && cell.r === redTempleCell.r;

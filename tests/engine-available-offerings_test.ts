@@ -5,7 +5,7 @@ import { assertGreater } from '@std/assert/greater';
 import { COLOR_WHEEL, type CubeHex, type Item } from '../src/types.ts';
 import {
   setupGame,
-  testEngine,
+  testGameManager,
   testGrid,
   testPlayer,
   testState,
@@ -38,13 +38,13 @@ function setupGameNextToRedCube(): CubeHex {
 
 Deno.test('Engine available offerings - no resource selected', () => {
   setupGameNextToRedCube();
-  const lands = testEngine.getAvailableLandInteractions();
+  const lands = testGameManager.getAvailableLandInteractions();
   assertEquals(lands.length, 0);
 });
 
 Deno.test('Engine available offerings - not next to any offerings', () => {
   setupGame();
-  const lands = testEngine.getAvailableLandInteractions();
+  const lands = testGameManager.getAvailableLandInteractions();
   assertEquals(lands.length, 0);
 });
 
@@ -56,8 +56,8 @@ Deno.test('Engine available offerings - not next to selected color cube', () => 
   const missingColor = missingColors[0];
   assert(missingColor);
   testPlayer.oracleDice = [missingColor];
-  testEngine.setSelectedDieColor(missingColor);
-  const lands = testEngine.getAvailableLandInteractions();
+  testGameManager.setSelectedDieColor(missingColor);
+  const lands = testGameManager.getAvailableLandInteractions();
   assertFalse(lands.find((cell) => {
     cell.q === cubeHex.q && cell.r === cubeHex.r;
   }));
@@ -68,8 +68,8 @@ Deno.test('Engine available offerings - not loadable', () => {
   const redCube: Item = { type: 'cube', color: 'red' };
   testPlayer.loadItem(redCube);
   testPlayer.oracleDice = ['red'];
-  testEngine.setSelectedDieColor('red');
-  const lands = testEngine.getAvailableLandInteractions();
+  testGameManager.setSelectedDieColor('red');
+  const lands = testGameManager.getAvailableLandInteractions();
   const redTemple = lands.find((cell) => {
     cell.terrain === 'temple' && cell.color === 'red';
   });
@@ -79,8 +79,8 @@ Deno.test('Engine available offerings - not loadable', () => {
 Deno.test('Engine available offerings - success', () => {
   const cubeHex = setupGameNextToRedCube();
   testPlayer.oracleDice = ['red'];
-  testEngine.setSelectedDieColor('red');
-  const lands = testEngine.getAvailableLandInteractions();
+  testGameManager.setSelectedDieColor('red');
+  const lands = testGameManager.getAvailableLandInteractions();
   assertGreater(lands.length, 0);
   const ourOfferingCell = lands.filter((cell) => {
     return cell.q === cubeHex.q && cell.r === cubeHex.r;

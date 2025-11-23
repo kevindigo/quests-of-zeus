@@ -2,7 +2,12 @@ import { assertEquals, assertFalse, assertStringIncludes } from '@std/assert';
 import { assert } from '@std/assert/assert';
 import type { HexCell } from '../src/hexmap/HexCell.ts';
 import type { CoreColor, Item } from '../src/types.ts';
-import { setupGame, testEngine, testGrid, testPlayer } from './test-helpers.ts';
+import {
+  setupGame,
+  testGameManager,
+  testGrid,
+  testPlayer,
+} from './test-helpers.ts';
 
 function setupWithRedCubeNextToRedTemple(): HexCell {
   setupGame();
@@ -33,10 +38,10 @@ function putShipNextToTemple(color: CoreColor): HexCell {
 Deno.test('Engine activate temple - should work', () => {
   const templeCell = setupWithRedCubeNextToRedTemple();
   testPlayer.oracleDice = ['red'];
-  testEngine.setSelectedDieColor('red');
+  testGameManager.setSelectedDieColor('red');
   const favorWas = testPlayer.favor;
 
-  const result = testEngine.activateTemple(templeCell.getCoordinates());
+  const result = testGameManager.activateTemple(templeCell.getCoordinates());
   assert(result.success, result.message);
   assertStringIncludes(result.message, 'favor');
 
@@ -50,7 +55,7 @@ Deno.test('Engine activate temple - should work', () => {
   assert(redTempleQuest.isCompleted, 'Quest not marked complete?');
 
   assertEquals(testPlayer.oracleDice.length, 0);
-  assertFalse(testEngine.getEffectiveSelectedColor());
+  assertFalse(testGameManager.getEffectiveSelectedColor());
 
   assertEquals(testPlayer.favor, favorWas + 3);
 });

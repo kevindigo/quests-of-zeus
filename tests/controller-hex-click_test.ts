@@ -13,7 +13,7 @@ import type { ResultWithMessage } from '../src/ResultWithMessage.ts';
 import type { CubeHex } from '../src/types.ts';
 import {
   setupGame,
-  testEngine,
+  testGameManager,
   testGrid,
   testPlayer,
   testState,
@@ -32,7 +32,7 @@ let center: HexCoordinates;
 
 function setupWithController(): void {
   setupGame();
-  testHandler = new ControllerForHexClicks(testEngine);
+  testHandler = new ControllerForHexClicks(testGameManager);
   center = HexGrid.CENTER;
 }
 
@@ -50,9 +50,9 @@ Deno.test('Hex click - second oracle card', () => {
   setupWithController();
 
   testPlayer.usedOracleCardThisTurn = true;
-  testEngine.setSelectedOracleCardColor('red');
-  assert(testEngine.getSelectedResource().isCard());
-  assertEquals(testEngine.getSelectedResource().getColor(), 'red');
+  testGameManager.setSelectedOracleCardColor('red');
+  assert(testGameManager.getSelectedResource().isCard());
+  assertEquals(testGameManager.getSelectedResource().getColor(), 'red');
   assertFailureContains(
     testHandler.handleHexClick(center),
     'per turn',
@@ -62,7 +62,7 @@ Deno.test('Hex click - second oracle card', () => {
 Deno.test('Hex click - unsupported terrain', () => {
   setupWithController();
   testPlayer.oracleDice = ['red'];
-  testEngine.setSelectedDieColor('red');
+  testGameManager.setSelectedDieColor('red');
   const shallowCell = testGrid.getCellsOfType('shallow')[0];
   assert(shallowCell, 'No shallows found on the map?');
   assertFailureContains(
@@ -78,7 +78,7 @@ Deno.test('Hex click - shrine not adjacent', () => {
   assert(shrineCell);
   shrineCell.color = 'red';
   testPlayer.oracleDice = [shrineCell.color];
-  testEngine.setSelectedDieColor(shrineCell.color);
+  testGameManager.setSelectedDieColor(shrineCell.color);
   const result = testHandler.handleHexClick(
     shrineCell.getCoordinates(),
   );
@@ -101,7 +101,7 @@ Deno.test('Hex click - next to good color, but click elsewhere', () => {
   assert(seaNeighbor);
   testPlayer.setShipPosition(seaNeighbor.getCoordinates());
   testPlayer.oracleDice = [adjacentColor, 'green'];
-  testEngine.setSelectedDieColor(adjacentColor);
+  testGameManager.setSelectedDieColor(adjacentColor);
 
   const result = testHandler.handleHexClick(
     otherShrineCell.getCoordinates(),
@@ -118,7 +118,7 @@ Deno.test('Hex click - next to good color, but different color', () => {
   assert(seaNeighbor);
   testPlayer.setShipPosition(seaNeighbor.getCoordinates());
   testPlayer.oracleDice = [shrineCell.color, 'green'];
-  testEngine.setSelectedDieColor('green');
+  testGameManager.setSelectedDieColor('green');
   const result = testHandler.handleHexClick(
     shrineCell.getCoordinates(),
   );
@@ -144,14 +144,14 @@ Deno.test('Hex click - available my hidden shrine (die)', () => {
   assert(shrineHex);
   shrineHex.owner = testPlayer.color;
 
-  testEngine.setSelectedDieColor(color);
+  testGameManager.setSelectedDieColor(color);
   const result = testHandler.handleHexClick(
     shrineCell.getCoordinates(),
   );
   assert(result.success, `Should have succeeded, but ${result.message}`);
   assertEquals(shrineHex.status, 'filled');
-  assertEquals(testEngine.getEffectiveSelectedColor(), null);
-  assertEquals(testEngine.getSelectedRecoloring(), 0);
+  assertEquals(testGameManager.getEffectiveSelectedColor(), null);
+  assertEquals(testGameManager.getSelectedRecoloring(), 0);
 });
 
 /********************** Offering tests ****************************/
@@ -183,7 +183,7 @@ function setupGameNextToRedCube(): CubeHex {
 Deno.test('Hex click - available offering', () => {
   const cubeHex = setupGameNextToRedCube();
   testPlayer.oracleDice = ['red'];
-  testEngine.setSelectedDieColor('red');
+  testGameManager.setSelectedDieColor('red');
 
   const result = testHandler.handleHexClick(cubeHex);
   assert(result.success, result.message);
@@ -197,7 +197,7 @@ Deno.test('Hex click - available offering', () => {
   );
   assertEquals(testPlayer.oracleDice.length, 0, 'Should have spent the die');
   assertFalse(
-    testEngine.getEffectiveSelectedColor(),
+    testGameManager.getEffectiveSelectedColor(),
     'Should have unselected the die',
   );
   const templeQuests = testPlayer.getQuestsOfType('temple');

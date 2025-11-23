@@ -20,7 +20,7 @@ export function assertFailureContains(
   assertStringIncludes(result.message, fragment);
 }
 
-export let testEngine: GameManager;
+export let testGameManager: GameManager;
 export let testState: GameState;
 export let testUiState: UiState;
 export let testMap: HexMap;
@@ -28,9 +28,9 @@ export let testGrid: HexGrid;
 export let testPlayer: Player;
 
 export function setupGame(): void {
-  testEngine = new GameManager();
-  testState = testEngine.getGameState();
-  testUiState = testEngine.getUiState();
+  testGameManager = new GameManager();
+  testState = testGameManager.getGameState();
+  testUiState = testGameManager.getUiState();
   testMap = testState.getMap();
   testGrid = testMap.getHexGrid();
   testPlayer = testState.getCurrentPlayer();

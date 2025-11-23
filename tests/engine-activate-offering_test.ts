@@ -4,17 +4,17 @@ import type { CoreColor, Item } from '../src/types.ts';
 import {
   assertFailureContains,
   setupGame,
-  testEngine,
+  testGameManager,
   testPlayer,
 } from './test-helpers.ts';
 
 Deno.test('Engine offering - can load valid wild cube', () => {
   setupGame();
   const redCube: Item = { type: 'cube', color: 'red' };
-  const validation = testEngine.validateItemIsLoadable(redCube);
+  const validation = testGameManager.validateItemIsLoadable(redCube);
   assert(validation.success, validation.message);
 
-  const result = testEngine.loadItem(redCube);
+  const result = testGameManager.loadItem(redCube);
   assert(result.success, result.message);
   const templeQuests = testPlayer.getQuestsOfType('temple');
   const redQuest = templeQuests.find((quest) => {
@@ -41,7 +41,7 @@ Deno.test('Engine offering - should use color quest if appropriate', () => {
   assert(color !== 'none');
   const cube: Item = { type: 'cube', color };
 
-  const result = testEngine.loadItem(cube);
+  const result = testGameManager.loadItem(cube);
   assert(result.success, result.message);
   assertEquals(wildQuest.color, 'none');
 });
@@ -49,12 +49,12 @@ Deno.test('Engine offering - should use color quest if appropriate', () => {
 Deno.test('Engine offering - cannot load same cube twice', () => {
   setupGame();
   const redCube: Item = { type: 'cube', color: 'red' };
-  assert(testEngine.validateItemIsLoadable(redCube).success);
-  testEngine.loadItem(redCube);
+  assert(testGameManager.validateItemIsLoadable(redCube).success);
+  testGameManager.loadItem(redCube);
 
-  const validation = testEngine.validateItemIsLoadable(redCube);
+  const validation = testGameManager.validateItemIsLoadable(redCube);
   assertFailureContains(validation, 'already');
-  const shouldFail = testEngine.loadItem(redCube);
+  const shouldFail = testGameManager.loadItem(redCube);
   assertFailureContains(shouldFail, 'already');
 });
 
@@ -75,9 +75,9 @@ Deno.test('Engine offering - fail load cube all quests complete', () => {
   completedColors.forEach((completedColor) => {
     const cube: Item = { type: 'cube', color: completedColor };
 
-    const validation = testEngine.validateItemIsLoadable(cube);
+    const validation = testGameManager.validateItemIsLoadable(cube);
     assertFailureContains(validation, 'quest');
-    const result = testEngine.validateItemIsLoadable(cube);
+    const result = testGameManager.validateItemIsLoadable(cube);
     assertFailureContains(result, 'quest');
   });
 });
@@ -85,12 +85,12 @@ Deno.test('Engine offering - fail load cube all quests complete', () => {
 Deno.test('Engine offering - fail load 2 wild cubes', () => {
   setupGame();
   const redCube: Item = { type: 'cube', color: 'red' };
-  assert(testEngine.validateItemIsLoadable(redCube).success);
-  testEngine.loadItem(redCube);
+  assert(testGameManager.validateItemIsLoadable(redCube).success);
+  testGameManager.loadItem(redCube);
 
   const greenCube: Item = { type: 'cube', color: 'green' };
-  const validation = testEngine.validateItemIsLoadable(greenCube);
+  const validation = testGameManager.validateItemIsLoadable(greenCube);
   assertFailureContains(validation, 'needs');
-  const shouldFail = testEngine.loadItem(greenCube);
+  const shouldFail = testGameManager.loadItem(greenCube);
   assertFailureContains(shouldFail, 'needs');
 });
