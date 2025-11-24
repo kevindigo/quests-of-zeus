@@ -45,20 +45,20 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
 });
 
 Deno.test('getAvailableMovesForDie - favor spending', () => {
-  const gameEngine = new GameManager();
-  const movementSystem = new MovementSystem(gameEngine.getGameState().getMap());
+  const manager = new GameManager();
+  const movementSystem = new MovementSystem(manager.getGameState().getMap());
   const handler = new ShipMoveHandler(
-    gameEngine.getGameState(),
-    gameEngine.getUiState(),
+    manager.getGameState(),
+    manager.getUiState(),
     movementSystem,
   );
 
-  const player = gameEngine.getCurrentPlayer();
+  const player = manager.getCurrentPlayer();
 
   // Set up deterministic test conditions
   player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 5;
-  gameEngine.setSelectedDieColor('black');
+  manager.getUiState().setSelectedDieColor('black');
 
   // Get moves with different favor amounts
   const movesWithNoFavor = handler.getAvailableMovesForColor(0);

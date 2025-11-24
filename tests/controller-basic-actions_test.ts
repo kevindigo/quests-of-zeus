@@ -32,7 +32,7 @@ Deno.test('Buy favor - success with die', () => {
   testPlayer.favor = 0;
   const firstDie = testPlayer.oracleDice[0];
   assert(firstDie);
-  testGameManager.setSelectedDieColor(firstDie);
+  testUiState.setSelectedDieColor(firstDie);
   const result = handler.spendResourceForFavor();
   assert(result.success);
   assertStringIncludes(result.message, firstDie);
@@ -86,7 +86,7 @@ Deno.test('Buy favor - with card, then with die', () => {
   assert(spentCard.success, spentCard.message);
 
   testPlayer.oracleDice = ['red'];
-  testGameManager.setSelectedDieColor('red');
+  testUiState.setSelectedDieColor('red');
   const spentDie = handler.spendResourceForFavor();
   assert(spentDie.success, spentDie.message);
 });

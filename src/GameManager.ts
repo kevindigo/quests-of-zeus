@@ -388,10 +388,6 @@ export class GameManager {
     }
   }
 
-  public setSelectedDieColor(color: CoreColor): void {
-    return this.uiState.setSelectedDieColor(color);
-  }
-
   public setSelectedOracleCardColor(color: CoreColor): void {
     this.uiState.setSelectedOracleCardColor(color);
   }

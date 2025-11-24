@@ -9,6 +9,7 @@ import {
   testGameState,
   testGrid,
   testPlayer,
+  testUiState,
 } from './test-helpers.ts';
 
 function setupGameNextToRedCube(): CubeHex {
@@ -56,7 +57,7 @@ Deno.test('Engine available offerings - not next to selected color cube', () => 
   const missingColor = missingColors[0];
   assert(missingColor);
   testPlayer.oracleDice = [missingColor];
-  testGameManager.setSelectedDieColor(missingColor);
+  testUiState.setSelectedDieColor(missingColor);
   const lands = testGameManager.getAvailableLandInteractions();
   assertFalse(lands.find((cell) => {
     cell.q === cubeHex.q && cell.r === cubeHex.r;
@@ -68,7 +69,7 @@ Deno.test('Engine available offerings - not loadable', () => {
   const redCube: Item = { type: 'cube', color: 'red' };
   testPlayer.loadItem(redCube);
   testPlayer.oracleDice = ['red'];
-  testGameManager.setSelectedDieColor('red');
+  testUiState.setSelectedDieColor('red');
   const lands = testGameManager.getAvailableLandInteractions();
   const redTemple = lands.find((cell) => {
     cell.terrain === 'temple' && cell.color === 'red';
@@ -79,7 +80,7 @@ Deno.test('Engine available offerings - not loadable', () => {
 Deno.test('Engine available offerings - success', () => {
   const cubeHex = setupGameNextToRedCube();
   testPlayer.oracleDice = ['red'];
-  testGameManager.setSelectedDieColor('red');
+  testUiState.setSelectedDieColor('red');
   const lands = testGameManager.getAvailableLandInteractions();
   assertGreater(lands.length, 0);
   const ourOfferingCell = lands.filter((cell) => {

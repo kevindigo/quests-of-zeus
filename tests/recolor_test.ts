@@ -30,24 +30,24 @@ Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
 });
 
 Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
-  const gameEngine = new GameManager();
+  const manager = new GameManager();
 
-  const player = gameEngine.getCurrentPlayer();
+  const player = manager.getCurrentPlayer();
 
   // Set up deterministic test conditions
   player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  gameEngine.getUiState().setSelectedRecoloring(0);
+  manager.getUiState().setSelectedRecoloring(0);
 
-  const gameState = gameEngine.getGameState();
-  const recoloringSuccess = gameEngine.getUiState().setSelectedRecoloring(1);
+  const gameState = manager.getGameState();
+  const recoloringSuccess = manager.getUiState().setSelectedRecoloring(1);
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Get available moves for black die with recoloring intention
-  gameEngine.setSelectedDieColor('black');
-  const uiState = gameEngine.getUiState();
+  manager.getUiState().setSelectedDieColor('black');
+  const uiState = manager.getUiState();
   const movementSystem = new MovementSystem(gameState.getMap());
   const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
   const availableMoves = handler.getAvailableMovesForColor(
@@ -77,30 +77,30 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
 });
 
 Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
-  const gameEngine = new GameManager();
+  const manager = new GameManager();
 
-  const player = gameEngine.getCurrentPlayer();
+  const player = manager.getCurrentPlayer();
 
   // Set up deterministic test conditions
   player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 3; // Low favor
 
   // Clear any recoloring intentions that might exist from initialization
-  gameEngine.getUiState().setSelectedRecoloring(0);
+  manager.getUiState().setSelectedRecoloring(0);
 
   // Set a high recoloring cost that would make some moves unaffordable
   // Player has 3 favor, recoloring black → blue costs 2 favor
   // This means any blue move that requires additional favor for movement would be unaffordable
-  const highRecolorSuccess = gameEngine.getUiState().setSelectedRecoloring(2); // black → blue (2 favor recoloring cost)
+  const highRecolorSuccess = manager.getUiState().setSelectedRecoloring(2); // black → blue (2 favor recoloring cost)
 
   assert(
     highRecolorSuccess,
     'High recoloring intention should be set successfully',
   );
 
-  gameEngine.setSelectedDieColor('blue');
-  const state = gameEngine.getGameState();
-  const uiState = gameEngine.getUiState();
+  manager.getUiState().setSelectedDieColor('blue');
+  const state = manager.getGameState();
+  const uiState = manager.getUiState();
   const movementSystem = new MovementSystem(state.getMap());
   const handler = new ShipMoveHandler(state, uiState, movementSystem);
   const movesWithHighRecolor = handler.getAvailableMovesForColor(

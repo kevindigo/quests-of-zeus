@@ -7,6 +7,7 @@ import {
   testGameManager,
   testGrid,
   testPlayer,
+  testUiState,
 } from './test-helpers.ts';
 
 function setupWithRedCubeNextToRedTemple(): HexCell {
@@ -38,7 +39,7 @@ function putShipNextToTemple(color: CoreColor): HexCell {
 Deno.test('Engine activate temple - should work', () => {
   const templeCell = setupWithRedCubeNextToRedTemple();
   testPlayer.oracleDice = ['red'];
-  testGameManager.setSelectedDieColor('red');
+  testUiState.setSelectedDieColor('red');
   const favorWas = testPlayer.favor;
 
   const result = testGameManager.activateTemple(templeCell.getCoordinates());
