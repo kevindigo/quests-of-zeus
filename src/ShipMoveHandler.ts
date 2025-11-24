@@ -147,6 +147,9 @@ export class ShipMoveHandler {
       }
     }
 
+    // FixMe: I think all the validations below should be replaced by
+    // a call to get all valid moves. If it's listed, it's valid.
+
     // validate destination coordinates
     const destination = this.uiState.getSelectedCoordinates();
     if (!destination) {
