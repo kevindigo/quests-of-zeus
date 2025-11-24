@@ -87,7 +87,7 @@ Deno.test('Click land - shrine hidden and ours (card)', () => {
   assert(shrineCell.color !== 'none');
 
   testPlayer.oracleCards = [shrineCell.color];
-  testGameManager.setSelectedOracleCardColor(shrineCell.color);
+  testUiState.setSelectedOracleCardColor(shrineCell.color);
   shrineHex.owner = testPlayer.color;
   shrineHex.reward = 'favor';
   const originalFavor = testPlayer.favor;

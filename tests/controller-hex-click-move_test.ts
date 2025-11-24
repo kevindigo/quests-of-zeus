@@ -59,7 +59,7 @@ Deno.test('Hex click move - no resource selected', () => {
 Deno.test('Hex click move - player does not have that card', () => {
   setup();
   player.oracleCards = ['green'];
-  manager.setSelectedOracleCardColor('blue');
+  manager.getUiState().setSelectedOracleCardColor('blue');
   assertFailureContainsAll(
     handler.handleHexClick(center),
     ['card', 'blue'],

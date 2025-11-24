@@ -388,10 +388,6 @@ export class GameManager {
     }
   }
 
-  public setSelectedOracleCardColor(color: CoreColor): void {
-    this.uiState.setSelectedOracleCardColor(color);
-  }
-
   public getEffectiveSelectedColor(): CoreColor | null {
     return this.uiState.getEffectiveSelectedColor();
   }
