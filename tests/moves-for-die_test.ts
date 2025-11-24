@@ -7,22 +7,22 @@ import { ShipMoveHandler } from '../src/ShipMoveHandler.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('getAvailableMovesForDie - basic functionality', () => {
-  const gameEngine = new GameManager();
-  const movementSystem = new MovementSystem(gameEngine.getGameState().getMap());
+  const manager = new GameManager();
+  const movementSystem = new MovementSystem(manager.getGameState().getMap());
   const handler = new ShipMoveHandler(
-    gameEngine.getGameState(),
-    gameEngine.getUiState(),
+    manager.getGameState(),
+    manager.getUiState(),
     movementSystem,
   );
 
-  const player = gameEngine.getCurrentPlayer();
+  const player = manager.getCurrentPlayer();
 
   // Set up deterministic test conditions
   player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  gameEngine.setSelectedRecoloring(0);
+  manager.getUiState().setSelectedRecoloring(0);
 
   // Test getting moves for a specific die color
   const movesForBlack = handler.getAvailableMovesForColor(player.favor);
@@ -71,26 +71,26 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
 });
 
 Deno.test('getAvailableMovesForDie - recoloring intention', () => {
-  const gameEngine = new GameManager();
-  const gameState = gameEngine.getGameState();
-  const uiState = gameEngine.getUiState();
+  const manager = new GameManager();
+  const gameState = manager.getGameState();
+  const uiState = manager.getUiState();
   const movementSystem = new MovementSystem(gameState.getMap());
   const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
-  const player = gameEngine.getCurrentPlayer();
+  const player = manager.getCurrentPlayer();
 
   // Set up deterministic test conditions
   player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  gameEngine.setSelectedRecoloring(0);
+  manager.getUiState().setSelectedRecoloring(0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
-  const recoloringSuccess = gameEngine.setSelectedRecoloring(1);
+  const recoloringSuccess = manager.getUiState().setSelectedRecoloring(1);
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Get moves for black die with recoloring intention
-  gameEngine.setSelectedDieColor('black');
+  manager.getUiState().setSelectedDieColor('black');
   const movesWithRecolor = handler.getAvailableMovesForColor(
     player.favor,
   );
@@ -114,29 +114,29 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
 });
 
 Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
-  const gameEngine = new GameManager();
-  const movementSystem = new MovementSystem(gameEngine.getGameState().getMap());
+  const manager = new GameManager();
+  const movementSystem = new MovementSystem(manager.getGameState().getMap());
   const handler = new ShipMoveHandler(
-    gameEngine.getGameState(),
-    gameEngine.getUiState(),
+    manager.getGameState(),
+    manager.getUiState(),
     movementSystem,
   );
 
-  const player = gameEngine.getCurrentPlayer();
+  const player = manager.getCurrentPlayer();
 
   // Set up deterministic test conditions
   player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 1; // Low favor
 
   // Clear any recoloring intentions that might exist from initialization
-  gameEngine.setSelectedRecoloring(0);
+  manager.getUiState().setSelectedRecoloring(0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
-  const recoloringSuccess = gameEngine.setSelectedRecoloring(1);
+  const recoloringSuccess = manager.getUiState().setSelectedRecoloring(1);
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Get moves for black die with recoloring intention but insufficient favor
-  gameEngine.setSelectedDieColor('pink');
+  manager.getUiState().setSelectedDieColor('pink');
   const movesWithRecolor = handler.getAvailableMovesForColor(
     player.favor - 1,
   );
@@ -153,30 +153,30 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
 });
 
 Deno.test('getAvailableMovesForDie - clear recoloring intention', () => {
-  const gameEngine = new GameManager();
-  const gameState = gameEngine.getGameState();
-  const uiState = gameEngine.getUiState();
+  const manager = new GameManager();
+  const gameState = manager.getGameState();
+  const uiState = manager.getUiState();
   const movementSystem = new MovementSystem(gameState.getMap());
   const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
 
-  const player = gameEngine.getCurrentPlayer();
+  const player = manager.getCurrentPlayer();
 
   // Set up deterministic test conditions
   player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 5;
 
   // Clear any recoloring intentions that might exist from initialization
-  gameEngine.setSelectedRecoloring(0);
+  manager.getUiState().setSelectedRecoloring(0);
 
   // Set recoloring intention for black die → pink (1 favor cost)
-  const recoloringSuccess = gameEngine.setSelectedRecoloring(1);
+  const recoloringSuccess = manager.getUiState().setSelectedRecoloring(1);
   assert(recoloringSuccess, 'Recoloring intention should be set successfully');
 
   // Clear recoloring intention
-  gameEngine.clearSelectedRecoloring();
+  manager.getUiState().clearSelectedRecoloring();
 
   // Get moves after clearing recoloring intention
-  gameEngine.setSelectedDieColor('black');
+  manager.getUiState().setSelectedDieColor('black');
   const movesAfterClear = handler.getAvailableMovesForColor(
     player.favor,
   );

@@ -55,7 +55,7 @@ export class ControllerForBasicActions {
       );
     }
 
-    const success = this.gameManager.setSelectedRecoloring(
+    const success = this.getUiState().setSelectedRecoloring(
       favorCost,
     );
 

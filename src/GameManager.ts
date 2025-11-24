@@ -389,12 +389,6 @@ export class GameManager {
     }
   }
 
-  public setSelectedRecoloring(
-    favorSpent: number,
-  ): boolean {
-    return this.uiState.setSelectedRecoloring(favorSpent);
-  }
-
   public clearSelectedRecoloring(): void {
     this.uiState.clearSelectedRecoloring();
   }
