@@ -14,8 +14,8 @@ Deno.test('MonsterDistribution - algorithm performance', () => {
   // Run multiple iterations to test performance
   const iterations = 50;
   for (let i = 0; i < iterations; i++) {
-    const engine = new GameManager();
-    const monsterHexes = engine.getMonsterHexes();
+    const manager = new GameManager();
+    const monsterHexes = manager.getGameState().getMonsterHexes();
 
     // Basic validation
     assertEquals(monsterHexes.length, 9);
@@ -45,8 +45,8 @@ Deno.test('MonsterDistribution - always valid results', () => {
 
   for (let run = 0; run < testRuns; run++) {
     try {
-      const engine = new GameManager();
-      const monsterHexes = engine.getMonsterHexes();
+      const manager = new GameManager();
+      const monsterHexes = manager.getGameState().getMonsterHexes();
 
       // All constraints must be satisfied
       assertEquals(monsterHexes.length, 9);
@@ -116,8 +116,8 @@ Deno.test('MonsterDistribution - statistical analysis', () => {
   let totalMonstersAcrossRuns = 0;
 
   for (let run = 0; run < runs; run++) {
-    const engine = new GameManager();
-    const monsterHexes = engine.getMonsterHexes();
+    const manager = new GameManager();
+    const monsterHexes = manager.getGameState().getMonsterHexes();
 
     const monstersPerHex = monsterHexes.map((
       hex: { monsterColors: string[] },
@@ -172,13 +172,13 @@ Deno.test('MonsterDistribution - statistical analysis', () => {
 
 Deno.test('MonsterDistribution - initialization robustness', () => {
   for (let i = 0; i < 10; i++) {
-    const engine = new GameManager();
-    const state = engine.getGameState();
+    const manager = new GameManager();
+    const state = manager.getGameState();
 
     // Verify game state is properly initialized
     assertEquals(state.getPlayerCount(), 2, 'Should have 2 players');
 
-    const monsterHexes = engine.getMonsterHexes();
+    const monsterHexes = manager.getGameState().getMonsterHexes();
     assertEquals(
       monsterHexes.length,
       9,

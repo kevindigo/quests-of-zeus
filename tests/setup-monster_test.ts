@@ -10,10 +10,10 @@ import { COLOR_WHEEL } from '../src/types.ts';
 
 // Helper function to run distribution tests
 function runDistributionTests(
-  engine: GameManager,
+  manager: GameManager,
   runNumber?: number,
 ): void {
-  const monsterHexes = engine.getMonsterHexes();
+  const monsterHexes = manager.getGameState().getMonsterHexes();
   const runLabel = runNumber ? `Run ${runNumber}: ` : '';
 
   // Test 1: Should have exactly 9 monster hexes
@@ -123,8 +123,8 @@ Deno.test('MonsterDistribution - even distribution across runs', () => {
   // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 20; run++) {
-    const engine = new GameManager();
-    const monsterHexes = engine.getMonsterHexes();
+    const manager = new GameManager();
+    const monsterHexes = manager.getGameState().getMonsterHexes();
 
     const monstersPerHex = monsterHexes.map((
       hex: { monsterColors: string[] },
@@ -145,8 +145,8 @@ Deno.test('MonsterDistribution - color distribution consistency', () => {
   // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 5; run++) {
-    const engine = new GameManager();
-    const monsterHexes = engine.getMonsterHexes();
+    const manager = new GameManager();
+    const monsterHexes = manager.getGameState().getMonsterHexes();
 
     // Count colors
     const colorCounts: Record<string, number> = {};
@@ -174,8 +174,8 @@ Deno.test('MonsterDistribution - max monsters per hex', () => {
   // const _playerCount = 2; // Unused variable removed
 
   for (let run = 0; run < 10; run++) {
-    const engine = new GameManager();
-    const monsterHexes = engine.getMonsterHexes();
+    const manager = new GameManager();
+    const monsterHexes = manager.getGameState().getMonsterHexes();
 
     const maxMonsters = Math.max(
       ...monsterHexes.map((hex: { monsterColors: string[] }) =>
@@ -203,8 +203,8 @@ Deno.test('MonsterDistribution - actual player count (2 players)', () => {
   // So sorted distribution pattern should always be "111111222"
 
   for (let run = 0; run < 50; run++) {
-    const engine = new GameManager();
-    const monsterHexes = engine.getMonsterHexes();
+    const manager = new GameManager();
+    const monsterHexes = manager.getGameState().getMonsterHexes();
 
     const monstersPerHex = monsterHexes.map((
       hex: { monsterColors: string[] },

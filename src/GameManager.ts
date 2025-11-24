@@ -14,13 +14,7 @@ import {
   Success,
 } from './ResultWithMessage.ts';
 import { ShipMoveHandler } from './ShipMoveHandler.ts';
-import type {
-  CoreColor,
-  Item,
-  MonsterHex,
-  MoveShipResult,
-  ShrineHex,
-} from './types.ts';
+import type { CoreColor, Item, MoveShipResult, ShrineHex } from './types.ts';
 import { type UiState, UiStateClass } from './UiState.ts';
 
 export class GameManager {
@@ -71,10 +65,6 @@ export class GameManager {
 
   public getUiState(): UiState {
     return this.uiState;
-  }
-
-  public getMonsterHexes(): MonsterHex[] {
-    return this.state.getMonsterHexes();
   }
 
   public getAvailableLandInteractions(): HexCell[] {
