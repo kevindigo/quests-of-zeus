@@ -389,10 +389,6 @@ export class GameManager {
     }
   }
 
-  public clearSelectedRecoloring(): void {
-    this.uiState.clearSelectedRecoloring();
-  }
-
   public getSelectedResource(): Resource {
     return this.uiState.getSelectedResource();
   }

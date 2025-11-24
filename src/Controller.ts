@@ -80,13 +80,13 @@ export class Controller {
       ? Resource.createDie(resourceColor)
       : Resource.createCard(resourceColor);
 
-    const alreadySelected = this.gameManager.getSelectedResource();
+    const alreadySelected = this.getUiState().getSelectedResource();
     if (resourceToSelect.equals(alreadySelected)) {
       this.clearResourceSelectionAndUpdateDisplay();
       return;
     }
 
-    this.gameManager.clearSelectedRecoloring();
+    this.gameManager.getUiState().clearSelectedRecoloring();
     if (resourceType === 'die') {
       if (this.selectDieColor(resourceColor)) {
         this.showMessage(`Selected ${resourceColor} die`);

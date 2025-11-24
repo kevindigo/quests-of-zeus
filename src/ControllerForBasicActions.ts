@@ -43,7 +43,7 @@ export class ControllerForBasicActions {
     }
 
     if (favorCost === 0) {
-      this.gameManager.clearSelectedRecoloring();
+      this.getUiState().clearSelectedRecoloring();
 
       return new Success('Recoloring intention cleared');
     }
