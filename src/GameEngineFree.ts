@@ -1,9 +1,30 @@
+import type { Action, FreeEndTurnAction } from './actions.ts';
 import type { GameState } from './GameState.ts';
 import { type ResultWithMessage, Success } from './ResultWithMessage.ts';
 import { COLOR_WHEEL, type CoreColor } from './types.ts';
 import type { UiState } from './UiState.ts';
 
 export class GameEngineFree {
+  public static getFreeActions(
+    gameState: GameState,
+  ): Action[] {
+    return GameEngineFree.getEndTurnActions(gameState);
+  }
+
+  private static getEndTurnActions(
+    gameState: GameState,
+  ): Action[] {
+    if (gameState.getPhase() !== 'action') {
+      return [];
+    }
+
+    const endTurnAction: FreeEndTurnAction = {
+      type: 'free',
+      subType: 'endTurn',
+    };
+    return [endTurnAction];
+  }
+
   public static endTurn(
     gameState: GameState,
     uiState: UiState,

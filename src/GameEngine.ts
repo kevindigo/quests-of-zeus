@@ -1,5 +1,6 @@
+import type { Action } from './actions.ts';
 import { GameEngineFree } from './GameEngineFree.ts';
-import { GameEngineNoColor } from './GameEngineNoColor.ts';
+import { GameEngineAnyResource } from './GameEngineAnyResource.ts';
 import type { GameState } from './GameState.ts';
 import {
   Failure,
@@ -9,6 +10,15 @@ import {
 import type { UiState } from './UiState.ts';
 
 export class GameEngine {
+  public static getAvailableActions(
+    gameState: GameState,
+  ): Action[] {
+    const actions: Action[] = [];
+    actions.push(...GameEngineFree.getFreeActions(gameState));
+    actions.push(...GameEngineAnyResource.getAnyResourceActions(gameState));
+    return actions;
+  }
+
   ////////////////////////////////////////////////////////////////////////
   //  free actions
   public endTurn(
@@ -24,14 +34,14 @@ export class GameEngine {
     gameState: GameState,
     uiState: UiState,
   ): ResultWithMessage {
-    return GameEngineNoColor.spendResourceForFavor(gameState, uiState);
+    return GameEngineAnyResource.spendResourceForFavor(gameState, uiState);
   }
 
   public spendResourceForOracleCard(
     gameState: GameState,
     uiState: UiState,
   ): ResultWithMessage {
-    return GameEngineNoColor.spendResourceForOracleCard(gameState, uiState);
+    return GameEngineAnyResource.spendResourceForOracleCard(gameState, uiState);
   }
 
   ////////////////////////////////////////////////////////////////////////

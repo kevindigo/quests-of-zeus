@@ -11,6 +11,20 @@ import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { UiStateClass } from '../src/UiState.ts';
 import { assertFailureContains } from './test-helpers.ts';
 
+Deno.test('GameEngine - available simplest case', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const player = gameState.getCurrentPlayer();
+  player.oracleDice = [];
+
+  const actions = GameEngine.getAvailableActions(gameState);
+  assertEquals(actions.length, 1);
+  const endTurnAction = actions[0];
+  assert(endTurnAction);
+  assert(endTurnAction.type === 'free', endTurnAction.type);
+  assertEquals(endTurnAction.subType, 'endTurn');
+});
+
 Deno.test('GameEngine - spend resource nothing selected', () => {
   const gameState = new GameState();
   new GameStateInitializer().initializeGameState(gameState);

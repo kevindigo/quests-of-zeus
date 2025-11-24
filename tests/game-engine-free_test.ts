@@ -5,6 +5,36 @@ import { GameEngineFree } from '../src/GameEngineFree.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { UiStateClass } from '../src/UiState.ts';
+import type { FreeAction } from '../src/actions.ts';
+
+Deno.test('GameEngineFree - getAvailableActions setup phase', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  gameState.setPhase('setup');
+  const actions = GameEngineFree.getFreeActions(gameState);
+  const endTurnActions = actions.filter((action) => {
+    if (action.type === 'free') {
+      const freeAction = action as FreeAction;
+      return (freeAction.subType === 'endTurn');
+    }
+    return false;
+  });
+  assertEquals(endTurnActions.length, 0);
+});
+
+Deno.test('GameEngineFree - getAvailableActions action phase', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const actions = GameEngineFree.getFreeActions(gameState);
+  const endTurnActions = actions.filter((action) => {
+    if (action.type === 'free') {
+      const freeAction = action as FreeAction;
+      return (freeAction.subType === 'endTurn');
+    }
+    return false;
+  });
+  assertEquals(endTurnActions.length, 1);
+});
 
 Deno.test('GameEngineFree - end turn', () => {
   const gameState = new GameState();
