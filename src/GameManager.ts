@@ -354,35 +354,6 @@ export class GameManager {
     );
   }
 
-  public spendColorSpecificDieOrCard(): void {
-    const player = this.getCurrentPlayer();
-    const favorSpentToRecolor = this.getUiState().getSelectedRecoloring();
-    player.favor -= favorSpentToRecolor;
-    const resource = this.getUiState().getSelectedResource();
-
-    if (!resource.hasColor()) {
-      return;
-    }
-
-    this.getUiState().clearResourceSelection();
-
-    const array = resource.isDie()
-      ? player.oracleDice
-      : resource.isCard()
-      ? player.oracleCards
-      : null;
-    if (array) {
-      const at = array.indexOf(resource.getColor());
-      if (at >= 0) {
-        array.splice(at, 1);
-      }
-    }
-
-    if (resource.isCard()) {
-      player.usedOracleCardThisTurn = true;
-    }
-  }
-
   private isNeededForQuest(item: Item): boolean {
     switch (item.type) {
       case 'cube':
@@ -437,6 +408,35 @@ export class GameManager {
     });
     if (wildQuest) {
       wildQuest.color = color;
+    }
+  }
+
+  private spendColorSpecificDieOrCard(): void {
+    const player = this.getCurrentPlayer();
+    const favorSpentToRecolor = this.getUiState().getSelectedRecoloring();
+    player.favor -= favorSpentToRecolor;
+    const resource = this.getUiState().getSelectedResource();
+
+    if (!resource.hasColor()) {
+      return;
+    }
+
+    this.getUiState().clearResourceSelection();
+
+    const array = resource.isDie()
+      ? player.oracleDice
+      : resource.isCard()
+      ? player.oracleCards
+      : null;
+    if (array) {
+      const at = array.indexOf(resource.getColor());
+      if (at >= 0) {
+        array.splice(at, 1);
+      }
+    }
+
+    if (resource.isCard()) {
+      player.usedOracleCardThisTurn = true;
     }
   }
 
