@@ -95,7 +95,9 @@ Deno.test('Hex click - next to good color, but click elsewhere', () => {
     throw new Error('Impossible: a shrine had no color');
   }
   assertNotEquals(adjacentColor, 'none');
-  const otherShrineCell = shrineCells[1];
+  const otherShrineCell = shrineCells.find((cell) => {
+    return cell.color !== adjacentColor;
+  });
   assert(otherShrineCell);
   const seaNeighbor = testGrid.getNeighborsOfType(adjacentShrineCell, 'sea')[0];
   assert(seaNeighbor);
