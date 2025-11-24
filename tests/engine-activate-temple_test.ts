@@ -56,7 +56,7 @@ Deno.test('Engine activate temple - should work', () => {
   assert(redTempleQuest.isCompleted, 'Quest not marked complete?');
 
   assertEquals(testPlayer.oracleDice.length, 0);
-  assertFalse(testGameManager.getEffectiveSelectedColor());
+  assertFalse(testUiState.getEffectiveSelectedColor());
 
   assertEquals(testPlayer.favor, favorWas + 3);
 });

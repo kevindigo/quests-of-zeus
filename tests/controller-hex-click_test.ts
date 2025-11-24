@@ -156,8 +156,8 @@ Deno.test('Hex click - available my hidden shrine (die)', () => {
   );
   assert(result.success, `Should have succeeded, but ${result.message}`);
   assertEquals(shrineHex.status, 'filled');
-  assertEquals(testGameManager.getEffectiveSelectedColor(), null);
-  assertEquals(testGameManager.getUiState().getSelectedRecoloring(), 0);
+  assertEquals(testUiState.getEffectiveSelectedColor(), null);
+  assertEquals(testUiState.getSelectedRecoloring(), 0);
 });
 
 /********************** Offering tests ****************************/
@@ -203,7 +203,7 @@ Deno.test('Hex click - available offering', () => {
   );
   assertEquals(testPlayer.oracleDice.length, 0, 'Should have spent the die');
   assertFalse(
-    testGameManager.getEffectiveSelectedColor(),
+    testUiState.getEffectiveSelectedColor(),
     'Should have unselected the die',
   );
   const templeQuests = testPlayer.getQuestsOfType('temple');

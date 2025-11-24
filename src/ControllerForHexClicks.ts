@@ -34,7 +34,7 @@ export class ControllerForHexClicks {
       );
     }
 
-    const effectiveColor = this.gameManager.getEffectiveSelectedColor();
+    const effectiveColor = this.getUiState().getEffectiveSelectedColor();
     if (!effectiveColor) {
       return new Failure(
         'Please select a resource (die or oracle card) first!!',

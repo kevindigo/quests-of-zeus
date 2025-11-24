@@ -91,7 +91,7 @@ export class GameManager {
     const player = this.getCurrentPlayer();
     const shipPosition = player.getShipPosition();
     const state = this.getGameState();
-    const color = this.getEffectiveSelectedColor();
+    const color = this.getUiState().getEffectiveSelectedColor();
     if (!color) {
       return [];
     }
@@ -116,7 +116,7 @@ export class GameManager {
   }
 
   private isShrineAvailable(cell: HexCell): boolean {
-    const effectiveColor = this.getEffectiveSelectedColor();
+    const effectiveColor = this.getUiState().getEffectiveSelectedColor();
     if (cell.color !== effectiveColor) {
       return false;
     }
@@ -139,7 +139,7 @@ export class GameManager {
   public activateShrine(
     coordinates: HexCoordinates,
   ): ResultWithMessage {
-    const effectiveColor = this.getEffectiveSelectedColor();
+    const effectiveColor = this.getUiState().getEffectiveSelectedColor();
     if (!effectiveColor) {
       return new Failure('Must select a die or card');
     }
@@ -267,7 +267,7 @@ export class GameManager {
         `Impossible: ${JSON.stringify(coordinates)} is not an offering`,
       );
     }
-    const effectiveColor = this.getEffectiveSelectedColor();
+    const effectiveColor = this.getUiState().getEffectiveSelectedColor();
     if (!effectiveColor) {
       return new Failure('Impossible: No resource was selected');
     }
@@ -325,7 +325,7 @@ export class GameManager {
   }
 
   public activateTemple(_coordinates: HexCoordinates): ResultWithMessage {
-    const color = this.getEffectiveSelectedColor();
+    const color = this.getUiState().getEffectiveSelectedColor();
     if (!color) {
       return new Failure('No resource selected');
     }
@@ -386,10 +386,6 @@ export class GameManager {
     if (resource.isCard()) {
       player.usedOracleCardThisTurn = true;
     }
-  }
-
-  public getEffectiveSelectedColor(): CoreColor | null {
-    return this.uiState.getEffectiveSelectedColor();
   }
 
   private isNeededForQuest(item: Item): boolean {
