@@ -15,15 +15,15 @@ import { ViewGame } from './ViewGame.ts';
 
 export class Controller {
   constructor() {
-    this.gameEngine = new GameManager();
+    this.gameManager = new GameManager();
     this.viewGame = new ViewGame(
-      this.gameEngine.getGameState(),
-      this.gameEngine.getUiState(),
+      this.gameManager.getGameState(),
+      this.gameManager.getUiState(),
     );
   }
 
   public getUiState(): UiState {
-    return this.gameEngine.getUiState();
+    return this.gameManager.getUiState();
   }
   public initializeGameUI(): void {
     this.viewGame.viewWelcome();
@@ -31,28 +31,28 @@ export class Controller {
   }
 
   public clearResourceSelection(): void {
-    this.gameEngine.clearResourceSelection();
+    this.gameManager.clearResourceSelection();
   }
 
   public getSelectedDieColor(): CoreColor | null {
-    const selected = this.gameEngine.getSelectedResource();
+    const selected = this.gameManager.getSelectedResource();
     return selected.isDie() ? selected.getColor() : null;
   }
 
   public getSelectedCardColor(): CoreColor | null {
-    const selected = this.gameEngine.getSelectedResource();
+    const selected = this.gameManager.getSelectedResource();
     return selected.isCard() ? selected.getColor() : null;
   }
 
   public selectDieColor(color: CoreColor): boolean {
-    this.gameEngine.clearResourceSelection();
-    this.gameEngine.setSelectedDieColor(color);
+    this.gameManager.clearResourceSelection();
+    this.gameManager.setSelectedDieColor(color);
     return true;
   }
 
   public selectCardColor(color: CoreColor): boolean {
-    this.gameEngine.clearResourceSelection();
-    this.gameEngine.setSelectedOracleCardColor(color);
+    this.gameManager.clearResourceSelection();
+    this.gameManager.setSelectedOracleCardColor(color);
     return true;
   }
 
@@ -63,7 +63,7 @@ export class Controller {
   }
 
   private selectResource(resourceType: string, resourceColor: CoreColor): void {
-    const currentPlayer = this.gameEngine.getCurrentPlayer();
+    const currentPlayer = this.gameManager.getCurrentPlayer();
     console.log(`selectResource called: ${resourceType}, ${resourceColor}`);
 
     if (resourceType == 'card' && currentPlayer.usedOracleCardThisTurn) {
@@ -75,13 +75,13 @@ export class Controller {
       ? Resource.createDie(resourceColor)
       : Resource.createCard(resourceColor);
 
-    const alreadySelected = this.gameEngine.getSelectedResource();
+    const alreadySelected = this.gameManager.getSelectedResource();
     if (resourceToSelect.equals(alreadySelected)) {
       this.clearResourceSelectionAndUpdateDisplay();
       return;
     }
 
-    this.gameEngine.clearSelectedRecoloring();
+    this.gameManager.clearSelectedRecoloring();
     if (resourceType === 'die') {
       if (this.selectDieColor(resourceColor)) {
         this.showMessage(`Selected ${resourceColor} die`);
@@ -174,7 +174,7 @@ export class Controller {
     gameState: GameState,
   ): void {
     const currentPlayer = gameState.getCurrentPlayer();
-    const favorForRecoloring = this.gameEngine.getSelectedRecoloring();
+    const favorForRecoloring = this.gameManager.getSelectedRecoloring();
     const favorAvailableForRange = currentPlayer.favor - favorForRecoloring;
 
     // Get available moves for the selected die color and available favor
@@ -211,7 +211,7 @@ export class Controller {
   }
 
   private highlightAvailableLands(): void {
-    const lands = this.gameEngine.getAvailableLandInteractions();
+    const lands = this.gameManager.getAvailableLandInteractions();
     lands.forEach((cell) => {
       this.highlightLand(cell);
     });
@@ -297,7 +297,7 @@ export class Controller {
     >;
     const { q, r } = customEvent.detail;
     const coordinates: HexCoordinates = { q, r };
-    const handlers = new ControllerForHexClicks(this.gameEngine);
+    const handlers = new ControllerForHexClicks(this.gameManager);
     const result = handlers.handleHexClick(
       coordinates,
     );
@@ -313,7 +313,7 @@ export class Controller {
   }
 
   private startNewGame(): void {
-    this.gameEngine.startNewGame();
+    this.gameManager.startNewGame();
     this.renderGameState();
     this.clearMessagePanel();
     this.showMessage(
@@ -322,7 +322,7 @@ export class Controller {
   }
 
   private spendResourceForFavor(): void {
-    const handler = new ControllerForBasicActions(this.gameEngine);
+    const handler = new ControllerForBasicActions(this.gameManager);
     const result = handler.spendResourceForFavor();
     if (result.success) {
       this.clearResourceSelection();
@@ -332,7 +332,7 @@ export class Controller {
   }
 
   private drawOracleCard(): void {
-    const handler = new ControllerForBasicActions(this.gameEngine);
+    const handler = new ControllerForBasicActions(this.gameManager);
     const result = handler.drawOracleCard();
     if (result.success) {
       this.clearResourceSelection();
@@ -342,7 +342,7 @@ export class Controller {
   }
 
   private setRecolorIntention(favorCost: number): void {
-    const handler = new ControllerForBasicActions(this.gameEngine);
+    const handler = new ControllerForBasicActions(this.gameManager);
     const result = handler.setRecolorIntention(
       favorCost,
       this.getSelectedDieColor(),
@@ -357,7 +357,7 @@ export class Controller {
   private endTurn(): void {
     this.clearResourceSelection();
 
-    const result = this.gameEngine.endTurn();
+    const result = this.gameManager.endTurn();
 
     this.showMessage(result.message);
 
@@ -379,12 +379,12 @@ export class Controller {
     if (!hexMapContainer) return;
     this.addHandlersToSvg();
 
-    const state = this.gameEngine.getGameState();
+    const state = this.gameManager.getGameState();
     if (state.getPhase() === 'action') {
       this.highlightAvailableHexElements(state);
     }
   }
 
-  private gameEngine: GameManager;
+  private gameManager: GameManager;
   private viewGame: ViewGame;
 }
