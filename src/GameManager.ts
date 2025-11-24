@@ -67,10 +67,6 @@ export class GameManager {
     );
   }
 
-  public endTurn(): ResultWithMessage {
-    return this.engine.endTurn(this.getGameState(), this.getUiState());
-  }
-
   public getGameStateSnapshot(): GameState {
     return GameState.fromSnapshot(
       JSON.parse(JSON.stringify(this.state.toSnapshot())),
