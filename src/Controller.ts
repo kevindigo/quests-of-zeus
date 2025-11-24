@@ -3,6 +3,7 @@
 
 import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
+import { GameEngine } from './GameEngine.ts';
 import { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
@@ -16,12 +17,16 @@ import { ViewGame } from './ViewGame.ts';
 export class Controller {
   constructor() {
     this.gameManager = new GameManager();
+    this.gameEngine = new GameEngine();
     this.viewGame = new ViewGame(
       this.gameManager.getGameState(),
       this.gameManager.getUiState(),
     );
   }
 
+  public getGameState(): GameState {
+    return this.gameManager.getGameState();
+  }
   public getUiState(): UiState {
     return this.gameManager.getUiState();
   }
@@ -357,7 +362,10 @@ export class Controller {
   private endTurn(): void {
     this.clearResourceSelection();
 
-    const result = this.gameManager.endTurn();
+    const result = this.gameEngine.endTurn(
+      this.getGameState(),
+      this.getUiState(),
+    );
 
     this.showMessage(result.message);
 
@@ -386,5 +394,6 @@ export class Controller {
   }
 
   private gameManager: GameManager;
+  private gameEngine: GameEngine;
   private viewGame: ViewGame;
 }
