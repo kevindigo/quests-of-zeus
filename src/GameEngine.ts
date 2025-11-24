@@ -9,7 +9,8 @@ import {
 import type { UiState } from './UiState.ts';
 
 export class GameEngine {
-  ///////////////////////////// free actions
+  ////////////////////////////////////////////////////////////////////////
+  //  free actions
   public endTurn(
     gameState: GameState,
     uiState: UiState,
@@ -17,7 +18,8 @@ export class GameEngine {
     return GameEngineFree.endTurn(gameState, uiState);
   }
 
-  ///////////////////////////// noColor actions
+  ////////////////////////////////////////////////////////////////////////
+  // noColor actions
   public spendResourceForFavor(
     gameState: GameState,
     uiState: UiState,
@@ -32,8 +34,9 @@ export class GameEngine {
     return GameEngineNoColor.spendResourceForOracleCard(gameState, uiState);
   }
 
-  ///////////////////////////// helpers
-  public static spendDieOrCard(
+  ////////////////////////////////////////////////////////////////////////
+  // helpers
+  public static spendResource(
     gameState: GameState,
     uiState: UiState,
   ): ResultWithMessage {
@@ -45,7 +48,7 @@ export class GameEngine {
     }
 
     if (uiState.getSelectedRecoloring() > 0) {
-      return new Failure('Recoloring should already have been done earlier');
+      return new Failure('Must recolor before spending a resource');
     }
 
     uiState.clearResourceSelection();

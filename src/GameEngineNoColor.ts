@@ -28,7 +28,7 @@ export class GameEngineNoColor {
       return new Failure(`Cannot use a second oracle card this turn`);
     }
 
-    GameEngine.spendDieOrCard(gameState, uiState);
+    GameEngine.spendResource(gameState, uiState);
     player.favor += 2;
 
     return new Success(`Resource spent (${effectiveColor}); favor gained`);
@@ -77,7 +77,7 @@ export class GameEngineNoColor {
 
     player.oracleCards.push(card);
 
-    GameEngine.spendDieOrCard(gameState, uiState);
+    GameEngine.spendResource(gameState, uiState);
     return new Success(`Drew ${card} by spending ${color}`);
   }
 }

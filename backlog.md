@@ -1,6 +1,7 @@
 == Short-term ==
 
 - Work on implementing ActionResolver
+  - Bring tests over to GameEngineXxx
   - Split recoloring out as a separate thing from ship move
 
 == Cosmetic/Usability ==
