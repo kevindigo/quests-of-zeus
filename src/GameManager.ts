@@ -357,7 +357,7 @@ export class GameManager {
 
   public spendColorSpecificDieOrCard(): void {
     const player = this.getCurrentPlayer();
-    const favorSpentToRecolor = this.getSelectedRecoloring();
+    const favorSpentToRecolor = this.getUiState().getSelectedRecoloring();
     player.favor -= favorSpentToRecolor;
     this.spendDieOrCard();
   }
@@ -387,10 +387,6 @@ export class GameManager {
     if (resource.isCard()) {
       player.usedOracleCardThisTurn = true;
     }
-  }
-
-  public getSelectedRecoloring(): number {
-    return this.uiState.getSelectedRecoloring();
   }
 
   public setSelectedRecoloring(

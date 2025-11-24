@@ -153,7 +153,7 @@ Deno.test('Hex click - available my hidden shrine (die)', () => {
   assert(result.success, `Should have succeeded, but ${result.message}`);
   assertEquals(shrineHex.status, 'filled');
   assertEquals(testGameManager.getEffectiveSelectedColor(), null);
-  assertEquals(testGameManager.getSelectedRecoloring(), 0);
+  assertEquals(testGameManager.getUiState().getSelectedRecoloring(), 0);
 });
 
 /********************** Offering tests ****************************/

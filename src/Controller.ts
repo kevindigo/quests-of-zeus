@@ -179,7 +179,7 @@ export class Controller {
     gameState: GameState,
   ): void {
     const currentPlayer = gameState.getCurrentPlayer();
-    const favorForRecoloring = this.gameManager.getSelectedRecoloring();
+    const favorForRecoloring = this.getUiState().getSelectedRecoloring();
     const favorAvailableForRange = currentPlayer.favor - favorForRecoloring;
 
     // Get available moves for the selected die color and available favor

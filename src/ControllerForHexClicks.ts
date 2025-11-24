@@ -9,6 +9,7 @@ import {
 } from './ResultWithMessage.ts';
 import { ShipMoveHandler } from './ShipMoveHandler.ts';
 import type { MoveShipResult } from './types.ts';
+import type { UiState } from './UiState.ts';
 
 export class ControllerForHexClicks {
   public constructor(manager: GameManager) {
@@ -98,8 +99,8 @@ export class ControllerForHexClicks {
   private handleMoveWithDieOrCard(): ResultWithMessage {
     const state = this.getState();
     const currentPlayer = state.getCurrentPlayer();
-    const effectiveColor = this.gameManager.getEffectiveSelectedColor();
-    const recoloringCost = this.gameManager.getSelectedRecoloring();
+    const effectiveColor = this.getUiState().getEffectiveSelectedColor();
+    const recoloringCost = this.getUiState().getSelectedRecoloring();
     const availableFavor = currentPlayer.favor;
     const maxFavorForMovement = Math.min(availableFavor - recoloringCost, 5);
     // Get available moves for the selected color and available favor
@@ -158,10 +159,10 @@ export class ControllerForHexClicks {
         targetQ: q,
         targetR: r,
         dieColor: selectedDieColor,
-        favorSpent: this.gameManager.getSelectedRecoloring(),
+        favorSpent: this.getUiState().getSelectedRecoloring(),
         playerFavor: currentPlayer.favor,
         playerDice: currentPlayer.oracleDice,
-        recolorIntention: this.gameManager.getSelectedRecoloring(),
+        recolorIntention: this.getUiState().getSelectedRecoloring(),
         moveResult,
       });
 
@@ -259,6 +260,10 @@ export class ControllerForHexClicks {
       default:
         return 'Invalid move! Please check your die selection, favor, and target hex.';
     }
+  }
+
+  private getUiState(): UiState {
+    return this.gameManager.getUiState();
   }
 
   private gameManager: GameManager;
