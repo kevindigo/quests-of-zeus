@@ -51,8 +51,6 @@ export class GameEngine {
       return new Failure('Must recolor before spending a resource');
     }
 
-    uiState.clearResourceSelection();
-
     const array = resource.isDie()
       ? player.oracleDice
       : resource.isCard()
@@ -69,6 +67,7 @@ export class GameEngine {
       player.usedOracleCardThisTurn = true;
     }
 
+    uiState.clearResourceSelection();
     return new Success(`Resource ${JSON.stringify(resource)} was spent`);
   }
 }

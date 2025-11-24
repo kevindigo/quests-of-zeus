@@ -71,6 +71,7 @@ export class UiStateClass {
 
   public clearResourceSelection(): void {
     this.selectedResource = Resource.none;
+    this.clearSelectedRecoloring();
   }
 
   getSelectedCoordinates(): HexCoordinates | null {

@@ -15,6 +15,7 @@ Deno.test('GameEngineFree - end turn', () => {
   oldPlayer.oracleCards = ['blue'];
   oldPlayer.usedOracleCardThisTurn = true;
   uiState.setSelectedDieColor('red');
+  uiState.setSelectedRecoloring(2);
   assertEquals(gameState.getRound(), 1);
 
   const result = GameEngineFree.endTurn(gameState, uiState);

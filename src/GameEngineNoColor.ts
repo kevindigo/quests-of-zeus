@@ -17,21 +17,26 @@ export class GameEngineNoColor {
       return new Failure(`Cannot buy favor during the ${phase} phase`);
     }
 
-    const effectiveColor = uiState.getEffectiveSelectedColor();
-    if (!effectiveColor) {
+    const resource = uiState.getSelectedResource();
+    if (!resource.hasColor()) {
       return new Failure('Must select a die or card to gain favor');
     }
 
-    const resource = uiState.getSelectedResource();
     const player = gameState.getCurrentPlayer();
     if (resource.isCard() && player.usedOracleCardThisTurn) {
       return new Failure(`Cannot use a second oracle card this turn`);
     }
 
-    GameEngine.spendResource(gameState, uiState);
-    player.favor += 2;
+    uiState.clearSelectedRecoloring();
 
-    return new Success(`Resource spent (${effectiveColor}); favor gained`);
+    const result = GameEngine.spendResource(gameState, uiState);
+    if (!result.success) {
+      return result;
+    }
+    uiState.clearResourceSelection();
+
+    player.favor += 2;
+    return new Success(`Resource spent (${resource.getColor()}); favor gained`);
   }
 
   public static spendResourceForOracleCard(

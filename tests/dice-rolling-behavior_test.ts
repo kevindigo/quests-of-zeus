@@ -90,7 +90,8 @@ Deno.test('DiceRolling - recoloring intentions cleared at end of turn', () => {
   assertEquals(engine.getSelectedRecoloring(), 1);
 
   // End Player 1's turn
-  engine.endTurn();
+  const result = engine.endTurn();
+  assert(result.success, result.message);
 
   assertEquals(
     engine.getSelectedRecoloring(),
