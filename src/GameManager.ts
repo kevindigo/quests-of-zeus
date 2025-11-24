@@ -369,7 +369,7 @@ export class GameManager {
       return;
     }
 
-    this.clearResourceSelection();
+    this.getUiState().clearResourceSelection();
 
     const array = resource.isDie()
       ? player.oracleDice
@@ -398,10 +398,6 @@ export class GameManager {
 
   public getEffectiveSelectedColor(): CoreColor | null {
     return this.uiState.getEffectiveSelectedColor();
-  }
-
-  public clearResourceSelection(): void {
-    return this.uiState.clearResourceSelection();
   }
 
   private isNeededForQuest(item: Item): boolean {
