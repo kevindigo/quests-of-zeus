@@ -1,4 +1,6 @@
+import { GameEngine } from './GameEngine.ts';
 import type { GameManager } from './GameManager.ts';
+import type { GameState } from './GameState.ts';
 import { OracleSystem } from './OracleSystem.ts';
 import {
   Failure,
@@ -6,18 +8,26 @@ import {
   Success,
 } from './ResultWithMessage.ts';
 import type { CoreColor } from './types.ts';
+import type { UiState } from './UiState.ts';
 
 export class ControllerForBasicActions {
-  public constructor(engine: GameManager) {
-    this.gameManager = engine;
+  public constructor(manager: GameManager) {
+    this.gameManager = manager;
+    this.gameEngine = new GameEngine();
   }
 
   public spendResourceForFavor(): ResultWithMessage {
-    return this.gameManager.spendResourceForFavor();
+    return this.gameEngine.spendResourceForFavor(
+      this.getGameState(),
+      this.getUiState(),
+    );
   }
 
   public drawOracleCard(): ResultWithMessage {
-    return this.gameManager.spendResourceForOracleCard();
+    return this.gameEngine.spendResourceForOracleCard(
+      this.getGameState(),
+      this.getUiState(),
+    );
   }
 
   public setRecolorIntention(
@@ -63,5 +73,14 @@ export class ControllerForBasicActions {
     }
   }
 
+  private getGameState(): GameState {
+    return this.gameManager.getGameState();
+  }
+
+  private getUiState(): UiState {
+    return this.gameManager.getUiState();
+  }
+
   private gameManager: GameManager;
+  private gameEngine: GameEngine;
 }

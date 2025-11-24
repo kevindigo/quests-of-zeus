@@ -1,4 +1,5 @@
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
+import { GameEngine } from '../src/GameEngine.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { OracleSystem } from '../src/OracleSystem.ts';
 import type { ShrineHex } from '../src/types.ts';
@@ -189,10 +190,11 @@ Deno.test('Click land - shrine card reward but oracle deck empty', () => {
   testPlayer.setShipPosition(adjacentSeaCell.getCoordinates());
 
   const MORE_THAN_ORACLE_DECK_CARD_COUNT = 1000;
+  const gameEngine = new GameEngine();
   for (let i = 0; i < MORE_THAN_ORACLE_DECK_CARD_COUNT; ++i) {
     testPlayer.oracleDice = ['red'];
     testUiState.setSelectedDieColor('red');
-    if (!testGameManager.spendResourceForOracleCard()) {
+    if (!gameEngine.spendResourceForOracleCard(testGameState, testUiState)) {
       break;
     }
   }

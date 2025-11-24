@@ -1,5 +1,6 @@
 import { assert } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
+import { GameEngine } from '../src/GameEngine.ts';
 import { GameManager } from '../src/GameManager.ts';
 
 Deno.test('GameEngine setup - initialization', () => {
@@ -137,14 +138,18 @@ Deno.test('GameEngine - initializes oracle card deck', () => {
 });
 
 Deno.test('GameEngine - starting a new game resets the oracle card deck', () => {
-  const engine = new GameManager();
-  const player = engine.getCurrentPlayer();
+  const manager = new GameManager();
+  const gameEngine = new GameEngine();
+  const gameState = manager.getGameState();
+  const uiState = manager.getUiState();
+  const player = manager.getCurrentPlayer();
   player.oracleDice = ['red'];
-  const uiState = engine.getUiState();
   uiState.setSelectedDieColor('red');
-  assert(engine.spendResourceForOracleCard());
-  assertEquals(engine.getGameState().getOracleCardDeck().length, 29);
+  assert(
+    gameEngine.spendResourceForOracleCard(gameState, uiState),
+  );
+  assertEquals(manager.getGameState().getOracleCardDeck().length, 29);
 
-  engine.startNewGame();
-  assertEquals(engine.getGameState().getOracleCardDeck().length, 30);
+  manager.startNewGame();
+  assertEquals(manager.getGameState().getOracleCardDeck().length, 30);
 });

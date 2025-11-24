@@ -60,13 +60,6 @@ export class GameManager {
     return this.engine.spendResourceForFavor(this.getGameState(), this.uiState);
   }
 
-  public spendResourceForOracleCard(): ResultWithMessage {
-    return this.engine.spendResourceForOracleCard(
-      this.getGameState(),
-      this.getUiState(),
-    );
-  }
-
   public getGameStateSnapshot(): GameState {
     return GameState.fromSnapshot(
       JSON.parse(JSON.stringify(this.state.toSnapshot())),
