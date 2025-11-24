@@ -15,9 +15,7 @@ import {
 } from './ResultWithMessage.ts';
 import { ShipMoveHandler } from './ShipMoveHandler.ts';
 import type {
-  CityHex,
   CoreColor,
-  CubeHex,
   Item,
   MonsterHex,
   MoveShipResult,
@@ -73,14 +71,6 @@ export class GameManager {
 
   public getUiState(): UiState {
     return this.uiState;
-  }
-
-  public getCityHexes(): CityHex[] {
-    return this.state.getCityHexes();
-  }
-
-  public getCubeHexes(): CubeHex[] {
-    return this.state.getCubeHexes();
   }
 
   public getMonsterHexes(): MonsterHex[] {

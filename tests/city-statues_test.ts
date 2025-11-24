@@ -5,8 +5,8 @@ import { GameManager } from '../src/GameManager.ts';
 import { COLOR_WHEEL } from '../src/types.ts';
 
 Deno.test('City Statue Functionality - Basic Operations', () => {
-  const engine = new GameManager();
-  const cities = engine.getCityHexes();
+  const manager = new GameManager();
+  const cities = manager.getGameState().getCityHexes();
 
   assertEquals(
     cities.length,
