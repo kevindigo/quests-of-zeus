@@ -358,11 +358,6 @@ export class GameManager {
     const player = this.getCurrentPlayer();
     const favorSpentToRecolor = this.getUiState().getSelectedRecoloring();
     player.favor -= favorSpentToRecolor;
-    this.spendDieOrCard();
-  }
-
-  public spendDieOrCard(): void {
-    const player = this.getCurrentPlayer();
     const resource = this.getUiState().getSelectedResource();
 
     if (!resource.hasColor()) {
