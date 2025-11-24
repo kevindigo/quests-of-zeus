@@ -1,6 +1,6 @@
 import type { Action } from './actions.ts';
-import { GameEngineFree } from './GameEngineFree.ts';
 import { GameEngineAnyResource } from './GameEngineAnyResource.ts';
+import { GameEngineFree } from './GameEngineFree.ts';
 import type { GameState } from './GameState.ts';
 import {
   Failure,

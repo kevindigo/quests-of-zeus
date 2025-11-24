@@ -1,6 +1,10 @@
 import type { Action, FreeEndTurnAction } from './actions.ts';
 import type { GameState } from './GameState.ts';
-import { type ResultWithMessage, Success } from './ResultWithMessage.ts';
+import {
+  Failure,
+  type ResultWithMessage,
+  Success,
+} from './ResultWithMessage.ts';
 import { COLOR_WHEEL, type CoreColor } from './types.ts';
 import type { UiState } from './UiState.ts';
 
@@ -29,6 +33,14 @@ export class GameEngineFree {
     gameState: GameState,
     uiState: UiState,
   ): ResultWithMessage {
+    const availableActions = GameEngineFree.getFreeActions(gameState);
+    const found = availableActions.find((action) => {
+      return action.type === 'free' && action.subType === 'endTurn';
+    });
+    if (!found) {
+      return new Failure('End turn not available');
+    }
+
     const newDice: CoreColor[] = [];
     for (let i = 0; i < 3; i++) {
       const randomColor =
