@@ -21,12 +21,12 @@ export class GameEngineFree {
     if (currentPlayer) {
       currentPlayer.usedOracleCardThisTurn = false;
       currentPlayer.oracleDice = newDice;
-      uiState.clearSelectedRecoloring();
     }
 
     const nextPlayerIndex = (gameState.getCurrentPlayerIndex() + 1) %
       gameState.getPlayerCount();
 
+    uiState.clearResourceSelection();
     gameState.setCurrentPlayerIndex(nextPlayerIndex);
     if (gameState.getCurrentPlayerIndex() === 0) {
       gameState.advanceRound();
