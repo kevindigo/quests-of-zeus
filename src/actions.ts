@@ -15,7 +15,7 @@ export interface ActionBase {
 
 export interface FreeAction extends ActionBase {
   type: 'free';
-  subtype:
+  subType:
     | 'continueMonsterFight'
     | 'abandonMonsterFight'
     | 'skipTurnHeal'
@@ -45,7 +45,7 @@ export interface ResourceAction extends ActionBase {
 
 export interface AnyResourceAction extends ResourceAction {
   type: 'anyResource';
-  subtype: 'gainFavor' | 'gainOracleCard' | 'gainPeekCoupons';
+  subType: 'gainFavor' | 'gainOracleCard' | 'gainPeekCoupons';
 }
 
 export interface ColorBasedAction extends ResourceAction {
@@ -95,7 +95,7 @@ export interface FreeEndTurnAction extends FreeAction {
 }
 
 export interface FreeRecolorAction extends FreeAction {
-  subtype: 'recolor';
+  subType: 'recolor';
   targetResource: Resource;
   favorToSpend: number;
 }
@@ -233,7 +233,7 @@ export type Action =
   | CouponGrabCubeAction
   | CouponGrabStatueAction
   | CouponFlipCloudAction
-  // noColor
+  // anyResource
   | AnyResourceGainFavorAction
   | AnyResourceGainOracleCardAction
   | AnyResourceGainPeekCouponsAction
