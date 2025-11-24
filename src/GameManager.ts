@@ -1,7 +1,6 @@
 // Quests of Zeus Game Engine - Core Orchestration
 // High-level game management and orchestration
 
-import { GameEngine } from './GameEngine.ts';
 import { GameState } from './GameState.ts';
 import { GameStateInitializer } from './GameStateInitializer.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
@@ -32,7 +31,6 @@ export class GameManager {
     this.state = new GameState();
     this.uiState = new UiStateClass();
     this.startNewGame();
-    this.engine = new GameEngine();
   }
 
   public startNewGame(): void {
@@ -54,10 +52,6 @@ export class GameManager {
       favorSpentToRecolor,
       favorSpentForRange,
     );
-  }
-
-  public spendResourceForFavor(): ResultWithMessage {
-    return this.engine.spendResourceForFavor(this.getGameState(), this.uiState);
   }
 
   public getGameStateSnapshot(): GameState {
@@ -488,5 +482,4 @@ export class GameManager {
 
   private state: GameState;
   private uiState: UiState;
-  private engine: GameEngine;
 }
