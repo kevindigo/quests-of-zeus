@@ -50,9 +50,12 @@ Deno.test('Hex click - second oracle card', () => {
   setupWithController();
 
   testPlayer.usedOracleCardThisTurn = true;
-  testGameManager.setSelectedOracleCardColor('red');
-  assert(testGameManager.getSelectedResource().isCard());
-  assertEquals(testGameManager.getSelectedResource().getColor(), 'red');
+  testGameManager.getUiState().setSelectedOracleCardColor('red');
+  assert(testGameManager.getUiState().getSelectedResource().isCard());
+  assertEquals(
+    testGameManager.getUiState().getSelectedResource().getColor(),
+    'red',
+  );
   assertFailureContains(
     testHandler.handleHexClick(center),
     'per turn',

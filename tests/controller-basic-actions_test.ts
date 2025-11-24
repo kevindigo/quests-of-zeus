@@ -44,17 +44,17 @@ Deno.test('Buy favor - success with card', () => {
   testPlayer.favor = 0;
   testPlayer.oracleCards = ['red'];
   testGameManager.setSelectedOracleCardColor('red');
-  assert(testGameManager.getSelectedResource().hasColor());
-  assert(testGameManager.getSelectedResource().isCard());
-  assertEquals(testGameManager.getSelectedResource().getColor(), 'red');
+  assert(testUiState.getSelectedResource().hasColor());
+  assert(testUiState.getSelectedResource().isCard());
+  assertEquals(testUiState.getSelectedResource().getColor(), 'red');
 
   const result = handler.spendResourceForFavor();
   assert(result);
   assertStringIncludes(result.message, 'red');
   assertEquals(testPlayer.favor, 2);
   assertEquals(testPlayer.oracleCards.length, 0);
-  assertFalse(testGameManager.getSelectedResource().hasColor());
-  assertFalse(testGameManager.getSelectedResource().hasColor());
+  assertFalse(testUiState.getSelectedResource().hasColor());
+  assertFalse(testUiState.getSelectedResource().hasColor());
   assert(
     testPlayer.usedOracleCardThisTurn,
     'Should have set the used card flag',

@@ -36,28 +36,28 @@ export class Controller {
   }
 
   public clearResourceSelection(): void {
-    this.gameManager.clearResourceSelection();
+    this.getUiState().clearResourceSelection();
   }
 
   public getSelectedDieColor(): CoreColor | null {
-    const selected = this.gameManager.getSelectedResource();
+    const selected = this.getUiState().getSelectedResource();
     return selected.isDie() ? selected.getColor() : null;
   }
 
   public getSelectedCardColor(): CoreColor | null {
-    const selected = this.gameManager.getSelectedResource();
+    const selected = this.getUiState().getSelectedResource();
     return selected.isCard() ? selected.getColor() : null;
   }
 
   public selectDieColor(color: CoreColor): boolean {
-    this.gameManager.clearResourceSelection();
-    this.gameManager.setSelectedDieColor(color);
+    this.getUiState().clearResourceSelection();
+    this.getUiState().setSelectedDieColor(color);
     return true;
   }
 
   public selectCardColor(color: CoreColor): boolean {
-    this.gameManager.clearResourceSelection();
-    this.gameManager.setSelectedOracleCardColor(color);
+    this.getUiState().clearResourceSelection();
+    this.getUiState().setSelectedOracleCardColor(color);
     return true;
   }
 

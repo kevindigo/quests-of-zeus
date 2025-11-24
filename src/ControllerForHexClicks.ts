@@ -44,7 +44,7 @@ export class ControllerForHexClicks {
     // FixMe: I think this is where we should perform the recoloring
 
     const currentPlayer = gameState.getCurrentPlayer();
-    const resource = this.getEngine().getSelectedResource();
+    const resource = this.getUiState().getSelectedResource();
 
     if (resource.isCard() && currentPlayer.usedOracleCardThisTurn) {
       return new Failure('Cannot use more than 1 oracle card per turn');
@@ -130,7 +130,7 @@ export class ControllerForHexClicks {
 
     const favorSpentForRange = targetMove.favorCost;
 
-    const selectedResource = this.getEngine().getSelectedResource();
+    const selectedResource = this.getUiState().getSelectedResource();
     const selectedDieColor = selectedResource.isDie()
       ? selectedResource.getColor()
       : null;

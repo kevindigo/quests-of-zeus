@@ -21,7 +21,6 @@ import type {
   Item,
   MonsterHex,
   MoveShipResult,
-  Resource,
   ShrineHex,
 } from './types.ts';
 import { type UiState, UiStateClass } from './UiState.ts';
@@ -364,7 +363,7 @@ export class GameManager {
 
   public spendDieOrCard(): void {
     const player = this.getCurrentPlayer();
-    const resource = this.getSelectedResource();
+    const resource = this.getUiState().getSelectedResource();
 
     if (!resource.hasColor()) {
       return;
@@ -387,10 +386,6 @@ export class GameManager {
     if (resource.isCard()) {
       player.usedOracleCardThisTurn = true;
     }
-  }
-
-  public getSelectedResource(): Resource {
-    return this.uiState.getSelectedResource();
   }
 
   public setSelectedDieColor(color: CoreColor): void {
