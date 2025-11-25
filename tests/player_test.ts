@@ -70,3 +70,29 @@ Deno.test('Player - load cube already full', () => {
   const result = testPlayer.loadItem(redCube);
   assertFailureContains(result, 'full');
 });
+
+Deno.test('Player - get resources for base color dice', () => {
+  setupGame();
+  testPlayer.oracleDice = ['red', 'blue', 'red'];
+  const resources = testPlayer.getResourcesForDice();
+  assertEquals(resources.length, 2);
+  assert(resources.find((resource) => {
+    return resource.isDie() && resource.getBaseColor() === 'red';
+  }));
+  assert(resources.find((resource) => {
+    return resource.isDie() && resource.getBaseColor() === 'blue';
+  }));
+});
+
+Deno.test('Player - get resources for base color cards', () => {
+  setupGame();
+  testPlayer.oracleCards = ['pink', 'blue', 'pink'];
+  const resources = testPlayer.getResourcesForCards();
+  assertEquals(resources.length, 2);
+  assert(resources.find((resource) => {
+    return resource.isCard() && resource.getBaseColor() === 'pink';
+  }));
+  assert(resources.find((resource) => {
+    return resource.isCard() && resource.getBaseColor() === 'blue';
+  }));
+});

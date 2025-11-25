@@ -1,4 +1,5 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import { Resource } from './Resource.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -96,6 +97,22 @@ export class Player {
 
   public getRange(): number {
     return 3;
+  }
+
+  public getResourcesForDice(): Resource[] {
+    return Array.from(
+      new Map(this.oracleDice.map((color) => {
+        return [color, Resource.createDie(color)];
+      })).values(),
+    );
+  }
+
+  public getResourcesForCards(): Resource[] {
+    return Array.from(
+      new Map(this.oracleCards.map((color) => {
+        return [color, Resource.createCard(color)];
+      })).values(),
+    );
   }
 
   public getQuests(): Quest[] {
