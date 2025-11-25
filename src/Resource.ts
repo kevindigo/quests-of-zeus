@@ -36,7 +36,7 @@ export class Resource {
     throw new Error('Resource snapshot not implemented yet!');
   }
 
-  public static fromSnapshot(!resource: Resource): Resource {
+  public static fromSnapshot(_resource: Resource): Resource {
     throw new Error('Resource snapshot not implemented yet!');
   }
 
