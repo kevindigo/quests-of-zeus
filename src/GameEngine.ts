@@ -1,6 +1,7 @@
 import type { Action } from './actions.ts';
 import { GameEngineAnyResource } from './GameEngineAnyResource.ts';
 import { GameEngineFree } from './GameEngineFree.ts';
+import { GameEngineHex } from './GameEngineHex.ts';
 import type { GameState } from './GameState.ts';
 import {
   Failure,
@@ -16,6 +17,7 @@ export class GameEngine {
     const actions: Action[] = [];
     actions.push(...GameEngineFree.getFreeActions(gameState));
     actions.push(...GameEngineAnyResource.getAnyResourceActions(gameState));
+    actions.push(...GameEngineHex.getHexActions(gameState));
     return actions;
   }
 
@@ -35,12 +37,6 @@ export class GameEngine {
       `GameEngine.doAction(${JSON.stringify(action)} not implemented yet)`,
     );
   }
-
-  ////////////////////////////////////////////////////////////////////////
-  //  free actions
-
-  ////////////////////////////////////////////////////////////////////////
-  // noColor actions
 
   ////////////////////////////////////////////////////////////////////////
   // helpers
