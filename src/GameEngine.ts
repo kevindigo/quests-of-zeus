@@ -3,11 +3,13 @@ import { GameEngineAnyResource } from './GameEngineAnyResource.ts';
 import { GameEngineFree } from './GameEngineFree.ts';
 import { GameEngineHex } from './GameEngineHex.ts';
 import type { GameState } from './GameState.ts';
+import type { Player } from './Player.ts';
 import {
   Failure,
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
+import type { CoreColor, Item } from './types.ts';
 import type { UiState } from './UiState.ts';
 
 export class GameEngine {
@@ -75,5 +77,36 @@ export class GameEngine {
 
     uiState.clearResourceSelection();
     return new Success(`Resource ${JSON.stringify(resource)} was spent`);
+  }
+
+  public static updateWildQuestIfNecessary(player: Player, item: Item): void {
+    switch (item.type) {
+      case 'cube':
+        GameEngine.updateWildTempleQuestIfNecessary(player, item.color);
+        return;
+      default:
+        return;
+    }
+  }
+
+  private static updateWildTempleQuestIfNecessary(
+    player: Player,
+    color: CoreColor,
+  ): void {
+    const templeQuests = player.getQuestsOfType('temple');
+    if (
+      templeQuests.find((quest) => {
+        return quest.color === color;
+      })
+    ) {
+      return;
+    }
+
+    const wildQuest = templeQuests.find((quest) => {
+      return quest.color === 'none';
+    });
+    if (wildQuest) {
+      wildQuest.color = color;
+    }
   }
 }
