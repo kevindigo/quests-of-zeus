@@ -67,6 +67,7 @@ export class GameManager {
     return this.uiState;
   }
 
+  //FixMe: Delete when doAction is working
   public getAvailableLandInteractions(): HexCell[] {
     const player = this.getCurrentPlayer();
     const shipPosition = player.getShipPosition();
@@ -116,6 +117,7 @@ export class GameManager {
     return false;
   }
 
+  // FixMe: Delete this after doAction is working
   public activateShrine(
     coordinates: HexCoordinates,
   ): ResultWithMessage {
@@ -237,6 +239,7 @@ export class GameManager {
     return true;
   }
 
+  // FixMe: Delete when doAction is working
   public activateOffering(coordinates: HexCoordinates): ResultWithMessage {
     const state = this.getGameState();
     const cubeHex = state.getCubeHexes().find((hex) => {
@@ -304,6 +307,7 @@ export class GameManager {
     return true;
   }
 
+  // FixMe: Delete when doAction is working
   public activateTemple(_coordinates: HexCoordinates): ResultWithMessage {
     const color = this.getUiState().getEffectiveSelectedColor();
     if (!color) {
