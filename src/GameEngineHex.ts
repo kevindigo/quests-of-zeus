@@ -2,13 +2,21 @@ import type {
   Action,
   DropCubeAction,
   ExploreShrineAction,
+  HexAction,
   LoadCubeAction,
 } from './actions.ts';
+import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import type { Resource } from './Resource.ts';
+import {
+  Failure,
+  type ResultWithMessage,
+  Success,
+} from './ResultWithMessage.ts';
 import type { Item } from './types.ts';
+import type { UiState } from './UiState.ts';
 
 export class GameEngineHex {
   public static getHexActions(gameState: GameState): Action[] {
@@ -52,6 +60,33 @@ export class GameEngineHex {
     return actions;
   }
 
+  public static doAction(
+    action: HexAction,
+    gameState: GameState,
+    uiState: UiState,
+  ): ResultWithMessage {
+    switch (action.subType) {
+      case 'shipMove':
+        break;
+      case 'loadCube':
+        break;
+      case 'dropCube':
+        break;
+      case 'loadStatue':
+        break;
+      case 'dropStatue':
+        break;
+      case 'fightMonster':
+        break;
+      case 'exploreShrine': {
+        return GameEngineHex.doExploreShrine(action, gameState, uiState);
+      }
+    }
+    return new Failure(
+      `GameHexAction.doAction(${JSON.stringify(action)}) not yet implemented`,
+    );
+  }
+
   private static getShrineActions(
     gameState: GameState,
     shrineCell: HexCell,
@@ -63,13 +98,11 @@ export class GameEngineHex {
 
     const coordinates = shrineCell.getCoordinates();
     if (GameEngineHex.canExploreShrine(gameState, coordinates)) {
-      const targetColor = resource.getEffectiveColor()!;
       const action: ExploreShrineAction = {
         type: 'hex',
         subType: 'exploreShrine',
         spend: resource,
         coordinates,
-        targetColor,
       };
 
       return [action];
@@ -122,7 +155,6 @@ export class GameEngineHex {
         subType: 'loadCube',
         coordinates: offeringCell.getCoordinates(),
         spend: resource,
-        targetColor: effectiveColor,
       };
       return [action];
     }
@@ -156,8 +188,101 @@ export class GameEngineHex {
       subType: 'dropCube',
       coordinates: templeCell.getCoordinates(),
       spend: resource,
-      targetColor: templeColor,
     };
     return [action];
+  }
+
+  private static doExploreShrine(
+    action: HexAction,
+    gameState: GameState,
+    uiState: UiState,
+  ): ResultWithMessage {
+    const selectedCoordinates = uiState.getSelectedCoordinates();
+    if (!selectedCoordinates) {
+      return new Failure(
+        `No coordinates selected for action ${JSON.stringify(action)}`,
+      );
+    }
+    const shrineHex = gameState.findShrineHexAt(selectedCoordinates);
+    if (!shrineHex) {
+      return new Failure(
+        `Explore shrine not where expected: ${JSON.stringify(action)}`,
+      );
+    }
+    const color = uiState.getEffectiveSelectedColor();
+    if (!color) {
+      return new Failure(
+        `Explore shrine without a color selected ${JSON.stringify(action)}`,
+      );
+    }
+    const hexActions = GameEngineHex.getHexActions(gameState);
+    const thisAction: ExploreShrineAction = {
+      type: 'hex',
+      subType: 'exploreShrine',
+      spend: uiState.getSelectedResource(),
+      coordinates: selectedCoordinates,
+    };
+    const found = hexActions.find((action): boolean => {
+      return action.type === thisAction.type &&
+        action.subType === thisAction.subType &&
+        action.coordinates.q === thisAction.coordinates.q &&
+        action.coordinates.r === thisAction.coordinates.r &&
+        action.spend.equals(thisAction.spend);
+    });
+    if (!found) {
+      return new Failure(
+        `Explore shrine action ${JSON.stringify(action)} not available in ${
+          JSON.stringify(hexActions)
+        }`,
+      );
+    }
+
+    const player = gameState.getCurrentPlayer();
+    if (shrineHex.owner === player.color) {
+      const unfilledShrineQuest = player.getQuestsOfType('shrine').find(
+        (quest) => {
+          return !quest.isCompleted;
+        },
+      );
+      if (!unfilledShrineQuest) {
+        return new Failure('All shrines were already built!?');
+      }
+      unfilledShrineQuest.isCompleted = true;
+      shrineHex.status = 'filled';
+      const spent = GameEngine.spendResource(gameState, uiState);
+      if (!spent.success) {
+        return new Failure(
+          'Completed the quest, but failed spendResource: ' + spent.message,
+        );
+      }
+      return new Success(`Completed shrine quest -- God reward not available`);
+    }
+
+    shrineHex.status = 'visible';
+    switch (shrineHex.reward) {
+      case 'favor':
+        player.favor += 4;
+        break;
+      case 'card': {
+        const deck = gameState.getOracleCardDeck();
+        for (let i = 0; i < 2; ++i) {
+          const card = deck.pop();
+          if (!card) {
+            return new Failure('Cloud flipped -- oracle card deck is empty');
+          }
+          player.oracleCards.push(card);
+        }
+        break;
+      }
+      case 'god':
+        return new Failure('Cloud flipped -- god reward not available yet');
+      case 'shield':
+        player.shield += 1;
+        return new Failure(
+          'Cloud flippe and gained shield -- healing injuries not available yet',
+        );
+    }
+    GameEngine.spendResource(gameState, uiState);
+    return new Success(`Completed shrine quest -- reward ${shrineHex.reward}`);
   }
 }

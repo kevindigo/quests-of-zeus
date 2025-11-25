@@ -1,9 +1,13 @@
 import { assert, assertGreaterOrEqual } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
+import type { ExploreShrineAction } from '../src/actions.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
+import { Resource } from '../src/Resource.ts';
 import { COLOR_WHEEL, type Item } from '../src/types.ts';
+import { UiStateClass } from '../src/UiState.ts';
+import { assertFailureContains } from './test-helpers.ts';
 
 Deno.test('GameEngineHex - available wrong phase', () => {
   const gameState = new GameState();
@@ -202,4 +206,281 @@ Deno.test('GameEngineHex -available next to useful temple', () => {
       action.coordinates.r === templeHex.r,
   );
   assert(action.spend.isDie());
+});
+
+Deno.test('GameEngineHex - doShrineExplore (ours)', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const uiState = new UiStateClass();
+  const player = gameState.getCurrentPlayer();
+  const shrineHex = gameState.getShrineHexes().find((hex) => {
+    return hex.owner === player.color;
+  });
+  assert(shrineHex);
+  const shrineCoordinates = { q: shrineHex.q, r: shrineHex.r };
+  const seaNeighbors = gameState.getMap().getHexGrid()
+    .getNeighborsOfTypeByCoordinates(
+      shrineCoordinates,
+      'sea',
+    );
+  const destination = seaNeighbors[0];
+  assert(destination);
+  const shrineCell = gameState.getMap().getCell(shrineCoordinates);
+  assert(shrineCell);
+  const shrineColor = shrineCell.color;
+  assert(shrineColor !== 'none');
+  player.setShipPosition(destination.getCoordinates());
+  player.oracleDice = [shrineColor];
+  player.favor = 0;
+  uiState.setSelectedResource(Resource.createDie(shrineColor));
+  uiState.setSelectedCoordinates(shrineCell.getCoordinates());
+
+  const action: ExploreShrineAction = {
+    type: 'hex',
+    subType: 'exploreShrine',
+    coordinates: shrineCoordinates,
+    spend: Resource.createDie(shrineColor),
+  };
+  const result = GameEngineHex.doAction(action, gameState, uiState);
+  assert(result.success, result.message);
+  assertEquals(shrineHex.status, 'filled');
+  const completedShrineQuests = player.getQuestsOfType('shrine').filter(
+    (quest) => {
+      return quest.isCompleted;
+    },
+  );
+  assertEquals(completedShrineQuests.length, 1);
+  assertEquals(player.oracleDice.length, 0);
+});
+
+Deno.test('GameEngineHex - doShrineExplore (ours already visible)', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const uiState = new UiStateClass();
+  const player = gameState.getCurrentPlayer();
+  const shrineHex = gameState.getShrineHexes().find((hex) => {
+    return hex.owner === player.color;
+  });
+  assert(shrineHex);
+  shrineHex.status = 'visible';
+  const shrineCoordinates = { q: shrineHex.q, r: shrineHex.r };
+  const seaNeighbors = gameState.getMap().getHexGrid()
+    .getNeighborsOfTypeByCoordinates(
+      shrineCoordinates,
+      'sea',
+    );
+  const destination = seaNeighbors[0];
+  assert(destination);
+  const shrineCell = gameState.getMap().getCell(shrineCoordinates);
+  assert(shrineCell);
+  const shrineColor = shrineCell.color;
+  assert(shrineColor !== 'none');
+  player.setShipPosition(destination.getCoordinates());
+  player.oracleDice = [shrineColor];
+  player.favor = 0;
+  uiState.setSelectedResource(Resource.createDie(shrineColor));
+  uiState.setSelectedCoordinates(shrineCell.getCoordinates());
+
+  const action: ExploreShrineAction = {
+    type: 'hex',
+    subType: 'exploreShrine',
+    coordinates: shrineCoordinates,
+    spend: Resource.createDie(shrineColor),
+  };
+  const result = GameEngineHex.doAction(action, gameState, uiState);
+  assert(result.success, result.message);
+  assertEquals(shrineHex.status, 'filled');
+  const completedShrineQuests = player.getQuestsOfType('shrine').filter(
+    (quest) => {
+      return quest.isCompleted;
+    },
+  );
+  assertEquals(completedShrineQuests.length, 1);
+  assertEquals(player.oracleDice.length, 0);
+});
+
+Deno.test('GameEngineHex - doShrineExplore (not ours, favor)', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const uiState = new UiStateClass();
+  const player = gameState.getCurrentPlayer();
+  const shrineHex = gameState.getShrineHexes().find((hex) => {
+    return hex.owner !== player.color && hex.reward === 'favor';
+  });
+  assert(shrineHex);
+  const shrineCoordinates = { q: shrineHex.q, r: shrineHex.r };
+  const seaNeighbors = gameState.getMap().getHexGrid()
+    .getNeighborsOfTypeByCoordinates(
+      shrineCoordinates,
+      'sea',
+    );
+  const destination = seaNeighbors[0];
+  assert(destination);
+  const shrineCell = gameState.getMap().getCell(shrineCoordinates);
+  assert(shrineCell);
+  const shrineColor = shrineCell.color;
+  assert(shrineColor !== 'none');
+  player.setShipPosition(destination.getCoordinates());
+  player.oracleDice = [shrineColor];
+  player.favor = 0;
+  uiState.setSelectedResource(Resource.createDie(shrineColor));
+  uiState.setSelectedCoordinates(shrineCell.getCoordinates());
+
+  const action: ExploreShrineAction = {
+    type: 'hex',
+    subType: 'exploreShrine',
+    coordinates: shrineCoordinates,
+    spend: Resource.createDie(shrineColor),
+  };
+  const result = GameEngineHex.doAction(action, gameState, uiState);
+  assert(result.success, result.message);
+  assertEquals(shrineHex.status, 'visible');
+  const completedShrineQuests = player.getQuestsOfType('shrine').filter(
+    (quest) => {
+      return quest.isCompleted;
+    },
+  );
+  assertEquals(completedShrineQuests.length, 0);
+  assertEquals(player.favor, 4);
+  assertEquals(player.oracleDice.length, 0);
+});
+
+Deno.test('GameEngineHex - doShrineExplore (not ours, shield)', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const uiState = new UiStateClass();
+  const player = gameState.getCurrentPlayer();
+  const shrineHex = gameState.getShrineHexes().find((hex) => {
+    return hex.owner !== player.color && hex.reward === 'shield';
+  });
+  assert(shrineHex);
+  const shrineCoordinates = { q: shrineHex.q, r: shrineHex.r };
+  const seaNeighbors = gameState.getMap().getHexGrid()
+    .getNeighborsOfTypeByCoordinates(
+      shrineCoordinates,
+      'sea',
+    );
+  const destination = seaNeighbors[0];
+  assert(destination);
+  const shrineCell = gameState.getMap().getCell(shrineCoordinates);
+  assert(shrineCell);
+  const shrineColor = shrineCell.color;
+  assert(shrineColor !== 'none');
+  player.setShipPosition(destination.getCoordinates());
+  player.oracleDice = [shrineColor];
+  player.favor = 0;
+  uiState.setSelectedResource(Resource.createDie(shrineColor));
+  uiState.setSelectedCoordinates(shrineCell.getCoordinates());
+
+  const action: ExploreShrineAction = {
+    type: 'hex',
+    subType: 'exploreShrine',
+    coordinates: shrineCoordinates,
+    spend: Resource.createDie(shrineColor),
+  };
+  const result = GameEngineHex.doAction(action, gameState, uiState);
+  assertFailureContains(result, 'shield');
+  assertFailureContains(result, 'yet');
+  assertEquals(shrineHex.status, 'visible');
+  const completedShrineQuests = player.getQuestsOfType('shrine').filter(
+    (quest) => {
+      return quest.isCompleted;
+    },
+  );
+  assertEquals(completedShrineQuests.length, 0);
+  assertEquals(player.shield, 1);
+  // assertEquals(player.oracleDice.length, 0);
+});
+
+Deno.test('GameEngineHex - doShrineExplore (not ours, god)', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const uiState = new UiStateClass();
+  const player = gameState.getCurrentPlayer();
+  const shrineHex = gameState.getShrineHexes().find((hex) => {
+    return hex.owner !== player.color && hex.reward === 'god';
+  });
+  assert(shrineHex);
+  const shrineCoordinates = { q: shrineHex.q, r: shrineHex.r };
+  const seaNeighbors = gameState.getMap().getHexGrid()
+    .getNeighborsOfTypeByCoordinates(
+      shrineCoordinates,
+      'sea',
+    );
+  const destination = seaNeighbors[0];
+  assert(destination);
+  const shrineCell = gameState.getMap().getCell(shrineCoordinates);
+  assert(shrineCell);
+  const shrineColor = shrineCell.color;
+  assert(shrineColor !== 'none');
+  player.setShipPosition(destination.getCoordinates());
+  player.oracleDice = [shrineColor];
+  player.favor = 0;
+  uiState.setSelectedResource(Resource.createDie(shrineColor));
+  uiState.setSelectedCoordinates(shrineCell.getCoordinates());
+
+  const action: ExploreShrineAction = {
+    type: 'hex',
+    subType: 'exploreShrine',
+    coordinates: shrineCoordinates,
+    spend: Resource.createDie(shrineColor),
+  };
+  const result = GameEngineHex.doAction(action, gameState, uiState);
+  assertFailureContains(result, 'god');
+  assertFailureContains(result, 'yet');
+  assertEquals(shrineHex.status, 'visible');
+  const completedShrineQuests = player.getQuestsOfType('shrine').filter(
+    (quest) => {
+      return quest.isCompleted;
+    },
+  );
+  assertEquals(completedShrineQuests.length, 0);
+  // assert 3 god coupons
+  // assertEquals(player.oracleDice.length, 0);
+});
+
+Deno.test('GameEngineHex - doShrineExplore (not ours, card)', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const uiState = new UiStateClass();
+  const player = gameState.getCurrentPlayer();
+  const shrineHex = gameState.getShrineHexes().find((hex) => {
+    return hex.owner !== player.color && hex.reward === 'card';
+  });
+  assert(shrineHex);
+  const shrineCoordinates = { q: shrineHex.q, r: shrineHex.r };
+  const seaNeighbors = gameState.getMap().getHexGrid()
+    .getNeighborsOfTypeByCoordinates(
+      shrineCoordinates,
+      'sea',
+    );
+  const destination = seaNeighbors[0];
+  assert(destination);
+  const shrineCell = gameState.getMap().getCell(shrineCoordinates);
+  assert(shrineCell);
+  const shrineColor = shrineCell.color;
+  assert(shrineColor !== 'none');
+  player.setShipPosition(destination.getCoordinates());
+  player.oracleDice = [shrineColor];
+  player.favor = 0;
+  uiState.setSelectedResource(Resource.createDie(shrineColor));
+  uiState.setSelectedCoordinates(shrineCell.getCoordinates());
+
+  const action: ExploreShrineAction = {
+    type: 'hex',
+    subType: 'exploreShrine',
+    coordinates: shrineCoordinates,
+    spend: Resource.createDie(shrineColor),
+  };
+  const result = GameEngineHex.doAction(action, gameState, uiState);
+  assert(result.success, result.message);
+  assertEquals(shrineHex.status, 'visible');
+  const completedShrineQuests = player.getQuestsOfType('shrine').filter(
+    (quest) => {
+      return quest.isCompleted;
+    },
+  );
+  assertEquals(completedShrineQuests.length, 0);
+  assertEquals(player.oracleCards.length, 2);
+  assertEquals(player.oracleDice.length, 0);
 });

@@ -31,6 +31,8 @@ export class GameEngine {
         return GameEngineAnyResource.doAction(action, gameState, uiState);
       case 'free':
         return GameEngineFree.doAction(action, gameState, uiState);
+      case 'hex':
+        return GameEngineHex.doAction(action, gameState, uiState);
     }
 
     return new Failure(
