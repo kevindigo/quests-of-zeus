@@ -328,13 +328,9 @@ export class Controller {
     );
     if (result.success) {
       this.clearResourceSelection();
-      this.renderGameState();
-      if (result.message) {
-        this.showMessage(result.message);
-      }
-    } else {
-      this.showMessage(result.message);
     }
+    this.showMessage(result.message);
+    this.renderGameState();
   }
 
   private startNewGame(): void {
