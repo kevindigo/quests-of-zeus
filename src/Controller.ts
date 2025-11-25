@@ -1,6 +1,10 @@
 // Game Controller for Quests of Zeus
 // Manages the game UI and user interactions
 
+import type {
+  AnyResourceGainFavorAction,
+  AnyResourceGainOracleCardAction,
+} from './actions.ts';
 import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
 import { GameEngine } from './GameEngine.ts';
@@ -331,8 +335,17 @@ export class Controller {
   }
 
   private spendResourceForFavor(): void {
-    const handler = new ControllerForBasicActions(this.gameManager);
-    const result = handler.spendResourceForFavor();
+    const selectedResource = this.getUiState().getSelectedResource();
+    const action: AnyResourceGainFavorAction = {
+      type: 'anyResource',
+      subType: 'gainFavor',
+      spend: selectedResource,
+    };
+    const result = GameEngine.doAction(
+      action,
+      this.getGameState(),
+      this.getUiState(),
+    );
     if (result.success) {
       this.clearResourceSelection();
       this.renderGameState();
@@ -341,8 +354,17 @@ export class Controller {
   }
 
   private drawOracleCard(): void {
-    const handler = new ControllerForBasicActions(this.gameManager);
-    const result = handler.drawOracleCard();
+    const selectedResource = this.getUiState().getSelectedResource();
+    const action: AnyResourceGainOracleCardAction = {
+      type: 'anyResource',
+      subType: 'gainOracleCard',
+      spend: selectedResource,
+    };
+    const result = GameEngine.doAction(
+      action,
+      this.getGameState(),
+      this.getUiState(),
+    );
     if (result.success) {
       this.clearResourceSelection();
       this.renderGameState();

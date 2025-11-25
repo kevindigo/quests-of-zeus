@@ -19,6 +19,22 @@ export class GameEngine {
     return actions;
   }
 
+  public static doAction(
+    action: Action,
+    gameState: GameState,
+    uiState: UiState,
+  ): ResultWithMessage {
+    switch (action.type) {
+      case 'anyResource':
+        console.log(action);
+        return GameEngineAnyResource.doAction(action, gameState, uiState);
+    }
+
+    return new Failure(
+      `GameEngine.doAction(${JSON.stringify(action)} not implemented yet)`,
+    );
+  }
+
   ////////////////////////////////////////////////////////////////////////
   //  free actions
   public endTurn(
@@ -30,19 +46,6 @@ export class GameEngine {
 
   ////////////////////////////////////////////////////////////////////////
   // noColor actions
-  public spendResourceForFavor(
-    gameState: GameState,
-    uiState: UiState,
-  ): ResultWithMessage {
-    return GameEngineAnyResource.spendResourceForFavor(gameState, uiState);
-  }
-
-  public spendResourceForOracleCard(
-    gameState: GameState,
-    uiState: UiState,
-  ): ResultWithMessage {
-    return GameEngineAnyResource.spendResourceForOracleCard(gameState, uiState);
-  }
 
   ////////////////////////////////////////////////////////////////////////
   // helpers

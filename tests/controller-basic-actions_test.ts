@@ -1,12 +1,10 @@
-import { assert, assertEquals, assertStringIncludes } from '@std/assert';
+import { assert, assertStringIncludes } from '@std/assert';
 import { ControllerForBasicActions } from '../src/ControllerForBasicActions.ts';
-import { Resource } from '../src/Resource.ts';
 import {
   assertFailureContains,
   setupGame,
   testGameManager,
   testPlayer,
-  testUiState,
 } from './test-helpers.ts';
 
 let handler: ControllerForBasicActions;
@@ -15,41 +13,6 @@ function setup() {
   setupGame();
   handler = new ControllerForBasicActions(testGameManager);
 }
-
-Deno.test('Buy favor - no resource selected', () => {
-  setup();
-  const result = handler.spendResourceForFavor();
-  assertFailureContains(result, 'available');
-});
-
-Deno.test('Buy favor - success with die', () => {
-  setup();
-  testPlayer.favor = 0;
-  const firstDie = testPlayer.oracleDice[0];
-  assert(firstDie);
-  testUiState.setSelectedResource(Resource.createDie(firstDie));
-  const result = handler.spendResourceForFavor();
-  assert(result.success);
-  assertStringIncludes(result.message, firstDie);
-  assertEquals(testPlayer.favor, 2);
-});
-
-Deno.test('Buy oracle card - no resource selected', () => {
-  setup();
-  const result = handler.drawOracleCard();
-  assertFailureContains(result, 'available');
-});
-
-Deno.test('Buy oracle card - success with die', () => {
-  setup();
-  const firstDie = testPlayer.oracleDice[0];
-  assert(firstDie);
-  testUiState.setSelectedResource(Resource.createDie(firstDie));
-  const result = handler.drawOracleCard();
-  assert(result, result.message);
-  assertStringIncludes(result.message, firstDie);
-  assertEquals(testPlayer.oracleCards.length, 1);
-});
 
 Deno.test('Recolor - success recolor die', () => {
   setup();

@@ -1,5 +1,6 @@
 import type {
   Action,
+  AnyResourceAction,
   AnyResourceGainFavorAction,
   AnyResourceGainOracleCardAction,
 } from './actions.ts';
@@ -25,6 +26,26 @@ export class GameEngineAnyResource {
     actions.push(...GameEngineAnyResource.getActionsForCards(gameState));
 
     return actions;
+  }
+
+  public static doAction(
+    action: AnyResourceAction,
+    gameState: GameState,
+    uiState: UiState,
+  ): ResultWithMessage {
+    switch (action.subType) {
+      case 'gainFavor':
+        return GameEngineAnyResource.spendResourceForFavor(gameState, uiState);
+      case 'gainOracleCard':
+        return GameEngineAnyResource.spendResourceForOracleCard(
+          gameState,
+          uiState,
+        );
+      case 'gainPeekCoupons':
+        return new Failure(
+          'GameEngineAnyResource.gainPeakCoupons not implemented yet',
+        );
+    }
   }
 
   private static getActionsForDice(gameState: GameState): Action[] {
