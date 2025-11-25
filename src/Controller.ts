@@ -387,11 +387,8 @@ export class Controller {
       this.getGameState(),
       this.getUiState(),
     );
-    if (result.success) {
-      this.clearResourceSelection();
-      this.renderGameState();
-    }
     this.showMessage(result.message);
+    this.renderGameState();
   }
 
   private clearMessagePanel(): void {
