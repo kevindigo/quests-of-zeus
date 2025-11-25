@@ -6,7 +6,6 @@ import type {
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
-import type { Resource } from './Resource.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -20,13 +19,8 @@ export class GameEngineAnyResource {
       return [];
     }
 
-    const availableResources: Resource[] = [];
     const player = gameState.getCurrentPlayer();
-    availableResources.push(...player.getResourcesForDice());
-
-    if (!player.usedOracleCardThisTurn) {
-      availableResources.push(...player.getResourcesForCards());
-    }
+    const availableResources = player.getAvailableResourcesWithoutRecoloring();
 
     const actions = availableResources.flatMap((resource) => {
       const gainFavorAction: AnyResourceGainFavorAction = {
@@ -34,7 +28,7 @@ export class GameEngineAnyResource {
         subType: 'gainFavor',
         spend: resource,
       };
-      const actions: Action[] = [gainFavorAction];
+      const actionsForThisResource: Action[] = [gainFavorAction];
 
       if (gameState.getOracleCardDeck().length > 0) {
         const gainCardAction: AnyResourceGainOracleCardAction = {
@@ -42,10 +36,10 @@ export class GameEngineAnyResource {
           subType: 'gainOracleCard',
           spend: resource,
         };
-        actions.push(gainCardAction);
+        actionsForThisResource.push(gainCardAction);
       }
 
-      return actions;
+      return actionsForThisResource;
     });
 
     return actions;

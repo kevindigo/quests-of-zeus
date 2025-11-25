@@ -96,3 +96,18 @@ Deno.test('Player - get resources for base color cards', () => {
     return resource.isCard() && resource.getBaseColor() === 'blue';
   }));
 });
+
+Deno.test('Player - getAvailableResources', () => {
+  setupGame();
+  testPlayer.oracleDice = ['red', 'blue', 'red'];
+  testPlayer.oracleCards = ['pink', 'blue', 'pink'];
+
+  const resourcesWithCards = testPlayer
+    .getAvailableResourcesWithoutRecoloring();
+  assertEquals(resourcesWithCards.length, 4);
+
+  testPlayer.usedOracleCardThisTurn = true;
+  const resourcesWithoutCards = testPlayer
+    .getAvailableResourcesWithoutRecoloring();
+  assertEquals(resourcesWithoutCards.length, 2);
+});

@@ -99,6 +99,14 @@ export class Player {
     return 3;
   }
 
+  public getAvailableResourcesWithoutRecoloring(): Resource[] {
+    const available = this.getResourcesForDice();
+    if (!this.usedOracleCardThisTurn) {
+      available.push(...this.getResourcesForCards());
+    }
+    return available;
+  }
+
   public getResourcesForDice(): Resource[] {
     return Array.from(
       new Map(this.oracleDice.map((color) => {
