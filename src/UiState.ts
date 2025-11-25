@@ -1,7 +1,7 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { OracleSystem } from './OracleSystem.ts';
 import { Resource } from './Resource.ts';
-import { type CoreColor } from './types.ts';
+import type { CoreColor } from './types.ts';
 
 export interface UiState {
   reset(): void;
