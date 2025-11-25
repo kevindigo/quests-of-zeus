@@ -41,8 +41,6 @@ export class ControllerForHexClicks {
       );
     }
 
-    // FixMe: I think this is where we should perform the recoloring
-
     const currentPlayer = gameState.getCurrentPlayer();
     const resource = this.getUiState().getSelectedResource();
 

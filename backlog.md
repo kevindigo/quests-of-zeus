@@ -2,13 +2,6 @@
 
 - Switch existing functionality over to using GameEngine.doAction
   - First, explore shrine
-    - Create game-engine-hex_test.ts
-    - Tests for getHexActions:
-      - Wrong phase
-      - Not adjacent to any shrines
-      - Adjacent but no dice of that color
-      - Shrine already filled
-      - Shrine visible and not ours
     - Tests for doHexAction:
       - Success: Flip ours
       - Success: Flip not ours (favor, card, shield, god)
