@@ -6,7 +6,7 @@ import type {
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
-import { Resource } from './Resource.ts';
+import type { Resource } from './Resource.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -22,16 +22,10 @@ export class GameEngineAnyResource {
 
     const availableResources: Resource[] = [];
     const player = gameState.getCurrentPlayer();
-    const dieResourcesByColor = new Map(player.oracleDice.map((color) => {
-      return [color, Resource.createDie(color)];
-    }));
-    availableResources.push(...dieResourcesByColor.values());
+    availableResources.push(...player.getResourcesForDice());
 
     if (!player.usedOracleCardThisTurn) {
-      const cardResourcesByColor = new Map(player.oracleCards.map((color) => {
-        return [color, Resource.createCard(color)];
-      }));
-      availableResources.push(...cardResourcesByColor.values());
+      availableResources.push(...player.getResourcesForCards());
     }
 
     const actions = availableResources.flatMap((resource) => {
