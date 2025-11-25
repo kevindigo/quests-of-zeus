@@ -122,7 +122,17 @@ export class HexGrid {
     cell: HexCell,
     terrainType: TerrainType,
   ): HexCell[] {
-    const neighbors = this.getNeighborsOf(cell);
+    return this.getNeighborsOfTypeByCoordinates(
+      cell.getCoordinates(),
+      terrainType,
+    );
+  }
+
+  public getNeighborsOfTypeByCoordinates(
+    coordinates: HexCoordinates,
+    terrainType: TerrainType,
+  ): HexCell[] {
+    const neighbors = this.getNeighborsByCoordinates(coordinates);
     const neighborsOfType = neighbors.filter((neighbor) => {
       return (neighbor.terrain === terrainType);
     });
