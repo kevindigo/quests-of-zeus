@@ -1,4 +1,4 @@
-import type { Action, FreeEndTurnAction } from './actions.ts';
+import type { Action, FreeAction, FreeEndTurnAction } from './actions.ts';
 import type { GameState } from './GameState.ts';
 import {
   Failure,
@@ -27,6 +27,29 @@ export class GameEngineFree {
       subType: 'endTurn',
     };
     return [endTurnAction];
+  }
+
+  public static doAction(
+    action: FreeAction,
+    gameState: GameState,
+    uiState: UiState,
+  ): ResultWithMessage {
+    switch (action.subType) {
+      case 'endTurn':
+        return GameEngineFree.endTurn(gameState, uiState);
+      case 'continueMonsterFight':
+        break;
+      case 'abandonMonsterFight':
+        break;
+      case 'skipTurnHeal':
+        break;
+      case 'useEquipmentExtraDie':
+        break;
+    }
+
+    return new Failure(
+      `Free action ${JSON.stringify(action)} not implemented yet`,
+    );
   }
 
   public static endTurn(

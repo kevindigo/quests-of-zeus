@@ -26,8 +26,9 @@ export class GameEngine {
   ): ResultWithMessage {
     switch (action.type) {
       case 'anyResource':
-        console.log(action);
         return GameEngineAnyResource.doAction(action, gameState, uiState);
+      case 'free':
+        return GameEngineFree.doAction(action, gameState, uiState);
     }
 
     return new Failure(
@@ -37,12 +38,6 @@ export class GameEngine {
 
   ////////////////////////////////////////////////////////////////////////
   //  free actions
-  public endTurn(
-    gameState: GameState,
-    uiState: UiState,
-  ): ResultWithMessage {
-    return GameEngineFree.endTurn(gameState, uiState);
-  }
 
   ////////////////////////////////////////////////////////////////////////
   // noColor actions

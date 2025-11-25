@@ -5,6 +5,7 @@ import type {
   Action,
   AnyResourceGainFavorAction,
   AnyResourceGainOracleCardAction,
+  FreeEndTurnAction,
 } from './actions.ts';
 import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
@@ -23,7 +24,6 @@ import { ViewGame } from './ViewGame.ts';
 export class Controller {
   constructor() {
     this.gameManager = new GameManager();
-    this.gameEngine = new GameEngine();
     this.viewGame = new ViewGame(
       this.gameManager.getGameState(),
       this.gameManager.getUiState(),
@@ -335,6 +335,19 @@ export class Controller {
     );
   }
 
+  private setRecolorIntention(favorCost: number): void {
+    const handler = new ControllerForBasicActions(this.gameManager);
+    const result = handler.setRecolorIntention(
+      favorCost,
+      this.getSelectedDieColor(),
+      this.getSelectedCardColor(),
+    );
+    if (result.success) {
+      this.renderGameState();
+    }
+    this.showMessage(result.message);
+  }
+
   private spendResourceForFavor(): void {
     const selectedResource = this.getUiState().getSelectedResource();
     const action: AnyResourceGainFavorAction = {
@@ -355,30 +368,12 @@ export class Controller {
     this.doAction(action);
   }
 
-  private setRecolorIntention(favorCost: number): void {
-    const handler = new ControllerForBasicActions(this.gameManager);
-    const result = handler.setRecolorIntention(
-      favorCost,
-      this.getSelectedDieColor(),
-      this.getSelectedCardColor(),
-    );
-    if (result.success) {
-      this.renderGameState();
-    }
-    this.showMessage(result.message);
-  }
-
   private endTurn(): void {
-    this.clearResourceSelection();
-
-    const result = this.gameEngine.endTurn(
-      this.getGameState(),
-      this.getUiState(),
-    );
-
-    this.showMessage(result.message);
-
-    this.renderGameState();
+    const action: FreeEndTurnAction = {
+      type: 'free',
+      subType: 'endTurn',
+    };
+    this.doAction(action);
   }
 
   private doAction(action: Action): void {
@@ -413,6 +408,5 @@ export class Controller {
   }
 
   private gameManager: GameManager;
-  private gameEngine: GameEngine;
   private viewGame: ViewGame;
 }
