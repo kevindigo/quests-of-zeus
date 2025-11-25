@@ -55,9 +55,7 @@ export class GameEngine {
       return new Failure('Nothing selected to spend');
     }
 
-    if (uiState.getSelectedRecoloring() > 0) {
-      return new Failure('Must recolor before spending a resource');
-    }
+    player.favor -= resource.getRecolorCost();
 
     const array = resource.isDie()
       ? player.oracleDice
