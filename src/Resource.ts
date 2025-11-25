@@ -100,7 +100,8 @@ export class Resource {
   }
 
   public equals(other: Resource): boolean {
-    return (other.type === this.type && other.baseColor === this.baseColor);
+    return (other.type === this.type && other.baseColor === this.baseColor &&
+      other.recolorCost === this.recolorCost);
   }
 
   private readonly type: ResourceType;
