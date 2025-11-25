@@ -9,6 +9,7 @@ import {
 } from '@std/assert';
 import { ControllerForHexClicks } from '../src/ControllerForHexClicks.ts';
 import { type HexCoordinates, HexGrid } from '../src/hexmap/HexGrid.ts';
+import { Resource } from '../src/Resource.ts';
 import type { ResultWithMessage } from '../src/ResultWithMessage.ts';
 import type { CubeHex } from '../src/types.ts';
 import {
@@ -51,7 +52,7 @@ Deno.test('Hex click - second oracle card', () => {
   setupWithController();
 
   testPlayer.usedOracleCardThisTurn = true;
-  testGameManager.getUiState().setSelectedOracleCardColor('red');
+  testGameManager.getUiState().setSelectedResource(Resource.createCard('red'));
   assert(testGameManager.getUiState().getSelectedResource().isCard());
   assertEquals(
     testGameManager.getUiState().getSelectedResource().getBaseColor(),
@@ -66,7 +67,7 @@ Deno.test('Hex click - second oracle card', () => {
 Deno.test('Hex click - unsupported terrain', () => {
   setupWithController();
   testPlayer.oracleDice = ['red'];
-  testUiState.setSelectedDieColor('red');
+  testUiState.setSelectedResource(Resource.createDie('red'));
   const shallowCell = testGrid.getCellsOfType('shallow')[0];
   assert(shallowCell, 'No shallows found on the map?');
   assertFailureContains(
@@ -82,7 +83,7 @@ Deno.test('Hex click - shrine not adjacent', () => {
   assert(shrineCell);
   shrineCell.color = 'red';
   testPlayer.oracleDice = [shrineCell.color];
-  testUiState.setSelectedDieColor(shrineCell.color);
+  testUiState.setSelectedResource(Resource.createDie(shrineCell.color));
   const result = testHandler.handleHexClick(
     shrineCell.getCoordinates(),
   );
@@ -107,7 +108,7 @@ Deno.test('Hex click - next to good color, but click elsewhere', () => {
   assert(seaNeighbor);
   testPlayer.setShipPosition(seaNeighbor.getCoordinates());
   testPlayer.oracleDice = [adjacentColor, 'green'];
-  testUiState.setSelectedDieColor(adjacentColor);
+  testUiState.setSelectedResource(Resource.createDie(adjacentColor));
 
   const result = testHandler.handleHexClick(
     otherShrineCell.getCoordinates(),
@@ -124,7 +125,7 @@ Deno.test('Hex click - next to good color, but different color', () => {
   assert(seaNeighbor);
   testPlayer.setShipPosition(seaNeighbor.getCoordinates());
   testPlayer.oracleDice = [shrineCell.color, 'green'];
-  testUiState.setSelectedDieColor('green');
+  testUiState.setSelectedResource(Resource.createDie('green'));
   const result = testHandler.handleHexClick(
     shrineCell.getCoordinates(),
   );
@@ -150,7 +151,7 @@ Deno.test('Hex click - available my hidden shrine (die)', () => {
   assert(shrineHex);
   shrineHex.owner = testPlayer.color;
 
-  testUiState.setSelectedDieColor(color);
+  testUiState.setSelectedResource(Resource.createDie(color));
   const result = testHandler.handleHexClick(
     shrineCell.getCoordinates(),
   );
@@ -189,7 +190,7 @@ function setupGameNextToRedCube(): CubeHex {
 Deno.test('Hex click - available offering', () => {
   const cubeHex = setupGameNextToRedCube();
   testPlayer.oracleDice = ['red'];
-  testUiState.setSelectedDieColor('red');
+  testUiState.setSelectedResource(Resource.createDie('red'));
 
   const result = testHandler.handleHexClick(cubeHex);
   assert(result.success, result.message);

@@ -1,8 +1,5 @@
 == Short-term ==
 
-- Should a Resource actually be die/card + base color + recoloring?
-  - Would be more consistent with current UI->controller->manager
-  - Would make life easier for the AI?
 - Work on implementing ActionResolver
   - Create GameEngineHex.ts and game-engine-hex_test.ts
   - GameEngine.getAvailableActions should call into GEH
@@ -16,10 +13,6 @@
     - Success: Flip ours
     - Success: Flip not ours (favor, card, shield, god)
     - Success: Visible and ours
-  - Then implement FreeRecolorAction
-    - Tests for getRecolorActions:
-      - For each die and card and for each recolor level
-  - Then have the controller call recolor before explore shrine
   - Then remove a bunch of old tests and code
 
 == Cosmetic/Usability ==

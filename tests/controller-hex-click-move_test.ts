@@ -10,6 +10,7 @@ import type { GameState } from '../src/GameState.ts';
 import { type HexCoordinates, HexGrid } from '../src/hexmap/HexGrid.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
 import type { Player } from '../src/Player.ts';
+import { Resource } from '../src/Resource.ts';
 import type { ResultWithMessage } from '../src/ResultWithMessage.ts';
 import { ShipMoveHandler } from '../src/ShipMoveHandler.ts';
 
@@ -59,7 +60,7 @@ Deno.test('Hex click move - no resource selected', () => {
 Deno.test('Hex click move - player does not have that card', () => {
   setup();
   player.oracleCards = ['green'];
-  manager.getUiState().setSelectedOracleCardColor('blue');
+  manager.getUiState().setSelectedResource(Resource.createCard('blue'));
   assertFailureContainsAll(
     handler.handleHexClick(center),
     ['card', 'blue'],
@@ -69,7 +70,7 @@ Deno.test('Hex click move - player does not have that card', () => {
 Deno.test('Hex click move - player does not have that die', () => {
   setup();
   player.oracleDice = ['green'];
-  manager.getUiState().setSelectedDieColor('blue');
+  manager.getUiState().setSelectedResource(Resource.createDie('blue'));
   assertFailureContainsAll(
     handler.handleHexClick(center),
     ['dice', 'blue'],
@@ -80,7 +81,7 @@ Deno.test('Hex click move - unlisted but otherwise legal', () => {
   setup();
   const firstDie = player.oracleDice[0];
   assert(firstDie);
-  manager.getUiState().setSelectedDieColor(firstDie);
+  manager.getUiState().setSelectedResource(Resource.createDie(firstDie));
   const noFavorMovesJson = JSON.stringify(
     shipMoveHandler.getAvailableMovesForColor(0),
   );
@@ -103,7 +104,7 @@ Deno.test('Hex click move - legal move but failed', () => {
   setup();
   const firstDie = player.oracleDice[0];
   assert(firstDie);
-  manager.getUiState().setSelectedDieColor(firstDie);
+  manager.getUiState().setSelectedResource(Resource.createDie(firstDie));
   const availableMoves = shipMoveHandler.getAvailableMovesForColor(
     player.favor,
   );
@@ -123,7 +124,7 @@ Deno.test('Hex click move - successful', () => {
   setup();
   const firstDie = player.oracleDice[0];
   assert(firstDie);
-  manager.getUiState().setSelectedDieColor(firstDie);
+  manager.getUiState().setSelectedResource(Resource.createDie(firstDie));
   const availableMoves = shipMoveHandler.getAvailableMovesForColor(
     player.favor,
   );

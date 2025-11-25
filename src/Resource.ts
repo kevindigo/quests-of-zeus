@@ -1,3 +1,4 @@
+import { OracleSystem } from './OracleSystem.ts';
 import type { CoreColor } from './types.ts';
 
 export type ResourceType = 'die' | 'card' | 'none';
@@ -9,11 +10,29 @@ export class Resource {
     return new Resource('die', color);
   }
 
+  public static createRecoloredDie(
+    color: CoreColor,
+    recoloring: number,
+  ): Resource {
+    return new Resource('die', color, recoloring);
+  }
+
   public static createCard(color: CoreColor): Resource {
     return new Resource('card', color);
   }
 
-  public static toSnapshot() {
+  public static createRecoloredCard(
+    color: CoreColor,
+    recoloring: number,
+  ): Resource {
+    return new Resource('card', color, recoloring);
+  }
+
+  public withoutRecoloring(): Resource {
+    return new Resource(this.type, this.baseColor, 0);
+  }
+
+  public toSnapshot() {
     throw new Error('Resource snapshot not implemented yet!');
   }
 
@@ -21,10 +40,14 @@ export class Resource {
     return new Resource(resource.type, resource.baseColor);
   }
 
-  private constructor(type: ResourceType, color?: CoreColor) {
+  private constructor(
+    type: ResourceType,
+    color?: CoreColor,
+    recoloring?: number,
+  ) {
     this.type = type;
     this.baseColor = color;
-    this.recolorCost = 0;
+    this.recolorCost = recoloring || 0;
   }
 
   public isDie(): boolean {
@@ -45,6 +68,20 @@ export class Resource {
     }
 
     return this.baseColor;
+  }
+
+  public getEffectiveColor(): CoreColor | null {
+    if (!this.hasColor()) {
+      return null;
+    }
+    const selectedColor = this.getBaseColor();
+
+    const favorForRecoloring = this.getRecolorCost();
+    const effectiveColor = OracleSystem.applyRecolor(
+      selectedColor,
+      favorForRecoloring,
+    );
+    return effectiveColor;
   }
 
   public getRecolorCost(): number {

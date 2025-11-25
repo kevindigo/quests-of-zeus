@@ -28,9 +28,11 @@ export class Controller {
   public getGameState(): GameState {
     return this.gameManager.getGameState();
   }
+
   public getUiState(): UiState {
     return this.gameManager.getUiState();
   }
+
   public initializeGameUI(): void {
     this.viewGame.viewWelcome();
     this.setupEventListeners();
@@ -52,13 +54,15 @@ export class Controller {
 
   public selectDieColor(color: CoreColor): boolean {
     this.getUiState().clearResourceSelection();
-    this.getUiState().setSelectedDieColor(color);
+    const die = Resource.createDie(color);
+    this.getUiState().setSelectedResource(die);
     return true;
   }
 
   public selectCardColor(color: CoreColor): boolean {
     this.getUiState().clearResourceSelection();
-    this.getUiState().setSelectedOracleCardColor(color);
+    const card = Resource.createCard(color);
+    this.getUiState().setSelectedResource(card);
     return true;
   }
 
@@ -87,7 +91,6 @@ export class Controller {
       return;
     }
 
-    this.gameManager.getUiState().clearSelectedRecoloring();
     if (resourceType === 'die') {
       if (this.selectDieColor(resourceColor)) {
         this.showMessage(`Selected ${resourceColor} die`);

@@ -1,6 +1,7 @@
 import { assertEquals, assertFalse, assertStringIncludes } from '@std/assert';
 import { assert } from '@std/assert/assert';
 import type { HexCell } from '../src/hexmap/HexCell.ts';
+import { Resource } from '../src/Resource.ts';
 import type { CoreColor, Item } from '../src/types.ts';
 import {
   setupGame,
@@ -39,7 +40,7 @@ function putShipNextToTemple(color: CoreColor): HexCell {
 Deno.test('Engine activate temple - should work', () => {
   const templeCell = setupWithRedCubeNextToRedTemple();
   testPlayer.oracleDice = ['red'];
-  testUiState.setSelectedDieColor('red');
+  testUiState.setSelectedResource(Resource.createDie('red'));
   const favorWas = testPlayer.favor;
 
   const result = testGameManager.activateTemple(templeCell.getCoordinates());

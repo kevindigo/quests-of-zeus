@@ -1,78 +1,55 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import { OracleSystem } from './OracleSystem.ts';
 import { Resource } from './Resource.ts';
 import type { CoreColor } from './types.ts';
 
 export interface UiState {
   reset(): void;
-  getSelectedRecoloring(): number;
-  setSelectedRecoloring(favorSpent: number): boolean;
-  clearSelectedRecoloring(): void;
   getSelectedResource(): Resource;
-  setSelectedDieColor(color: CoreColor): void;
-  setSelectedOracleCardColor(color: CoreColor): void;
+  setSelectedResource(resource: Resource): void;
+  getSelectedRecoloring(): number;
   getEffectiveSelectedColor(): CoreColor | null;
   clearResourceSelection(): void;
+
   getSelectedCoordinates(): HexCoordinates | null;
   setSelectedCoordinates(coordinates: HexCoordinates): void;
 }
 export class UiStateClass {
   public constructor() {
     this.selectedResource = Resource.none;
-    this.selectedRecoloring = 0;
     this.selectedCoordinates = null;
   }
 
   public reset(): void {
     this.selectedResource = Resource.none;
-    this.selectedRecoloring = 0;
     this.selectedCoordinates = null;
   }
 
   public getSelectedRecoloring(): number {
-    return this.selectedRecoloring || 0;
-  }
-
-  public setSelectedRecoloring(
-    favorSpent: number,
-  ): boolean {
-    this.selectedRecoloring = favorSpent;
-    return true;
-  }
-
-  public clearSelectedRecoloring(): void {
-    this.selectedRecoloring = 0;
+    return this.selectedResource.getRecolorCost();
   }
 
   public getSelectedResource(): Resource {
     return this.selectedResource;
   }
 
-  public setSelectedDieColor(color: CoreColor): void {
+  public setSelectedResource(resource: Resource): void {
+    this.selectedResource = resource;
+  }
+
+  public setSelectedBaseDieColor(color: CoreColor): void {
     this.selectedResource = Resource.createDie(color);
   }
 
-  public setSelectedOracleCardColor(color: CoreColor): void {
+  public setSelectedBaseCardColor(color: CoreColor): void {
     this.selectedResource = Resource.createCard(color);
   }
 
   public getEffectiveSelectedColor(): CoreColor | null {
-    if (!this.selectedResource.hasColor()) {
-      return null;
-    }
-    const selectedColor = this.selectedResource.getBaseColor();
-
-    const favorForRecoloring = this.getSelectedRecoloring();
-    const effectiveColor = OracleSystem.applyRecolor(
-      selectedColor,
-      favorForRecoloring,
-    );
-    return effectiveColor;
+    return this.selectedResource.getEffectiveColor();
   }
 
   public clearResourceSelection(): void {
     this.selectedResource = Resource.none;
-    this.clearSelectedRecoloring();
   }
 
   getSelectedCoordinates(): HexCoordinates | null {
@@ -84,6 +61,5 @@ export class UiStateClass {
   }
 
   private selectedResource: Resource;
-  private selectedRecoloring: number;
   private selectedCoordinates: HexCoordinates | null;
 }

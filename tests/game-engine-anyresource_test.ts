@@ -5,6 +5,7 @@ import { assertStringIncludes } from '@std/assert/string-includes';
 import { GameEngineAnyResource } from '../src/GameEngineAnyResource.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
+import { Resource } from '../src/Resource.ts';
 import type { CoreColor } from '../src/types.ts';
 import { UiStateClass } from '../src/UiState.ts';
 import { assertFailureContains } from './test-helpers.ts';
@@ -73,7 +74,7 @@ Deno.test('GameEngineAnyResource - gain favor with die success', () => {
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
   player.oracleDice = ['red', 'blue'];
-  uiState.setSelectedDieColor('red');
+  uiState.setSelectedResource(Resource.createDie('red'));
 
   const result = GameEngineAnyResource.spendResourceForFavor(
     gameState,
@@ -95,7 +96,7 @@ Deno.test('GameEngineAnyResource - gain favor with card success', () => {
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
   player.oracleCards = ['red', 'blue'];
-  uiState.setSelectedOracleCardColor('red');
+  uiState.setSelectedResource(Resource.createCard('red'));
 
   const result = GameEngineAnyResource.spendResourceForFavor(
     gameState,
@@ -117,8 +118,7 @@ Deno.test('GameEngineAnyResource - gain favor ignore recolor', () => {
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
   player.oracleCards = ['red', 'blue'];
-  uiState.setSelectedOracleCardColor('red');
-  uiState.setSelectedRecoloring(2);
+  uiState.setSelectedResource(Resource.createRecoloredCard('red', 2));
 
   const result = GameEngineAnyResource.spendResourceForFavor(
     gameState,
@@ -148,7 +148,7 @@ Deno.test('GameEngineAnyResource - gain card with die success', () => {
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
   player.oracleDice = ['red', 'blue'];
-  uiState.setSelectedDieColor('red');
+  uiState.setSelectedResource(Resource.createDie('red'));
 
   const result = GameEngineAnyResource.spendResourceForOracleCard(
     gameState,
@@ -171,7 +171,7 @@ Deno.test('GameEngineAnyResource - gain card with card success', () => {
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
   player.oracleCards = ['red', 'blue'];
-  uiState.setSelectedOracleCardColor('red');
+  uiState.setSelectedResource(Resource.createCard('red'));
 
   const result = GameEngineAnyResource.spendResourceForOracleCard(
     gameState,
@@ -193,8 +193,7 @@ Deno.test('GameEngineAnyResource - gain card with die ignore recolor', () => {
   const uiState = new UiStateClass();
   const player = gameState.getCurrentPlayer();
   player.oracleDice = ['red', 'blue'];
-  uiState.setSelectedDieColor('red');
-  uiState.setSelectedRecoloring(2);
+  uiState.setSelectedResource(Resource.createRecoloredDie('red', 2));
 
   const result = GameEngineAnyResource.spendResourceForOracleCard(
     gameState,

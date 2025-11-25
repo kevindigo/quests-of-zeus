@@ -1,11 +1,12 @@
 import { assert } from '@std/assert/assert';
 import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
+import type { FreeAction } from '../src/actions.ts';
 import { GameEngineFree } from '../src/GameEngineFree.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
+import { Resource } from '../src/Resource.ts';
 import { UiStateClass } from '../src/UiState.ts';
-import type { FreeAction } from '../src/actions.ts';
 
 Deno.test('GameEngineFree - getAvailableActions setup phase', () => {
   const gameState = new GameState();
@@ -44,8 +45,7 @@ Deno.test('GameEngineFree - end turn', () => {
   oldPlayer.oracleDice = ['red'];
   oldPlayer.oracleCards = ['blue'];
   oldPlayer.usedOracleCardThisTurn = true;
-  uiState.setSelectedDieColor('red');
-  uiState.setSelectedRecoloring(2);
+  uiState.setSelectedResource(Resource.createRecoloredDie('red', 2));
   assertEquals(gameState.getRound(), 1);
 
   const result = GameEngineFree.endTurn(gameState, uiState);

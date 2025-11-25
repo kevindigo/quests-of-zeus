@@ -3,31 +3,9 @@
 import { assert, assertEquals } from '@std/assert';
 import { GameManager } from '../src/GameManager.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
+import { Resource } from '../src/Resource.ts';
 import { ShipMoveHandler } from '../src/ShipMoveHandler.ts';
 import type { CoreColor } from '../src/types.ts';
-
-Deno.test('RecolorFavorCalculation - basic recoloring intention', () => {
-  const gameEngine = new GameManager();
-
-  const player = gameEngine.getCurrentPlayer();
-
-  // Set up deterministic test conditions
-  player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
-  player.favor = 5;
-
-  // Clear any recoloring intentions that might exist from initialization
-  gameEngine.getUiState().setSelectedRecoloring(0);
-
-  // Test: Set recoloring intention for black die → pink (1 favor cost)
-  const recoloringSuccess = gameEngine.getUiState().setSelectedRecoloring(1);
-  assert(recoloringSuccess, 'Recoloring intention should be set successfully');
-
-  assertEquals(
-    player.favor,
-    5,
-    'Player favor should not be spent when setting intention',
-  );
-});
 
 Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   const manager = new GameManager();
@@ -38,15 +16,9 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 5;
 
-  // Clear any recoloring intentions that might exist from initialization
-  manager.getUiState().setSelectedRecoloring(0);
-
   const gameState = manager.getGameState();
-  const recoloringSuccess = manager.getUiState().setSelectedRecoloring(1);
-  assert(recoloringSuccess, 'Recoloring intention should be set successfully');
-
-  // Get available moves for black die with recoloring intention
-  manager.getUiState().setSelectedDieColor('black');
+  const recoloredBlack = Resource.createRecoloredDie('black', 1);
+  manager.getUiState().setSelectedResource(recoloredBlack);
   const uiState = manager.getUiState();
   const movementSystem = new MovementSystem(gameState.getMap());
   const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
@@ -85,20 +57,8 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
   player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 3; // Low favor
 
-  // Clear any recoloring intentions that might exist from initialization
-  manager.getUiState().setSelectedRecoloring(0);
-
-  // Set a high recoloring cost that would make some moves unaffordable
-  // Player has 3 favor, recoloring black → blue costs 2 favor
-  // This means any blue move that requires additional favor for movement would be unaffordable
-  const highRecolorSuccess = manager.getUiState().setSelectedRecoloring(2); // black → blue (2 favor recoloring cost)
-
-  assert(
-    highRecolorSuccess,
-    'High recoloring intention should be set successfully',
-  );
-
-  manager.getUiState().setSelectedDieColor('blue');
+  const blue2 = Resource.createRecoloredDie('blue', 2);
+  manager.getUiState().setSelectedResource(blue2);
   const state = manager.getGameState();
   const uiState = manager.getUiState();
   const movementSystem = new MovementSystem(state.getMap());
@@ -121,21 +81,15 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
 
 Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () => {
   const gameEngine = new GameManager();
-
+  const gameState = gameEngine.getGameState();
+  const uiState = gameEngine.getUiState();
   const player = gameEngine.getCurrentPlayer();
 
   // Set up deterministic test conditions
   player.oracleDice = ['black', 'pink', 'blue'] as CoreColor[];
   player.favor = 5;
 
-  // Clear any recoloring intentions that might exist from initialization
-  gameEngine.getUiState().setSelectedRecoloring(0);
-
-  const gameState = gameEngine.getGameState();
-  gameEngine.getUiState().clearSelectedRecoloring();
-
-  gameEngine.getUiState().setSelectedDieColor('black');
-  const uiState = gameEngine.getUiState();
+  uiState.setSelectedResource(Resource.createDie('black'));
   const movementSystem = new MovementSystem(gameState.getMap());
   const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
   const movesWithoutRecolor = handler.getAvailableMovesForColor(

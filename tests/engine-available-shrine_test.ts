@@ -1,6 +1,7 @@
 import { assert } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
 import { OracleSystem } from '../src/OracleSystem.ts';
+import { Resource } from '../src/Resource.ts';
 import {
   findFirstCellWithTerrainAndColor,
   putPlayerNextTo,
@@ -15,7 +16,7 @@ import {
 
 Deno.test('Available land - nothing available from zeus', () => {
   setupGame();
-  testUiState.setSelectedDieColor('red');
+  testUiState.setSelectedResource(Resource.createDie('red'));
   const positions = testGameManager.getAvailableLandInteractions();
   assertEquals(positions.length, 0);
 });
@@ -28,7 +29,7 @@ Deno.test('Available land - shrine adjacent but wrong color', () => {
   putPlayerNextTo(shrineCell);
   const wrongColor = OracleSystem.applyRecolor(color, 1);
 
-  testUiState.setSelectedDieColor(wrongColor);
+  testUiState.setSelectedResource(Resource.createDie(wrongColor));
   const positions = testGameManager.getAvailableLandInteractions();
   const shrines = positions.filter((cell) => {
     return cell.q === shrineCell.q && cell.r === shrineCell.r;
@@ -43,7 +44,7 @@ Deno.test('Available land - shrine adjacent correct color', () => {
   const shrineCell = findFirstCellWithTerrainAndColor('shrine', color);
   putPlayerNextTo(shrineCell);
 
-  testUiState.setSelectedDieColor(color);
+  testUiState.setSelectedResource(Resource.createDie(color));
   const lands = testGameManager.getAvailableLandInteractions();
   const ourShrine = lands.find((cell) => {
     return cell.q === shrineCell.q && cell.r === shrineCell.r;
@@ -62,7 +63,7 @@ Deno.test('Available land - shrine already completed', () => {
   assert(shrineHex);
   shrineHex.status = 'filled';
 
-  testUiState.setSelectedDieColor(color);
+  testUiState.setSelectedResource(Resource.createDie(color));
   const lands = testGameManager.getAvailableLandInteractions();
   const shrines = lands.filter((cell) => {
     return cell.q === shrineCell.q && cell.r === shrineCell.r;
@@ -83,7 +84,7 @@ Deno.test('Available land - shrine already flipped and not ours', () => {
   shrineHex.status = 'visible';
   putPlayerNextTo(shrineCell);
   testPlayer.oracleDice = [shrineCell.color];
-  testUiState.setSelectedDieColor(shrineCell.color);
+  testUiState.setSelectedResource(Resource.createDie(shrineCell.color));
 
   const cells = testGameManager.getAvailableLandInteractions();
   const thisShrine = cells.find((cell) => {
@@ -103,7 +104,7 @@ Deno.test('Available land - shrine already flipped and is ours', () => {
   assert(shrineCell.color !== 'none');
 
   shrineHex.status = 'visible';
-  testUiState.setSelectedDieColor(shrineCell.color);
+  testUiState.setSelectedResource(Resource.createDie(shrineCell.color));
 
   testPlayer.oracleDice = [shrineCell.color];
   putPlayerNextTo(shrineCell);

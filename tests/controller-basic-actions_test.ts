@@ -1,5 +1,6 @@
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { ControllerForBasicActions } from '../src/ControllerForBasicActions.ts';
+import { Resource } from '../src/Resource.ts';
 import {
   assertFailureContains,
   setupGame,
@@ -26,7 +27,7 @@ Deno.test('Buy favor - success with die', () => {
   testPlayer.favor = 0;
   const firstDie = testPlayer.oracleDice[0];
   assert(firstDie);
-  testUiState.setSelectedDieColor(firstDie);
+  testUiState.setSelectedResource(Resource.createDie(firstDie));
   const result = handler.spendResourceForFavor();
   assert(result.success);
   assertStringIncludes(result.message, firstDie);
@@ -43,25 +44,11 @@ Deno.test('Buy oracle card - success with die', () => {
   setup();
   const firstDie = testPlayer.oracleDice[0];
   assert(firstDie);
-  testUiState.setSelectedDieColor(firstDie);
+  testUiState.setSelectedResource(Resource.createDie(firstDie));
   const result = handler.drawOracleCard();
   assert(result, result.message);
   assertStringIncludes(result.message, firstDie);
   assertEquals(testPlayer.oracleCards.length, 1);
-});
-
-Deno.test('Recolor - success clear die recoloring', () => {
-  setup();
-  const result = handler.setRecolorIntention(0, 'black', null);
-  assert(result.success);
-  assertStringIncludes(result.message, 'cleared');
-});
-
-Deno.test('Recolor - success clear card recoloring', () => {
-  setup();
-  const result = handler.setRecolorIntention(0, null, 'black');
-  assert(result.success);
-  assertStringIncludes(result.message, 'cleared');
 });
 
 Deno.test('Recolor - success recolor die', () => {

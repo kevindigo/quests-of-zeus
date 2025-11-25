@@ -11,7 +11,7 @@ import {
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import { type CoreColor } from './types.ts';
+import type { CoreColor } from './types.ts';
 import type { UiState } from './UiState.ts';
 
 export class GameEngineAnyResource {
@@ -99,21 +99,21 @@ export class GameEngineAnyResource {
     gameState: GameState,
     uiState: UiState,
   ): ResultWithMessage {
-    const spend = uiState.getSelectedResource();
+    const requestedSpend = uiState.getSelectedResource();
+    const spendWithoutRecoloring = requestedSpend.withoutRecoloring();
 
     const availableActions = GameEngineAnyResource.getAnyResourceActions(
       gameState,
     );
     const found = availableActions.find((action) => {
       return action.type === 'anyResource' && action.subType === 'gainFavor' &&
-        action.spend.equals(spend);
+        action.spend.equals(spendWithoutRecoloring);
     });
     if (!found) {
       return new Failure('End turn not available');
     }
 
-    uiState.clearSelectedRecoloring();
-
+    uiState.setSelectedResource(spendWithoutRecoloring);
     const result = GameEngine.spendResource(gameState, uiState);
     if (!result.success) {
       return result;
@@ -122,7 +122,7 @@ export class GameEngineAnyResource {
     const player = gameState.getCurrentPlayer();
     player.favor += 2;
     return new Success(
-      `Resource spent (${spend.getBaseColor()}); favor gained`,
+      `Resource spent (${spendWithoutRecoloring.getBaseColor()}); favor gained`,
     );
   }
 
@@ -130,7 +130,8 @@ export class GameEngineAnyResource {
     gameState: GameState,
     uiState: UiState,
   ): ResultWithMessage {
-    const spend = uiState.getSelectedResource();
+    const requestedSpend = uiState.getSelectedResource();
+    const spendWithoutRecoloring = requestedSpend.withoutRecoloring();
 
     const availableActions = GameEngineAnyResource.getAnyResourceActions(
       gameState,
@@ -138,7 +139,7 @@ export class GameEngineAnyResource {
     const found = availableActions.find((action) => {
       return action.type === 'anyResource' &&
         action.subType === 'gainOracleCard' &&
-        action.spend.equals(spend);
+        action.spend.equals(spendWithoutRecoloring);
     });
     if (!found) {
       return new Failure('End turn not available');
@@ -153,14 +154,16 @@ export class GameEngineAnyResource {
         'Oracle card deck was empty',
       );
     }
-    uiState.clearSelectedRecoloring();
 
+    uiState.setSelectedResource(spendWithoutRecoloring);
     const result = GameEngine.spendResource(gameState, uiState);
     if (!result.success) {
       return result;
     }
     player.oracleCards.push(card);
 
-    return new Success(`Spent ${spend.getBaseColor()} to gain ${card} card`);
+    return new Success(
+      `Spent ${spendWithoutRecoloring.getBaseColor()} to gain ${card} card`,
+    );
   }
 }

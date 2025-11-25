@@ -1,7 +1,7 @@
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
-import { GameEngine } from '../src/GameEngine.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { OracleSystem } from '../src/OracleSystem.ts';
+import { Resource } from '../src/Resource.ts';
 import type { ShrineHex } from '../src/types.ts';
 import {
   assertFailureContains,
@@ -35,7 +35,7 @@ Deno.test('click land - shrine no selected color', () => {
 
 Deno.test('click land - shrine not valid option', () => {
   setupGame();
-  testUiState.setSelectedDieColor('red');
+  testUiState.setSelectedResource(Resource.createDie('red'));
   const result = testGameManager.activateShrine({ q: 0, r: -1 });
   assertFailureContains(result, 'available');
 });
@@ -46,7 +46,7 @@ Deno.test('Click land - shrine hidden and ours (die)', () => {
   assert(shrineCell);
   assert(shrineCell.color !== 'none');
 
-  testUiState.setSelectedDieColor(shrineCell.color);
+  testUiState.setSelectedResource(Resource.createDie(shrineCell.color));
   shrineHex.owner = testPlayer.color;
   shrineHex.reward = 'favor';
   const originalFavor = testPlayer.favor;
@@ -68,8 +68,9 @@ Deno.test('Click land - shrine hidden and ours (recolored die)', () => {
   testPlayer.favor = 5;
   const preRecoloredColor = OracleSystem.applyRecolor(shrineCell.color, 1);
   testPlayer.oracleDice = [preRecoloredColor];
-  testUiState.setSelectedDieColor(preRecoloredColor);
-  testUiState.setSelectedRecoloring(5);
+  testUiState.setSelectedResource(
+    Resource.createRecoloredDie(preRecoloredColor, 5),
+  );
   shrineHex.owner = testPlayer.color;
   shrineHex.reward = 'favor';
   const result = testGameManager.activateShrine(shrineCell.getCoordinates());
@@ -87,7 +88,7 @@ Deno.test('Click land - shrine hidden and ours (card)', () => {
   assert(shrineCell.color !== 'none');
 
   testPlayer.oracleCards = [shrineCell.color];
-  testUiState.setSelectedOracleCardColor(shrineCell.color);
+  testUiState.setSelectedResource(Resource.createCard(shrineCell.color));
   shrineHex.owner = testPlayer.color;
   shrineHex.reward = 'favor';
   const originalFavor = testPlayer.favor;
@@ -107,7 +108,7 @@ Deno.test('Click land - shrine visible and ours (die)', () => {
   assert(shrineCell);
   assert(shrineCell.color !== 'none');
 
-  testUiState.setSelectedDieColor(shrineCell.color);
+  testUiState.setSelectedResource(Resource.createDie(shrineCell.color));
   shrineHex.owner = testPlayer.color;
   shrineHex.status = 'visible';
   const originalDiceCount = testPlayer.oracleDice.length;
@@ -134,7 +135,7 @@ Deno.test('Click land - shrine hidden and favor reward (die)', () => {
   testPlayer.setShipPosition(adjacentSeaCell.getCoordinates());
 
   testPlayer.oracleDice = [shrineCell.color];
-  testUiState.setSelectedDieColor(shrineCell.color);
+  testUiState.setSelectedResource(Resource.createDie(shrineCell.color));
   const originalFavor = testPlayer.favor;
   const originalDiceCount = testPlayer.oracleDice.length;
   const result = testGameManager.activateShrine(shrineCell.getCoordinates());
@@ -161,7 +162,7 @@ Deno.test('Click land - shrine hidden and card reward (die)', () => {
   testPlayer.setShipPosition(adjacentSeaCell.getCoordinates());
 
   testPlayer.oracleDice = [shrineCell.color];
-  testUiState.setSelectedDieColor(shrineCell.color);
+  testUiState.setSelectedResource(Resource.createDie(shrineCell.color));
   const originalFavor = testPlayer.favor;
   const originalDiceCount = testPlayer.oracleDice.length;
   const originalCardCount = testPlayer.oracleCards.length;
@@ -188,19 +189,9 @@ Deno.test('Click land - shrine card reward but oracle deck empty', () => {
   const adjacentSeaCell = testGrid.getNeighborsOfType(shrineCell, 'sea')[0];
   assert(adjacentSeaCell);
   testPlayer.setShipPosition(adjacentSeaCell.getCoordinates());
-
-  const MORE_THAN_ORACLE_DECK_CARD_COUNT = 1000;
-  const gameEngine = new GameEngine();
-  for (let i = 0; i < MORE_THAN_ORACLE_DECK_CARD_COUNT; ++i) {
-    testPlayer.oracleDice = ['red'];
-    testUiState.setSelectedDieColor('red');
-    if (!gameEngine.spendResourceForOracleCard(testGameState, testUiState)) {
-      break;
-    }
-  }
-
+  testGameState.getOracleCardDeck().splice(0);
   testPlayer.oracleDice = [shrineCell.color];
-  testUiState.setSelectedDieColor(shrineCell.color);
+  testUiState.setSelectedResource(Resource.createDie(shrineCell.color));
 
   const originalFavor = testPlayer.favor;
   const originalDiceCount = testPlayer.oracleDice.length;

@@ -2,11 +2,8 @@ import { GameEngine } from './GameEngine.ts';
 import type { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import { OracleSystem } from './OracleSystem.ts';
-import {
-  Failure,
-  type ResultWithMessage,
-  Success,
-} from './ResultWithMessage.ts';
+import { Resource } from './Resource.ts';
+import { Failure, type ResultWithMessage } from './ResultWithMessage.ts';
 import type { CoreColor } from './types.ts';
 import type { UiState } from './UiState.ts';
 
@@ -42,12 +39,6 @@ export class ControllerForBasicActions {
       );
     }
 
-    if (favorCost === 0) {
-      this.getUiState().clearSelectedRecoloring();
-
-      return new Success('Recoloring intention cleared');
-    }
-
     const playerFavor = this.gameManager.getCurrentPlayer().favor;
     if (favorCost > playerFavor) {
       return new Failure(
@@ -55,22 +46,21 @@ export class ControllerForBasicActions {
       );
     }
 
-    const success = this.getUiState().setSelectedRecoloring(
-      favorCost,
-    );
+    const resource = dieColor
+      ? Resource.createRecoloredDie(dieColor, favorCost)
+      : cardColor
+      ? Resource.createRecoloredCard(cardColor, favorCost)
+      : Resource.none;
+    this.getUiState().setSelectedResource(resource);
 
-    if (success) {
-      const resourceType = dieColor ? 'die' : 'oracle card';
-      const newColor = OracleSystem.applyRecolor(selectedColor, favorCost);
-      return {
-        success,
-        message: `${
-          resourceType.charAt(0).toUpperCase() + resourceType.slice(1)
-        } will be recolored from ${selectedColor} to ${newColor} when used (${favorCost} favor will be spent)`,
-      };
-    } else {
-      return new Failure('Failed to set recoloring intention');
-    }
+    const resourceType = dieColor ? 'die' : 'oracle card';
+    const newColor = OracleSystem.applyRecolor(selectedColor, favorCost);
+    return {
+      success: true,
+      message: `${
+        resourceType.charAt(0).toUpperCase() + resourceType.slice(1)
+      } will be recolored from ${selectedColor} to ${newColor} when used (${favorCost} favor will be spent)`,
+    };
   }
 
   private getGameState(): GameState {

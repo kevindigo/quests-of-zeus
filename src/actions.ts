@@ -21,8 +21,7 @@ export interface FreeAction extends ActionBase {
     | 'abandonMonsterFight'
     | 'skipTurnHeal'
     | 'useEquipmentExtraDie'
-    | 'endTurn'
-    | 'recolor';
+    | 'endTurn';
 }
 
 export interface GodEffectAction extends ActionBase {
@@ -93,12 +92,6 @@ export interface FreeUseEquipmentExtraDieAction extends FreeAction {
 
 export interface FreeEndTurnAction extends FreeAction {
   subType: 'endTurn';
-}
-
-export interface FreeRecolorAction extends FreeAction {
-  subType: 'recolor';
-  targetResource: Resource;
-  favorToSpend: number;
 }
 
 // ------------------ Free God Actions ------------------
@@ -220,7 +213,6 @@ export type Action =
   | FreeSkipTurnHealAction
   | FreeUseEquipmentExtraDieAction
   | FreeEndTurnAction
-  | FreeRecolorAction
   // godEffect
   | BlueGodAction
   | YellowGodAction

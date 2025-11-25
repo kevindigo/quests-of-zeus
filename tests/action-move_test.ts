@@ -3,6 +3,7 @@ import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { MovementSystem } from '../src/MovementSystem.ts';
+import { Resource } from '../src/Resource.ts';
 import { ShipMoveHandler } from '../src/ShipMoveHandler.ts';
 import { UiStateClass } from '../src/UiState.ts';
 
@@ -44,7 +45,7 @@ Deno.test('Action move ship invalid destination coordinates', () => {
   const destination = player.getShipPosition();
   const uiState = handler.getUiState();
   uiState.setSelectedCoordinates(destination);
-  uiState.setSelectedDieColor('red');
+  uiState.setSelectedResource(Resource.createDie('red'));
   const alreadyThere = handler.attemptMoveShip(
     0,
     0,
@@ -60,7 +61,7 @@ Deno.test('Action move ship invalid destination coordinates', () => {
     r: 0,
   };
   uiState.setSelectedCoordinates(qIsOffMapCoordinates);
-  uiState.setSelectedDieColor('red');
+  uiState.setSelectedResource(Resource.createDie('red'));
   const offMap = handler.attemptMoveShip(
     0,
     0,
@@ -76,7 +77,7 @@ Deno.test('Action move ship invalid destination coordinates', () => {
     r: -(state.getMap().getHexGrid().getRadius() + 1),
   };
   uiState.setSelectedCoordinates(rIsOffMapCoordinates);
-  uiState.setSelectedDieColor('red');
+  uiState.setSelectedResource(Resource.createDie('red'));
   const offMap2 = handler.attemptMoveShip(
     0,
     0,
@@ -108,7 +109,7 @@ Deno.test('Action move ship use invalid die', () => {
 
   player.oracleDice = ['red'];
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
-  handler.getUiState().setSelectedDieColor('blue');
+  handler.getUiState().setSelectedResource(Resource.createDie('blue'));
   const result = handler.attemptMoveShip(
     0,
     0,
@@ -127,7 +128,7 @@ Deno.test('Action move ship use invalid card', () => {
 
   player.oracleCards = ['red'];
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
-  handler.getUiState().setSelectedOracleCardColor('blue');
+  handler.getUiState().setSelectedResource(Resource.createCard('blue'));
   const result = handler.attemptMoveShip(
     0,
     0,
@@ -147,7 +148,7 @@ Deno.test('Action move ship not enough favor', () => {
   player.favor = 0;
   player.oracleDice = ['red'];
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
-  handler.getUiState().setSelectedDieColor('red');
+  handler.getUiState().setSelectedResource(Resource.createDie('red'));
   const tooMuchRecolor = handler.attemptMoveShip(
     1,
     0,
@@ -157,7 +158,7 @@ Deno.test('Action move ship not enough favor', () => {
   assertEquals(tooMuchRecolor.error.type, 'not_enough_favor');
 
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
-  handler.getUiState().setSelectedDieColor('red');
+  handler.getUiState().setSelectedResource(Resource.createDie('red'));
   const tooMuchRange = handler.attemptMoveShip(
     0,
     1,
@@ -176,7 +177,7 @@ Deno.test('Action move ship to non-sea', () => {
   state.getMap().getHexGrid().getCell(destination)!.terrain = 'shallow';
   player.oracleDice = ['red'];
   handler.getUiState().setSelectedCoordinates(destination);
-  handler.getUiState().setSelectedDieColor('red');
+  handler.getUiState().setSelectedResource(Resource.createDie('red'));
   const result = handler.attemptMoveShip(
     0,
     0,
@@ -194,7 +195,7 @@ Deno.test('Action move ship to wrong color (no recoloring)', () => {
 
   player.oracleDice = ['blue'];
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
-  handler.getUiState().setSelectedDieColor('blue');
+  handler.getUiState().setSelectedResource(Resource.createDie('blue'));
   const result = handler.attemptMoveShip(
     0,
     0,
@@ -212,7 +213,7 @@ Deno.test('Action move ship to wrong color (with recoloring)', () => {
   player.favor = 1;
   player.oracleDice = ['red'];
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
-  handler.getUiState().setSelectedDieColor('red');
+  handler.getUiState().setSelectedResource(Resource.createDie('red'));
   const result = handler.attemptMoveShip(
     1,
     0,
@@ -231,7 +232,7 @@ Deno.test('Action move ship out of range', () => {
   player.oracleDice = ['red'];
   player.setShipPosition({ q: 4, r: 0 });
   handler.getUiState().setSelectedCoordinates(HexGrid.CENTER);
-  handler.getUiState().setSelectedDieColor('red');
+  handler.getUiState().setSelectedResource(Resource.createDie('red'));
   const result = handler.attemptMoveShip(
     0,
     0,
@@ -257,7 +258,7 @@ Deno.test('Action move ship with die success (no favor)', () => {
   const to = reachable[0]!;
   player.oracleDice = [to.color, to.color];
   handler.getUiState().setSelectedCoordinates(to);
-  handler.getUiState().setSelectedDieColor(to.color);
+  handler.getUiState().setSelectedResource(Resource.createDie(to.color));
   const result = handler.attemptMoveShip(
     0,
     0,
@@ -285,7 +286,7 @@ Deno.test('Action move ship with card and favor range success', () => {
   player.oracleCards = ['red', 'red'];
   player.favor = 2;
   handler.getUiState().setSelectedCoordinates(to);
-  handler.getUiState().setSelectedOracleCardColor('red');
+  handler.getUiState().setSelectedResource(Resource.createCard('red'));
   const result = handler.attemptMoveShip(
     0,
     1,
@@ -313,7 +314,7 @@ Deno.test('Action move ship with card and recolor success', () => {
   player.oracleCards = ['red', 'red'];
   player.favor = 2;
   handler.getUiState().setSelectedCoordinates(to);
-  handler.getUiState().setSelectedOracleCardColor('red');
+  handler.getUiState().setSelectedResource(Resource.createCard('red'));
   const result = handler.attemptMoveShip(
     1,
     0,
@@ -325,7 +326,7 @@ Deno.test('Action move ship with card and recolor success', () => {
   assertEquals(handler.getUiState().getSelectedRecoloring(), 0);
 
   handler.getUiState().setSelectedCoordinates(to);
-  handler.getUiState().setSelectedOracleCardColor('red');
+  handler.getUiState().setSelectedResource(Resource.createCard('red'));
   const secondCardInOneTurn = handler.attemptMoveShip(
     1,
     0,

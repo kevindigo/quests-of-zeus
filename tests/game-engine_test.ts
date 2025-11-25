@@ -8,6 +8,7 @@ import { assertFalse } from '@std/assert/false';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
+import { Resource } from '../src/Resource.ts';
 import { UiStateClass } from '../src/UiState.ts';
 import { assertFailureContains } from './test-helpers.ts';
 
@@ -39,8 +40,7 @@ Deno.test('GameEngine - spend resource with pending recolor', () => {
   const gameState = new GameState();
   new GameStateInitializer().initializeGameState(gameState);
   const uiState = new UiStateClass();
-  uiState.setSelectedDieColor('red');
-  uiState.setSelectedRecoloring(2);
+  uiState.setSelectedResource(Resource.createRecoloredDie('red', 2));
 
   const result = GameEngine.spendResource(gameState, uiState);
   assertFalse(result.success, result.message);
@@ -54,7 +54,7 @@ Deno.test('GameEngine - spend resource die success', () => {
   const player = gameState.getCurrentPlayer();
   player.oracleDice = ['blue', 'red', 'red'];
   const uiState = new UiStateClass();
-  uiState.setSelectedDieColor('red');
+  uiState.setSelectedResource(Resource.createDie('red'));
 
   const result = GameEngine.spendResource(gameState, uiState);
   assert(result.success, result.message);
@@ -72,7 +72,7 @@ Deno.test('GameEngine - spend resource card success', () => {
   const player = gameState.getCurrentPlayer();
   player.oracleCards = ['blue', 'red', 'red'];
   const uiState = new UiStateClass();
-  uiState.setSelectedOracleCardColor('red');
+  uiState.setSelectedResource(Resource.createCard('red'));
 
   const result = GameEngine.spendResource(gameState, uiState);
   assert(result.success, result.message);
