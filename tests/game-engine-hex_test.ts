@@ -128,3 +128,38 @@ Deno.test('GameEngineHex - available next to our visible shrine', () => {
   );
   assert(action.spend.isDie());
 });
+
+Deno.test('GameEngineHex - available next to needed cubes', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const player = gameState.getCurrentPlayer();
+  const offeringHex = gameState.getCubeHexes()[0];
+  assert(offeringHex);
+  const offeringCoordinates = { q: offeringHex.q, r: offeringHex.r };
+  const seaNeighbors = gameState.getMap().getHexGrid()
+    .getNeighborsOfTypeByCoordinates(
+      offeringCoordinates,
+      'sea',
+    );
+  const destination = seaNeighbors[0];
+  assert(destination);
+  player.setShipPosition(destination.getCoordinates());
+  player.oracleDice = [...COLOR_WHEEL];
+  player.favor = 0;
+
+  const actions = GameEngineHex.getHexActions(gameState);
+  assertGreaterOrEqual(actions.length, 2, JSON.stringify(actions));
+  const action = actions.find((action) => {
+    return action.type === 'hex' && action.subType === 'loadCube' &&
+      action.coordinates.q === offeringHex.q &&
+      action.coordinates.r === offeringHex.r;
+  });
+  assert(action);
+  assert(action.type === 'hex');
+  assert(action.subType === 'loadCube');
+  assert(
+    action.coordinates.q === offeringHex.q &&
+      action.coordinates.r === offeringHex.r,
+  );
+  assert(action.spend.isDie());
+});

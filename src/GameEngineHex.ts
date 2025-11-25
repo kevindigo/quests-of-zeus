@@ -1,5 +1,9 @@
-import type { Action, ExploreShrineAction } from './actions.ts';
+import type { Action, ExploreShrineAction, LoadCubeAction } from './actions.ts';
 import type { GameState } from './GameState.ts';
+import type { HexCell } from './hexmap/HexCell.ts';
+import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import type { Resource } from './Resource.ts';
+import type { Item } from './types.ts';
 
 export class GameEngineHex {
   public static getHexActions(gameState: GameState): Action[] {
@@ -15,28 +19,105 @@ export class GameEngineHex {
 
     const resources = player.getAvailableResourcesWithRecoloring();
     resources.forEach((resource) => {
-      const resourceColor = resource.getEffectiveColor();
       neighbors.forEach((neighbor) => {
-        if (neighbor.terrain === 'shrine' && neighbor.color === resourceColor) {
-          const shrineHex = gameState.getShrineHexes().find((shrineHex) => {
-            return shrineHex.q === neighbor.q && shrineHex.r === neighbor.r;
-          });
-          const isHidden = shrineHex?.status === 'hidden';
-          const isVisibleAndOurs = shrineHex?.status === 'visible' &&
-            shrineHex.owner === player.color;
-          if (isHidden || isVisibleAndOurs) {
-            const action: ExploreShrineAction = {
-              type: 'hex',
-              subType: 'exploreShrine',
-              spend: resource,
-              coordinates: neighbor.getCoordinates(),
-              targetColor: resourceColor,
-            };
-            actions.push(action);
-          }
+        switch (neighbor.terrain) {
+          case 'shrine':
+            actions.push(
+              ...GameEngineHex.getShrineActions(gameState, neighbor, resource),
+            );
+            break;
+          case 'offerings':
+            actions.push(
+              ...GameEngineHex.getOfferingActions(
+                gameState,
+                neighbor,
+                resource,
+              ),
+            );
+            break;
         }
       });
     });
+
     return actions;
+  }
+
+  private static getShrineActions(
+    gameState: GameState,
+    shrineCell: HexCell,
+    resource: Resource,
+  ): Action[] {
+    if (shrineCell.color !== resource.getEffectiveColor()) {
+      return [];
+    }
+
+    const coordinates = shrineCell.getCoordinates();
+    if (GameEngineHex.canExploreShrine(gameState, coordinates)) {
+      const targetColor = resource.getEffectiveColor()!;
+      const action: ExploreShrineAction = {
+        type: 'hex',
+        subType: 'exploreShrine',
+        spend: resource,
+        coordinates,
+        targetColor,
+      };
+
+      return [action];
+    }
+
+    return [];
+  }
+
+  private static canExploreShrine(
+    gameState: GameState,
+    coordinates: HexCoordinates,
+  ): boolean {
+    const shrineHex = gameState.getShrineHexes().find((shrineHex) => {
+      return shrineHex.q === coordinates.q && shrineHex.r === coordinates.r;
+    });
+
+    const player = gameState.getCurrentPlayer();
+    const isHidden = shrineHex?.status === 'hidden';
+    const isVisibleAndOurs = shrineHex?.status === 'visible' &&
+      shrineHex.owner === player.color;
+
+    return (isHidden || isVisibleAndOurs);
+  }
+
+  private static getOfferingActions(
+    gameState: GameState,
+    offeringCell: HexCell,
+    resource: Resource,
+  ): LoadCubeAction[] {
+    const effectiveColor = resource.getEffectiveColor();
+    if (!effectiveColor) {
+      return [];
+    }
+
+    const cube: Item = { type: 'cube', color: effectiveColor };
+    const player = gameState.getCurrentPlayer();
+    if (!player.validateItemIsLoadable(cube)) {
+      return [];
+    }
+
+    const offeringHex = gameState.getCubeHexes().find((hex) => {
+      return hex.q === offeringCell.q && hex.r === offeringCell.r;
+    });
+    if (!offeringHex) {
+      return [];
+    }
+
+    if (offeringHex.cubeColors.indexOf(effectiveColor) >= 0) {
+      const action: LoadCubeAction = {
+        type: 'hex',
+        subType: 'loadCube',
+        coordinates: offeringCell.getCoordinates(),
+        spend: resource,
+        targetColor: effectiveColor,
+      };
+      return [action];
+    }
+
+    return [];
   }
 }
