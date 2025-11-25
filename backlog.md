@@ -1,18 +1,21 @@
 == Short-term ==
 
 - Switch existing functionality over to using GameEngine.doAction
-- Create GameEngineHex.ts and game-engine-hex_test.ts
-- GameEngine.getAvailableActions should call into GEH
-- Tests for getHexActions -> getShrineActions:
-  - Wrong phase
-  - Not adjacent to any shrines
-  - Adjacent but no dice of that color
-  - Shrine already filled
-  - Shrine visible and not ours
-- Tests for actual explore shring
-  - Success: Flip ours
-  - Success: Flip not ours (favor, card, shield, god)
-  - Success: Visible and ours
+  - First, explore shrine
+    - Create game-engine-hex_test.ts
+    - Tests for getHexActions:
+      - Wrong phase
+      - Not adjacent to any shrines
+      - Adjacent but no dice of that color
+      - Shrine already filled
+      - Shrine visible and not ours
+    - Tests for doHexAction:
+      - Success: Flip ours
+      - Success: Flip not ours (favor, card, shield, god)
+      - Success: Visible and ours
+  - Second, move ship
+    - Available moves
+    - doMove
 - Then remove a bunch of old tests and code
 - Have controller enable/disable buttons based on available actions
 
