@@ -36,18 +36,6 @@ export class UiStateClass {
     this.selectedResource = resource;
   }
 
-  public setSelectedBaseDieColor(color: CoreColor): void {
-    this.selectedResource = Resource.createDie(color);
-  }
-
-  public setSelectedBaseCardColor(color: CoreColor): void {
-    this.selectedResource = Resource.createCard(color);
-  }
-
-  public getEffectiveSelectedColor(): CoreColor | null {
-    return this.selectedResource.getEffectiveColor();
-  }
-
   public clearResourceSelection(): void {
     this.selectedResource = Resource.none;
   }
