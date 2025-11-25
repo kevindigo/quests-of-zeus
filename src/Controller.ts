@@ -179,9 +179,12 @@ export class Controller {
     }
   }
 
-  private highlightAvailableHexElements(gameState: GameState): void {
+  private highlightAvailableHexElements(
+    gameState: GameState,
+    availableActions: Action[],
+  ): void {
     this.highlightAvailableShipMoves(gameState);
-    this.highlightAvailableLands();
+    this.highlightAvailableLands(gameState, availableActions);
   }
 
   private highlightAvailableShipMoves(
@@ -224,10 +227,18 @@ export class Controller {
     );
   }
 
-  private highlightAvailableLands(): void {
-    const lands = this.gameManager.getAvailableLandInteractions();
-    lands.forEach((cell) => {
-      this.highlightLand(cell);
+  private highlightAvailableLands(
+    gameState: GameState,
+    availableActions: Action[],
+  ): void {
+    const selectedResource = this.getUiState().getSelectedResource();
+    availableActions.forEach((action) => {
+      if (action.type === 'hex' && action.spend.equals(selectedResource)) {
+        const cell = gameState.getMap().getCell(action.coordinates);
+        if (cell) {
+          this.highlightLand(cell);
+        }
+      }
     });
   }
 
@@ -419,7 +430,7 @@ export class Controller {
     this.addHandlersToSvg();
 
     if (gameState.getPhase() === 'action') {
-      this.highlightAvailableHexElements(gameState);
+      this.highlightAvailableHexElements(gameState, availableActions);
     }
   }
 
