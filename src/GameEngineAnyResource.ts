@@ -12,18 +12,47 @@ import {
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import type { CoreColor } from './types.ts';
 import type { UiState } from './UiState.ts';
 
 export class GameEngineAnyResource {
   public static getAnyResourceActions(gameState: GameState): Action[] {
-    const actions: Action[] = [];
     if (gameState.getPhase() !== 'action') {
-      return actions;
+      return [];
     }
 
-    actions.push(...GameEngineAnyResource.getActionsForDice(gameState));
-    actions.push(...GameEngineAnyResource.getActionsForCards(gameState));
+    const availableResources: Resource[] = [];
+    const player = gameState.getCurrentPlayer();
+    const dieResourcesByColor = new Map(player.oracleDice.map((color) => {
+      return [color, Resource.createDie(color)];
+    }));
+    availableResources.push(...dieResourcesByColor.values());
+
+    if (!player.usedOracleCardThisTurn) {
+      const cardResourcesByColor = new Map(player.oracleCards.map((color) => {
+        return [color, Resource.createCard(color)];
+      }));
+      availableResources.push(...cardResourcesByColor.values());
+    }
+
+    const actions = availableResources.flatMap((resource) => {
+      const gainFavorAction: AnyResourceGainFavorAction = {
+        type: 'anyResource',
+        subType: 'gainFavor',
+        spend: resource,
+      };
+      const actions: Action[] = [gainFavorAction];
+
+      if (gameState.getOracleCardDeck().length > 0) {
+        const gainCardAction: AnyResourceGainOracleCardAction = {
+          type: 'anyResource',
+          subType: 'gainOracleCard',
+          spend: resource,
+        };
+        actions.push(gainCardAction);
+      }
+
+      return actions;
+    });
 
     return actions;
   }
@@ -48,74 +77,6 @@ export class GameEngineAnyResource {
     }
   }
 
-  private static getActionsForDice(gameState: GameState): Action[] {
-    const actions: Action[] = [];
-    const diceColors: Set<CoreColor> = new Set();
-    const player = gameState.getCurrentPlayer();
-    player.oracleDice.forEach((color) => {
-      diceColors.add(color);
-    });
-    const diceResources: Resource[] = [];
-    diceColors.forEach((color) => {
-      diceResources.push(Resource.createDie(color));
-    });
-    diceResources.forEach((resource) => {
-      const gainFavorAction: AnyResourceGainFavorAction = {
-        type: 'anyResource',
-        subType: 'gainFavor',
-        spend: resource,
-      };
-      actions.push(gainFavorAction);
-
-      const gainCardAction: AnyResourceGainOracleCardAction = {
-        type: 'anyResource',
-        subType: 'gainOracleCard',
-        spend: resource,
-      };
-      if (gameState.getOracleCardDeck().length > 0) {
-        actions.push(gainCardAction);
-      }
-    });
-
-    return actions;
-  }
-
-  private static getActionsForCards(gameState: GameState): Action[] {
-    const actions: Action[] = [];
-    const player = gameState.getCurrentPlayer();
-
-    if (player.usedOracleCardThisTurn) {
-      return actions;
-    }
-    const cardColors: Set<CoreColor> = new Set();
-    player.oracleCards.forEach((color) => {
-      cardColors.add(color);
-    });
-    const cardResources: Resource[] = [];
-    cardColors.forEach((color) => {
-      cardResources.push(Resource.createCard(color));
-    });
-    cardResources.forEach((resource) => {
-      const gainFavorAction: AnyResourceGainFavorAction = {
-        type: 'anyResource',
-        subType: 'gainFavor',
-        spend: resource,
-      };
-      actions.push(gainFavorAction);
-
-      const gainCardAction: AnyResourceGainOracleCardAction = {
-        type: 'anyResource',
-        subType: 'gainOracleCard',
-        spend: resource,
-      };
-      if (gameState.getOracleCardDeck().length > 0) {
-        actions.push(gainCardAction);
-      }
-    });
-
-    return actions;
-  }
-
   public static spendResourceForFavor(
     gameState: GameState,
     uiState: UiState,
@@ -131,7 +92,7 @@ export class GameEngineAnyResource {
         action.spend.equals(spendWithoutRecoloring);
     });
     if (!found) {
-      return new Failure('End turn not available');
+      return new Failure('Action not available');
     }
 
     uiState.setSelectedResource(spendWithoutRecoloring);
