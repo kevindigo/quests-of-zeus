@@ -107,6 +107,19 @@ export class Player {
     return available;
   }
 
+  public getAvailableResourcesWithRecoloring(): Resource[] {
+    const available: Resource[] = [];
+    const baseResources = this.getAvailableResourcesWithoutRecoloring();
+    for (let favor = 0; favor <= this.favor; ++favor) {
+      baseResources.forEach((resource) => {
+        const recolored = Resource.createRecoloredVersionOf(resource, favor);
+        available.push(recolored);
+      });
+    }
+
+    return available;
+  }
+
   public getResourcesForDice(): Resource[] {
     return Array.from(
       new Map(this.oracleDice.map((color) => {

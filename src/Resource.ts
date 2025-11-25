@@ -28,6 +28,17 @@ export class Resource {
     return new Resource('card', color, recoloring);
   }
 
+  public static createRecoloredVersionOf(
+    original: Resource,
+    recolor: number,
+  ): Resource {
+    return new Resource(
+      original.type,
+      original.getBaseColor(),
+      recolor,
+    );
+  }
+
   public withoutRecoloring(): Resource {
     return new Resource(this.type, this.baseColor, 0);
   }
