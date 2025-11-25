@@ -60,7 +60,7 @@ export class UiStateClass {
     if (!this.selectedResource.hasColor()) {
       return null;
     }
-    const selectedColor = this.selectedResource.getColor();
+    const selectedColor = this.selectedResource.getBaseColor();
 
     const favorForRecoloring = this.getSelectedRecoloring();
     const effectiveColor = OracleSystem.applyRecolor(

@@ -42,12 +42,12 @@ export class Controller {
 
   public getSelectedDieColor(): CoreColor | null {
     const selected = this.getUiState().getSelectedResource();
-    return selected.isDie() ? selected.getColor() : null;
+    return selected.isDie() ? selected.getBaseColor() : null;
   }
 
   public getSelectedCardColor(): CoreColor | null {
     const selected = this.getUiState().getSelectedResource();
-    return selected.isCard() ? selected.getColor() : null;
+    return selected.isCard() ? selected.getBaseColor() : null;
   }
 
   public selectDieColor(color: CoreColor): boolean {

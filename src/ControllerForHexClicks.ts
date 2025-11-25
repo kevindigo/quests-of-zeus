@@ -51,14 +51,14 @@ export class ControllerForHexClicks {
     }
 
     const dice = currentPlayer.oracleDice;
-    if (resource.isDie() && !dice.includes(resource.getColor())) {
-      const color = resource.getColor();
+    if (resource.isDie() && !dice.includes(resource.getBaseColor())) {
+      const color = resource.getBaseColor();
       return new Failure(`Color ${color} not in dice ${JSON.stringify(dice)}`);
     }
 
     const cards = currentPlayer.oracleCards;
-    if (resource.isCard() && !cards.includes(resource.getColor())) {
-      const color = resource.getColor();
+    if (resource.isCard() && !cards.includes(resource.getBaseColor())) {
+      const color = resource.getBaseColor();
       return new Failure(
         `Color ${color} not in cards ${JSON.stringify(cards)}`,
       );
@@ -132,10 +132,10 @@ export class ControllerForHexClicks {
 
     const selectedResource = this.getUiState().getSelectedResource();
     const selectedDieColor = selectedResource.isDie()
-      ? selectedResource.getColor()
+      ? selectedResource.getBaseColor()
       : null;
     const selectedOracleCardColor = selectedResource.isCard()
-      ? selectedResource.getColor()
+      ? selectedResource.getBaseColor()
       : null;
     const moveResult = this.gameManager.moveShip(
       recoloringCost,

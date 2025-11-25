@@ -56,10 +56,10 @@ export class ViewPhase {
     const currentPlayer = state.getCurrentPlayer();
     const selectedResource = this.uiState.getSelectedResource();
     const selectedDie = selectedResource.isDie()
-      ? selectedResource.getColor()
+      ? selectedResource.getBaseColor()
       : null;
     const selectedCard = selectedResource.isCard()
-      ? selectedResource.getColor()
+      ? selectedResource.getBaseColor()
       : null;
     const content = `
       <div class="oracle-dice">
@@ -124,7 +124,7 @@ export class ViewPhase {
       return '';
     }
 
-    const useColor = selectedResource.getColor();
+    const useColor = selectedResource.getBaseColor();
 
     const currentIndex = COLOR_WHEEL.indexOf(useColor);
 

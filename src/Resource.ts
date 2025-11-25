@@ -18,12 +18,13 @@ export class Resource {
   }
 
   public static fromSnapshot(resource: Resource): Resource {
-    return new Resource(resource.type, resource.color);
+    return new Resource(resource.type, resource.baseColor);
   }
 
   private constructor(type: ResourceType, color?: CoreColor) {
     this.type = type;
-    this.color = color;
+    this.baseColor = color;
+    this.recolorCost = 0;
   }
 
   public isDie(): boolean {
@@ -38,18 +39,23 @@ export class Resource {
     return this.type !== 'none';
   }
 
-  public getColor(): CoreColor {
-    if (!this.hasColor() || !this.color) {
+  public getBaseColor(): CoreColor {
+    if (!this.hasColor() || !this.baseColor) {
       throw new Error('Attempted to get non-existant color');
     }
 
-    return this.color;
+    return this.baseColor;
+  }
+
+  public getRecolorCost(): number {
+    return this.recolorCost;
   }
 
   public equals(other: Resource): boolean {
-    return (other.type === this.type && other.color === this.color);
+    return (other.type === this.type && other.baseColor === this.baseColor);
   }
 
   private readonly type: ResourceType;
-  private readonly color: CoreColor | undefined;
+  private readonly baseColor: CoreColor | undefined;
+  private readonly recolorCost: number;
 }

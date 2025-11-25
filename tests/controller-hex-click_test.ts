@@ -54,7 +54,7 @@ Deno.test('Hex click - second oracle card', () => {
   testGameManager.getUiState().setSelectedOracleCardColor('red');
   assert(testGameManager.getUiState().getSelectedResource().isCard());
   assertEquals(
-    testGameManager.getUiState().getSelectedResource().getColor(),
+    testGameManager.getUiState().getSelectedResource().getBaseColor(),
     'red',
   );
   assertFailureContains(

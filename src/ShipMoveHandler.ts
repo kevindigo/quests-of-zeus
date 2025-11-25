@@ -105,15 +105,15 @@ export class ShipMoveHandler {
     }
     // validate die (if spent)
     if (selectedResource.isDie()) {
-      if (player.oracleDice.indexOf(selectedResource.getColor()) < 0) {
+      if (player.oracleDice.indexOf(selectedResource.getBaseColor()) < 0) {
         return {
           success: false,
           error: {
             type: 'die_not_available',
             message:
-              `no ${selectedResource.getColor()} die available in ${player.oracleDice}`,
+              `no ${selectedResource.getBaseColor()} die available in ${player.oracleDice}`,
             details: {
-              dieColor: selectedResource.getColor(),
+              dieColor: selectedResource.getBaseColor(),
               availableDice: player.oracleDice,
             },
           },
@@ -122,15 +122,15 @@ export class ShipMoveHandler {
     }
     // validate card (if spent)
     if (selectedResource.isCard()) {
-      if (player.oracleCards.indexOf(selectedResource.getColor()) < 0) {
+      if (player.oracleCards.indexOf(selectedResource.getBaseColor()) < 0) {
         return {
           success: false,
           error: {
             type: 'card_not_available',
             message:
-              `no ${selectedResource.getColor()} card available in ${player.oracleCards}`,
+              `no ${selectedResource.getBaseColor()} card available in ${player.oracleCards}`,
             details: {
-              dieColor: selectedResource.getColor(),
+              dieColor: selectedResource.getBaseColor(),
               availableDice: player.oracleCards,
             },
           },
@@ -211,7 +211,7 @@ export class ShipMoveHandler {
     }
     // validate destination color matches effective color
     const effectiveColor = OracleSystem.applyRecolor(
-      selectedResource.getColor(),
+      selectedResource.getBaseColor(),
       favorSpentToRecolor,
     );
     if (effectiveColor !== destinationCell?.color) {

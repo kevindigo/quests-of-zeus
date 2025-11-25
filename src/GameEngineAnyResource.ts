@@ -121,7 +121,9 @@ export class GameEngineAnyResource {
 
     const player = gameState.getCurrentPlayer();
     player.favor += 2;
-    return new Success(`Resource spent (${spend.getColor()}); favor gained`);
+    return new Success(
+      `Resource spent (${spend.getBaseColor()}); favor gained`,
+    );
   }
 
   public static spendResourceForOracleCard(
@@ -159,6 +161,6 @@ export class GameEngineAnyResource {
     }
     player.oracleCards.push(card);
 
-    return new Success(`Spent ${spend.getColor()} to gain ${card} card`);
+    return new Success(`Spent ${spend.getBaseColor()} to gain ${card} card`);
   }
 }

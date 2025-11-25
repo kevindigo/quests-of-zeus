@@ -197,7 +197,7 @@ export class GameState {
     const resourceArray = resource.isDie()
       ? player.oracleDice
       : player.oracleCards;
-    const originalColor = resource.getColor();
+    const originalColor = resource.getBaseColor();
     const index = resourceArray.indexOf(originalColor);
     if (index < 0) {
       return new Failure(

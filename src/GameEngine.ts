@@ -67,7 +67,7 @@ export class GameEngine {
       ? player.oracleCards
       : null;
     if (array) {
-      const at = array.indexOf(resource.getColor());
+      const at = array.indexOf(resource.getBaseColor());
       if (at >= 0) {
         array.splice(at, 1);
       }
