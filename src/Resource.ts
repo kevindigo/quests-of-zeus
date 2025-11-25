@@ -36,8 +36,8 @@ export class Resource {
     throw new Error('Resource snapshot not implemented yet!');
   }
 
-  public static fromSnapshot(resource: Resource): Resource {
-    return new Resource(resource.type, resource.baseColor);
+  public static fromSnapshot(!resource: Resource): Resource {
+    throw new Error('Resource snapshot not implemented yet!');
   }
 
   private constructor(
