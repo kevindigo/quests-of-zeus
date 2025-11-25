@@ -48,11 +48,7 @@ export interface AnyResourceAction extends ResourceAction {
   subType: 'gainFavor' | 'gainOracleCard' | 'gainPeekCoupons';
 }
 
-export interface ColorBasedAction extends ResourceAction {
-  targetColor: CoreColor;
-}
-
-export interface HexAction extends ColorBasedAction {
+export interface HexAction extends ResourceAction {
   type: 'hex';
   coordinates: HexCoordinates;
   subType:
