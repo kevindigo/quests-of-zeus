@@ -3,7 +3,7 @@ import { assertEquals } from '@std/assert/equals';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
-import { COLOR_WHEEL } from '../src/types.ts';
+import { COLOR_WHEEL, type Item } from '../src/types.ts';
 
 Deno.test('GameEngineHex - available wrong phase', () => {
   const gameState = new GameState();
@@ -160,6 +160,46 @@ Deno.test('GameEngineHex - available next to needed cubes', () => {
   assert(
     action.coordinates.q === offeringHex.q &&
       action.coordinates.r === offeringHex.r,
+  );
+  assert(action.spend.isDie());
+});
+
+Deno.test('GameEngineHex -available next to useful temple', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const player = gameState.getCurrentPlayer();
+  const templeHex = gameState.getMap().getCellsByTerrain('temple')[0];
+  assert(templeHex);
+  const templeColor = templeHex.color;
+  assert(templeColor !== 'none');
+  const templeCoordinates = { q: templeHex.q, r: templeHex.r };
+  const seaNeighbors = gameState.getMap().getHexGrid()
+    .getNeighborsOfTypeByCoordinates(
+      templeCoordinates,
+      'sea',
+    );
+  const destination = seaNeighbors[0];
+  assert(destination);
+  player.setShipPosition(destination.getCoordinates());
+  player.oracleDice = [...COLOR_WHEEL];
+  player.favor = 0;
+  const cube: Item = { type: 'cube', color: templeColor };
+  const loaded = player.loadItem(cube);
+  assert(loaded.success, loaded.message);
+
+  const actions = GameEngineHex.getHexActions(gameState);
+  assertGreaterOrEqual(actions.length, 1, JSON.stringify(actions));
+  const action = actions.find((action) => {
+    return action.type === 'hex' && action.subType === 'dropCube' &&
+      action.coordinates.q === templeHex.q &&
+      action.coordinates.r === templeHex.r;
+  });
+  assert(action);
+  assert(action.type === 'hex');
+  assert(action.subType === 'dropCube');
+  assert(
+    action.coordinates.q === templeHex.q &&
+      action.coordinates.r === templeHex.r,
   );
   assert(action.spend.isDie());
 });

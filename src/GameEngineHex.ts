@@ -1,4 +1,9 @@
-import type { Action, ExploreShrineAction, LoadCubeAction } from './actions.ts';
+import type {
+  Action,
+  DropCubeAction,
+  ExploreShrineAction,
+  LoadCubeAction,
+} from './actions.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
@@ -33,6 +38,11 @@ export class GameEngineHex {
                 neighbor,
                 resource,
               ),
+            );
+            break;
+          case 'temple':
+            actions.push(
+              ...GameEngineHex.getTempleActions(gameState, neighbor, resource),
             );
             break;
         }
@@ -118,5 +128,36 @@ export class GameEngineHex {
     }
 
     return [];
+  }
+
+  private static getTempleActions(
+    gameState: GameState,
+    templeCell: HexCell,
+    resource: Resource,
+  ): DropCubeAction[] {
+    const selectedColor = resource.getEffectiveColor();
+    const templeColor = templeCell.color;
+    if (
+      !selectedColor || templeColor === 'none' || selectedColor !== templeColor
+    ) {
+      return [];
+    }
+
+    const player = gameState.getCurrentPlayer();
+    const requiredCube = player.getLoadedItems().find((item) => {
+      return item.type === 'cube' && item.color === templeColor;
+    });
+    if (!requiredCube) {
+      return [];
+    }
+
+    const action: DropCubeAction = {
+      type: 'hex',
+      subType: 'dropCube',
+      coordinates: templeCell.getCoordinates(),
+      spend: resource,
+      targetColor: templeColor,
+    };
+    return [action];
   }
 }
