@@ -70,9 +70,8 @@ export class GameEngineHex {
         break;
       case 'loadCube':
         return GameEngineHex.doLoadCube(action, gameState, uiState);
-
       case 'dropCube':
-        break;
+        return GameEngineHex.doDropCube(action, gameState, uiState);
       case 'loadStatue':
         break;
       case 'dropStatue':
@@ -335,5 +334,36 @@ export class GameEngineHex {
       );
     }
     return new Success('Offering was loaded');
+  }
+
+  private static doDropCube(
+    action: HexAction,
+    gameState: GameState,
+    uiState: UiState,
+  ): ResultWithMessage {
+    const player = gameState.getCurrentPlayer();
+    const effectiveColor = action.spend.getEffectiveColor();
+    if (!effectiveColor) {
+      return new Failure('Drop cube no resource selected');
+    }
+    const quests = player.getQuestsOfType('temple');
+    const quest = quests.find((quest) => {
+      return quest.color === effectiveColor;
+    });
+    if (!quest) {
+      return new Failure(
+        `Drop cube ${effectiveColor} quest not found in ${
+          JSON.stringify(quests)
+        }`,
+      );
+    }
+    quest.isCompleted = true;
+    player.favor += 3;
+    const item: Item = { type: 'cube', color: effectiveColor };
+    player.unloadItem(item);
+
+    GameEngine.spendResource(gameState, uiState);
+
+    return new Success('faked');
   }
 }

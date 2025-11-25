@@ -1,6 +1,10 @@
 import { assert, assertGreaterOrEqual } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
-import type { ExploreShrineAction, LoadCubeAction } from '../src/actions.ts';
+import type {
+  DropCubeAction,
+  ExploreShrineAction,
+  LoadCubeAction,
+} from '../src/actions.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
@@ -580,4 +584,52 @@ Deno.test('GameEngineHex - doOfferingAction (wild quest)', () => {
     greenQuest,
     'Cube should have been used for the wild quest',
   );
+});
+
+Deno.test('GameEngineHex - doTempleAction', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const uiState = new UiStateClass();
+  const player = gameState.getCurrentPlayer();
+  const quest = player.getQuestsOfType('temple').find((quest) => {
+    return quest.color !== 'none';
+  });
+  assert(quest && !quest.isCompleted);
+  const color = quest.color;
+  assert(color !== 'none');
+  const templeCell = gameState.getMap().getCellsByTerrain('temple').find(
+    (cell) => {
+      return cell.color === color;
+    },
+  );
+  assert(templeCell);
+  const templeLocation = templeCell.getCoordinates();
+  const seaNeighbors = gameState.getMap().getHexGrid()
+    .getNeighborsOfTypeByCoordinates(
+      templeLocation,
+      'sea',
+    );
+  const destination = seaNeighbors[0];
+  assert(destination);
+  player.setShipPosition(destination.getCoordinates());
+  player.oracleDice = [color];
+  player.favor = 0;
+  const item: Item = { type: 'cube', color };
+  player.loadItem(item);
+  const resource = Resource.createDie(color);
+  uiState.setSelectedResource(resource);
+  uiState.setSelectedCoordinates(templeLocation);
+
+  const action: DropCubeAction = {
+    type: 'hex',
+    subType: 'dropCube',
+    coordinates: templeLocation,
+    spend: resource,
+  };
+  const result = GameEngineHex.doAction(action, gameState, uiState);
+  assert(result.success, result.message);
+  assert(quest.isCompleted);
+  assertEquals(player.favor, 3);
+  assertEquals(player.getItemCount(), 0);
+  assertEquals(player.oracleDice.length, 0);
 });
