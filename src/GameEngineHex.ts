@@ -21,7 +21,10 @@ export class GameEngineHex {
           const shrineHex = gameState.getShrineHexes().find((shrineHex) => {
             return shrineHex.q === neighbor.q && shrineHex.r === neighbor.r;
           });
-          if (shrineHex?.status === 'hidden') {
+          const isHidden = shrineHex?.status === 'hidden';
+          const isVisibleAndOurs = shrineHex?.status === 'visible' &&
+            shrineHex.owner === player.color;
+          if (isHidden || isVisibleAndOurs) {
             const action: ExploreShrineAction = {
               type: 'hex',
               subType: 'exploreShrine',
