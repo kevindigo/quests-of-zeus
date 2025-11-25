@@ -1,6 +1,6 @@
 import { assert, assertGreaterOrEqual } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
-import type { ExploreShrineAction } from '../src/actions.ts';
+import type { ExploreShrineAction, LoadCubeAction } from '../src/actions.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
@@ -483,4 +483,101 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, card)', () => {
   assertEquals(completedShrineQuests.length, 0);
   assertEquals(player.oracleCards.length, 2);
   assertEquals(player.oracleDice.length, 0);
+});
+
+Deno.test('GameEngineHex - doOfferingAction (existing quest)', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const uiState = new UiStateClass();
+  const player = gameState.getCurrentPlayer();
+  const colorQuest = player.getQuestsOfType('temple').find((quest) => {
+    return quest.color !== 'none';
+  });
+  const needColor = colorQuest?.color;
+  assert(needColor);
+  assert(needColor !== 'none');
+  const offeringHex = gameState.getCubeHexes().find((hex) => {
+    return hex.cubeColors.indexOf(needColor) >= 0;
+  });
+  assert(offeringHex);
+  const cubeCount = offeringHex.cubeColors.length;
+  const offeringCoordinates = { q: offeringHex.q, r: offeringHex.r };
+  const seaNeighbors = gameState.getMap().getHexGrid()
+    .getNeighborsOfTypeByCoordinates(
+      offeringCoordinates,
+      'sea',
+    );
+  const destination = seaNeighbors[0];
+  assert(destination);
+  player.setShipPosition(destination.getCoordinates());
+  player.oracleDice = [needColor];
+  player.favor = 0;
+  const spend = Resource.createDie(needColor);
+  uiState.setSelectedResource(spend);
+  uiState.setSelectedCoordinates(offeringCoordinates);
+
+  const action: LoadCubeAction = {
+    type: 'hex',
+    subType: 'loadCube',
+    coordinates: offeringCoordinates,
+    spend: Resource.createDie(needColor),
+  };
+  const result = GameEngineHex.doAction(action, gameState, uiState);
+  assert(result.success, result.message);
+  assertEquals(player.getItemCount(), 1);
+  assertEquals(offeringHex.cubeColors.length, cubeCount - 1);
+  assertEquals(player.oracleDice.length, 0);
+  const wildQuest = player.getQuestsOfType('temple').find((quest) => {
+    return quest.color === 'none';
+  });
+  assert(
+    wildQuest,
+    'Cube should have been used for its quest, not for the wild',
+  );
+});
+
+Deno.test('GameEngineHex - doOfferingAction (wild quest)', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const uiState = new UiStateClass();
+  const player = gameState.getCurrentPlayer();
+  const needColor = 'green';
+  const offeringHex = gameState.getCubeHexes().find((hex) => {
+    return hex.cubeColors.indexOf(needColor) >= 0;
+  });
+  assert(offeringHex);
+  const cubeCount = offeringHex.cubeColors.length;
+  const offeringCoordinates = { q: offeringHex.q, r: offeringHex.r };
+  const seaNeighbors = gameState.getMap().getHexGrid()
+    .getNeighborsOfTypeByCoordinates(
+      offeringCoordinates,
+      'sea',
+    );
+  const destination = seaNeighbors[0];
+  assert(destination);
+  player.setShipPosition(destination.getCoordinates());
+  player.oracleDice = [needColor];
+  player.favor = 0;
+  const spend = Resource.createDie(needColor);
+  uiState.setSelectedResource(spend);
+  uiState.setSelectedCoordinates(offeringCoordinates);
+
+  const action: LoadCubeAction = {
+    type: 'hex',
+    subType: 'loadCube',
+    coordinates: offeringCoordinates,
+    spend: Resource.createDie(needColor),
+  };
+  const result = GameEngineHex.doAction(action, gameState, uiState);
+  assert(result.success, result.message);
+  assertEquals(player.getItemCount(), 1);
+  assertEquals(offeringHex.cubeColors.length, cubeCount - 1);
+  assertEquals(player.oracleDice.length, 0);
+  const greenQuest = player.getQuestsOfType('temple').find((quest) => {
+    return quest.color === 'green';
+  });
+  assert(
+    greenQuest,
+    'Cube should have been used for the wild quest',
+  );
 });

@@ -69,7 +69,8 @@ export class GameEngineHex {
       case 'shipMove':
         break;
       case 'loadCube':
-        break;
+        return GameEngineHex.doLoadCube(action, gameState, uiState);
+
       case 'dropCube':
         break;
       case 'loadStatue':
@@ -282,7 +283,57 @@ export class GameEngineHex {
           'Cloud flippe and gained shield -- healing injuries not available yet',
         );
     }
-    GameEngine.spendResource(gameState, uiState);
+    const spent = GameEngine.spendResource(gameState, uiState);
+    if (!spent.success) {
+      return new Failure(
+        'Completed shrine quest but spend failed: ' + spent.message,
+      );
+    }
     return new Success(`Completed shrine quest -- reward ${shrineHex.reward}`);
+  }
+
+  private static doLoadCube(
+    action: HexAction,
+    gameState: GameState,
+    uiState: UiState,
+  ): ResultWithMessage {
+    const coordinates = uiState.getSelectedCoordinates();
+    if (!coordinates) {
+      return new Failure('doLoadCube failed because no location was selected');
+    }
+
+    const effectiveColor = action.spend.getEffectiveColor();
+    if (!effectiveColor) {
+      return new Failure('doLoadCube failed because no resource was selected');
+    }
+    const item: Item = {
+      type: 'cube',
+      color: effectiveColor,
+    };
+
+    const offeringHex = gameState.findCubeHexAt(coordinates);
+    if (!offeringHex) {
+      return new Failure(
+        'doLoadCube failed because the offering hex was not found',
+      );
+    }
+
+    const player = gameState.getCurrentPlayer();
+    const loaded = player.loadItem(item);
+    if (!loaded.success) {
+      return loaded;
+    }
+    const removalResult = offeringHex.remove(effectiveColor);
+    if (!removalResult.success) {
+      return removalResult;
+    }
+    GameEngine.updateWildQuestIfNecessary(player, item);
+    const spent = GameEngine.spendResource(gameState, uiState);
+    if (!spent.success) {
+      return new Failure(
+        'Loaded cube but spend failed: ' + spent.message,
+      );
+    }
+    return new Success('Offering was loaded');
   }
 }
