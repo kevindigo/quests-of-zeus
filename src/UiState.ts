@@ -36,6 +36,10 @@ export class UiStateClass {
     this.selectedResource = resource;
   }
 
+  public getEffectiveSelectedColor(): CoreColor | null {
+    return this.selectedResource.getEffectiveColor();
+  }
+
   public clearResourceSelection(): void {
     this.selectedResource = Resource.none;
   }
