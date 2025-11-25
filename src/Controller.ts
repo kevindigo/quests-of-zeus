@@ -2,6 +2,7 @@
 // Manages the game UI and user interactions
 
 import type {
+  Action,
   AnyResourceGainFavorAction,
   AnyResourceGainOracleCardAction,
 } from './actions.ts';
@@ -341,16 +342,7 @@ export class Controller {
       subType: 'gainFavor',
       spend: selectedResource,
     };
-    const result = GameEngine.doAction(
-      action,
-      this.getGameState(),
-      this.getUiState(),
-    );
-    if (result.success) {
-      this.clearResourceSelection();
-      this.renderGameState();
-    }
-    this.showMessage(result.message);
+    this.doAction(action);
   }
 
   private drawOracleCard(): void {
@@ -360,16 +352,7 @@ export class Controller {
       subType: 'gainOracleCard',
       spend: selectedResource,
     };
-    const result = GameEngine.doAction(
-      action,
-      this.getGameState(),
-      this.getUiState(),
-    );
-    if (result.success) {
-      this.clearResourceSelection();
-      this.renderGameState();
-    }
-    this.showMessage(result.message);
+    this.doAction(action);
   }
 
   private setRecolorIntention(favorCost: number): void {
@@ -396,6 +379,19 @@ export class Controller {
     this.showMessage(result.message);
 
     this.renderGameState();
+  }
+
+  private doAction(action: Action): void {
+    const result = GameEngine.doAction(
+      action,
+      this.getGameState(),
+      this.getUiState(),
+    );
+    if (result.success) {
+      this.clearResourceSelection();
+      this.renderGameState();
+    }
+    this.showMessage(result.message);
   }
 
   private clearMessagePanel(): void {
