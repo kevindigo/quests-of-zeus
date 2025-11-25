@@ -197,12 +197,13 @@ export interface ExploreShrineAction extends HexAction {
 }
 
 // ------------------ Miscellaneous Actions ------------------
-export interface HealAction extends ColorBasedAction {
+export interface HealAction extends ActionBase {
+  type: 'miscellaneous';
   subType: 'heal';
 }
 
-export interface UseEquipmentGainFavorCardAdvanceAction
-  extends ColorBasedAction {
+export interface UseEquipmentGainFavorCardAdvanceAction extends ActionBase {
+  type: 'miscellaneous';
   subType: 'useEquipmentGainFavorCardAdvance';
 }
 
