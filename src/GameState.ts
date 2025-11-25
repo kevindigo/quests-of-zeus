@@ -1,7 +1,7 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMap, type HexMapSnapshot } from './hexmap/HexMap.ts';
 import { Player, type PlayerSnapshot } from './Player.ts';
-import { type Resource } from './Resource.ts';
+import type { Resource } from './Resource.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -171,6 +171,12 @@ export class GameState {
 
   public getShrineHexes(): ShrineHex[] {
     return this.shrineHexes;
+  }
+
+  public findShrineHex(coordinates: HexCoordinates): ShrineHex | undefined {
+    return this.getShrineHexes().find((shrineHex) => {
+      return shrineHex.q === coordinates.q && shrineHex.r === coordinates.r;
+    });
   }
 
   public setShrineHexes(hexes: ShrineHex[]): void {

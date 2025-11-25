@@ -72,12 +72,13 @@ export class GameEngineHex {
     gameState: GameState,
     coordinates: HexCoordinates,
   ): boolean {
-    const shrineHex = gameState.getShrineHexes().find((shrineHex) => {
-      return shrineHex.q === coordinates.q && shrineHex.r === coordinates.r;
-    });
+    const shrineHex = gameState.findShrineHexAt(coordinates);
+    if (!shrineHex) {
+      return false;
+    }
 
     const player = gameState.getCurrentPlayer();
-    const isHidden = shrineHex?.status === 'hidden';
+    const isHidden = shrineHex.status === 'hidden';
     const isVisibleAndOurs = shrineHex?.status === 'visible' &&
       shrineHex.owner === player.color;
 
