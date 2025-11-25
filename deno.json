@@ -23,7 +23,10 @@
     "esbuild-deno-loader": "https://deno.land/x/esbuild_deno_loader@0.9.0/mod.ts"
   },
   "compilerOptions": {
-    "lib": ["deno.window", "dom"],
+    "lib": [
+      "deno.window",
+      "dom"
+    ],
     "strict": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
@@ -39,8 +42,13 @@
   },
   "lint": {
     "rules": {
-      "tags": ["recommended"],
-      "quotes": ["error", "single"]
+      "tags": [
+        "recommended"
+      ],
+      "quotes": [
+        "error",
+        "single"
+      ]
     }
   },
   "fmt": {
