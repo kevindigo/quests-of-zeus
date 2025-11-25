@@ -405,14 +405,14 @@ export class Controller {
     //   }`,
     // );
 
-    // const availableActions = GameEngine.getAvailableActions(gameState);
+    const availableActions = GameEngine.getAvailableActions(gameState);
     // console.log(
     //   `renderGameState with ${availableActions.length} available actions: ${
     //     JSON.stringify(availableActions)
     //   }`,
     // );
 
-    this.viewGame.renderGameState();
+    this.viewGame.renderGameState(availableActions);
 
     const hexMapContainer = document.getElementById('hexMapSVG');
     if (!hexMapContainer) return;

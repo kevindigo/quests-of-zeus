@@ -1,3 +1,4 @@
+import type { Action } from './actions.ts';
 import type { GameState } from './GameState.ts';
 import type { Player } from './Player.ts';
 import type { Resource } from './Resource.ts';
@@ -11,44 +12,64 @@ export class ViewPhase {
     this.uiState = uiState;
   }
 
-  public getPhasePanelContents(selectedResource: Resource): string {
+  public getPhasePanelContents(availableActions: Action[]): string {
     return `
         <div class="phase-info">
           <h3>Current Phase: ${this.gameState.getPhase().toUpperCase()}</h3>
           <div class="phase-actions">
-            ${this.getPhaseActionsContents(selectedResource)}
+            ${this.getPhaseActionsContents(availableActions)}
+            ${this.getDiceAndOracleCardsContent()}
           </div>
         </div>
       `;
   }
 
-  private getPhaseActionsContents(selectedResource: Resource): string {
-    switch (this.gameState.getPhase()) {
-      case 'action': {
-        let actions = '';
-
-        const disabledText = selectedResource.hasColor() ? '' : 'disabled';
-        actions += `
-          <div class="resource-actions" style="margin-bottom: 1rem;">
-            <button id="spendResourceForFavor" 
-              class="action-button" ${disabledText}>+2 Favor</button>
-            <button id="drawOracleCard" 
-              class="action-button" ${disabledText}>+Oracle Card</button>
-            <button id="endTurn" class="action-button secondary">
-            End Turn</button>
+  private getPhaseActionsContents(availableActions: Action[]): string {
+    return `
+      <div class="resource-actions" style="margin-bottom: 1rem;">
+        <button id="spendResourceForFavor" 
+          class="action-button" 
+          ${this.getFavorButtonStatus(availableActions)}>
+            +2 Favor
+        </button>
+        <button id="drawOracleCard"              
+          class="action-button" 
+          ${this.getCardButtonStatus(availableActions)}>
+            +Oracle Card
+        </button>
+        <button id="endTurn" 
+          class="action-button secondary 
+          ${this.getEndTurnStatus(availableActions)}">
+            End Turn
+        </button>
       </div>`;
+  }
 
-        actions += this.getDiceAndOracleCardsContent();
-        if (!actions) {
-          actions = '<p>Select a die or card to take an action</p>';
-        }
+  private getFavorButtonStatus(availableActions: Action[]): string {
+    const selectedResource = this.uiState.getSelectedResource();
+    const canGainFavor = availableActions.find((action) => {
+      return action.type === 'anyResource' && action.subType === 'gainFavor' &&
+        action.spend.equals(selectedResource);
+    });
+    return canGainFavor ? '' : 'disabled';
+  }
 
-        return actions;
-      }
-      default: {
-        return '<p>Game phase not recognized</p>';
-      }
-    }
+  private getCardButtonStatus(availableActions: Action[]): string {
+    const selectedResource = this.uiState.getSelectedResource();
+    const canGainCard = availableActions.find((action) => {
+      return action.type === 'anyResource' &&
+        action.subType === 'gainOracleCard' &&
+        action.spend.equals(selectedResource);
+    });
+    return canGainCard ? '' : 'disabled';
+  }
+
+  private getEndTurnStatus(availableActions: Action[]): string {
+    const canEndTurn = availableActions.find((action) => {
+      return action.type === 'free' &&
+        action.subType === 'endTurn';
+    });
+    return canEndTurn ? '' : 'disabled';
   }
 
   private getDiceAndOracleCardsContent() {
