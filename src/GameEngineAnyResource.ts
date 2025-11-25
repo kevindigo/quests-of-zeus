@@ -5,12 +5,13 @@ import type {
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
+import { Resource } from './Resource.ts';
 import {
   Failure,
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import { type CoreColor, Resource } from './types.ts';
+import { type CoreColor } from './types.ts';
 import type { UiState } from './UiState.ts';
 
 export class GameEngineAnyResource {

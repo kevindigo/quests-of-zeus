@@ -1,6 +1,7 @@
 import type { GameState } from './GameState.ts';
 import type { Player } from './Player.ts';
-import { COLOR_WHEEL, type Resource } from './types.ts';
+import { type Resource } from './Resource.ts';
+import { COLOR_WHEEL } from './types.ts';
 import type { UiState } from './UiState.ts';
 import { ViewPlayer } from './ViewPlayer.ts';
 

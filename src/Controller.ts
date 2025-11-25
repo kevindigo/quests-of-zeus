@@ -9,8 +9,9 @@ import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
+import { Resource } from './Resource.ts';
 import { ShipMoveHandler } from './ShipMoveHandler.ts';
-import { type CoreColor, Resource, type TerrainType } from './types.ts';
+import { type CoreColor, type TerrainType } from './types.ts';
 import type { UiState } from './UiState.ts';
 import { ViewGame } from './ViewGame.ts';
 

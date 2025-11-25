@@ -1,6 +1,7 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMap, type HexMapSnapshot } from './hexmap/HexMap.ts';
 import { Player, type PlayerSnapshot } from './Player.ts';
+import { type Resource } from './Resource.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -13,7 +14,6 @@ import {
   type CubeHex,
   type MonsterHex,
   type Phase,
-  type Resource,
   type ShrineHex,
   type StatueHex,
 } from './types.ts';
