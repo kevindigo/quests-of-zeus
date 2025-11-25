@@ -141,6 +141,12 @@ export class GameState {
     return this.cubeHexes;
   }
 
+  public findCubeHexAt(coordinates: HexCoordinates): CubeHex | undefined {
+    return this.getCubeHexes().find((hex) => {
+      return hex.q === coordinates.q && hex.r === coordinates.r;
+    });
+  }
+
   public setCubeHexes(hexes: CubeHex[]): void {
     this.cubeHexes = hexes;
   }

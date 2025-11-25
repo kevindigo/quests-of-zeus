@@ -101,9 +101,7 @@ export class GameEngineHex {
       return [];
     }
 
-    const offeringHex = gameState.getCubeHexes().find((hex) => {
-      return hex.q === offeringCell.q && hex.r === offeringCell.r;
-    });
+    const offeringHex = gameState.findCubeHexAt(offeringCell.getCoordinates());
     if (!offeringHex) {
       return [];
     }
