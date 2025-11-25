@@ -1,3 +1,9 @@
+import type {
+  DropCubeAction,
+  ExploreShrineAction,
+  LoadCubeAction,
+} from './actions.ts';
+import { GameEngine } from './GameEngine.ts';
 import type { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
@@ -27,7 +33,7 @@ export class ControllerForHexClicks {
   public handleHexClick(
     coordinates: HexCoordinates,
   ): ResultWithMessage {
-    const gameState = this.gameManager.getGameStateSnapshot();
+    const gameState = this.gameManager.getGameState();
     if (gameState.getPhase() !== 'action') {
       return new Failure(
         `Cannot click hexes during the ${gameState.getPhase()} phase`,
@@ -69,21 +75,38 @@ export class ControllerForHexClicks {
       return new Failure(`No cell found at ${JSON.stringify(coordinates)}`);
     }
 
+    const uiState = this.getUiState();
     const terrain = cell.terrain;
     switch (terrain) {
       case 'sea': {
         return this.handleMoveWithDieOrCard();
       }
       case 'shrine': {
-        return this.handleShrineWithDieOrCard(
+        const action: ExploreShrineAction = {
+          type: 'hex',
+          subType: 'exploreShrine',
           coordinates,
-        );
+          spend: uiState.getSelectedResource(),
+        };
+        return GameEngine.doAction(action, gameState, uiState);
       }
       case 'offerings': {
-        return this.handleOfferingsWithDieOrCard(coordinates);
+        const action: LoadCubeAction = {
+          type: 'hex',
+          subType: 'loadCube',
+          coordinates,
+          spend: uiState.getSelectedResource(),
+        };
+        return GameEngine.doAction(action, gameState, uiState);
       }
       case 'temple': {
-        return this.handleTempleWithDieOrCard(coordinates);
+        const action: DropCubeAction = {
+          type: 'hex',
+          subType: 'dropCube',
+          coordinates,
+          spend: uiState.getSelectedResource(),
+        };
+        return GameEngine.doAction(action, gameState, uiState);
       }
       default:
         return new Failure(
@@ -170,45 +193,6 @@ export class ControllerForHexClicks {
     }
   }
 
-  private handleShrineWithDieOrCard(
-    coordinates: HexCoordinates,
-  ): ResultWithMessage {
-    if (!this.isLandHexClickable(coordinates)) {
-      return new Failure('That shrine is not available');
-    }
-    return this.getEngine().activateShrine(coordinates);
-  }
-
-  private handleOfferingsWithDieOrCard(
-    coordinates: HexCoordinates,
-  ): ResultWithMessage {
-    if (!this.isLandHexClickable(coordinates)) {
-      return new Failure('That offering is not available');
-    }
-    return this.getEngine().activateOffering(coordinates);
-  }
-
-  private handleTempleWithDieOrCard(
-    coordinates: HexCoordinates,
-  ): ResultWithMessage {
-    if (!this.isLandHexClickable(coordinates)) {
-      return new Failure('That temple is not available');
-    }
-    return this.getEngine().activateTemple(coordinates);
-  }
-
-  private isLandHexClickable(coordinates: HexCoordinates): boolean {
-    const engine = this.getEngine();
-    const cells = engine.getAvailableLandInteractions();
-    const found = cells.find((cell) => {
-      return (cell.q === coordinates.q && cell.r === coordinates.r);
-    });
-    return found ? true : false;
-  }
-
-  /**
-   * Format a detailed error message from move ship result
-   */
   private static formatMoveErrorMessage(
     error?: MoveShipResult['error'],
   ): string {

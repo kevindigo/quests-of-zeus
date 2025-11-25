@@ -1,11 +1,7 @@
 == Short-term ==
 
 - Switch existing functionality over to using GameEngine.doAction
-  - First, explore shrine
-    - Tests for doHexAction:
-      - Success: Flip ours
-      - Success: Flip not ours (favor, card, shield, god)
-      - Success: Visible and ours
+  - Bug: Can load a wild cube twice
   - Second, move ship
     - Available moves
     - doMove

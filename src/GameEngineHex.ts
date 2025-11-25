@@ -197,6 +197,19 @@ export class GameEngineHex {
     gameState: GameState,
     uiState: UiState,
   ): ResultWithMessage {
+    const availableActions = GameEngineHex.getHexActions(gameState);
+    console.log(JSON.stringify(availableActions));
+    const isAvailable = availableActions.find((aa) => {
+      return aa.type === action.type &&
+        aa.subType === action.subType &&
+        aa.coordinates.q === action.coordinates.q &&
+        aa.coordinates.r === action.coordinates.r &&
+        aa.spend.equals(action.spend);
+    });
+    if (!isAvailable) {
+      return new Failure(`Action not available ${JSON.stringify(action)}`);
+    }
+
     const selectedCoordinates = uiState.getSelectedCoordinates();
     if (!selectedCoordinates) {
       return new Failure(
@@ -213,27 +226,6 @@ export class GameEngineHex {
     if (!color) {
       return new Failure(
         `Explore shrine without a color selected ${JSON.stringify(action)}`,
-      );
-    }
-    const hexActions = GameEngineHex.getHexActions(gameState);
-    const thisAction: ExploreShrineAction = {
-      type: 'hex',
-      subType: 'exploreShrine',
-      spend: uiState.getSelectedResource(),
-      coordinates: selectedCoordinates,
-    };
-    const found = hexActions.find((action): boolean => {
-      return action.type === thisAction.type &&
-        action.subType === thisAction.subType &&
-        action.coordinates.q === thisAction.coordinates.q &&
-        action.coordinates.r === thisAction.coordinates.r &&
-        action.spend.equals(thisAction.spend);
-    });
-    if (!found) {
-      return new Failure(
-        `Explore shrine action ${JSON.stringify(action)} not available in ${
-          JSON.stringify(hexActions)
-        }`,
       );
     }
 
@@ -279,16 +271,16 @@ export class GameEngineHex {
       case 'shield':
         player.shield += 1;
         return new Failure(
-          'Cloud flippe and gained shield -- healing injuries not available yet',
+          'Cloud flipped and gained shield -- healing injuries not available yet',
         );
     }
     const spent = GameEngine.spendResource(gameState, uiState);
     if (!spent.success) {
       return new Failure(
-        'Completed shrine quest but spend failed: ' + spent.message,
+        'Cloud flipped but spend failed: ' + spent.message,
       );
     }
-    return new Success(`Completed shrine quest -- reward ${shrineHex.reward}`);
+    return new Success(`Cloud flipped -- reward ${shrineHex.reward}`);
   }
 
   private static doLoadCube(
@@ -296,6 +288,19 @@ export class GameEngineHex {
     gameState: GameState,
     uiState: UiState,
   ): ResultWithMessage {
+    const availableActions = GameEngineHex.getHexActions(gameState);
+    if (
+      !availableActions.find((aa) => {
+        return aa.type === action.type &&
+          aa.subType === action.subType &&
+          aa.coordinates.q === action.coordinates.q &&
+          aa.coordinates.r === action.coordinates.r &&
+          aa.spend.equals(action.spend);
+      })
+    ) {
+      return new Failure(`Action not available ${JSON.stringify(action)}`);
+    }
+
     const coordinates = uiState.getSelectedCoordinates();
     if (!coordinates) {
       return new Failure('doLoadCube failed because no location was selected');
@@ -341,6 +346,19 @@ export class GameEngineHex {
     gameState: GameState,
     uiState: UiState,
   ): ResultWithMessage {
+    const availableActions = GameEngineHex.getHexActions(gameState);
+    if (
+      !availableActions.find((aa) => {
+        return aa.type === action.type &&
+          aa.subType === action.subType &&
+          aa.coordinates.q === action.coordinates.q &&
+          aa.coordinates.r === action.coordinates.r &&
+          aa.spend.equals(action.spend);
+      })
+    ) {
+      return new Failure(`Action not available ${JSON.stringify(action)}`);
+    }
+
     const player = gameState.getCurrentPlayer();
     const effectiveColor = action.spend.getEffectiveColor();
     if (!effectiveColor) {
