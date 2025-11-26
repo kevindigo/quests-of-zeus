@@ -84,10 +84,10 @@ Deno.test('GameEngineHex - available next to at least one hidden shrine', () => 
 
   const actions = GameEngineHex.getHexActions(gameState);
   assertGreaterOrEqual(actions.length, 1, JSON.stringify(actions));
-  const found = actions.find((availableAction) => {
+  const found = actions.filter((availableAction) => {
     return GameEngineHex.areEqualHexActions(action, availableAction);
   });
-  assert(found);
+  assertEquals(found.length, 1);
 });
 
 Deno.test('GameEngineHex - available next to our visible shrine', () => {
@@ -98,10 +98,10 @@ Deno.test('GameEngineHex - available next to our visible shrine', () => {
 
   const actions = GameEngineHex.getHexActions(gameState);
   assertGreaterOrEqual(actions.length, 1, JSON.stringify(actions));
-  const found = actions.find((availableAction) => {
+  const found = actions.filter((availableAction) => {
     return GameEngineHex.areEqualHexActions(action, availableAction);
   });
-  assert(found);
+  assertEquals(found.length, 1);
 });
 
 Deno.test('GameEngineHex - doShrineExplore (ours)', () => {
