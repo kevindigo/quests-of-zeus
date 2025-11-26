@@ -87,6 +87,14 @@ export class GameEngineHex {
     );
   }
 
+  public static areEqualHexActions(aa: Action, action: Action): boolean {
+    return aa.type === 'hex' && action.type === 'hex' &&
+      aa.subType === action.subType &&
+      aa.coordinates.q === action.coordinates.q &&
+      aa.coordinates.r === action.coordinates.r &&
+      aa.spend.equals(action.spend);
+  }
+
   private static getShrineActions(
     gameState: GameState,
     shrineCell: HexCell,
@@ -199,11 +207,7 @@ export class GameEngineHex {
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
     const isAvailable = availableActions.find((aa) => {
-      return aa.type === action.type &&
-        aa.subType === action.subType &&
-        aa.coordinates.q === action.coordinates.q &&
-        aa.coordinates.r === action.coordinates.r &&
-        aa.spend.equals(action.spend);
+      return this.areEqualHexActions(aa, action as Action);
     });
     if (!isAvailable) {
       return new Failure(`Action not available ${JSON.stringify(action)}`);
@@ -246,7 +250,7 @@ export class GameEngineHex {
           'Completed the quest, but failed spendResource: ' + spent.message,
         );
       }
-      return new Success(`Completed shrine quest -- God reward not available`);
+      return new Success(`Shrine quest completed -- God reward not available`);
     }
 
     shrineHex.status = 'visible';
