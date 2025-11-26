@@ -156,6 +156,11 @@ export class ShrineHex {
     this.owner = owner;
     this.reward = reward;
   }
+
+  public getCoordinates(): HexCoordinates {
+    return {q: this.q, r: this.r};
+  }
+  
   q: number;
   r: number;
   status: ShrineStatus;
