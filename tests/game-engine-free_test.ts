@@ -1,12 +1,13 @@
 import { assert } from '@std/assert/assert';
 import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
-import type { FreeAction } from '../src/actions.ts';
+import type { FreeAction, FreeEndTurnAction } from '../src/actions.ts';
 import { GameEngineFree } from '../src/GameEngineFree.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
+import { assertFailureContains } from './test-helpers.ts';
 
-Deno.test('GameEngineFree - getAvailableActions setup phase', () => {
+Deno.test('GameEngineFree - getFreeActions setup phase', () => {
   const gameState = new GameState();
   new GameStateInitializer().initializeGameState(gameState);
   gameState.setPhase('setup');
@@ -21,7 +22,7 @@ Deno.test('GameEngineFree - getAvailableActions setup phase', () => {
   assertEquals(endTurnActions.length, 0);
 });
 
-Deno.test('GameEngineFree - getAvailableActions action phase', () => {
+Deno.test('GameEngineFree - getFreeActions action phase', () => {
   const gameState = new GameState();
   new GameStateInitializer().initializeGameState(gameState);
   const actions = GameEngineFree.getFreeActions(gameState);
@@ -35,7 +36,17 @@ Deno.test('GameEngineFree - getAvailableActions action phase', () => {
   assertEquals(endTurnActions.length, 1);
 });
 
-Deno.test('GameEngineFree - end turn', () => {
+Deno.test('GameEngineFree - end turn action wrong phase', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  gameState.setPhase('setup');
+
+  const action: FreeEndTurnAction = { type: 'free', subType: 'endTurn' };
+  const result = GameEngineFree.doAction(action, gameState);
+  assertFailureContains(result, 'not available');
+});
+
+Deno.test('GameEngineFree - end turn action success', () => {
   const gameState = new GameState();
   new GameStateInitializer().initializeGameState(gameState);
   const oldPlayer = gameState.getCurrentPlayer();
@@ -44,7 +55,9 @@ Deno.test('GameEngineFree - end turn', () => {
   oldPlayer.usedOracleCardThisTurn = true;
   assertEquals(gameState.getRound(), 1);
 
-  const result = GameEngineFree.endTurn(gameState);
+  const action: FreeEndTurnAction = { type: 'free', subType: 'endTurn' };
+
+  const result = GameEngineFree.doAction(action, gameState);
   assert(result.success, result.message);
   assertEquals(oldPlayer.oracleDice.length, 3);
   assertEquals(oldPlayer.oracleCards.length, 1);
@@ -53,7 +66,7 @@ Deno.test('GameEngineFree - end turn', () => {
   assertEquals(gameState.getPhase(), 'action');
   assertEquals(gameState.getRound(), 1);
 
-  GameEngineFree.endTurn(gameState);
+  GameEngineFree.doAction(action, gameState);
   assertEquals(gameState.getCurrentPlayerIndex(), 0);
   assertEquals(gameState.getRound(), 2);
 });

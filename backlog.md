@@ -5,7 +5,6 @@
     - Available moves
     - doMove
 - Then remove a bunch of old tests and code
-- Have controller enable/disable buttons based on available actions
 
 == Cosmetic/Usability ==
 

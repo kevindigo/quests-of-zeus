@@ -11,12 +11,6 @@ export class GameEngineFree {
   public static getFreeActions(
     gameState: GameState,
   ): Action[] {
-    return GameEngineFree.getEndTurnActions(gameState);
-  }
-
-  private static getEndTurnActions(
-    gameState: GameState,
-  ): Action[] {
     if (gameState.getPhase() !== 'action') {
       return [];
     }
@@ -34,7 +28,7 @@ export class GameEngineFree {
   ): ResultWithMessage {
     switch (action.subType) {
       case 'endTurn':
-        return GameEngineFree.endTurn(gameState);
+        return GameEngineFree.endTurn(action, gameState);
       case 'continueMonsterFight':
         break;
       case 'abandonMonsterFight':
@@ -51,11 +45,15 @@ export class GameEngineFree {
   }
 
   public static endTurn(
+    action: FreeAction,
     gameState: GameState,
   ): ResultWithMessage {
     const availableActions = GameEngineFree.getFreeActions(gameState);
-    const found = availableActions.find((action) => {
-      return action.type === 'free' && action.subType === 'endTurn';
+    const found = availableActions.find((availableAction) => {
+      return GameEngineFree.areEqualFreeActions(
+        availableAction,
+        action as Action,
+      );
     });
     if (!found) {
       return new Failure('End turn not available');
@@ -85,5 +83,10 @@ export class GameEngineFree {
     }
     gameState.setPhase('action');
     return new Success(`Player ${currentPlayer.color} turn ended`);
+  }
+
+  public static areEqualFreeActions(aa: Action, action: Action): boolean {
+    return aa.type === 'free' && action.type === 'free' &&
+      aa.subType === action.subType;
   }
 }
