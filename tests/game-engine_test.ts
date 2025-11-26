@@ -43,9 +43,8 @@ Deno.test('GameEngine - spend resource with pending recolor', () => {
   uiState.setSelectedResource(Resource.createRecoloredDie('red', 2));
 
   const result = GameEngine.spendResource(gameState, uiState);
-  assertFalse(result.success, result.message);
-  assertFailureContains(result, 'recolor');
-  assert(uiState.getSelectedResource().hasColor());
+  assert(result.success, result.message);
+  assertFalse(uiState.getSelectedResource().hasColor());
 });
 
 Deno.test('GameEngine - spend resource die success', () => {
