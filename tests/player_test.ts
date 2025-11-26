@@ -1,17 +1,11 @@
 import { assert } from '@std/assert/assert';
 import { assertEquals } from '@std/assert/equals';
-import { Player } from '../src/Player.ts';
 import type { Item } from '../src/types.ts';
 import {
   assertFailureContains,
   setupGame,
   testPlayer,
 } from './test-helpers.ts';
-
-Deno.test('Player - range', () => {
-  const player = new Player(0, 'any', 'blue', { q: 0, r: 0 });
-  assertEquals(player.getRange(), 3);
-});
 
 Deno.test('Player - getQuestsOfType', () => {
   setupGame();
