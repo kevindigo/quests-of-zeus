@@ -381,14 +381,15 @@ export class Controller {
       subType: 'endTurn',
     };
     this.doAction(action);
+    this.clearResourceSelectionAndUpdateDisplay();
   }
 
   private doAction(action: Action): void {
     const result = GameEngine.doAction(
       action,
       this.getGameState(),
-      this.getUiState(),
     );
+    this.clearResourceSelection();
     this.showMessage(result.message);
     this.renderGameState();
   }

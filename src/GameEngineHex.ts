@@ -17,7 +17,6 @@ import {
   Success,
 } from './ResultWithMessage.ts';
 import type { Item } from './types.ts';
-import type { UiState } from './UiState.ts';
 
 export class GameEngineHex {
   public static getHexActions(gameState: GameState): Action[] {
@@ -64,15 +63,14 @@ export class GameEngineHex {
   public static doAction(
     action: HexAction,
     gameState: GameState,
-    uiState: UiState,
   ): ResultWithMessage {
     switch (action.subType) {
       case 'shipMove':
         break;
       case 'loadCube':
-        return GameEngineHex.doLoadCube(action, gameState, uiState);
+        return GameEngineHex.doLoadCube(action, gameState);
       case 'dropCube':
-        return GameEngineHex.doDropCube(action, gameState, uiState);
+        return GameEngineHex.doDropCube(action, gameState);
       case 'loadStatue':
         break;
       case 'dropStatue':
@@ -80,7 +78,7 @@ export class GameEngineHex {
       case 'fightMonster':
         break;
       case 'exploreShrine': {
-        return GameEngineHex.doExploreShrine(action, gameState, uiState);
+        return GameEngineHex.doExploreShrine(action, gameState);
       }
     }
     return new Failure(
@@ -232,7 +230,6 @@ export class GameEngineHex {
   private static doExploreShrine(
     action: HexAction,
     gameState: GameState,
-    uiState: UiState,
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
     const isAvailable = availableActions.find((aa) => {
@@ -242,7 +239,7 @@ export class GameEngineHex {
       return new Failure(`Action not available ${JSON.stringify(action)}`);
     }
 
-    const selectedCoordinates = uiState.getSelectedCoordinates();
+    const selectedCoordinates = action.coordinates;
     if (!selectedCoordinates) {
       return new Failure(
         `No coordinates selected for action ${JSON.stringify(action)}`,
@@ -254,7 +251,7 @@ export class GameEngineHex {
         `Explore shrine not where expected: ${JSON.stringify(action)}`,
       );
     }
-    const color = uiState.getEffectiveSelectedColor();
+    const color = action.spend.getEffectiveColor();
     if (!color) {
       return new Failure(
         `Explore shrine without a color selected ${JSON.stringify(action)}`,
@@ -273,7 +270,7 @@ export class GameEngineHex {
       }
       unfilledShrineQuest.isCompleted = true;
       shrineHex.status = 'filled';
-      const spent = GameEngine.spendResource(gameState, uiState);
+      const spent = GameEngine.spendResource(gameState, action.spend);
       if (!spent.success) {
         return new Failure(
           'Completed the quest, but failed spendResource: ' + spent.message,
@@ -306,7 +303,7 @@ export class GameEngineHex {
           'Cloud flipped and gained shield -- healing injuries not available yet',
         );
     }
-    const spent = GameEngine.spendResource(gameState, uiState);
+    const spent = GameEngine.spendResource(gameState, action.spend);
     if (!spent.success) {
       return new Failure(
         'Cloud flipped but spend failed: ' + spent.message,
@@ -318,7 +315,6 @@ export class GameEngineHex {
   private static doLoadCube(
     action: HexAction,
     gameState: GameState,
-    uiState: UiState,
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
     if (
@@ -333,7 +329,7 @@ export class GameEngineHex {
       return new Failure(`Action not available ${JSON.stringify(action)}`);
     }
 
-    const coordinates = uiState.getSelectedCoordinates();
+    const coordinates = action.coordinates;
     if (!coordinates) {
       return new Failure('doLoadCube failed because no location was selected');
     }
@@ -364,7 +360,7 @@ export class GameEngineHex {
       return removalResult;
     }
     GameEngine.updateWildQuestIfNecessary(player, item);
-    const spent = GameEngine.spendResource(gameState, uiState);
+    const spent = GameEngine.spendResource(gameState, action.spend);
     if (!spent.success) {
       return new Failure(
         'Loaded cube but spend failed: ' + spent.message,
@@ -376,7 +372,6 @@ export class GameEngineHex {
   private static doDropCube(
     action: HexAction,
     gameState: GameState,
-    uiState: UiState,
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
     if (
@@ -412,7 +407,7 @@ export class GameEngineHex {
     const item: Item = { type: 'cube', color: effectiveColor };
     player.unloadItem(item);
 
-    GameEngine.spendResource(gameState, uiState);
+    GameEngine.spendResource(gameState, action.spend);
 
     return new Success('faked');
   }

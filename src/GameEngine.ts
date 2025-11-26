@@ -4,13 +4,13 @@ import { GameEngineFree } from './GameEngineFree.ts';
 import { GameEngineHex } from './GameEngineHex.ts';
 import type { GameState } from './GameState.ts';
 import type { Player } from './Player.ts';
+import type { Resource } from './Resource.ts';
 import {
   Failure,
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
 import type { CoreColor, Item } from './types.ts';
-import type { UiState } from './UiState.ts';
 
 export class GameEngine {
   public static getAvailableActions(
@@ -26,15 +26,14 @@ export class GameEngine {
   public static doAction(
     action: Action,
     gameState: GameState,
-    uiState: UiState,
   ): ResultWithMessage {
     switch (action.type) {
       case 'anyResource':
-        return GameEngineAnyResource.doAction(action, gameState, uiState);
+        return GameEngineAnyResource.doAction(action, gameState);
       case 'free':
-        return GameEngineFree.doAction(action, gameState, uiState);
+        return GameEngineFree.doAction(action, gameState);
       case 'hex':
-        return GameEngineHex.doAction(action, gameState, uiState);
+        return GameEngineHex.doAction(action, gameState);
     }
 
     return new Failure(
@@ -46,10 +45,9 @@ export class GameEngine {
   // helpers
   public static spendResource(
     gameState: GameState,
-    uiState: UiState,
+    resource: Resource,
   ): ResultWithMessage {
     const player = gameState.getCurrentPlayer();
-    const resource = uiState.getSelectedResource();
 
     if (!resource.hasColor()) {
       return new Failure('Nothing selected to spend');
@@ -73,7 +71,6 @@ export class GameEngine {
       player.usedOracleCardThisTurn = true;
     }
 
-    uiState.clearResourceSelection();
     return new Success(`Resource ${JSON.stringify(resource)} was spent`);
   }
 

@@ -95,7 +95,7 @@ Deno.test('GameEngineHex - doTempleAction', () => {
   const quest = setupNextToTemple(red);
 
   const action = createDropCubeAction(red);
-  const result = GameEngineHex.doAction(action, gameState, uiState);
+  const result = GameEngineHex.doAction(action, gameState);
   assert(result.success, result.message);
   assert(quest.isCompleted);
   const player = gameState.getCurrentPlayer();

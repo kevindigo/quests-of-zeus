@@ -175,7 +175,7 @@ Deno.test('GameEngineHex - doOfferingAction (existing quest)', () => {
   const cubeCount = offeringHex.cubeColors.length;
 
   const action = createLoadCubeAction(color);
-  const result = GameEngineHex.doAction(action, gameState, uiState);
+  const result = GameEngineHex.doAction(action, gameState);
   assert(result.success, result.message);
   assertEquals(offeringHex.cubeColors.length, cubeCount - 1);
   const player = gameState.getCurrentPlayer();
@@ -197,7 +197,7 @@ Deno.test('GameEngineHex - doOfferingAction (wild quest)', () => {
   const cubeCount = offeringHex.cubeColors.length;
 
   const action = createLoadCubeAction(color);
-  const result = GameEngineHex.doAction(action, gameState, uiState);
+  const result = GameEngineHex.doAction(action, gameState);
   assert(result.success, result.message);
   assertEquals(offeringHex.cubeColors.length, cubeCount - 1);
   const player = gameState.getCurrentPlayer();

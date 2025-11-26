@@ -6,7 +6,6 @@ import {
   Success,
 } from './ResultWithMessage.ts';
 import { COLOR_WHEEL, type CoreColor } from './types.ts';
-import type { UiState } from './UiState.ts';
 
 export class GameEngineFree {
   public static getFreeActions(
@@ -32,11 +31,10 @@ export class GameEngineFree {
   public static doAction(
     action: FreeAction,
     gameState: GameState,
-    uiState: UiState,
   ): ResultWithMessage {
     switch (action.subType) {
       case 'endTurn':
-        return GameEngineFree.endTurn(gameState, uiState);
+        return GameEngineFree.endTurn(gameState);
       case 'continueMonsterFight':
         break;
       case 'abandonMonsterFight':
@@ -54,7 +52,6 @@ export class GameEngineFree {
 
   public static endTurn(
     gameState: GameState,
-    uiState: UiState,
   ): ResultWithMessage {
     const availableActions = GameEngineFree.getFreeActions(gameState);
     const found = availableActions.find((action) => {
@@ -82,7 +79,6 @@ export class GameEngineFree {
     const nextPlayerIndex = (gameState.getCurrentPlayerIndex() + 1) %
       gameState.getPlayerCount();
 
-    uiState.clearResourceSelection();
     gameState.setCurrentPlayerIndex(nextPlayerIndex);
     if (gameState.getCurrentPlayerIndex() === 0) {
       gameState.advanceRound();

@@ -109,7 +109,7 @@ Deno.test('GameEngineHex - doShrineExplore (ours)', () => {
   const shrineHex = getSelectedShrineHex();
 
   const action = createExploreAction();
-  const result = GameEngineHex.doAction(action, gameState, uiState);
+  const result = GameEngineHex.doAction(action, gameState);
   assert(result.success, result.message);
   assertStringIncludes(result.message, 'completed');
   assertEquals(shrineHex.status, 'filled');
@@ -130,7 +130,7 @@ Deno.test('GameEngineHex - doShrineExplore (ours already visible)', () => {
   shrineHex.status = 'visible';
 
   const action = createExploreAction();
-  const result = GameEngineHex.doAction(action, gameState, uiState);
+  const result = GameEngineHex.doAction(action, gameState);
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'filled');
   const player = gameState.getCurrentPlayer();
@@ -149,7 +149,7 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, favor)', () => {
   const shrineHex = getSelectedShrineHex();
 
   const action = createExploreAction();
-  const result = GameEngineHex.doAction(action, gameState, uiState);
+  const result = GameEngineHex.doAction(action, gameState);
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'visible');
   const player = gameState.getCurrentPlayer();
@@ -169,7 +169,7 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, shield)', () => {
   const shrineHex = getSelectedShrineHex();
 
   const action = createExploreAction();
-  const result = GameEngineHex.doAction(action, gameState, uiState);
+  const result = GameEngineHex.doAction(action, gameState);
   assertFailureContains(result, 'shield');
   assertFailureContains(result, 'yet');
   assertEquals(shrineHex.status, 'visible');
@@ -189,7 +189,7 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, god)', () => {
   const shrineHex = getSelectedShrineHex();
 
   const action = createExploreAction();
-  const result = GameEngineHex.doAction(action, gameState, uiState);
+  const result = GameEngineHex.doAction(action, gameState);
   assertFailureContains(result, 'god');
   assertFailureContains(result, 'yet');
   assertEquals(shrineHex.status, 'visible');
@@ -209,7 +209,7 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, card)', () => {
   const shrineHex = getSelectedShrineHex();
 
   const action = createExploreAction();
-  const result = GameEngineHex.doAction(action, gameState, uiState);
+  const result = GameEngineHex.doAction(action, gameState);
   assert(result.success, result.message);
   assertEquals(shrineHex.status, 'visible');
   const player = gameState.getCurrentPlayer();

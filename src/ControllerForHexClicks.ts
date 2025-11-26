@@ -88,7 +88,9 @@ export class ControllerForHexClicks {
           coordinates,
           spend: uiState.getSelectedResource(),
         };
-        return GameEngine.doAction(action, gameState, uiState);
+        const result = GameEngine.doAction(action, gameState);
+        uiState.clearResourceSelection();
+        return result;
       }
       case 'offerings': {
         const action: LoadCubeAction = {
@@ -97,7 +99,9 @@ export class ControllerForHexClicks {
           coordinates,
           spend: uiState.getSelectedResource(),
         };
-        return GameEngine.doAction(action, gameState, uiState);
+        const result = GameEngine.doAction(action, gameState);
+        uiState.clearResourceSelection();
+        return result;
       }
       case 'temple': {
         const action: DropCubeAction = {
@@ -106,7 +110,9 @@ export class ControllerForHexClicks {
           coordinates,
           spend: uiState.getSelectedResource(),
         };
-        return GameEngine.doAction(action, gameState, uiState);
+        const result = GameEngine.doAction(action, gameState);
+        uiState.clearResourceSelection();
+        return result;
       }
       default:
         return new Failure(

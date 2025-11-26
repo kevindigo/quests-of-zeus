@@ -1,7 +1,6 @@
 == Short-term ==
 
 - Switch existing functionality over to using GameEngine.doAction
-  - Bug: Can load a wild cube twice
   - Second, move ship
     - Available moves
     - doMove
@@ -45,6 +44,9 @@
 == Code improvement ==
 
 - Put all the map navigation in one place
+- Should ship loading rules enforcement all be in one place?
+  - Currently, duplicate and full ship are in player, but
+  - No valid quest is in GameEngineHex
 
 == Quests ==
 

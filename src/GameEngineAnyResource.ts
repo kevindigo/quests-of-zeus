@@ -11,7 +11,6 @@ import {
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import type { UiState } from './UiState.ts';
 
 export class GameEngineAnyResource {
   public static getAnyResourceActions(gameState: GameState): Action[] {
@@ -48,15 +47,14 @@ export class GameEngineAnyResource {
   public static doAction(
     action: AnyResourceAction,
     gameState: GameState,
-    uiState: UiState,
   ): ResultWithMessage {
     switch (action.subType) {
       case 'gainFavor':
-        return GameEngineAnyResource.spendResourceForFavor(gameState, uiState);
+        return GameEngineAnyResource.spendResourceForFavor(gameState, action);
       case 'gainOracleCard':
         return GameEngineAnyResource.spendResourceForOracleCard(
           gameState,
-          uiState,
+          action,
         );
       case 'gainPeekCoupons':
         return new Failure(
@@ -67,10 +65,11 @@ export class GameEngineAnyResource {
 
   public static spendResourceForFavor(
     gameState: GameState,
-    uiState: UiState,
+    action: AnyResourceAction,
   ): ResultWithMessage {
-    const requestedSpend = uiState.getSelectedResource();
-    const spendWithoutRecoloring = requestedSpend.withoutRecoloring();
+    const spendWithoutRecoloring = action.spend.withoutRecoloring();
+    action.spend = spendWithoutRecoloring;
+    const requestedSpend = action.spend;
 
     const availableActions = GameEngineAnyResource.getAnyResourceActions(
       gameState,
@@ -83,8 +82,7 @@ export class GameEngineAnyResource {
       return new Failure('Action not available');
     }
 
-    uiState.setSelectedResource(spendWithoutRecoloring);
-    const result = GameEngine.spendResource(gameState, uiState);
+    const result = GameEngine.spendResource(gameState, requestedSpend);
     if (!result.success) {
       return result;
     }
@@ -98,10 +96,11 @@ export class GameEngineAnyResource {
 
   public static spendResourceForOracleCard(
     gameState: GameState,
-    uiState: UiState,
+    action: AnyResourceAction,
   ): ResultWithMessage {
-    const requestedSpend = uiState.getSelectedResource();
-    const spendWithoutRecoloring = requestedSpend.withoutRecoloring();
+    const spendWithoutRecoloring = action.spend.withoutRecoloring();
+    action.spend = spendWithoutRecoloring;
+    const requestedSpend = action.spend;
 
     const availableActions = GameEngineAnyResource.getAnyResourceActions(
       gameState,
@@ -112,7 +111,7 @@ export class GameEngineAnyResource {
         action.spend.equals(spendWithoutRecoloring);
     });
     if (!found) {
-      return new Failure('End turn not available');
+      return new Failure('Gain oracle card not available');
     }
 
     const player = gameState.getCurrentPlayer();
@@ -125,8 +124,7 @@ export class GameEngineAnyResource {
       );
     }
 
-    uiState.setSelectedResource(spendWithoutRecoloring);
-    const result = GameEngine.spendResource(gameState, uiState);
+    const result = GameEngine.spendResource(gameState, requestedSpend);
     if (!result.success) {
       return result;
     }
