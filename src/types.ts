@@ -81,6 +81,10 @@ export class CubeHex {
     this.cubeColors = [];
   }
 
+  public getCoordinates(): HexCoordinates {
+    return { q: this.q, r: this.r };
+  }
+
   public remove(color: CoreColor): ResultWithMessage {
     const index = this.cubeColors.indexOf(color);
     if (index < 0) {
@@ -106,6 +110,11 @@ export class MonsterHex {
     this.r = coordinates.r;
     this.monsterColors = [];
   }
+
+  public getCoordinates(): HexCoordinates {
+    return { q: this.q, r: this.r };
+  }
+
   q: number;
   r: number;
   monsterColors: CoreColor[];
@@ -118,6 +127,10 @@ export class CityHex {
     this.statues = 3;
   }
 
+  public getCoordinates(): HexCoordinates {
+    return { q: this.q, r: this.r };
+  }
+
   q: number;
   r: number;
   statues: number;
@@ -128,6 +141,10 @@ export class StatueHex {
     this.q = coordinates.q;
     this.r = coordinates.r;
     this.statueBaseColors = [];
+  }
+
+  public getCoordinates(): HexCoordinates {
+    return { q: this.q, r: this.r };
   }
 
   q: number;
@@ -158,9 +175,9 @@ export class ShrineHex {
   }
 
   public getCoordinates(): HexCoordinates {
-    return {q: this.q, r: this.r};
+    return { q: this.q, r: this.r };
   }
-  
+
   q: number;
   r: number;
   status: ShrineStatus;
@@ -237,4 +254,3 @@ export interface Item {
   type: ItemType;
   color: CoreColor;
 }
-
