@@ -67,30 +67,26 @@ export class GameEngineAnyResource {
     gameState: GameState,
     action: AnyResourceAction,
   ): ResultWithMessage {
-    const spendWithoutRecoloring = action.spend.withoutRecoloring();
-    action.spend = spendWithoutRecoloring;
-    const requestedSpend = action.spend;
+    this.removeColoringFrom(action);
 
-    const availableActions = GameEngineAnyResource.getAnyResourceActions(
-      gameState,
-    );
-    const found = availableActions.find((action) => {
-      return action.type === 'anyResource' && action.subType === 'gainFavor' &&
-        action.spend.equals(spendWithoutRecoloring);
+    const availableActions = this.getAnyResourceActions(gameState);
+    const found = availableActions.find((availableAction) => {
+      return this.areEqualAnyResourceActions(availableAction, action);
     });
     if (!found) {
       return new Failure('Action not available');
     }
 
-    const result = GameEngine.spendResource(gameState, requestedSpend);
+    const result = GameEngine.spendResource(gameState, action.spend);
     if (!result.success) {
       return result;
     }
 
     const player = gameState.getCurrentPlayer();
     player.favor += 2;
+
     return new Success(
-      `Resource spent (${spendWithoutRecoloring.getBaseColor()}); favor gained`,
+      `Resource spent (${action.spend.getBaseColor()}); favor gained`,
     );
   }
 
@@ -98,40 +94,45 @@ export class GameEngineAnyResource {
     gameState: GameState,
     action: AnyResourceAction,
   ): ResultWithMessage {
-    const spendWithoutRecoloring = action.spend.withoutRecoloring();
-    action.spend = spendWithoutRecoloring;
-    const requestedSpend = action.spend;
+    this.removeColoringFrom(action);
 
-    const availableActions = GameEngineAnyResource.getAnyResourceActions(
-      gameState,
-    );
-    const found = availableActions.find((action) => {
-      return action.type === 'anyResource' &&
-        action.subType === 'gainOracleCard' &&
-        action.spend.equals(spendWithoutRecoloring);
+    const availableActions = this.getAnyResourceActions(gameState);
+    const found = availableActions.find((availableAction) => {
+      return this.areEqualAnyResourceActions(availableAction, action);
     });
     if (!found) {
       return new Failure('Gain oracle card not available');
     }
 
-    const player = gameState.getCurrentPlayer();
-
     const deck = gameState.getOracleCardDeck();
     const card = deck.pop();
     if (!card) {
-      return new Failure(
-        'Oracle card deck was empty',
-      );
+      return new Failure('Oracle card deck was empty');
     }
 
-    const result = GameEngine.spendResource(gameState, requestedSpend);
+    const result = GameEngine.spendResource(gameState, action.spend);
     if (!result.success) {
       return result;
     }
+
+    const player = gameState.getCurrentPlayer();
     player.oracleCards.push(card);
 
     return new Success(
-      `Spent ${spendWithoutRecoloring.getBaseColor()} to gain ${card} card`,
+      `Spent ${action.spend.getBaseColor()} to gain ${card} card`,
     );
+  }
+
+  public static areEqualAnyResourceActions(
+    aa: Action,
+    action: Action,
+  ): boolean {
+    return aa.type === 'anyResource' && action.type === 'anyResource' &&
+      aa.subType === action.subType &&
+      aa.spend.equals(action.spend);
+  }
+
+  private static removeColoringFrom(action: AnyResourceAction): void {
+    action.spend = action.spend.withoutRecoloring();
   }
 }

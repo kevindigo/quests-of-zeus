@@ -11,8 +11,19 @@ import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { Resource } from '../src/Resource.ts';
 import type { CoreColor } from '../src/types.ts';
-import { UiStateClass } from '../src/UiState.ts';
 import { assertFailureContains } from './test-helpers.ts';
+
+let gameState: GameState;
+
+function setup(): void {
+  gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const player = gameState.getCurrentPlayer();
+  const dice: CoreColor[] = ['red', 'red'];
+  player.oracleDice = dice;
+  const cards: CoreColor[] = ['red', 'blue'];
+  player.oracleCards = cards;
+}
 
 function createGainFavorAction(spend: Resource): AnyResourceGainFavorAction {
   return {
@@ -33,89 +44,69 @@ function createGainCardAction(
 }
 
 Deno.test('GameEngineAnyResource - available actions setup phase', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
+  setup();
   gameState.setPhase('setup');
   const actions = GameEngineAnyResource.getAnyResourceActions(gameState);
   assertEquals(actions.length, 0);
 });
 
 Deno.test('GameEngineAnyResource - available actions already used card', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
+  setup();
   const player = gameState.getCurrentPlayer();
-  const dice: CoreColor[] = ['red', 'red'];
-  player.oracleDice = dice;
-  const cards: CoreColor[] = ['red', 'blue'];
-  player.oracleCards = cards;
   player.usedOracleCardThisTurn = true;
   const actions = GameEngineAnyResource.getAnyResourceActions(gameState);
   assertEquals(actions.length, 2);
 });
 
 Deno.test('GameEngineAnyResource - available actions dice and cards', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
-  const player = gameState.getCurrentPlayer();
-  const dice: CoreColor[] = ['red', 'red', 'blue'];
-  player.oracleDice = dice;
-  const cards: CoreColor[] = ['red', 'black'];
-  player.oracleCards = cards;
+  setup();
   const actions = GameEngineAnyResource.getAnyResourceActions(gameState);
-  assertEquals(actions.length, 8, JSON.stringify(actions));
+  assertEquals(actions.length, 6, JSON.stringify(actions));
 });
 
 Deno.test('GameEngineAnyResource - available actions empty deck', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
-  const player = gameState.getCurrentPlayer();
+  setup();
   gameState.getOracleCardDeck().splice(0);
-  player.oracleDice = ['red'];
-  player.oracleCards = ['blue'];
 
   const actions = GameEngineAnyResource.getAnyResourceActions(gameState);
-  assertEquals(actions.length, 2, JSON.stringify(actions));
+  assertEquals(actions.length, 3, JSON.stringify(actions));
 });
 
 Deno.test('GameEngineAnyResource - gain favor nothing selected', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
+  setup();
 
-  const result = GameEngineAnyResource.spendResourceForFavor(
-    gameState,
+  const result = GameEngineAnyResource.doAction(
     createGainFavorAction(Resource.none),
+    gameState,
   );
   assertFailureContains(result, 'available');
 });
 
 Deno.test('GameEngineAnyResource - gain favor with die success', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
+  setup();
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
-  player.oracleDice = ['red', 'blue'];
+  const oldDiceCount = player.oracleDice.length;
 
-  const result = GameEngineAnyResource.spendResourceForFavor(
+  const result = GameEngineAnyResource.doAction(
+    createGainFavorAction(Resource.createDie('red')),
     gameState,
-    createGainFavorAction(Resource.createDie('blue')),
   );
   assert(result.success, result.message);
   assertStringIncludes(result.message, 'gained');
   assertEquals(player.favor, oldFavor + 2);
   assertFalse(player.usedOracleCardThisTurn);
-  assertEquals(player.oracleDice.length, 1);
+  assertEquals(player.oracleDice.length, oldDiceCount - 1);
 });
 
 Deno.test('GameEngineAnyResource - gain favor with card success', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
+  setup();
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
-  player.oracleCards = ['red', 'blue'];
 
-  const result = GameEngineAnyResource.spendResourceForFavor(
-    gameState,
+  const result = GameEngineAnyResource.doAction(
     createGainFavorAction(Resource.createCard('blue')),
+    gameState,
   );
   assert(result.success, result.message);
   assertStringIncludes(result.message, 'gained');
@@ -125,15 +116,13 @@ Deno.test('GameEngineAnyResource - gain favor with card success', () => {
 });
 
 Deno.test('GameEngineAnyResource - gain favor ignore recolor', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
+  setup();
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
-  player.oracleCards = ['red', 'blue'];
 
-  const result = GameEngineAnyResource.spendResourceForFavor(
-    gameState,
+  const result = GameEngineAnyResource.doAction(
     createGainFavorAction(Resource.createRecoloredCard('blue', 2)),
+    gameState,
   );
   assert(result.success, result.message);
   assertStringIncludes(result.message, 'gained');
@@ -141,72 +130,59 @@ Deno.test('GameEngineAnyResource - gain favor ignore recolor', () => {
 });
 
 Deno.test('GameEngineAnyResource - gain card nothing selected', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
+  setup();
 
-  const result = GameEngineAnyResource.spendResourceForOracleCard(
-    gameState,
+  const result = GameEngineAnyResource.doAction(
     createGainCardAction(Resource.none),
+    gameState,
   );
   assertFailureContains(result, 'available');
 });
 
 Deno.test('GameEngineAnyResource - gain card with die success', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
-  const uiState = new UiStateClass();
+  setup();
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
-  player.oracleDice = ['red', 'blue'];
 
-  const result = GameEngineAnyResource.spendResourceForOracleCard(
+  const result = GameEngineAnyResource.doAction(
+    createGainCardAction(Resource.createDie('red')),
     gameState,
-    createGainCardAction(Resource.createDie('blue')),
   );
   assert(result.success, result.message);
   assertStringIncludes(result.message, 'gain');
   assertEquals(player.favor, oldFavor);
-  assertFalse(uiState.getSelectedResource().hasColor());
-  assertEquals(uiState.getSelectedRecoloring(), 0);
   assertFalse(player.usedOracleCardThisTurn);
   assertEquals(player.oracleDice.length, 1);
-  assertEquals(player.oracleCards.length, 1);
+  assertEquals(player.oracleCards.length, 3);
 });
 
 Deno.test('GameEngineAnyResource - gain card with card success', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
-  const uiState = new UiStateClass();
+  setup();
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
-  player.oracleCards = ['red', 'blue'];
 
-  const result = GameEngineAnyResource.spendResourceForOracleCard(
-    gameState,
+  const result = GameEngineAnyResource.doAction(
     createGainCardAction(Resource.createCard('blue')),
+    gameState,
   );
   assert(result.success, result.message);
   assertStringIncludes(result.message, 'gain');
   assertEquals(player.favor, oldFavor);
-  assertFalse(uiState.getSelectedResource().hasColor());
-  assertEquals(uiState.getSelectedRecoloring(), 0);
   assert(player.usedOracleCardThisTurn);
-  assertEquals(player.oracleDice.length, 3);
+  assertEquals(player.oracleDice.length, 2);
   assertEquals(player.oracleCards.length, 2);
 });
 
 Deno.test('GameEngineAnyResource - gain card with die ignore recolor', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
+  setup();
   const player = gameState.getCurrentPlayer();
-  player.oracleDice = ['red', 'blue'];
 
-  const result = GameEngineAnyResource.spendResourceForOracleCard(
+  const result = GameEngineAnyResource.doAction(
+    createGainCardAction(Resource.createRecoloredDie('red', 2)),
     gameState,
-    createGainCardAction(Resource.createRecoloredDie('blue', 2)),
   );
   assert(result.success, result.message);
   assertStringIncludes(result.message, 'gain');
   assertEquals(player.oracleDice.length, 1);
-  assertEquals(player.oracleCards.length, 1);
+  assertEquals(player.oracleCards.length, 3);
 });
