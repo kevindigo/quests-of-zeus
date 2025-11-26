@@ -5,15 +5,38 @@ import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { Resource } from '../src/Resource.ts';
-import { COLOR_WHEEL, type Item } from '../src/types.ts';
-import { UiStateClass } from '../src/UiState.ts';
+import {
+  COLOR_WHEEL,
+  type CoreColor,
+  type CubeHex,
+  type Item,
+} from '../src/types.ts';
+import { type UiState, UiStateClass } from '../src/UiState.ts';
 
-Deno.test('GameEngineHex - available next to needed cubes', () => {
-  const gameState = new GameState();
+let gameState: GameState;
+let uiState: UiState;
+
+function setupNextToOffering(
+  cubeFromExistingQuest: boolean,
+): CoreColor {
+  gameState = new GameState();
   new GameStateInitializer().initializeGameState(gameState);
+  uiState = new UiStateClass();
   const player = gameState.getCurrentPlayer();
-  const offeringHex = gameState.getCubeHexes()[0];
+
+  const quests = player.getQuestsOfType('temple');
+  const questColors = quests.map((quest) => {
+    return quest.color;
+  }).filter((color) => {
+    return color !== 'none';
+  });
+  const findColor = cubeFromExistingQuest ? questColors[0] : 'green';
+  assert(findColor);
+  const offeringHex = gameState.getCubeHexes().find((hex) => {
+    return hex.cubeColors.indexOf(findColor) >= 0;
+  });
   assert(offeringHex);
+
   const offeringCoordinates = { q: offeringHex.q, r: offeringHex.r };
   const seaNeighbors = gameState.getMap().getHexGrid()
     .getNeighborsOfTypeByCoordinates(
@@ -22,65 +45,100 @@ Deno.test('GameEngineHex - available next to needed cubes', () => {
     );
   const destination = seaNeighbors[0];
   assert(destination);
+
   player.setShipPosition(destination.getCoordinates());
-  player.oracleDice = [...COLOR_WHEEL];
+  player.oracleDice = [];
+  player.oracleCards = [...COLOR_WHEEL];
   player.favor = 0;
 
+  const shrineCell = gameState.getMap().getCell(offeringHex.getCoordinates());
+  assert(shrineCell);
+  uiState.setSelectedCoordinates(shrineCell.getCoordinates());
+  return findColor;
+}
+
+function getSelectedOfferingHex(): CubeHex {
+  const offeringCoordinates = uiState.getSelectedCoordinates();
+  assert(offeringCoordinates);
+  const offeringHex = gameState.findCubeHexAt(offeringCoordinates);
+  assert(offeringHex);
+  return offeringHex;
+}
+
+function createLoadCubeAction(color: CoreColor): LoadCubeAction {
+  const offeringHex = getSelectedOfferingHex();
+  const offeringCell = gameState.getMap().getCell(offeringHex.getCoordinates());
+  assert(offeringCell);
+  uiState.setSelectedResource(Resource.createCard(color));
+  uiState.setSelectedCoordinates(offeringCell.getCoordinates());
+  const action: LoadCubeAction = {
+    type: 'hex',
+    subType: 'loadCube',
+    coordinates: offeringHex.getCoordinates(),
+    spend: Resource.createCard(color),
+  };
+  return action;
+}
+
+Deno.test('GameEngineHex - available next to cube needed for wild quest', () => {
+  const color = setupNextToOffering(false);
+
+  const action = createLoadCubeAction(color);
   const actions = GameEngineHex.getHexActions(gameState);
   assertGreaterOrEqual(actions.length, 2, JSON.stringify(actions));
-  const action = actions.find((action) => {
-    return action.type === 'hex' && action.subType === 'loadCube' &&
-      action.coordinates.q === offeringHex.q &&
-      action.coordinates.r === offeringHex.r;
+  const found = actions.filter((availableAction) => {
+    return GameEngineHex.areEqualHexActions(action, availableAction);
   });
-  assert(action);
-  assert(action.type === 'hex');
-  assert(action.subType === 'loadCube');
-  assert(
-    action.coordinates.q === offeringHex.q &&
-      action.coordinates.r === offeringHex.r,
-  );
-  assert(action.spend.isDie());
+  assertEquals(found.length, 1);
 });
 
-Deno.test('GameEngineHex -available next to useful temple', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
-  const player = gameState.getCurrentPlayer();
-  const templeHex = gameState.getMap().getCellsByTerrain('temple')[0];
-  assert(templeHex);
-  const templeColor = templeHex.color;
-  assert(templeColor !== 'none');
-  const templeCoordinates = { q: templeHex.q, r: templeHex.r };
-  const seaNeighbors = gameState.getMap().getHexGrid()
-    .getNeighborsOfTypeByCoordinates(
-      templeCoordinates,
-      'sea',
-    );
-  const destination = seaNeighbors[0];
-  assert(destination);
-  player.setShipPosition(destination.getCoordinates());
-  player.oracleDice = [...COLOR_WHEEL];
-  player.favor = 0;
-  const cube: Item = { type: 'cube', color: templeColor };
-  const loaded = player.loadItem(cube);
-  assert(loaded.success, loaded.message);
+Deno.test('GameEngineHex - available next to cube needed for color quest', () => {
+  const color = setupNextToOffering(true);
 
+  const action = createLoadCubeAction(color);
+  const actions = GameEngineHex.getHexActions(gameState);
+  assertGreaterOrEqual(actions.length, 2, JSON.stringify(actions));
+  const found = actions.filter((availableAction) => {
+    return GameEngineHex.areEqualHexActions(action, availableAction);
+  });
+  assertEquals(found.length, 1);
+});
+
+Deno.test('GameEngineHex - available next to cube we already have', () => {
+  const color = setupNextToOffering(true);
+  const player = gameState.getCurrentPlayer();
+  const cube: Item = { type: 'cube', color };
+  assert(player.loadItem(cube), `Failed to load ${JSON.stringify(cube)}`);
+
+  const action = createLoadCubeAction(color);
   const actions = GameEngineHex.getHexActions(gameState);
   assertGreaterOrEqual(actions.length, 1, JSON.stringify(actions));
-  const action = actions.find((action) => {
-    return action.type === 'hex' && action.subType === 'dropCube' &&
-      action.coordinates.q === templeHex.q &&
-      action.coordinates.r === templeHex.r;
+  const found = actions.filter((availableAction) => {
+    return GameEngineHex.areEqualHexActions(action, availableAction);
   });
-  assert(action);
-  assert(action.type === 'hex');
-  assert(action.subType === 'dropCube');
-  assert(
-    action.coordinates.q === templeHex.q &&
-      action.coordinates.r === templeHex.r,
+  assertEquals(
+    found.length,
+    0,
+    JSON.stringify(action) + ': ' + JSON.stringify(actions),
   );
-  assert(action.spend.isDie());
+});
+
+Deno.test('GameEngineHex - available next to cube we cannot use', () => {
+  const color = setupNextToOffering(false);
+  const player = gameState.getCurrentPlayer();
+  const wildQuest = player.getQuestsOfType('temple').find((quest) => {
+    return quest.color === 'none';
+  });
+  assert(wildQuest);
+  wildQuest.color = 'red';
+
+  const action = createLoadCubeAction(color);
+  const actions = GameEngineHex.getHexActions(gameState);
+  assertGreaterOrEqual(actions.length, 2, JSON.stringify(actions));
+  const found = actions.filter((availableAction) => {
+    return GameEngineHex.areEqualHexActions(action, availableAction);
+  });
+  assertEquals(found.length, 0);
 });
 
 Deno.test('GameEngineHex - doOfferingAction (existing quest)', () => {
@@ -178,6 +236,46 @@ Deno.test('GameEngineHex - doOfferingAction (wild quest)', () => {
     greenQuest,
     'Cube should have been used for the wild quest',
   );
+});
+
+Deno.test('GameEngineHex -available next to useful temple', () => {
+  const gameState = new GameState();
+  new GameStateInitializer().initializeGameState(gameState);
+  const player = gameState.getCurrentPlayer();
+  const templeHex = gameState.getMap().getCellsByTerrain('temple')[0];
+  assert(templeHex);
+  const templeColor = templeHex.color;
+  assert(templeColor !== 'none');
+  const templeCoordinates = { q: templeHex.q, r: templeHex.r };
+  const seaNeighbors = gameState.getMap().getHexGrid()
+    .getNeighborsOfTypeByCoordinates(
+      templeCoordinates,
+      'sea',
+    );
+  const destination = seaNeighbors[0];
+  assert(destination);
+  player.setShipPosition(destination.getCoordinates());
+  player.oracleDice = [...COLOR_WHEEL];
+  player.favor = 0;
+  const cube: Item = { type: 'cube', color: templeColor };
+  const loaded = player.loadItem(cube);
+  assert(loaded.success, loaded.message);
+
+  const actions = GameEngineHex.getHexActions(gameState);
+  assertGreaterOrEqual(actions.length, 1, JSON.stringify(actions));
+  const action = actions.find((action) => {
+    return action.type === 'hex' && action.subType === 'dropCube' &&
+      action.coordinates.q === templeHex.q &&
+      action.coordinates.r === templeHex.r;
+  });
+  assert(action);
+  assert(action.type === 'hex');
+  assert(action.subType === 'dropCube');
+  assert(
+    action.coordinates.q === templeHex.q &&
+      action.coordinates.r === templeHex.r,
+  );
+  assert(action.spend.isDie());
 });
 
 Deno.test('GameEngineHex - doTempleAction', () => {

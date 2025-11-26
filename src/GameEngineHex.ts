@@ -9,6 +9,7 @@ import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import type { Player } from './Player.ts';
 import type { Resource } from './Resource.ts';
 import {
   Failure,
@@ -148,7 +149,11 @@ export class GameEngineHex {
 
     const cube: Item = { type: 'cube', color: effectiveColor };
     const player = gameState.getCurrentPlayer();
-    if (!player.validateItemIsLoadable(cube)) {
+    if (!player.validateItemIsLoadable(cube).success) {
+      return [];
+    }
+
+    if (!this.willSatisfyQuest(player, cube)) {
       return [];
     }
 
@@ -168,6 +173,16 @@ export class GameEngineHex {
     }
 
     return [];
+  }
+
+  private static willSatisfyQuest(player: Player, cube: Item): boolean {
+    if (cube.type !== 'cube') {
+      return false;
+    }
+    const questItCanUse = player.getQuestsOfType('temple').find((quest) => {
+      return quest.color === 'none' || quest.color === cube.color;
+    });
+    return questItCanUse ? true : false;
   }
 
   private static getTempleActions(
