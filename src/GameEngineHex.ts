@@ -198,7 +198,6 @@ export class GameEngineHex {
     uiState: UiState,
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
-    console.log(JSON.stringify(availableActions));
     const isAvailable = availableActions.find((aa) => {
       return aa.type === action.type &&
         aa.subType === action.subType &&
