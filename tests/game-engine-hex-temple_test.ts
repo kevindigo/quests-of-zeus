@@ -123,7 +123,7 @@ Deno.test('GameEngineHex - available next to cube we already have', () => {
   );
 });
 
-Deno.test('GameEngineHex - available next to cube we cannot use', () => {
+Deno.test('GameEngineHex - available next to cube with no matching quest', () => {
   const color = setupNextToOffering(false);
   const player = gameState.getCurrentPlayer();
   const wildQuest = player.getQuestsOfType('temple').find((quest) => {
@@ -134,7 +134,23 @@ Deno.test('GameEngineHex - available next to cube we cannot use', () => {
 
   const action = createLoadCubeAction(color);
   const actions = GameEngineHex.getHexActions(gameState);
-  assertGreaterOrEqual(actions.length, 2, JSON.stringify(actions));
+  const found = actions.filter((availableAction) => {
+    return GameEngineHex.areEqualHexActions(action, availableAction);
+  });
+  assertEquals(found.length, 0);
+});
+
+Deno.test('GameEngineHex - available next to cube matching completed quest', () => {
+  const color = setupNextToOffering(true);
+  const player = gameState.getCurrentPlayer();
+  const completedQuest = player.getQuestsOfType('temple').find((quest) => {
+    return quest.color === color;
+  });
+  assert(completedQuest);
+  completedQuest.isCompleted = true;
+
+  const action = createLoadCubeAction(color);
+  const actions = GameEngineHex.getHexActions(gameState);
   const found = actions.filter((availableAction) => {
     return GameEngineHex.areEqualHexActions(action, availableAction);
   });
@@ -142,47 +158,18 @@ Deno.test('GameEngineHex - available next to cube we cannot use', () => {
 });
 
 Deno.test('GameEngineHex - doOfferingAction (existing quest)', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
-  const uiState = new UiStateClass();
-  const player = gameState.getCurrentPlayer();
-  const colorQuest = player.getQuestsOfType('temple').find((quest) => {
-    return quest.color !== 'none';
-  });
-  const needColor = colorQuest?.color;
-  assert(needColor);
-  assert(needColor !== 'none');
-  const offeringHex = gameState.getCubeHexes().find((hex) => {
-    return hex.cubeColors.indexOf(needColor) >= 0;
-  });
-  assert(offeringHex);
+  const color = setupNextToOffering(true);
+  const offeringHex = getSelectedOfferingHex();
   const cubeCount = offeringHex.cubeColors.length;
-  const offeringCoordinates = { q: offeringHex.q, r: offeringHex.r };
-  const seaNeighbors = gameState.getMap().getHexGrid()
-    .getNeighborsOfTypeByCoordinates(
-      offeringCoordinates,
-      'sea',
-    );
-  const destination = seaNeighbors[0];
-  assert(destination);
-  player.setShipPosition(destination.getCoordinates());
-  player.oracleDice = [needColor];
-  player.favor = 0;
-  const spend = Resource.createDie(needColor);
-  uiState.setSelectedResource(spend);
-  uiState.setSelectedCoordinates(offeringCoordinates);
 
-  const action: LoadCubeAction = {
-    type: 'hex',
-    subType: 'loadCube',
-    coordinates: offeringCoordinates,
-    spend: Resource.createDie(needColor),
-  };
+  const action = createLoadCubeAction(color);
   const result = GameEngineHex.doAction(action, gameState, uiState);
   assert(result.success, result.message);
-  assertEquals(player.getItemCount(), 1);
   assertEquals(offeringHex.cubeColors.length, cubeCount - 1);
+  const player = gameState.getCurrentPlayer();
+  assertEquals(player.getItemCount(), 1);
   assertEquals(player.oracleDice.length, 0);
+  assertEquals(player.oracleCards.length, 5);
   const wildQuest = player.getQuestsOfType('temple').find((quest) => {
     return quest.color === 'none';
   });
@@ -193,42 +180,18 @@ Deno.test('GameEngineHex - doOfferingAction (existing quest)', () => {
 });
 
 Deno.test('GameEngineHex - doOfferingAction (wild quest)', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
-  const uiState = new UiStateClass();
-  const player = gameState.getCurrentPlayer();
-  const needColor = 'green';
-  const offeringHex = gameState.getCubeHexes().find((hex) => {
-    return hex.cubeColors.indexOf(needColor) >= 0;
-  });
-  assert(offeringHex);
+  const color = setupNextToOffering(false);
+  const offeringHex = getSelectedOfferingHex();
   const cubeCount = offeringHex.cubeColors.length;
-  const offeringCoordinates = { q: offeringHex.q, r: offeringHex.r };
-  const seaNeighbors = gameState.getMap().getHexGrid()
-    .getNeighborsOfTypeByCoordinates(
-      offeringCoordinates,
-      'sea',
-    );
-  const destination = seaNeighbors[0];
-  assert(destination);
-  player.setShipPosition(destination.getCoordinates());
-  player.oracleDice = [needColor];
-  player.favor = 0;
-  const spend = Resource.createDie(needColor);
-  uiState.setSelectedResource(spend);
-  uiState.setSelectedCoordinates(offeringCoordinates);
 
-  const action: LoadCubeAction = {
-    type: 'hex',
-    subType: 'loadCube',
-    coordinates: offeringCoordinates,
-    spend: Resource.createDie(needColor),
-  };
+  const action = createLoadCubeAction(color);
   const result = GameEngineHex.doAction(action, gameState, uiState);
   assert(result.success, result.message);
-  assertEquals(player.getItemCount(), 1);
   assertEquals(offeringHex.cubeColors.length, cubeCount - 1);
+  const player = gameState.getCurrentPlayer();
+  assertEquals(player.getItemCount(), 1);
   assertEquals(player.oracleDice.length, 0);
+  assertEquals(player.oracleCards.length, 5);
   const greenQuest = player.getQuestsOfType('temple').find((quest) => {
     return quest.color === 'green';
   });

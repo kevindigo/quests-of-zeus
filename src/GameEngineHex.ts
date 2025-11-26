@@ -179,9 +179,23 @@ export class GameEngineHex {
     if (cube.type !== 'cube') {
       return false;
     }
-    const questItCanUse = player.getQuestsOfType('temple').find((quest) => {
-      return quest.color === 'none' || quest.color === cube.color;
+    const quests = player.getQuestsOfType('temple');
+
+    const questItCanUse = quests.find((quest) => {
+      return !quest.isCompleted &&
+        (quest.color === 'none' || quest.color === cube.color);
     });
+
+    const wouldTakeWildQuest = questItCanUse?.color === 'none';
+    if (wouldTakeWildQuest) {
+      const questExistsForThatColor = quests.find((quest) => {
+        return quest.color === cube.color;
+      });
+      if (questExistsForThatColor) {
+        return false;
+      }
+    }
+
     return questItCanUse ? true : false;
   }
 
