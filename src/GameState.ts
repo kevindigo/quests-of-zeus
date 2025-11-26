@@ -179,12 +179,6 @@ export class GameState {
     return this.shrineHexes;
   }
 
-  public findShrineHex(coordinates: HexCoordinates): ShrineHex | undefined {
-    return this.getShrineHexes().find((shrineHex) => {
-      return shrineHex.q === coordinates.q && shrineHex.r === coordinates.r;
-    });
-  }
-
   public setShrineHexes(hexes: ShrineHex[]): void {
     this.shrineHexes = hexes;
   }
