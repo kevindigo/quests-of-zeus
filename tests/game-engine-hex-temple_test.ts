@@ -116,11 +116,23 @@ Deno.test('GameEngineHex - available next to cube we already have', () => {
   const found = actions.filter((availableAction) => {
     return GameEngineHex.areEqualHexActions(action, availableAction);
   });
-  assertEquals(
-    found.length,
-    0,
-    JSON.stringify(action) + ': ' + JSON.stringify(actions),
-  );
+  assertEquals(found.length, 0);
+});
+
+Deno.test('GameEngineHex - available full ship', () => {
+  const color = setupNextToOffering(true);
+  const player = gameState.getCurrentPlayer();
+  const redCube: Item = { type: 'cube', color: 'red' };
+  assert(player.loadItem(redCube), `Failed to load red`);
+  const greenCube: Item = { type: 'cube', color: 'green' };
+  assert(player.loadItem(greenCube), `Failed to load breen`);
+
+  const action = createLoadCubeAction(color);
+  const actions = GameEngineHex.getHexActions(gameState);
+  const found = actions.filter((availableAction) => {
+    return GameEngineHex.areEqualHexActions(action, availableAction);
+  });
+  assertEquals(found.length, 0);
 });
 
 Deno.test('GameEngineHex - available next to cube with no matching quest', () => {
