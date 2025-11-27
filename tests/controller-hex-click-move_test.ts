@@ -135,15 +135,10 @@ Deno.test('Hex click move - successful', () => {
   );
   const move = availableMoves[0];
   assert(move);
-  console.log(JSON.stringify(move));
   const desinationCoordinates = {
     q: move.q,
     r: move.r,
   };
-  const destinationCell = manager.getGameState().getMap().getCell(
-    desinationCoordinates,
-  );
-  console.log(JSON.stringify(destinationCell));
   const result = handler.handleHexClick(desinationCoordinates);
   assert(result.success, result.message);
 });
