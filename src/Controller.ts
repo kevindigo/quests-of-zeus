@@ -6,6 +6,7 @@ import type {
   AnyResourceGainFavorAction,
   AnyResourceGainOracleCardAction,
   FreeEndTurnAction,
+  ShipMoveAction,
 } from './actions.ts';
 import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
@@ -218,21 +219,32 @@ export class Controller {
   private highlightAvailableShipMoves(
     availableMoves: PossibleShipMove[],
   ): void {
-    availableMoves.forEach((move) => {
+    const availableActions: ShipMoveAction[] = availableMoves.map((move) => {
+      const action: ShipMoveAction = {
+        type: 'move',
+        subType: 'shipMove',
+        destination: { q: move.q, r: move.r },
+        spend: Resource.none,
+        favorToExtendRange: move.favorCost,
+      };
+      return action;
+    });
+    availableActions.forEach((action) => {
+      const destination = action.destination;
       // Highlight the new hex-highlight polygons (centered, won't cover colored border)
       const hexToHighlight = document.querySelector(
-        `.hex-highlight[data-q="${move.q}"][data-r="${move.r}"]`,
+        `.hex-highlight[data-q="${destination.q}"][data-r="${destination.r}"]`,
       );
 
       if (hexToHighlight) {
-        if (move.favorCost > 0) {
+        if (action.favorToExtendRange > 0) {
           hexToHighlight.classList.add('available-move-favor');
         } else {
           hexToHighlight.classList.add('available-move');
         }
       } else {
         console.warn(
-          `Could not find hex-highlight element for (${move.q}, ${move.r})`,
+          `Could not find hex-highlight element for (${destination.q}, ${destination.r})`,
         );
       }
     });
