@@ -122,13 +122,53 @@ export class Controller {
   private addHandlersToSvg(): void {
     // Hex map interaction
     const svg = document.querySelector('.hex-map-svg');
-    if (svg) {
-      // Add click handlers to hex cells (only outer cells)
-      svg.addEventListener('click', (event) => {
-        let target = event?.target;
-        if (!(target instanceof Element)) {
-          target = null;
-        }
+    if (!svg) {
+      return;
+    }
+
+    // Add click handlers to hex cells (only outer cells)
+    svg.addEventListener('click', (event) => {
+      // Remove previous selection
+      document.querySelectorAll('.hex-cell.selected').forEach((cell) => {
+        cell.classList.remove('selected');
+      });
+
+      let target = event?.target;
+      if (!(target instanceof Element)) {
+        target = null;
+      }
+      let hexCell = target?.closest(
+        '.hex-cell:not(.hex-cell-inner)',
+      );
+      if (!(hexCell instanceof SVGElement)) {
+        hexCell = null;
+      }
+      if (!hexCell) {
+        return;
+      }
+      const q = parseInt(hexCell.dataset['q'] ?? '0');
+      const r = parseInt(hexCell.dataset['r'] ?? '0');
+      const terrain = hexCell.dataset['terrain'];
+
+      // Add selection to clicked cell
+      hexCell.classList.add('selected');
+
+      // Dispatch custom event
+      const cellEvent = new CustomEvent('hexCellClick', {
+        detail: { q, r, terrain, element: hexCell },
+      });
+      document.dispatchEvent(cellEvent);
+
+      console.log('Hex cell clicked:', { q, r, terrain });
+    });
+
+    // Add hover effects (only outer cells)
+    svg.addEventListener('mouseover', (event) => {
+      let target = event?.target;
+      if (!(target instanceof Element)) {
+        target = null;
+      }
+      if (target) {
         let hexCell = target?.closest(
           '.hex-cell:not(.hex-cell-inner)',
         );
@@ -136,47 +176,10 @@ export class Controller {
           hexCell = null;
         }
         if (hexCell) {
-          const q = parseInt(hexCell.dataset['q'] ?? '0');
-          const r = parseInt(hexCell.dataset['r'] ?? '0');
-          const terrain = hexCell.dataset['terrain'];
-
-          // Remove previous selection
-          document.querySelectorAll('.hex-cell.selected').forEach((cell) => {
-            cell.classList.remove('selected');
-          });
-
-          // Add selection to clicked cell
-          hexCell.classList.add('selected');
-
-          // Dispatch custom event
-          const cellEvent = new CustomEvent('hexCellClick', {
-            detail: { q, r, terrain, element: hexCell },
-          });
-          document.dispatchEvent(cellEvent);
-
-          console.log('Hex cell clicked:', { q, r, terrain });
+          hexCell.style.cursor = 'pointer';
         }
-      });
-
-      // Add hover effects (only outer cells)
-      svg.addEventListener('mouseover', (event) => {
-        let target = event?.target;
-        if (!(target instanceof Element)) {
-          target = null;
-        }
-        if (target) {
-          let hexCell = target?.closest(
-            '.hex-cell:not(.hex-cell-inner)',
-          );
-          if (!(hexCell instanceof SVGElement)) {
-            hexCell = null;
-          }
-          if (hexCell) {
-            hexCell.style.cursor = 'pointer';
-          }
-        }
-      });
-    }
+      }
+    });
   }
 
   private highlightAvailableHexElements(
