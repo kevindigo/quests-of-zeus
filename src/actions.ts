@@ -8,6 +8,7 @@ export type ActionType =
   | 'coupon'
   | 'anyResource'
   | 'hex'
+  | 'move'
   | 'miscellaneous';
 
 export interface ActionBase {
@@ -39,20 +40,17 @@ export interface CouponAction extends ActionBase {
     | 'flipCloud';
 }
 
-export interface ResourceAction extends ActionBase {
-  spend: Resource;
-}
-
-export interface AnyResourceAction extends ResourceAction {
+export interface AnyResourceAction extends ActionBase {
   type: 'anyResource';
+  spend: Resource;
   subType: 'gainFavor' | 'gainOracleCard' | 'gainPeekCoupons';
 }
 
-export interface HexAction extends ResourceAction {
+export interface HexAction extends ActionBase {
   type: 'hex';
   coordinates: HexCoordinates;
+  spend: Resource;
   subType:
-    | 'shipMove'
     | 'loadCube'
     | 'dropCube'
     | 'loadStatue'
@@ -61,8 +59,9 @@ export interface HexAction extends ResourceAction {
     | 'exploreShrine';
 }
 
-export interface MiscellaneousColorAction extends ResourceAction {
+export interface MiscellaneousColorAction extends ActionBase {
   type: 'miscellaneous';
+  spend: Resource;
   subType:
     | 'heal'
     | 'useEquipmentGainFavorCardAdvance';
@@ -158,11 +157,6 @@ export interface AnyResourceGainPeekCouponsAction extends AnyResourceAction {
 }
 
 // ------------------ Hex Actions ------------------
-export interface ShipMoveAction extends HexAction {
-  subType: 'shipMove';
-  favorToExtendRange: number;
-}
-
 export interface LoadCubeAction extends HexAction {
   subType: 'loadCube';
 }
@@ -190,6 +184,15 @@ export interface FightMonsterAction extends HexAction {
 export interface ExploreShrineAction extends HexAction {
   subType: 'exploreShrine';
   coordinates: HexCoordinates;
+}
+
+// ------------------ Ship Move Actions ------------------
+export interface ShipMoveAction extends ActionBase {
+  type: 'move';
+  subType: 'shipMove';
+  destination: HexCoordinates;
+  spend: Resource;
+  favorToExtendRange: number;
 }
 
 // ------------------ Miscellaneous Actions ------------------

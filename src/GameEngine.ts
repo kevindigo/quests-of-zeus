@@ -2,6 +2,7 @@ import type { Action } from './actions.ts';
 import { GameEngineAnyResource } from './GameEngineAnyResource.ts';
 import { GameEngineFree } from './GameEngineFree.ts';
 import { GameEngineHex } from './GameEngineHex.ts';
+import { GameEngineMove } from './GameEngineMove.ts';
 import type { GameState } from './GameState.ts';
 import type { Player } from './Player.ts';
 import type { Resource } from './Resource.ts';
@@ -34,6 +35,8 @@ export class GameEngine {
         return GameEngineFree.doAction(action, gameState);
       case 'hex':
         return GameEngineHex.doAction(action, gameState);
+      case 'move':
+        return GameEngineMove.doAction(action, gameState);
     }
 
     return new Failure(

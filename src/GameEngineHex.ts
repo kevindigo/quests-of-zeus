@@ -65,8 +65,6 @@ export class GameEngineHex {
     gameState: GameState,
   ): ResultWithMessage {
     switch (action.subType) {
-      case 'shipMove':
-        break;
       case 'loadCube':
         return GameEngineHex.doLoadCube(action, gameState);
       case 'dropCube':
@@ -318,12 +316,8 @@ export class GameEngineHex {
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
     if (
-      !availableActions.find((aa) => {
-        return aa.type === action.type &&
-          aa.subType === action.subType &&
-          aa.coordinates.q === action.coordinates.q &&
-          aa.coordinates.r === action.coordinates.r &&
-          aa.spend.equals(action.spend);
+      !availableActions.find((availableAction) => {
+        return this.areEqualHexActions(availableAction, action);
       })
     ) {
       return new Failure(`Action not available ${JSON.stringify(action)}`);
@@ -375,12 +369,8 @@ export class GameEngineHex {
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
     if (
-      !availableActions.find((aa) => {
-        return aa.type === action.type &&
-          aa.subType === action.subType &&
-          aa.coordinates.q === action.coordinates.q &&
-          aa.coordinates.r === action.coordinates.r &&
-          aa.spend.equals(action.spend);
+      !availableActions.find((availableAction) => {
+        return this.areEqualHexActions(availableAction, action);
       })
     ) {
       return new Failure(`Action not available ${JSON.stringify(action)}`);
