@@ -218,26 +218,24 @@ export class Controller {
   private highlightAvailableShipMoves(
     availableMoves: PossibleShipMove[],
   ): void {
-    availableMoves.forEach(
-      (move) => {
-        // Highlight the new hex-highlight polygons (centered, won't cover colored border)
-        const hexToHighlight = document.querySelector(
-          `.hex-highlight[data-q="${move.q}"][data-r="${move.r}"]`,
-        );
+    availableMoves.forEach((move) => {
+      // Highlight the new hex-highlight polygons (centered, won't cover colored border)
+      const hexToHighlight = document.querySelector(
+        `.hex-highlight[data-q="${move.q}"][data-r="${move.r}"]`,
+      );
 
-        if (hexToHighlight) {
-          if (move.favorCost > 0) {
-            hexToHighlight.classList.add('available-move-favor');
-          } else {
-            hexToHighlight.classList.add('available-move');
-          }
+      if (hexToHighlight) {
+        if (move.favorCost > 0) {
+          hexToHighlight.classList.add('available-move-favor');
         } else {
-          console.warn(
-            `Could not find hex-highlight element for (${move.q}, ${move.r})`,
-          );
+          hexToHighlight.classList.add('available-move');
         }
-      },
-    );
+      } else {
+        console.warn(
+          `Could not find hex-highlight element for (${move.q}, ${move.r})`,
+        );
+      }
+    });
   }
 
   private highlightAvailableLands(
