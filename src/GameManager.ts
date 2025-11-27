@@ -28,10 +28,10 @@ export class GameManager {
     const movementSystem = new MovementSystem(this.getGameState().getMap());
     const handler = new ShipMoveHandler(
       this.getGameState(),
-      this.getUiState(),
       movementSystem,
     );
     return handler.attemptMoveShip(
+      this.getUiState(),
       favorSpentToRecolor,
       favorSpentForRange,
     );

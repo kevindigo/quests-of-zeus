@@ -205,7 +205,6 @@ export class Controller {
     const movementSystem = new MovementSystem(gameState.getMap());
     const shipMoveHandler = new ShipMoveHandler(
       gameState,
-      this.getUiState(),
       movementSystem,
     );
     const availableMoves = shipMoveHandler.getAvailableMovesForColor(

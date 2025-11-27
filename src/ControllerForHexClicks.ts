@@ -133,7 +133,7 @@ export class ControllerForHexClicks {
     // Get available moves for the selected color and available favor
     const uiState = this.getEngine().getUiState();
     const movementSystem = new MovementSystem(state.getMap());
-    const moveShipHandler = new ShipMoveHandler(state, uiState, movementSystem);
+    const moveShipHandler = new ShipMoveHandler(state, movementSystem);
     const availableMoves = effectiveColor
       ? moveShipHandler.getAvailableMovesForColor(
         effectiveColor,

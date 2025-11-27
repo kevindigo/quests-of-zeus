@@ -44,9 +44,8 @@ function setup(): void {
   state = manager.getGameState();
   center = HexGrid.CENTER;
   player = state.getCurrentPlayer();
-  const uiState = manager.getUiState();
   const movementSystem = new MovementSystem(state.getMap());
-  shipMoveHandler = new ShipMoveHandler(state, uiState, movementSystem);
+  shipMoveHandler = new ShipMoveHandler(state, movementSystem);
 }
 
 Deno.test('Hex click move - no resource selected', () => {

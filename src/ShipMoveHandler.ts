@@ -9,16 +9,11 @@ import type { UiState } from './UiState.ts';
 export class ShipMoveHandler {
   constructor(
     private gameState: GameState,
-    private uiState: UiState,
     private movementSystem: MovementSystem,
   ) {}
 
   public getGameState(): GameState {
     return this.gameState;
-  }
-
-  public getUiState(): UiState {
-    return this.uiState;
   }
 
   public getMovementSystem(): MovementSystem {
@@ -69,7 +64,7 @@ export class ShipMoveHandler {
     const availableMoves: PossibleShipMove[] = [];
     for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
       const movementRange = baseRange + favorSpent;
-      const reachableSeaCells = this.movementSystem!.getReachableSeaTiles(
+      const reachableSeaCells = this.movementSystem.getReachableSeaTiles(
         origin,
         movementRange,
       );
@@ -103,6 +98,7 @@ export class ShipMoveHandler {
   }
 
   public attemptMoveShip(
+    uiState: UiState,
     favorSpentToRecolor: number,
     favorSpentForRange: number,
   ): MoveShipResult {
@@ -123,7 +119,7 @@ export class ShipMoveHandler {
       };
     }
 
-    const selectedResource = this.uiState.getSelectedResource();
+    const selectedResource = uiState.getSelectedResource();
     if (!selectedResource.hasColor()) {
       return {
         success: false,
@@ -181,7 +177,7 @@ export class ShipMoveHandler {
     // a call to get all valid moves. If it's listed, it's valid.
 
     // validate destination coordinates
-    const destination = this.uiState.getSelectedCoordinates();
+    const destination = uiState.getSelectedCoordinates();
     if (!destination) {
       return {
         success: false,

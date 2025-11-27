@@ -12,7 +12,6 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
   const movementSystem = new MovementSystem(manager.getGameState().getMap());
   const handler = new ShipMoveHandler(
     manager.getGameState(),
-    manager.getUiState(),
     movementSystem,
   );
 
@@ -50,7 +49,6 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
   const movementSystem = new MovementSystem(manager.getGameState().getMap());
   const handler = new ShipMoveHandler(
     manager.getGameState(),
-    manager.getUiState(),
     movementSystem,
   );
 
@@ -74,9 +72,8 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
 Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   const manager = new GameManager();
   const gameState = manager.getGameState();
-  const uiState = manager.getUiState();
   const movementSystem = new MovementSystem(gameState.getMap());
-  const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
+  const handler = new ShipMoveHandler(gameState, movementSystem);
   const player = manager.getCurrentPlayer();
 
   // Set up deterministic test conditions
@@ -114,7 +111,6 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
   const movementSystem = new MovementSystem(manager.getGameState().getMap());
   const handler = new ShipMoveHandler(
     manager.getGameState(),
-    manager.getUiState(),
     movementSystem,
   );
 
