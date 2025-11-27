@@ -1,6 +1,8 @@
 import type { Action, ShipMoveAction } from './actions.ts';
 import type { GameState } from './GameState.ts';
+import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
+import type { Resource } from './Resource.ts';
 import { Failure, type ResultWithMessage } from './ResultWithMessage.ts';
 import { ShipMoveHandler } from './ShipMoveHandler.ts';
 import type { PossibleShipMove } from './types.ts';
@@ -9,31 +11,22 @@ export class GameEngineMove {
   public static getMoveActions(gameState: GameState): Action[] {
     const possibleActionsWithAvailableResources: ShipMoveAction[] = [];
 
-    const player = gameState.getCurrentPlayer();
-    const availableFavor = player.favor;
-    const availableResources = player.getAvailableResourcesWithRecoloring();
-
-    const allTheoreticallyPossibleMoves = this.getAllPossibleShipMovesWithFavor(
+    const allTheoreticallyPossibleMoves = this.getAllShipMovesIgnoringAvailableResources(
       gameState,
     );
 
     allTheoreticallyPossibleMoves.forEach((move) => {
-      const suitableResource = availableResources.find((resource) => {
-        return (
-          move.effectiveColor === resource.getEffectiveColor() &&
-          move.favorCost + resource.getRecolorCost() <= availableFavor
-        );
-      });
+      const player = gameState.getCurrentPlayer();
+      const availableFavor = player.favor;
+      const availableResources = player.getAvailableResourcesWithRecoloring();
+      const actionOrNull = this.createActionIfAvailable(
+        move,
+        availableFavor,
+        availableResources,
+      );
 
-      if (suitableResource) {
-        const action: ShipMoveAction = {
-          type: 'move',
-          subType: 'shipMove',
-          destination: { q: move.q, r: move.r },
-          spend: suitableResource,
-          favorToExtendRange: move.favorCost,
-        };
-        possibleActionsWithAvailableResources.push(action);
+      if (actionOrNull) {
+        possibleActionsWithAvailableResources.push(actionOrNull);
       }
     });
 
@@ -56,7 +49,7 @@ export class GameEngineMove {
       aa.spend.equals(action.spend);
   }
 
-  private static getAllPossibleShipMovesWithFavor(
+  private static getAllShipMovesIgnoringAvailableResources(
     gameState: GameState,
   ): PossibleShipMove[] {
     const currentPlayer = gameState.getCurrentPlayer();
@@ -73,5 +66,44 @@ export class GameEngineMove {
       favorAvailableForRange,
     );
     return availableMoves;
+  }
+
+  private static createActionIfAvailable(
+    move: PossibleShipMove,
+    availableFavor: number,
+    availableResources: Resource[],
+  ): ShipMoveAction | null {
+    const suitableResource = availableResources.find((resource) => {
+      return (
+        move.effectiveColor === resource.getEffectiveColor() &&
+        move.favorCost + resource.getRecolorCost() <= availableFavor
+      );
+    });
+
+    if (suitableResource) {
+      const action = this.createShipMoveAction(
+        { q: move.q, r: move.r },
+        suitableResource,
+        move.favorCost,
+      );
+      return action;
+    }
+
+    return null;
+  }
+
+  private static createShipMoveAction(
+    destination: HexCoordinates,
+    spend: Resource,
+    favorToExtendRange: number,
+  ): ShipMoveAction {
+    const action: ShipMoveAction = {
+      type: 'move',
+      subType: 'shipMove',
+      destination,
+      spend,
+      favorToExtendRange,
+    };
+    return action;
   }
 }
