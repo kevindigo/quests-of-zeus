@@ -15,10 +15,8 @@ import { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import { MovementSystem } from './MovementSystem.ts';
 import { Resource } from './Resource.ts';
-import { ShipMoveHandler } from './ShipMoveHandler.ts';
-import type { CoreColor, PossibleShipMove, TerrainType } from './types.ts';
+import type { CoreColor, TerrainType } from './types.ts';
 import type { UiState } from './UiState.ts';
 import { ViewGame } from './ViewGame.ts';
 
@@ -192,35 +190,18 @@ export class Controller {
     this.highlightAvailableLands(gameState, availableActions);
   }
 
-  private getAvailableShipMoves(gameState: GameState): PossibleShipMove[] {
-    const effectiveColor = this.getUiState().getEffectiveSelectedColor();
-    if (!effectiveColor) {
-      return [];
-    }
-
-    const currentPlayer = gameState.getCurrentPlayer();
-    const favorForRecoloring = this.getUiState().getSelectedRecoloring();
-    const favorAvailableForRange = currentPlayer.favor - favorForRecoloring;
-
-    const movementSystem = new MovementSystem(gameState.getMap());
-    const shipMoveHandler = new ShipMoveHandler(
-      gameState,
-      movementSystem,
-    );
-    const availableMoves = shipMoveHandler.getAvailableMovesForColor(
-      effectiveColor,
-      favorAvailableForRange,
-    );
-    return availableMoves;
-  }
-
   private highlightAvailableShipMoves(
     availableActions: Action[],
   ): void {
+    const selectedResource = this.getUiState().getSelectedResource();
     const moveActions: ShipMoveAction[] = availableActions.filter((action) => {
       return action.type === 'move';
     });
-    moveActions.forEach((action) => {
+    const legalMoveActions = moveActions.filter((action) => {
+      return action.spend.equals(selectedResource);
+    });
+
+    legalMoveActions.forEach((action) => {
       const destination = action.destination;
       // Highlight the new hex-highlight polygons (centered, won't cover colored border)
       const hexToHighlight = document.querySelector(
@@ -433,20 +414,6 @@ export class Controller {
     //     JSON.stringify(availableActions)
     //   }`,
     // );
-    const availableMoves = this.getAvailableShipMoves(gameState);
-    const availableMoveActions: ShipMoveAction[] = availableMoves.map(
-      (move) => {
-        const action: ShipMoveAction = {
-          type: 'move',
-          subType: 'shipMove',
-          destination: { q: move.q, r: move.r },
-          spend: Resource.none,
-          favorToExtendRange: move.favorCost,
-        };
-        return action;
-      },
-    );
-    availableActions.push(...availableMoveActions);
 
     this.viewGame.renderGameState(availableActions);
 

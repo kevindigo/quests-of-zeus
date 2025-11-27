@@ -21,6 +21,7 @@ export class GameEngine {
     actions.push(...GameEngineFree.getFreeActions(gameState));
     actions.push(...GameEngineAnyResource.getAnyResourceActions(gameState));
     actions.push(...GameEngineHex.getHexActions(gameState));
+    actions.push(...GameEngineMove.getMoveActions(gameState));
     return actions;
   }
 
