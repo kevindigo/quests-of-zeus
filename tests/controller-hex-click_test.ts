@@ -43,7 +43,7 @@ Deno.test('Hex click - wrong phase', () => {
 
   testGameState.setPhase('setup');
   assertFailureContains(
-    testHandler.handleHexClick(center),
+    testHandler.handleHexClick(center, 0),
     'phase',
   );
 });
@@ -59,7 +59,7 @@ Deno.test('Hex click - second oracle card', () => {
     'red',
   );
   assertFailureContains(
-    testHandler.handleHexClick(center),
+    testHandler.handleHexClick(center, 0),
     'per turn',
   );
 });
@@ -71,7 +71,7 @@ Deno.test('Hex click - unsupported terrain', () => {
   const shallowCell = testGrid.getCellsOfType('shallow')[0];
   assert(shallowCell, 'No shallows found on the map?');
   assertFailureContains(
-    testHandler.handleHexClick(shallowCell.getCoordinates()),
+    testHandler.handleHexClick(shallowCell.getCoordinates(), 0),
     'shallow',
   );
 });
@@ -86,6 +86,7 @@ Deno.test('Hex click - shrine not adjacent', () => {
   testUiState.setSelectedResource(Resource.createDie(shrineCell.color));
   const result = testHandler.handleHexClick(
     shrineCell.getCoordinates(),
+    0,
   );
   assertFailureContains(result, 'not available');
 });
@@ -112,6 +113,7 @@ Deno.test('Hex click - next to good color, but click elsewhere', () => {
 
   const result = testHandler.handleHexClick(
     otherShrineCell.getCoordinates(),
+    0,
   );
   assertFailureContains(result, 'not available');
 });
@@ -128,6 +130,7 @@ Deno.test('Hex click - next to good color, but different color', () => {
   testUiState.setSelectedResource(Resource.createDie('green'));
   const result = testHandler.handleHexClick(
     shrineCell.getCoordinates(),
+    0,
   );
   assertFailureContains(result, 'not available');
 });
@@ -154,6 +157,7 @@ Deno.test('Hex click - available my hidden shrine (die)', () => {
   testUiState.setSelectedResource(Resource.createDie(color));
   const result = testHandler.handleHexClick(
     shrineCell.getCoordinates(),
+    0,
   );
   assert(result.success, `Should have succeeded, but ${result.message}`);
   assertEquals(shrineHex.status, 'filled');
@@ -192,7 +196,7 @@ Deno.test('Hex click - available offering', () => {
   testPlayer.oracleDice = ['red'];
   testUiState.setSelectedResource(Resource.createDie('red'));
 
-  const result = testHandler.handleHexClick(cubeHex);
+  const result = testHandler.handleHexClick(cubeHex, 0);
   assert(result.success, result.message);
   assertEquals(testPlayer.getItemCount(), 1);
   const thisCube = testPlayer.getLoadedItems().find((item) => {

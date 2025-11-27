@@ -159,13 +159,14 @@ export class Controller {
       const q = parseInt(hexCell.dataset['q'] ?? '0');
       const r = parseInt(hexCell.dataset['r'] ?? '0');
       const terrain = hexCell.dataset['terrain'];
+      const favorCost = Number(hexCell.getAttribute('data-favor-cost') ?? '0');
 
       // Add selection to clicked cell
       hexCell.classList.add('selected');
 
       // Dispatch custom event
       const cellEvent = new CustomEvent('hexCellClick', {
-        detail: { q, r, terrain, element: hexCell },
+        detail: { q, r, terrain, element: hexCell, favorCost },
       });
       document.dispatchEvent(cellEvent);
 
@@ -228,6 +229,23 @@ export class Controller {
       } else {
         console.warn(
           `Could not find hex-highlight element for (${destination.q}, ${destination.r})`,
+        );
+      }
+
+      // Find the corresponding clickable element
+      const hexCell = document.querySelector<SVGElement>(
+        `.hex-cell[data-q="${destination.q}"][data-r="${destination.r}"]`,
+      );
+
+      if (hexCell) {
+        // Attach the favor cost so click handler can read it
+        hexCell.setAttribute(
+          'data-favor-cost',
+          String(action.favorToExtendRange),
+        );
+      } else {
+        console.warn(
+          `Could not find hex-cell element for (${destination.q}, ${destination.r})`,
         );
       }
     });
@@ -324,13 +342,14 @@ export class Controller {
 
   private handleHexClickEvent(event: Event): void {
     const customEvent = event as CustomEvent<
-      { q: number; r: number; terrain: TerrainType }
+      { q: number; r: number; terrain: TerrainType; favorCost: number }
     >;
-    const { q, r } = customEvent.detail;
+    const { q, r, favorCost } = customEvent.detail;
     const coordinates: HexCoordinates = { q, r };
     const handlers = new ControllerForHexClicks(this.gameManager);
     const result = handlers.handleHexClick(
       coordinates,
+      favorCost,
     );
     if (result.success) {
       this.clearResourceSelection();

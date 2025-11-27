@@ -57,6 +57,7 @@ export class GameEngineMove {
     const player = gameState.getCurrentPlayer();
     GameEngine.spendResource(gameState, action.spend);
     player.setShipPosition(action.destination);
+    player.favor -= action.favorToExtendRange;
 
     return new Success(`Ship moved per ${action}`);
   }

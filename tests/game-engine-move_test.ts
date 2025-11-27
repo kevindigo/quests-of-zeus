@@ -268,4 +268,5 @@ Deno.test('GameEngineMove - do action card move favor worked', () => {
   assert(HexGrid.isSameLocation(player.getShipPosition(), destination));
   assertEquals(player.oracleCards.length, 0);
   assert(player.usedOracleCardThisTurn);
+  assertEquals(player.favor, 1);
 });
