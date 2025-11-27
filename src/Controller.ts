@@ -187,18 +187,7 @@ export class Controller {
     gameState: GameState,
     availableActions: Action[],
   ): void {
-    const availableMoves = this.getAvailableShipMoves(gameState);
-    const availableMoveActions: ShipMoveAction[] = availableMoves.map((move) => {
-      const action: ShipMoveAction = {
-        type: 'move',
-        subType: 'shipMove',
-        destination: { q: move.q, r: move.r },
-        spend: Resource.none,
-        favorToExtendRange: move.favorCost,
-      };
-      return action;
-    });
-    this.highlightAvailableShipMoves(availableMoveActions);
+    this.highlightAvailableShipMoves(availableActions);
 
     this.highlightAvailableLands(gameState, availableActions);
   }
@@ -227,9 +216,12 @@ export class Controller {
   }
 
   private highlightAvailableShipMoves(
-    availableActions: ShipMoveAction[],
+    availableActions: Action[],
   ): void {
-    availableActions.forEach((action) => {
+    const moveActions: ShipMoveAction[] = availableActions.filter((action) => {
+      return action.type === 'move';
+    });
+    moveActions.forEach((action) => {
       const destination = action.destination;
       // Highlight the new hex-highlight polygons (centered, won't cover colored border)
       const hexToHighlight = document.querySelector(
@@ -442,6 +434,20 @@ export class Controller {
     //     JSON.stringify(availableActions)
     //   }`,
     // );
+    const availableMoves = this.getAvailableShipMoves(gameState);
+    const availableMoveActions: ShipMoveAction[] = availableMoves.map(
+      (move) => {
+        const action: ShipMoveAction = {
+          type: 'move',
+          subType: 'shipMove',
+          destination: { q: move.q, r: move.r },
+          spend: Resource.none,
+          favorToExtendRange: move.favorCost,
+        };
+        return action;
+      },
+    );
+    availableActions.push(...availableMoveActions);
 
     this.viewGame.renderGameState(availableActions);
 
