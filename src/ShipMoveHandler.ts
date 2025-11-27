@@ -51,7 +51,12 @@ export class ShipMoveHandler {
       });
 
       relevantCells.forEach((cell) => {
-        const possibleMove = { q: cell.q, r: cell.r, favorCost: favorSpent };
+        const possibleMove = {
+          q: cell.q,
+          r: cell.r,
+          effectiveColor: cell.color,
+          favorCost: favorSpent,
+        };
 
         if (!this.alreadyContainsMove(availableMoves, possibleMove)) {
           availableMoves.push(possibleMove);

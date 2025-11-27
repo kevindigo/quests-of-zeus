@@ -203,6 +203,7 @@ export class Quest {
 export interface PossibleShipMove {
   q: number;
   r: number;
+  effectiveColor: CoreColor;
   favorCost: number;
 }
 
