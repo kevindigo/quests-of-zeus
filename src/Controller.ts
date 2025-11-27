@@ -70,12 +70,6 @@ export class Controller {
     return true;
   }
 
-  private clearResourceSelectionAndUpdateDisplay(): void {
-    this.clearResourceSelection();
-    this.showMessage('Resource selection cleared');
-    this.renderGameState();
-  }
-
   private selectResource(resourceType: string, resourceColor: CoreColor): void {
     const currentPlayer = this.gameManager.getCurrentPlayer();
     console.log(`selectResource called: ${resourceType}, ${resourceColor}`);
@@ -91,7 +85,9 @@ export class Controller {
 
     const alreadySelected = this.getUiState().getSelectedResource();
     if (resourceToSelect.equals(alreadySelected)) {
-      this.clearResourceSelectionAndUpdateDisplay();
+      this.clearResourceSelection();
+      this.showMessage('Resource selection cleared');
+      this.renderGameState();
       return;
     }
 
@@ -391,7 +387,6 @@ export class Controller {
       subType: 'endTurn',
     };
     this.doAction(action);
-    this.clearResourceSelectionAndUpdateDisplay();
   }
 
   private doAction(action: Action): void {
