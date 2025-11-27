@@ -1,9 +1,14 @@
 import type { Action, ShipMoveAction } from './actions.ts';
+import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
 import type { Resource } from './Resource.ts';
-import { Failure, type ResultWithMessage } from './ResultWithMessage.ts';
+import {
+  Failure,
+  type ResultWithMessage,
+  Success,
+} from './ResultWithMessage.ts';
 import { ShipMoveHandler } from './ShipMoveHandler.ts';
 import type { PossibleShipMove } from './types.ts';
 
@@ -35,10 +40,25 @@ export class GameEngineMove {
   }
 
   public static doAction(
-    _action: ShipMoveAction,
-    _gameState: GameState,
+    action: ShipMoveAction,
+    gameState: GameState,
   ): ResultWithMessage {
-    return new Failure('Ship move not implemented yet');
+    const availableActions = this.getMoveActions(gameState);
+    if (
+      !availableActions.find((availableAction) => {
+        return this.areEqualMoveActions(availableAction, action);
+      })
+    ) {
+      return new Failure(
+        `ShipMoveAction not available ${JSON.stringify(action)}`,
+      );
+    }
+
+    const player = gameState.getCurrentPlayer();
+    GameEngine.spendResource(gameState, action.spend);
+    player.setShipPosition(action.destination);
+
+    return new Success(`Ship moved per ${action}`);
   }
 
   public static areEqualMoveActions(aa: Action, action: Action): boolean {

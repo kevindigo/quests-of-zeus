@@ -1,12 +1,14 @@
 import { assertEquals } from '@std/assert';
 import { assert } from '@std/assert/assert';
 import type { ShipMoveAction } from '../src/actions.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineMove } from '../src/GameEngineMove.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { Resource } from '../src/Resource.ts';
 import { COLOR_WHEEL } from '../src/types.ts';
+import { assertFailureContains } from './test-helpers.ts';
 
 let gameState: GameState;
 
@@ -184,7 +186,7 @@ Deno.test('GameEngineMove - move die with favor for recoloring', () => {
   const r = 3;
   const colorDistant = COLOR_WHEEL[r];
   assert(colorDistant);
-  const baseColor = COLOR_WHEEL[(r + 6 - 2) % COLOR_WHEEL.length];
+  const baseColor = COLOR_WHEEL[(r - 2) % COLOR_WHEEL.length];
   assert(baseColor);
   const player = gameState.getCurrentPlayer();
   player.oracleDice = [baseColor];
@@ -207,7 +209,7 @@ Deno.test('GameEngineMove - move card with favor for recoloring', () => {
   const r = 3;
   const colorDistant = COLOR_WHEEL[r];
   assert(colorDistant);
-  const baseColor = COLOR_WHEEL[(r + 6 - 2) % COLOR_WHEEL.length];
+  const baseColor = COLOR_WHEEL[(r - 2) % COLOR_WHEEL.length];
   assert(baseColor);
   const player = gameState.getCurrentPlayer();
   player.oracleDice = [];
@@ -224,4 +226,46 @@ Deno.test('GameEngineMove - move card with favor for recoloring', () => {
     return GameEngineMove.areEqualMoveActions(availableAction, simpleMove);
   });
   assertEquals(adjacentMoves.length, 1);
+});
+
+Deno.test('GameEngineMove - do action not available', () => {
+  setup();
+  const player = gameState.getCurrentPlayer();
+  player.setShipPosition(HexGrid.CENTER);
+  const centerCell = gameState.getMap().getCell(HexGrid.CENTER);
+  assert(centerCell && centerCell.color !== 'none');
+  player.oracleDice = [centerCell.color];
+  const moveAlreadyThere: ShipMoveAction = {
+    type: 'move',
+    destination: HexGrid.CENTER,
+    spend: Resource.createDie(centerCell.color),
+    favorToExtendRange: 0,
+  };
+
+  const result = GameEngine.doAction(moveAlreadyThere, gameState);
+  assertFailureContains(result, 'not available');
+});
+
+Deno.test('GameEngineMove - do action card move favor worked', () => {
+  setup();
+  const r = 4;
+  const destination = { q: 0, r: r };
+  const colorDistant = COLOR_WHEEL[r];
+  assert(colorDistant);
+  const baseColor = COLOR_WHEEL[(r - 1) % COLOR_WHEEL.length];
+  assert(baseColor);
+  const player = gameState.getCurrentPlayer();
+  player.oracleDice = [];
+  player.oracleCards = [baseColor];
+  const moveRecoloredCardPlusRange: ShipMoveAction = {
+    type: 'move',
+    destination: destination,
+    spend: Resource.createRecoloredCard(baseColor, 1),
+    favorToExtendRange: 1,
+  };
+  const result = GameEngine.doAction(moveRecoloredCardPlusRange, gameState);
+  assert(result.success, result.message);
+  assert(HexGrid.isSameLocation(player.getShipPosition(), destination));
+  assertEquals(player.oracleCards.length, 0);
+  assert(player.usedOracleCardThisTurn);
 });
