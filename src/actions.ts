@@ -189,7 +189,6 @@ export interface ExploreShrineAction extends HexAction {
 // ------------------ Ship Move Actions ------------------
 export interface ShipMoveAction extends ActionBase {
   type: 'move';
-  subType: 'shipMove';
   destination: HexCoordinates;
   spend: Resource;
   favorToExtendRange: number;

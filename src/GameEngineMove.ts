@@ -11,9 +11,10 @@ export class GameEngineMove {
   public static getMoveActions(gameState: GameState): Action[] {
     const possibleActionsWithAvailableResources: ShipMoveAction[] = [];
 
-    const allTheoreticallyPossibleMoves = this.getAllShipMovesIgnoringAvailableResources(
-      gameState,
-    );
+    const allTheoreticallyPossibleMoves = this
+      .getAllShipMovesIgnoringAvailableResources(
+        gameState,
+      );
 
     allTheoreticallyPossibleMoves.forEach((move) => {
       const player = gameState.getCurrentPlayer();
@@ -42,7 +43,6 @@ export class GameEngineMove {
 
   public static areEqualMoveActions(aa: Action, action: Action): boolean {
     return aa.type === 'move' && action.type === 'move' &&
-      aa.subType === action.subType &&
       aa.destination.q === action.destination.q &&
       aa.destination.r === action.destination.r &&
       aa.favorToExtendRange === action.favorToExtendRange &&
@@ -99,7 +99,6 @@ export class GameEngineMove {
   ): ShipMoveAction {
     const action: ShipMoveAction = {
       type: 'move',
-      subType: 'shipMove',
       destination,
       spend,
       favorToExtendRange,

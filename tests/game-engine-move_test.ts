@@ -33,7 +33,6 @@ Deno.test('GameEngineMove - cannot move to current position', () => {
   player.favor = 0;
   const simpleMove: ShipMoveAction = {
     type: 'move',
-    subType: 'shipMove',
     destination: HexGrid.CENTER,
     spend: Resource.createDie(centerColor),
     favorToExtendRange: 0,
@@ -57,7 +56,6 @@ Deno.test('GameEngineMove - no resource available', () => {
   player.favor = 0;
   const simpleMove: ShipMoveAction = {
     type: 'move',
-    subType: 'shipMove',
     destination: destination,
     spend: Resource.createDie(colorAdjacent),
     favorToExtendRange: 0,
@@ -81,7 +79,6 @@ Deno.test('GameEngineMove - cannot move beyond range', () => {
   player.oracleCards = [colorDistant];
   const simpleMove: ShipMoveAction = {
     type: 'move',
-    subType: 'shipMove',
     destination: { q: 0, r },
     spend: Resource.createDie(colorDistant),
     favorToExtendRange: 2,
@@ -104,7 +101,6 @@ Deno.test('GameEngineMove - simple move die no favor', () => {
   player.favor = 0;
   const simpleMove: ShipMoveAction = {
     type: 'move',
-    subType: 'shipMove',
     destination: { q: 0, r },
     spend: Resource.createDie(colorAdjacent),
     favorToExtendRange: 0,
@@ -128,7 +124,6 @@ Deno.test('GameEngineMove - simple move card no favor', () => {
   player.favor = 0;
   const simpleMove: ShipMoveAction = {
     type: 'move',
-    subType: 'shipMove',
     destination: { q: 0, r },
     spend: Resource.createCard(colorAdjacent),
     favorToExtendRange: 0,
@@ -150,7 +145,6 @@ Deno.test('GameEngineMove - move die with favor for range', () => {
   player.oracleDice = [colorDistant];
   const simpleMove: ShipMoveAction = {
     type: 'move',
-    subType: 'shipMove',
     destination: { q: 0, r },
     spend: Resource.createDie(colorDistant),
     favorToExtendRange: 2,
@@ -173,7 +167,6 @@ Deno.test('GameEngineMove - move card with favor for range', () => {
   player.oracleCards = [colorDistant];
   const simpleMove: ShipMoveAction = {
     type: 'move',
-    subType: 'shipMove',
     destination: { q: 0, r },
     spend: Resource.createCard(colorDistant),
     favorToExtendRange: 2,
@@ -197,7 +190,6 @@ Deno.test('GameEngineMove - move die with favor for recoloring', () => {
   player.oracleDice = [baseColor];
   const simpleMove: ShipMoveAction = {
     type: 'move',
-    subType: 'shipMove',
     destination: { q: 0, r },
     spend: Resource.createRecoloredDie(baseColor, 2),
     favorToExtendRange: 0,
@@ -222,7 +214,6 @@ Deno.test('GameEngineMove - move card with favor for recoloring', () => {
   player.oracleCards = [baseColor];
   const simpleMove: ShipMoveAction = {
     type: 'move',
-    subType: 'shipMove',
     destination: { q: 0, r },
     spend: Resource.createRecoloredCard(baseColor, 2),
     favorToExtendRange: 0,
