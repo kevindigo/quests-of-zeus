@@ -188,7 +188,17 @@ export class Controller {
     availableActions: Action[],
   ): void {
     const availableMoves = this.getAvailableShipMoves(gameState);
-    this.highlightAvailableShipMoves(availableMoves);
+    const availableMoveActions: ShipMoveAction[] = availableMoves.map((move) => {
+      const action: ShipMoveAction = {
+        type: 'move',
+        subType: 'shipMove',
+        destination: { q: move.q, r: move.r },
+        spend: Resource.none,
+        favorToExtendRange: move.favorCost,
+      };
+      return action;
+    });
+    this.highlightAvailableShipMoves(availableMoveActions);
 
     this.highlightAvailableLands(gameState, availableActions);
   }
@@ -217,18 +227,8 @@ export class Controller {
   }
 
   private highlightAvailableShipMoves(
-    availableMoves: PossibleShipMove[],
+    availableActions: ShipMoveAction[],
   ): void {
-    const availableActions: ShipMoveAction[] = availableMoves.map((move) => {
-      const action: ShipMoveAction = {
-        type: 'move',
-        subType: 'shipMove',
-        destination: { q: move.q, r: move.r },
-        spend: Resource.none,
-        favorToExtendRange: move.favorCost,
-      };
-      return action;
-    });
     availableActions.forEach((action) => {
       const destination = action.destination;
       // Highlight the new hex-highlight polygons (centered, won't cover colored border)
