@@ -118,6 +118,35 @@ export class Controller {
     }
   }
 
+  private renderGameState(): void {
+    const gameState = this.gameManager.getGameState();
+
+    // const player = gameState.getCurrentPlayer();
+    // const availableResources = player.getAvailableResourcesWithRecoloring();
+    // console.log(
+    //   `renderGameState with ${availableResources.length} resources: ${
+    //     JSON.stringify(availableResources)
+    //   }`,
+    // );
+
+    const availableActions = GameEngine.getAvailableActions(gameState);
+    // console.log(
+    //   `renderGameState with ${availableActions.length} available actions: ${
+    //     JSON.stringify(availableActions)
+    //   }`,
+    // );
+
+    this.viewGame.renderGameState(availableActions);
+
+    const hexMapContainer = document.getElementById('hexMapSVG');
+    if (!hexMapContainer) return;
+    this.addHandlersToSvg();
+
+    if (gameState.getPhase() === 'action') {
+      this.highlightAvailableHexElements(gameState, availableActions);
+    }
+  }
+
   private addHandlersToSvg(): void {
     // Hex map interaction
     const svg = document.querySelector('.hex-map-svg');
@@ -395,35 +424,6 @@ export class Controller {
 
   private showMessage(message: string): void {
     this.viewGame.showMessage(message);
-  }
-
-  private renderGameState(): void {
-    const gameState = this.gameManager.getGameState();
-
-    // const player = gameState.getCurrentPlayer();
-    // const availableResources = player.getAvailableResourcesWithRecoloring();
-    // console.log(
-    //   `renderGameState with ${availableResources.length} resources: ${
-    //     JSON.stringify(availableResources)
-    //   }`,
-    // );
-
-    const availableActions = GameEngine.getAvailableActions(gameState);
-    // console.log(
-    //   `renderGameState with ${availableActions.length} available actions: ${
-    //     JSON.stringify(availableActions)
-    //   }`,
-    // );
-
-    this.viewGame.renderGameState(availableActions);
-
-    const hexMapContainer = document.getElementById('hexMapSVG');
-    if (!hexMapContainer) return;
-    this.addHandlersToSvg();
-
-    if (gameState.getPhase() === 'action') {
-      this.highlightAvailableHexElements(gameState, availableActions);
-    }
   }
 
   private gameManager: GameManager;
