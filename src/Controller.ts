@@ -17,7 +17,7 @@ import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { MovementSystem } from './MovementSystem.ts';
 import { Resource } from './Resource.ts';
 import { ShipMoveHandler } from './ShipMoveHandler.ts';
-import type { CoreColor, TerrainType } from './types.ts';
+import type { CoreColor, PossibleShipMove, TerrainType } from './types.ts';
 import type { UiState } from './UiState.ts';
 import { ViewGame } from './ViewGame.ts';
 
@@ -186,13 +186,13 @@ export class Controller {
     gameState: GameState,
     availableActions: Action[],
   ): void {
-    this.highlightAvailableShipMoves(gameState);
+    const availableMoves = this.getAvailableShipMoves(gameState);
+    this.highlightAvailableShipMoves(availableMoves);
+
     this.highlightAvailableLands(gameState, availableActions);
   }
 
-  private highlightAvailableShipMoves(
-    gameState: GameState,
-  ): void {
+  private getAvailableShipMoves(gameState: GameState): PossibleShipMove[] {
     const currentPlayer = gameState.getCurrentPlayer();
     const favorForRecoloring = this.getUiState().getSelectedRecoloring();
     const favorAvailableForRange = currentPlayer.favor - favorForRecoloring;
@@ -208,6 +208,11 @@ export class Controller {
       favorAvailableForRange,
     );
 
+    return availableMoves;
+  }
+  private highlightAvailableShipMoves(
+    availableMoves: PossibleShipMove[],
+  ): void {
     availableMoves.forEach(
       (move) => {
         // Highlight the new hex-highlight polygons (centered, won't cover colored border)
