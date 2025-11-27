@@ -23,6 +23,7 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   const movementSystem = new MovementSystem(gameState.getMap());
   const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
   const availableMoves = handler.getAvailableMovesForColor(
+    'pink',
     player.favor - 1,
   );
 
@@ -64,6 +65,7 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
   const movementSystem = new MovementSystem(state.getMap());
   const handler = new ShipMoveHandler(state, uiState, movementSystem);
   const movesWithHighRecolor = handler.getAvailableMovesForColor(
+    'blue',
     player.favor - 2,
   );
 
@@ -93,6 +95,7 @@ Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () =>
   const movementSystem = new MovementSystem(gameState.getMap());
   const handler = new ShipMoveHandler(gameState, uiState, movementSystem);
   const movesWithoutRecolor = handler.getAvailableMovesForColor(
+    'black',
     player.favor,
   );
 

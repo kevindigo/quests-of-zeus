@@ -134,9 +134,12 @@ export class ControllerForHexClicks {
     const uiState = this.getEngine().getUiState();
     const movementSystem = new MovementSystem(state.getMap());
     const moveShipHandler = new ShipMoveHandler(state, uiState, movementSystem);
-    const availableMoves = moveShipHandler.getAvailableMovesForColor(
-      maxFavorForMovement,
-    );
+    const availableMoves = effectiveColor
+      ? moveShipHandler.getAvailableMovesForColor(
+        effectiveColor,
+        maxFavorForMovement,
+      )
+      : [];
 
     const coordinates = uiState.getSelectedCoordinates();
     if (!coordinates) {

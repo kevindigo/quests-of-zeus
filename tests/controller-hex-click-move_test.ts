@@ -83,9 +83,12 @@ Deno.test('Hex click move - unlisted but otherwise legal', () => {
   assert(firstDie);
   manager.getUiState().setSelectedResource(Resource.createDie(firstDie));
   const noFavorMovesJson = JSON.stringify(
-    shipMoveHandler.getAvailableMovesForColor(0),
+    shipMoveHandler.getAvailableMovesForColor(firstDie, 0),
   );
-  const upToFiveFavorMoves = shipMoveHandler.getAvailableMovesForColor(5);
+  const upToFiveFavorMoves = shipMoveHandler.getAvailableMovesForColor(
+    firstDie,
+    5,
+  );
   const onlyOneFavorMoves = upToFiveFavorMoves.filter((move) => {
     return !noFavorMovesJson.includes(JSON.stringify(move));
   });
@@ -106,6 +109,7 @@ Deno.test('Hex click move - legal move but failed', () => {
   assert(firstDie);
   manager.getUiState().setSelectedResource(Resource.createDie(firstDie));
   const availableMoves = shipMoveHandler.getAvailableMovesForColor(
+    firstDie,
     player.favor,
   );
   const moveNeedingFavor = availableMoves.find((move) => {
@@ -126,12 +130,20 @@ Deno.test('Hex click move - successful', () => {
   assert(firstDie);
   manager.getUiState().setSelectedResource(Resource.createDie(firstDie));
   const availableMoves = shipMoveHandler.getAvailableMovesForColor(
+    firstDie,
     player.favor,
   );
   const move = availableMoves[0];
   assert(move);
-  const result = handler.handleHexClick(
-    { q: move.q, r: move.r },
+  console.log(JSON.stringify(move));
+  const desinationCoordinates = {
+    q: move.q,
+    r: move.r,
+  };
+  const destinationCell = manager.getGameState().getMap().getCell(
+    desinationCoordinates,
   );
-  assert(result.success);
+  console.log(JSON.stringify(destinationCell));
+  const result = handler.handleHexClick(desinationCoordinates);
+  assert(result.success, result.message);
 });

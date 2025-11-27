@@ -23,9 +23,12 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
   player.favor = 5;
 
   // Test getting moves for a specific die color
-  const movesForBlack = handler.getAvailableMovesForColor(player.favor);
-  const movesForPink = handler.getAvailableMovesForColor(player.favor);
-  const movesForBlue = handler.getAvailableMovesForColor(player.favor);
+  const movesForBlack = handler.getAvailableMovesForColor(
+    'black',
+    player.favor,
+  );
+  const movesForPink = handler.getAvailableMovesForColor('pink', player.favor);
+  const movesForBlue = handler.getAvailableMovesForColor('blue', player.favor);
 
   // Check that moves are returned for each die color
   assertEquals(Array.isArray(movesForBlack), true);
@@ -59,9 +62,9 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
   manager.getUiState().setSelectedResource(Resource.createDie('black'));
 
   // Get moves with different favor amounts
-  const movesWithNoFavor = handler.getAvailableMovesForColor(0);
-  const movesWithSomeFavor = handler.getAvailableMovesForColor(2);
-  const movesWithMaxFavor = handler.getAvailableMovesForColor(5);
+  const movesWithNoFavor = handler.getAvailableMovesForColor('black', 0);
+  const movesWithSomeFavor = handler.getAvailableMovesForColor('black', 2);
+  const movesWithMaxFavor = handler.getAvailableMovesForColor('black', 5);
 
   // With more favor, should have more or equal moves (since favor extends range)
   assert(movesWithSomeFavor.length >= movesWithNoFavor.length);
@@ -84,6 +87,7 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
     Resource.createRecoloredDie('black', 1),
   );
   const movesWithRecolor = handler.getAvailableMovesForColor(
+    'pink',
     player.favor,
   );
 
@@ -125,6 +129,7 @@ Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
     Resource.createRecoloredCard('black', 1),
   );
   const movesWithRecolor = handler.getAvailableMovesForColor(
+    'black',
     player.favor - 1,
   );
 

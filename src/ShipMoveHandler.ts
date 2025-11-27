@@ -3,7 +3,7 @@ import type { GameState } from './GameState.ts';
 import { HexGrid } from './hexmap/HexGrid.ts';
 import type { MovementSystem } from './MovementSystem.ts';
 import { OracleSystem } from './OracleSystem.ts';
-import type { MoveShipResult, PossibleShipMove } from './types.ts';
+import type { CoreColor, MoveShipResult, PossibleShipMove } from './types.ts';
 import type { UiState } from './UiState.ts';
 
 export class ShipMoveHandler {
@@ -26,11 +26,11 @@ export class ShipMoveHandler {
   }
 
   public getAvailableMovesForColor(
+    effectiveColor: CoreColor,
     maxFavorForMovement: number,
   ): PossibleShipMove[] {
     const player = this.gameState.getCurrentPlayer();
     const origin = player.getShipPosition();
-    const effectiveColor = this.uiState.getEffectiveSelectedColor();
 
     const availableMoves: PossibleShipMove[] = [];
     for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {

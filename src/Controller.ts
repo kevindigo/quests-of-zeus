@@ -193,11 +193,15 @@ export class Controller {
   }
 
   private getAvailableShipMoves(gameState: GameState): PossibleShipMove[] {
+    const effectiveColor = this.getUiState().getEffectiveSelectedColor();
+    if (!effectiveColor) {
+      return [];
+    }
+
     const currentPlayer = gameState.getCurrentPlayer();
     const favorForRecoloring = this.getUiState().getSelectedRecoloring();
     const favorAvailableForRange = currentPlayer.favor - favorForRecoloring;
 
-    // Get available moves for the selected die color and available favor
     const movementSystem = new MovementSystem(gameState.getMap());
     const shipMoveHandler = new ShipMoveHandler(
       gameState,
@@ -205,11 +209,12 @@ export class Controller {
       movementSystem,
     );
     const availableMoves = shipMoveHandler.getAvailableMovesForColor(
+      effectiveColor,
       favorAvailableForRange,
     );
-
     return availableMoves;
   }
+
   private highlightAvailableShipMoves(
     availableMoves: PossibleShipMove[],
   ): void {
