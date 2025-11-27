@@ -120,21 +120,7 @@ export class Controller {
 
   private renderGameState(): void {
     const gameState = this.gameManager.getGameState();
-
-    // const player = gameState.getCurrentPlayer();
-    // const availableResources = player.getAvailableResourcesWithRecoloring();
-    // console.log(
-    //   `renderGameState with ${availableResources.length} resources: ${
-    //     JSON.stringify(availableResources)
-    //   }`,
-    // );
-
     const availableActions = GameEngine.getAvailableActions(gameState);
-    // console.log(
-    //   `renderGameState with ${availableActions.length} available actions: ${
-    //     JSON.stringify(availableActions)
-    //   }`,
-    // );
 
     this.viewGame.renderGameState(availableActions);
 
