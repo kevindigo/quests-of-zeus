@@ -1,6 +1,6 @@
 // Player action implementations for Quests of Zeus
 import type { GameState } from './GameState.ts';
-import { HexGrid } from './hexmap/HexGrid.ts';
+import { type HexCoordinates, HexGrid } from './hexmap/HexGrid.ts';
 import type { MovementSystem } from './MovementSystem.ts';
 import { OracleSystem } from './OracleSystem.ts';
 import type { CoreColor, MoveShipResult, PossibleShipMove } from './types.ts';
@@ -31,17 +31,18 @@ export class ShipMoveHandler {
   ): PossibleShipMove[] {
     const player = this.gameState.getCurrentPlayer();
     const origin = player.getShipPosition();
+    const baseRange = player.getRange();
+    const map = this.gameState.getMap();
 
     const availableMoves: PossibleShipMove[] = [];
     for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
-      const movementRange = player.getRange() + favorSpent;
-      const reachableSeaCells = this.movementSystem!.getReachableSeaTiles(
-        origin,
-        movementRange,
-      );
-
-      const relevantCells = reachableSeaCells.filter((cell) => {
-        if (HexGrid.isSameLocation(cell, origin)) {
+      const moves = this.getAvailableMoves(origin, baseRange, favorSpent);
+      const relevantMoves = moves.filter((move) => {
+        if (move.q === origin.q && move.r === origin.r) {
+          return false;
+        }
+        const cell = map.getCell({ q: move.q, r: move.r });
+        if (!cell) {
           return false;
         }
         if (cell.color !== effectiveColor) {
@@ -50,7 +51,30 @@ export class ShipMoveHandler {
         return true;
       });
 
-      relevantCells.forEach((cell) => {
+      relevantMoves.forEach((possibleMove) => {
+        if (!this.alreadyContainsMove(availableMoves, possibleMove)) {
+          availableMoves.push(possibleMove);
+        }
+      });
+    }
+
+    return availableMoves;
+  }
+
+  public getAvailableMoves(
+    origin: HexCoordinates,
+    baseRange: number,
+    maxFavorForMovement: number,
+  ): PossibleShipMove[] {
+    const availableMoves: PossibleShipMove[] = [];
+    for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
+      const movementRange = baseRange + favorSpent;
+      const reachableSeaCells = this.movementSystem!.getReachableSeaTiles(
+        origin,
+        movementRange,
+      );
+
+      reachableSeaCells.forEach((cell) => {
         const possibleMove = {
           q: cell.q,
           r: cell.r,
@@ -72,7 +96,8 @@ export class ShipMoveHandler {
     candidateMove: PossibleShipMove,
   ): boolean {
     const found = availableMoves.find((move) => {
-      return HexGrid.isSameLocation(move, candidateMove);
+      return HexGrid.isSameLocation(move, candidateMove) &&
+        move.favorCost <= candidateMove.favorCost;
     });
     return found ? true : false;
   }
