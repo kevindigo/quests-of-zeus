@@ -4,6 +4,7 @@ import type {
   ExploreShrineAction,
   HexAction,
   LoadCubeAction,
+  LoadStatueAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
@@ -41,7 +42,7 @@ export class GameEngineHex {
             break;
           case 'offerings':
             actions.push(
-              ...GameEngineHex.getOfferingActions(
+              ...this.getOfferingActions(
                 gameState,
                 neighbor,
                 resource,
@@ -50,9 +51,13 @@ export class GameEngineHex {
             break;
           case 'temple':
             actions.push(
-              ...GameEngineHex.getTempleActions(gameState, neighbor, resource),
+              ...this.getTempleActions(gameState, neighbor, resource),
             );
             break;
+          case 'city':
+            actions.push(
+              ...this.getCityActions(gameState, neighbor, resource),
+            );
         }
       });
     });
@@ -399,6 +404,45 @@ export class GameEngineHex {
 
     GameEngine.spendResource(gameState, action.spend);
 
-    return new Success('faked');
+    return new Success(`Dropped cube {$color} at temple; gained favor`);
+  }
+
+  private static getCityActions(
+    gameState: GameState,
+    cityCell: HexCell,
+    resource: Resource,
+  ): Action[] {
+    const effectiveColor = resource.getEffectiveColor();
+    const cityColor = cityCell.color;
+    if (cityColor !== effectiveColor) {
+      return [];
+    }
+
+    const player = gameState.getCurrentPlayer();
+    const item: Item = { type: 'statue', color: effectiveColor };
+    if (!player.validateItemIsLoadable(item).success) {
+      return [];
+    }
+
+    const wildQuest = player.getQuestsOfType('statue').find((quest) => {
+      return quest.color === 'none';
+    });
+    if (!wildQuest) {
+      return [];
+    }
+
+    const cityCoordinates = cityCell.getCoordinates();
+    const cityHex = gameState.findCityHexAt(cityCoordinates);
+    if (!cityHex || cityHex.statues < 1) {
+      return [];
+    }
+
+    const action: LoadStatueAction = {
+      type: 'hex',
+      subType: 'loadStatue',
+      coordinates: cityCoordinates,
+      spend: resource,
+    };
+    return [action];
   }
 }
