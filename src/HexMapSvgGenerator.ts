@@ -386,16 +386,7 @@ export class HexMapSvgGenerator {
    * Get fill color for cubes
    */
   private getCubeFillColor(color: HexColor): string {
-    const colors: Record<HexColor, string> = {
-      none: '#cccccc',
-      red: '#ff0000', // More vibrant red
-      pink: '#ff69b4', // More vibrant pink
-      blue: '#0000ff', // More vibrant blue
-      black: '#000000', // Pure black
-      green: '#008000', // Consistent green (same as hex outlines)
-      yellow: '#ffff00', // More vibrant yellow
-    };
-    return colors[color] || '#cccccc';
+    return ViewPlayer.getColorHex(color);
   }
 
   /**

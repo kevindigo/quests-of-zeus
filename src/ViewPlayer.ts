@@ -105,15 +105,15 @@ export class ViewPlayer {
   }
 
   public static getColorHex(color: string): string {
-    const colors: Record<string, string> = {
-      'none': 'white',
-      'red': '#DC143C',
-      'pink': '#ff69b4',
-      'blue': '#0000ff',
-      'black': '#000000',
-      'green': '#008000',
-      'yellow': '#ffff00',
+    const colorsAsHexValues: Record<string, string> = {
+      none: '#D3D3D3',
+      red: '#D62828',
+      pink: '#FF69B4',
+      blue: '#0072B2',
+      black: '#000000',
+      green: '#2CA02C',
+      yellow: '#F2C94C',
     };
-    return colors[color] || '#333333';
+    return colorsAsHexValues[color] || '#333333';
   }
 }
