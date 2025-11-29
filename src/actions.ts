@@ -37,7 +37,9 @@ export interface CouponAction extends ActionBase {
     | 'godAdvance'
     | 'grabCube'
     | 'grabStatue'
-    | 'flipCloud';
+    | 'flipCloud'
+    | 'gainCompanion'
+    | 'gainEquipment';
 }
 
 export interface AnyResourceAction extends ActionBase {
@@ -143,6 +145,17 @@ export interface CouponFlipCloudAction extends CouponAction {
   coordinates: HexCoordinates;
 }
 
+export interface CouponGainCompanionAction extends CouponAction {
+  subType: 'gainCompanion';
+  color: CoreColor;
+  companionType: 'wounds' | 'range' | 'wild';
+}
+
+export interface CouponGainEquipmentAction extends CouponAction {
+  subType: 'gainEquipment';
+  equipmentId: number;
+}
+
 // ------------------ No-Target-Color Actions ------------------
 export interface AnyResourceGainFavorAction extends AnyResourceAction {
   subType: 'gainFavor';
@@ -225,6 +238,8 @@ export type Action =
   | CouponGrabCubeAction
   | CouponGrabStatueAction
   | CouponFlipCloudAction
+  | CouponGainCompanionAction
+  | CouponGainEquipmentAction
   // anyResource
   | AnyResourceGainFavorAction
   | AnyResourceGainOracleCardAction

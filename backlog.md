@@ -1,10 +1,7 @@
 == Short-term ==
 
-- Switch existing functionality over to using GameEngine.doAction
-  - Second, move ship
-    - Available moves
-    - doMove
-- Then remove a bunch of old tests and code
+- Statues
+  - action: statue dropoff (without companion rewards)
 
 == Cosmetic/Usability ==
 
@@ -49,15 +46,8 @@
 
 == Quests ==
 
-- Statues
-  - action: statue pickup (slot open, not a repeat color)
-  - action: statue dropoff
-- Shrines
-  - action: shrine flip God reward (wait for gods to be implemented)
-  - action: shrine flip Shield+heal reward (wait for injuries to be implemented)
-    - Any reason not to randomly pick a color with the most injury cards?
 - Monsters
-  - action: monster fight
+  - action: monster fight (for now, automatically fight to the death)
 
 == Round end/Game end ==
 
@@ -75,11 +65,14 @@
 - action: spend a die to heal
 - round: end of round, roll Titan die
 - turn: if too many injuries, skip and heal
+- Shrine reward: Heal injuries
+  - Any reason not to pick random color from among "most"?
 
 == Gods ==
 
 - setup: gods
 - action: spend a die to advance god
+- Shrine reward: God advance
 - free: god effects:
   - effect: Fully heal
   - effect: Teleport
@@ -91,7 +84,8 @@
 == Equipment ==
 
 - setup: equipment
-- reward: equipment
+- reward: equipment coupon
+- free action: spend coupon to gain equipment
 - free: equipment one-time gains (new task for each specific type)
   - effect: take statue
   - effect: take cube
@@ -114,11 +108,21 @@
 == Companions ==
 
 - setup: companion deck
-- reward: gain companion (non-functional)
-  - effect: companion +move
-  - effect: companion -wounds
-  - effect: companion wild color
+- Shrine reward: gain companion coupon
+- Free action: spend coupon to gain companion
+- Companion effects:
+  - effect: +move
+  - effect: -wounds
+  - effect: wild color
 
 == Ships ==
 
 - setup: ships (new task for each specific ship)
+  - +2 shield
+  - start gods higher
+  - +2 range
+  - gain favor get +1
+  - remove 1 quest from the game
+  - recoloring cost -1
+  - setup: gain 1 oracle card and 1 equipment coupon
+  - +2 storage and recolor either direction

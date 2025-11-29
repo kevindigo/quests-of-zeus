@@ -119,13 +119,17 @@ and gain favor with the gods. Complete 12 quests, and return to Zeus.
 ## Game Rules Implementation
 
 The game closely aligns with the official Oracle of Delphi rules by Stefan Feld,
-but has variations:
+but has these differences:
 
 - **Map**: Hexagonal grid with radius 6, and each feature is individually
   placed, rather than as part of larger tiles
 - **Players**: Currently only allows 2 players (but theoretically supports 2-4)
 - **Quests**: Monster and temple quests are never green or red, for
   accessibility
+- **Equipment** Display of available equipment is only refilled at the end of a
+  player's turn
+- **Monsters** Fights automatically continue until either the monster is
+  defeated or the player runs out of favor
 
 ## Contributing
 
