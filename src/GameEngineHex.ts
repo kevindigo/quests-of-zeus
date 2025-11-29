@@ -1,6 +1,7 @@
 import type {
   Action,
   DropCubeAction,
+  DropStatueAction,
   ExploreShrineAction,
   HexAction,
   LoadCubeAction,
@@ -58,6 +59,12 @@ export class GameEngineHex {
             actions.push(
               ...this.getCityActions(gameState, neighbor, resource),
             );
+            break;
+          case 'statue':
+            actions.push(
+              ...this.getStatueActions(gameState, neighbor, resource),
+            );
+            break;
         }
       });
     });
@@ -77,7 +84,7 @@ export class GameEngineHex {
       case 'loadStatue':
         return this.doLoadStatue(action, gameState);
       case 'dropStatue':
-        break;
+        return this.doDropStatue(action, gameState);
       case 'fightMonster':
         break;
       case 'exploreShrine': {
@@ -234,7 +241,7 @@ export class GameEngineHex {
     gameState: GameState,
     cityCell: HexCell,
     resource: Resource,
-  ): Action[] {
+  ): LoadStatueAction[] {
     const effectiveColor = resource.getEffectiveColor();
     const cityColor = cityCell.color;
     if (cityColor !== effectiveColor) {
@@ -271,6 +278,40 @@ export class GameEngineHex {
       type: 'hex',
       subType: 'loadStatue',
       coordinates: cityCoordinates,
+      spend: resource,
+    };
+    return [action];
+  }
+
+  private static getStatueActions(
+    gameState: GameState,
+    statueCell: HexCell,
+    resource: Resource,
+  ): DropStatueAction[] {
+    const effectiveColor = resource.getEffectiveColor();
+    if (!effectiveColor) {
+      return [];
+    }
+
+    const player = gameState.getCurrentPlayer();
+    const statue: Item = { type: 'statue', color: effectiveColor };
+    if (!player.isItemLoaded(statue)) {
+      return [];
+    }
+
+    const statueCoordinates = statueCell.getCoordinates();
+    const statueHex = gameState.findStatueHexAt(statueCoordinates);
+    if (!statueHex) {
+      return [];
+    }
+    if (statueHex.emptyBases.indexOf(effectiveColor) < 0) {
+      return [];
+    }
+
+    const action: DropStatueAction = {
+      type: 'hex',
+      subType: 'dropStatue',
+      coordinates: statueCoordinates,
       spend: resource,
     };
     return [action];
@@ -496,6 +537,63 @@ export class GameEngineHex {
 
     return new Success(
       `Dropped cube ${effectiveColor} at temple; gained favor`,
+    );
+  }
+
+  private static doDropStatue(
+    action: HexAction,
+    gameState: GameState,
+  ): ResultWithMessage {
+    const availableActions = GameEngineHex.getHexActions(gameState);
+    if (
+      !availableActions.find((availableAction) => {
+        return this.areEqualHexActions(availableAction, action);
+      })
+    ) {
+      return new Failure(`Action not available ${JSON.stringify(action)}`);
+    }
+
+    const effectiveColor = action.spend.getEffectiveColor();
+    if (!effectiveColor) {
+      return new Failure('Cannot raise statue -- no resource selected');
+    }
+
+    const statue: Item = { type: 'statue', color: effectiveColor };
+    const player = gameState.getCurrentPlayer();
+    const unloaded = player.unloadItem(statue);
+    if (!unloaded.success) {
+      return unloaded;
+    }
+
+    const statueCoordinates = action.coordinates;
+    const statueHex = gameState.findStatueHexAt(statueCoordinates);
+    if (!statueHex) {
+      return new Failure(
+        'Impossible: statueHex not at ' + JSON.stringify(statueCoordinates),
+      );
+    }
+    const thisIndex = statueHex.emptyBases.indexOf(effectiveColor);
+    if (thisIndex < 0) {
+      return new Failure('Impossible: no empty base ' + effectiveColor);
+    }
+    statueHex.emptyBases.splice(thisIndex, 1);
+    statueHex.raisedStatues.push(effectiveColor);
+
+    const thisQuest = player.getQuestsOfType('statue').find((quest) => {
+      return quest.color === effectiveColor;
+    });
+    if (!thisQuest) {
+      return new Failure('Impossible: no quest of ' + effectiveColor);
+    }
+    thisQuest.isCompleted = true;
+
+    const spent = GameEngine.spendResource(gameState, action.spend);
+    if (!spent.success) {
+      return spent;
+    }
+
+    return new Success(
+      `Successfully raised ${effectiveColor} statue (but no companion reward)`,
     );
   }
 }

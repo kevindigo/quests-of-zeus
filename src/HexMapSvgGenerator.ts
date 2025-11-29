@@ -316,6 +316,46 @@ export class HexMapSvgGenerator {
     }
   }
 
+  private generateRaisedStatues(
+    options: IconOptions,
+    statueColors: CoreColor[],
+  ): string {
+    try {
+      const { centerX, centerY, cellSize } = options;
+      const barSize = cellSize * 0.4;
+
+      let statueBasesContent = '';
+
+      statueColors.forEach((color) => {
+        const { bitCenterX, bitCenterY } = this.getBitLocationWithinHex(
+          centerX,
+          centerY,
+          barSize,
+          color,
+        );
+        const strokeColor = this.getSvgColorForHexColor(color);
+
+        statueBasesContent += `
+          <line 
+            x1 = "${bitCenterX}"
+            y1 = "${bitCenterY - barSize / 2}"
+            x2 = "${bitCenterX}"
+            y2 = "${bitCenterY + barSize / 2}"
+            stroke="${strokeColor}" 
+            stroke-width="${cellSize * 0.2}"
+            class="raised-statue raised-statue-${color}"
+          />
+        `;
+      });
+
+      return statueBasesContent;
+    } catch (error) {
+      console.error('Error in generateColoredMonsters:', error);
+      // Return empty string on error - the fallback generic icon will be used
+      return '';
+    }
+  }
+
   private getBitLocationWithinHex(
     centerX: number,
     centerY: number,
@@ -735,12 +775,22 @@ export class HexMapSvgGenerator {
     const statueHex = gameState.getStatueHexes().find((sh) =>
       sh.q === cell.q && sh.r === cell.r
     );
-    const statueBaseColors = statueHex?.emptyBases || [];
 
-    return this.generateColoredStatueBases({
+    let content = '';
+    const statueBaseColors = statueHex?.emptyBases || [];
+    content += this.generateColoredStatueBases({
       centerX,
       centerY,
       cellSize,
     }, statueBaseColors);
+
+    const raisedStatueColors = statueHex?.raisedStatues || [];
+    content += this.generateRaisedStatues({
+      centerX,
+      centerY,
+      cellSize,
+    }, raisedStatueColors);
+
+    return content;
   }
 }

@@ -1,8 +1,5 @@
 == Short-term ==
 
-- Statues
-  - action: statue dropoff (without companion rewards)
-
 == Cosmetic/Usability ==
 
 - Clicking on a shrine with shield reward doesn't update the display immediately
