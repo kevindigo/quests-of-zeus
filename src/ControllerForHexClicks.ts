@@ -2,6 +2,7 @@ import type {
   DropCubeAction,
   ExploreShrineAction,
   LoadCubeAction,
+  LoadStatueAction,
   ShipMoveAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
@@ -105,6 +106,17 @@ export class ControllerForHexClicks {
         const action: DropCubeAction = {
           type: 'hex',
           subType: 'dropCube',
+          coordinates,
+          spend: uiState.getSelectedResource(),
+        };
+        const result = GameEngine.doAction(action, gameState);
+        uiState.clearResourceSelection();
+        return result;
+      }
+      case 'city': {
+        const action: LoadStatueAction = {
+          type: 'hex',
+          'subType': 'loadStatue',
           coordinates,
           spend: uiState.getSelectedResource(),
         };

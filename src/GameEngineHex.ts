@@ -71,17 +71,17 @@ export class GameEngineHex {
   ): ResultWithMessage {
     switch (action.subType) {
       case 'loadCube':
-        return GameEngineHex.doLoadCube(action, gameState);
+        return this.doLoadCube(action, gameState);
       case 'dropCube':
-        return GameEngineHex.doDropCube(action, gameState);
+        return this.doDropCube(action, gameState);
       case 'loadStatue':
-        break;
+        return this.doLoadStatue(action, gameState);
       case 'dropStatue':
         break;
       case 'fightMonster':
         break;
       case 'exploreShrine': {
-        return GameEngineHex.doExploreShrine(action, gameState);
+        return this.doExploreShrine(action, gameState);
       }
     }
     return new Failure(
@@ -225,6 +225,52 @@ export class GameEngineHex {
       type: 'hex',
       subType: 'dropCube',
       coordinates: templeCell.getCoordinates(),
+      spend: resource,
+    };
+    return [action];
+  }
+
+  private static getCityActions(
+    gameState: GameState,
+    cityCell: HexCell,
+    resource: Resource,
+  ): Action[] {
+    const effectiveColor = resource.getEffectiveColor();
+    const cityColor = cityCell.color;
+    if (cityColor !== effectiveColor) {
+      return [];
+    }
+
+    const player = gameState.getCurrentPlayer();
+    const item: Item = { type: 'statue', color: effectiveColor };
+    if (!player.validateItemIsLoadable(item).success) {
+      return [];
+    }
+
+    const quests = player.getQuestsOfType('statue');
+    const wildQuest = quests.find((quest) => {
+      return quest.color === 'none';
+    });
+    if (!wildQuest) {
+      return [];
+    }
+    const duplicateQuest = quests.find((quest) => {
+      return quest.color === effectiveColor;
+    });
+    if (duplicateQuest) {
+      return [];
+    }
+
+    const cityCoordinates = cityCell.getCoordinates();
+    const cityHex = gameState.findCityHexAt(cityCoordinates);
+    if (!cityHex || cityHex.statues < 1) {
+      return [];
+    }
+
+    const action: LoadStatueAction = {
+      type: 'hex',
+      subType: 'loadStatue',
+      coordinates: cityCoordinates,
       spend: resource,
     };
     return [action];
@@ -404,45 +450,52 @@ export class GameEngineHex {
 
     GameEngine.spendResource(gameState, action.spend);
 
-    return new Success(`Dropped cube {$color} at temple; gained favor`);
+    return new Success(
+      `Dropped cube ${effectiveColor} at temple; gained favor`,
+    );
   }
 
-  private static getCityActions(
+  public static doLoadStatue(
+    action: HexAction,
     gameState: GameState,
-    cityCell: HexCell,
-    resource: Resource,
-  ): Action[] {
-    const effectiveColor = resource.getEffectiveColor();
-    const cityColor = cityCell.color;
-    if (cityColor !== effectiveColor) {
-      return [];
+  ): ResultWithMessage {
+    const availableActions = GameEngineHex.getHexActions(gameState);
+    if (
+      !availableActions.find((availableAction) => {
+        return this.areEqualHexActions(availableAction, action);
+      })
+    ) {
+      return new Failure(`Action not available ${JSON.stringify(action)}`);
     }
+
+    const cityHex = gameState.findCityHexAt(action.coordinates);
+    if (!cityHex) {
+      return new Failure(`No city hex at ${action.coordinates}`);
+    }
+    cityHex.statues -= 1;
 
     const player = gameState.getCurrentPlayer();
-    const item: Item = { type: 'statue', color: effectiveColor };
-    if (!player.validateItemIsLoadable(item).success) {
-      return [];
+    const resource = action.spend;
+    const effectiveColor = resource.getEffectiveColor();
+    if (!effectiveColor) {
+      return new Failure(`No resource selected`);
     }
+    const statue: Item = { type: 'statue', color: effectiveColor };
+    player.loadItem(statue);
 
-    const wildQuest = player.getQuestsOfType('statue').find((quest) => {
+    const quests = player.getQuestsOfType('statue');
+    const wildQuest = quests.find((quest) => {
       return quest.color === 'none';
     });
     if (!wildQuest) {
-      return [];
+      return new Failure('No wild quests available');
     }
+    wildQuest.color = effectiveColor;
 
-    const cityCoordinates = cityCell.getCoordinates();
-    const cityHex = gameState.findCityHexAt(cityCoordinates);
-    if (!cityHex || cityHex.statues < 1) {
-      return [];
-    }
+    GameEngine.spendResource(gameState, resource);
 
-    const action: LoadStatueAction = {
-      type: 'hex',
-      subType: 'loadStatue',
-      coordinates: cityCoordinates,
-      spend: resource,
-    };
-    return [action];
+    return new Success(
+      `Dropped cube ${effectiveColor} at temple; gained favor`,
+    );
   }
 }
