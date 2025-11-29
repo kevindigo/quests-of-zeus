@@ -159,27 +159,18 @@ export class HexMapSvgGenerator {
       zeus: 'none',
       sea: '#C4F4FFFF',
       shallow: 'none',
-      monsters: '#d4a574',
-      offerings: '#e8c99b',
-      temple: '#f9d9a9',
-      shrine: '#f0f8ff',
-      city: '#b0b0b0',
-      statue: '#b0b0b0',
+      shrine: '#AAAAAA',
+      monsters: '#AAAAAA',
+      offerings: '#AAAAAA',
+      temple: '#AAAAAA',
+      city: '#AAAAAA',
+      statue: '#AAAAAA',
     };
     return colors[terrain] || '#cccccc';
   }
 
   private getSvgColorForHexColor(color: HexColor): string {
-    const colors: Record<HexColor, string> = {
-      none: '#333333',
-      red: '#DC143C',
-      pink: '#ff69b4',
-      blue: '#0000ff',
-      black: '#000000',
-      green: '#008000',
-      yellow: '#ffff00',
-    };
-    return colors[color] || '#333333';
+    return ViewPlayer.getColorHex(color);
   }
 
   private getTerrainClass(terrain: TerrainType): string {
@@ -205,7 +196,7 @@ export class HexMapSvgGenerator {
         );
 
         const strokeColor = this.getSvgColorForHexColor(color);
-        const fillColor = this.getCubeFillColor(color);
+        const fillColor = this.getSvgColorForHexColor(color);
 
         // Use squares instead of circles for cubes
         cubesContent += `
@@ -383,18 +374,11 @@ export class HexMapSvgGenerator {
   }
 
   /**
-   * Get fill color for cubes
-   */
-  private getCubeFillColor(color: HexColor): string {
-    return ViewPlayer.getColorHex(color);
-  }
-
-  /**
    * Get fill color for monsters
    */
   private getMonsterFillColor(color: HexColor): string {
     // Use the same vibrant colors as cubes for consistency
-    return this.getCubeFillColor(color);
+    return this.getSvgColorForHexColor(color);
   }
 
   private createStyleSheetSvg(): string {
@@ -730,7 +714,12 @@ export class HexMapSvgGenerator {
       }
     }
 
-    return generateCloudsIcon({ centerX, centerY, cellSize, hexColor: 'none' });
+    return generateCloudsIcon({
+      centerX,
+      centerY,
+      cellSize,
+      hexColor: 'white',
+    });
   }
 
   private createHexStatueSvg(
