@@ -47,7 +47,7 @@ Deno.test('GameEngineMove - cannot move to current position', () => {
   assertEquals(adjacentMoves.length, 0);
 });
 
-Deno.test('GameEngineMove - no resource available', () => {
+Deno.test('GameEngineMove - available no resource available', () => {
   setup();
   const r = 1;
   const colorAdjacent = COLOR_WHEEL[r];
@@ -70,7 +70,7 @@ Deno.test('GameEngineMove - no resource available', () => {
   assertEquals(adjacentMoves.length, 0);
 });
 
-Deno.test('GameEngineMove - cannot move beyond range', () => {
+Deno.test('GameEngineMove - available cannot move beyond range', () => {
   setup();
   const r = 5;
   const colorDistant = COLOR_WHEEL[r];
@@ -93,7 +93,7 @@ Deno.test('GameEngineMove - cannot move beyond range', () => {
   assertEquals(adjacentMoves.length, 0);
 });
 
-Deno.test('GameEngineMove - simple move die no favor', () => {
+Deno.test('GameEngineMove - available simple move die no favor', () => {
   setup();
   const r = 3;
   const colorAdjacent = COLOR_WHEEL[r];
@@ -115,7 +115,7 @@ Deno.test('GameEngineMove - simple move die no favor', () => {
   assertEquals(adjacentMoves.length, 1);
 });
 
-Deno.test('GameEngineMove - simple move card no favor', () => {
+Deno.test('GameEngineMove - available simple move card no favor', () => {
   setup();
   const r = 3;
   const colorAdjacent = COLOR_WHEEL[r];
@@ -138,7 +138,7 @@ Deno.test('GameEngineMove - simple move card no favor', () => {
   assertEquals(adjacentMoves.length, 1);
 });
 
-Deno.test('GameEngineMove - move die with favor for range', () => {
+Deno.test('GameEngineMove - available move die with favor for range', () => {
   setup();
   const r = 5;
   const colorDistant = COLOR_WHEEL[r];
@@ -159,7 +159,7 @@ Deno.test('GameEngineMove - move die with favor for range', () => {
   assertEquals(adjacentMoves.length, 1);
 });
 
-Deno.test('GameEngineMove - move card with favor for range', () => {
+Deno.test('GameEngineMove - available move card with favor for range', () => {
   setup();
   const r = 5;
   const colorDistant = COLOR_WHEEL[r];
@@ -181,7 +181,7 @@ Deno.test('GameEngineMove - move card with favor for range', () => {
   assertEquals(adjacentMoves.length, 1);
 });
 
-Deno.test('GameEngineMove - move die with favor for recoloring', () => {
+Deno.test('GameEngineMove - available move die with favor for recoloring', () => {
   setup();
   const r = 3;
   const colorDistant = COLOR_WHEEL[r];
@@ -204,7 +204,7 @@ Deno.test('GameEngineMove - move die with favor for recoloring', () => {
   assertEquals(adjacentMoves.length, 1);
 });
 
-Deno.test('GameEngineMove - move card with favor for recoloring', () => {
+Deno.test('GameEngineMove - available move card with favor for recoloring', () => {
   setup();
   const r = 3;
   const colorDistant = COLOR_WHEEL[r];
@@ -226,6 +226,39 @@ Deno.test('GameEngineMove - move card with favor for recoloring', () => {
     return GameEngineMove.areEqualMoveActions(availableAction, simpleMove);
   });
   assertEquals(adjacentMoves.length, 1);
+});
+
+Deno.test('GameEngineMove - available should offer die and card for same move', () => {
+  setup();
+  const r = 1;
+  const colorAdjacent = COLOR_WHEEL[r];
+  assert(colorAdjacent);
+  const player = gameState.getCurrentPlayer();
+  player.oracleDice = [colorAdjacent];
+  player.oracleCards = [colorAdjacent];
+  player.favor = 0;
+  const dieMove: ShipMoveAction = {
+    type: 'move',
+    destination: { q: 0, r },
+    spend: Resource.createDie(colorAdjacent),
+    favorToExtendRange: 0,
+  };
+  const cardMove: ShipMoveAction = {
+    type: 'move',
+    destination: { q: 0, r },
+    spend: Resource.createCard(colorAdjacent),
+    favorToExtendRange: 0,
+  };
+
+  const actions = GameEngineMove.getMoveActions(gameState);
+  const dieMoves = actions.filter((availableAction) => {
+    return GameEngineMove.areEqualMoveActions(availableAction, dieMove);
+  });
+  assertEquals(dieMoves.length, 1);
+  const cardMoves = actions.filter((availableAction) => {
+    return GameEngineMove.areEqualMoveActions(availableAction, cardMove);
+  });
+  assertEquals(cardMoves.length, 1);
 });
 
 Deno.test('GameEngineMove - do action not available', () => {

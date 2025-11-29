@@ -25,15 +25,15 @@ export class GameEngineMove {
       const player = gameState.getCurrentPlayer();
       const availableFavor = player.favor;
       const availableResources = player.getAvailableResourcesWithRecoloring();
-      const actionOrNull = this.createActionIfAvailable(
+      const actionAvailableGivenResources = this.createActionsIfAvailable(
         move,
         availableFavor,
         availableResources,
       );
 
-      if (actionOrNull) {
-        possibleActionsWithAvailableResources.push(actionOrNull);
-      }
+      possibleActionsWithAvailableResources.push(
+        ...actionAvailableGivenResources,
+      );
     });
 
     return possibleActionsWithAvailableResources;
@@ -89,28 +89,28 @@ export class GameEngineMove {
     return availableMoves;
   }
 
-  private static createActionIfAvailable(
+  private static createActionsIfAvailable(
     move: PossibleShipMove,
     availableFavor: number,
     availableResources: Resource[],
-  ): ShipMoveAction | null {
-    const suitableResource = availableResources.find((resource) => {
+  ): ShipMoveAction[] {
+    const suitableResources = availableResources.filter((resource) => {
       return (
         move.effectiveColor === resource.getEffectiveColor() &&
         move.favorCost + resource.getRecolorCost() <= availableFavor
       );
     });
 
-    if (suitableResource) {
+    const actions = suitableResources.map((resource) => {
       const action = this.createShipMoveAction(
         { q: move.q, r: move.r },
-        suitableResource,
+        resource,
         move.favorCost,
       );
       return action;
-    }
+    });
 
-    return null;
+    return actions;
   }
 
   private static createShipMoveAction(
