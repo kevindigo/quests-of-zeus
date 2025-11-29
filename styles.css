@@ -300,12 +300,24 @@ footer {
   border-width: 2px;
 }
 
-.cargo-item {
+.cargo-item-cube {
   display: inline-flex; /* treat span as a flex container */
   align-items: center; /* vertical center */
   justify-content: center; /* horizontal center */
-  width: 1.5rem; /* square width */
+  height: 1.5rem; /* square width */
   aspect-ratio: 1.0 / 1.0; /* width / height */
+  overflow: hidden; /* crop excess if needed */
+  border: black;
+  border-style: solid;
+  border-width: 2px;
+}
+
+.cargo-item-statue {
+  display: inline-flex; /* treat span as a flex container */
+  align-items: center; /* vertical center */
+  justify-content: center; /* horizontal center */
+  height: 1.5rem; /* square width */
+  aspect-ratio: 0.5 / 1.0; /* width / height */
   overflow: hidden; /* crop excess if needed */
   border: black;
   border-style: solid;

@@ -75,8 +75,11 @@ export class ViewPlayer {
 
   public getShipCargoContents(player: Player) {
     const contentForEachItem = player.getLoadedItems().map((item) => {
+      const className = item.type === 'cube'
+        ? 'cargo-item-cube'
+        : 'cargo-item-statue';
       return `<div 
-        class="cargo-item" style="background-color: ${
+        class="${className}" style="background-color: ${
         ViewPlayer.getColorHex(item.color)
       }">
         </div>`;
