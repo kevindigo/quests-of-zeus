@@ -163,6 +163,12 @@ export class GameState {
     return this.cityHexes;
   }
 
+  public findCityHexAt(coordinates: HexCoordinates): CityHex | undefined {
+    return this.getCityHexes().find((hex) => {
+      return hex.q === coordinates.q && hex.r === coordinates.r;
+    });
+  }
+
   public setCityHexes(hexes: CityHex[]): void {
     this.cityHexes = hexes;
   }
