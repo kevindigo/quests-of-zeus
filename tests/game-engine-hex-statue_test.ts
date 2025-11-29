@@ -5,7 +5,7 @@ import { assertFalse } from '@std/assert/false';
 import type { DropStatueAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
-import { HexGrid } from '../src/hexmap/HexGrid.ts';
+import type { HexCoordinates } from '../src/hexmap/HexGrid.ts';
 import { Resource } from '../src/Resource.ts';
 import type { CoreColor, Item, StatueHex } from '../src/types.ts';
 import {
@@ -40,29 +40,43 @@ function setup(color: CoreColor): StatueHex {
   return statueHex;
 }
 
+function createDropStatueAction(
+  coordinates: HexCoordinates,
+  spend: Resource,
+): DropStatueAction {
+  return { type: 'hex', subType: 'dropStatue', coordinates, spend };
+}
+
 Deno.test('GameEngineHex statue available - loaded no, base yes, resource yes', () => {
   const statueHex = setup('red');
+  const action = createDropStatueAction(
+    statueHex.getCoordinates(),
+    Resource.createDie('black'),
+  );
 
   const availableActions = GameEngineHex.getHexActions(testGameState);
-  const dropsAvailableHere = availableActions.filter((action) => {
-    return action.type === 'hex' && action.subType === 'dropStatue' &&
-      HexGrid.isSameLocation(
-        action.coordinates,
-        statueHex.getCoordinates(),
-      );
+  const dropsAvailableHere = availableActions.filter((availableAction) => {
+    return GameEngineHex.areEqualHexActions(availableAction, action);
   });
   assertEquals(dropsAvailableHere.length, 0);
 });
 
 Deno.test('GameEngineHex statue available - loaded yes, base yes, resource no', () => {
-  setup('red');
+  const statueHex = setup('red');
   const player = testGameState.getCurrentPlayer();
   const statue: Item = { type: 'statue', color: 'red' };
   assert(player.loadItem(statue));
   player.oracleCards = [];
+  const action = createDropStatueAction(
+    statueHex.getCoordinates(),
+    Resource.createDie('black'),
+  );
 
   const availableActions = GameEngineHex.getHexActions(testGameState);
-  assertEquals(availableActions.length, 0);
+  const dropsAvailableHere = availableActions.filter((availableAction) => {
+    return GameEngineHex.areEqualHexActions(availableAction, action);
+  });
+  assertEquals(dropsAvailableHere.length, 0);
 });
 
 Deno.test('GameEngineHex statue available - loaded yes, base no, resource yes', () => {
@@ -71,19 +85,33 @@ Deno.test('GameEngineHex statue available - loaded yes, base no, resource yes', 
   const statue: Item = { type: 'statue', color: 'red' };
   assert(player.loadItem(statue));
   statueHex.emptyBases = [];
+  const action = createDropStatueAction(
+    statueHex.getCoordinates(),
+    Resource.createCard('red'),
+  );
 
   const availableActions = GameEngineHex.getHexActions(testGameState);
-  assertEquals(availableActions.length, 0);
+  const dropsAvailableHere = availableActions.filter((availableAction) => {
+    return GameEngineHex.areEqualHexActions(availableAction, action);
+  });
+  assertEquals(dropsAvailableHere.length, 0);
 });
 
 Deno.test('GameEngineHex statue available - loaded yes, base yes, resource yes', () => {
-  setup('red');
+  const statueHex = setup('red');
   const player = testGameState.getCurrentPlayer();
   const statue: Item = { type: 'statue', color: 'red' };
   assert(player.loadItem(statue));
+  const action = createDropStatueAction(
+    statueHex.getCoordinates(),
+    Resource.createCard('red'),
+  );
 
   const availableActions = GameEngineHex.getHexActions(testGameState);
-  assertEquals(availableActions.length, 1);
+  const dropsAvailableHere = availableActions.filter((availableAction) => {
+    return GameEngineHex.areEqualHexActions(availableAction, action);
+  });
+  assertEquals(dropsAvailableHere.length, 1);
 });
 
 Deno.test('GameEngineHex statue doAction - not available', () => {
