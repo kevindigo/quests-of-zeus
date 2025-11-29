@@ -193,7 +193,8 @@ export class Player {
     }
 
     const at = this.items.findIndex((item) => {
-      return item.type === 'cube' && item.color === itemToUnload.color;
+      return item.type === itemToUnload.type &&
+        item.color === itemToUnload.color;
     });
     if (at < 0) {
       return new Failure(

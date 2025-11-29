@@ -1,3 +1,4 @@
+import { assertFalse } from '@std/assert';
 import { assert } from '@std/assert/assert';
 import { assertEquals } from '@std/assert/equals';
 import type { Item } from '../src/types.ts';
@@ -63,6 +64,19 @@ Deno.test('Player - load cube already full', () => {
   assertFailureContains(validation, 'full');
   const result = testPlayer.loadItem(redCube);
   assertFailureContains(result, 'full');
+});
+
+Deno.test('Player - load and unload a statue', () => {
+  setupGame();
+  const statue: Item = { type: 'statue', color: 'red' };
+  const loaded = testPlayer.loadItem(statue);
+  assert(loaded.success, loaded.message);
+  assert(testPlayer.isItemLoaded(statue));
+  assertEquals(testPlayer.getItemCount(), 1);
+  const unloaded = testPlayer.unloadItem(statue);
+  assert(unloaded.success, unloaded.message);
+  assertEquals(testPlayer.getItemCount(), 0);
+  assertFalse(testPlayer.isItemLoaded(statue));
 });
 
 Deno.test('Player - get resources for base color dice', () => {
