@@ -9,7 +9,7 @@ Deno.test('Statue base distribution - 6 with 3 on each', () => {
 
   assertEquals(statueHexes.length, 6);
   statueHexes.forEach((statueHex) => {
-    assertEquals(statueHex.statueBaseColors.length, 3);
+    assertEquals(statueHex.emptyBases.length, 3);
   });
 });
 
@@ -20,7 +20,7 @@ Deno.test('Statue base distribution - no duplicates on a hex', () => {
 
   statueHexes.forEach((statueHex) => {
     const set: Set<CoreColor> = new Set();
-    statueHex.statueBaseColors.forEach((color) => {
+    statueHex.emptyBases.forEach((color) => {
       set.add(color);
     });
     assertEquals(set.size, 3);
@@ -34,7 +34,7 @@ Deno.test('Statue base distribution - exactly 3 of each color in total', () => {
 
   const countByColor: Map<CoreColor, number> = new Map();
   statueHexes.forEach((statueHex) => {
-    statueHex.statueBaseColors.forEach((color) => {
+    statueHex.emptyBases.forEach((color) => {
       const oldCount = countByColor.get(color) || 0;
       countByColor.set(color, oldCount + 1);
     });

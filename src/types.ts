@@ -140,7 +140,8 @@ export class StatueHex {
   public constructor(coordinates: HexCoordinates) {
     this.q = coordinates.q;
     this.r = coordinates.r;
-    this.statueBaseColors = [];
+    this.emptyBases = [];
+    this.raisedStatues = [];
   }
 
   public getCoordinates(): HexCoordinates {
@@ -149,7 +150,8 @@ export class StatueHex {
 
   q: number;
   r: number;
-  statueBaseColors: CoreColor[];
+  emptyBases: CoreColor[];
+  raisedStatues: CoreColor[];
 }
 
 export type ShrineStatus = 'hidden' | 'visible' | 'filled';

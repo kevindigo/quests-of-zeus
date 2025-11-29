@@ -322,7 +322,7 @@ export class GameStateInitializer {
         if (!thisStatueColor) {
           throw new Error(`Ran out of statue colors to place!`);
         }
-        hex.statueBaseColors.push(thisStatueColor);
+        hex.emptyBases.push(thisStatueColor);
       }
       return hex;
     });

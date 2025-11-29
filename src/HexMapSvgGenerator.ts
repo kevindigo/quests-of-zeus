@@ -735,7 +735,7 @@ export class HexMapSvgGenerator {
     const statueHex = gameState.getStatueHexes().find((sh) =>
       sh.q === cell.q && sh.r === cell.r
     );
-    const statueBaseColors = statueHex?.statueBaseColors || [];
+    const statueBaseColors = statueHex?.emptyBases || [];
 
     return this.generateColoredStatueBases({
       centerX,
