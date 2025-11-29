@@ -1,5 +1,9 @@
 == Short-term ==
 
+- Monsters
+  - action: monster fight (for now, automatically fight to the death)
+  - no reward
+
 == Cosmetic/Usability ==
 
 - Clicking on a shrine with shield reward doesn't update the display immediately
@@ -43,9 +47,6 @@
 
 == Quests ==
 
-- Monsters
-  - action: monster fight (for now, automatically fight to the death)
-
 == Round end/Game end ==
 
 - effect: free god advance for other players' rolls
@@ -62,7 +63,8 @@
 - action: spend a die to heal
 - round: end of round, roll Titan die
 - turn: if too many injuries, skip and heal
-- Shrine reward: Heal injuries
+- During fight, bad roll causes injury
+- Shrine quest reward: Heal injuries
   - Any reason not to pick random color from among "most"?
 
 == Gods ==

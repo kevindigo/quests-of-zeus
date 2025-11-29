@@ -3,6 +3,7 @@ import type {
   DropCubeAction,
   DropStatueAction,
   ExploreShrineAction,
+  FightMonsterAction,
   HexAction,
   LoadCubeAction,
   LoadStatueAction,
@@ -11,14 +12,13 @@ import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import type { Player } from './Player.ts';
 import type { Resource } from './Resource.ts';
 import {
   Failure,
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import type { Item } from './types.ts';
+import type { CoreColor, Item, Quest } from './types.ts';
 
 export class GameEngineHex {
   public static getHexActions(gameState: GameState): Action[] {
@@ -38,7 +38,7 @@ export class GameEngineHex {
         switch (neighbor.terrain) {
           case 'shrine':
             actions.push(
-              ...GameEngineHex.getShrineActions(gameState, neighbor, resource),
+              ...this.getShrineActions(gameState, neighbor, resource),
             );
             break;
           case 'offerings':
@@ -63,6 +63,11 @@ export class GameEngineHex {
           case 'statue':
             actions.push(
               ...this.getStatueActions(gameState, neighbor, resource),
+            );
+            break;
+          case 'monsters':
+            actions.push(
+              ...this.getMonsterActions(gameState, neighbor, resource),
             );
             break;
         }
@@ -161,7 +166,8 @@ export class GameEngineHex {
       return [];
     }
 
-    if (!this.willSatisfyQuest(player, cube)) {
+    const quests = player.getQuestsOfType('temple');
+    if (!this.willSatisfyQuest(quests, cube.color)) {
       return [];
     }
 
@@ -183,21 +189,16 @@ export class GameEngineHex {
     return [];
   }
 
-  private static willSatisfyQuest(player: Player, cube: Item): boolean {
-    if (cube.type !== 'cube') {
-      return false;
-    }
-    const quests = player.getQuestsOfType('temple');
-
+  private static willSatisfyQuest(quests: Quest[], color: CoreColor): boolean {
     const questItCanUse = quests.find((quest) => {
       return !quest.isCompleted &&
-        (quest.color === 'none' || quest.color === cube.color);
+        (quest.color === 'none' || quest.color === color);
     });
 
     const wouldTakeWildQuest = questItCanUse?.color === 'none';
     if (wouldTakeWildQuest) {
       const questExistsForThatColor = quests.find((quest) => {
-        return quest.color === cube.color;
+        return quest.color === color;
       });
       if (questExistsForThatColor) {
         return false;
@@ -312,6 +313,39 @@ export class GameEngineHex {
       type: 'hex',
       subType: 'dropStatue',
       coordinates: statueCoordinates,
+      spend: resource,
+    };
+    return [action];
+  }
+
+  private static getMonsterActions(
+    gameState: GameState,
+    monsterCell: HexCell,
+    resource: Resource,
+  ): FightMonsterAction[] {
+    const color = resource.getEffectiveColor();
+    if (!color) {
+      return [];
+    }
+
+    const monsterCoordinates = monsterCell.getCoordinates();
+    const monsterHex = gameState.findMonsterHexAt(monsterCoordinates);
+    if (!monsterHex) {
+      return [];
+    }
+    if (monsterHex.monsterColors.indexOf(color) < 0) {
+      return [];
+    }
+
+    const player = gameState.getCurrentPlayer();
+    if (!this.willSatisfyQuest(player.getQuestsOfType('monster'), color)) {
+      return [];
+    }
+
+    const action: FightMonsterAction = {
+      type: 'hex',
+      subType: 'fightMonster',
+      coordinates: monsterCoordinates,
       spend: resource,
     };
     return [action];
