@@ -18,6 +18,7 @@ import {
   type HexColor,
   type TerrainType,
 } from './types.ts';
+import { ViewPlayer } from './ViewPlayer.ts';
 
 export interface IconOptions {
   centerX: number;
@@ -29,9 +30,13 @@ export class HexMapSvgGenerator {
   constructor() {
   }
 
-  public generateSVG(grid: HexGrid, gameState: GameState): string {
+  public generateSVG(
+    gameState: GameState,
+    areAccessibilityIconsEnabled: boolean,
+  ): string {
     const cellSize = 30;
 
+    const grid = gameState.getMap().getHexGrid();
     const radius = grid.getRadius();
     const svgWidth = cellSize * 2 + cellSize * 1.5 * (radius * 2);
     const svgHeight = cellSize * 2 + cellSize * Math.sqrt(3) * (radius * 2);
@@ -42,7 +47,12 @@ export class HexMapSvgGenerator {
       xmlns="http://www.w3.org/2000/svg" 
       class="hex-map-svg">`;
     svgContent += this.createStyleSheetSvg();
-    svgContent += this.createHexGridSvg(grid, gameState, cellSize);
+    svgContent += this.createHexGridSvg(
+      grid,
+      gameState,
+      cellSize,
+      areAccessibilityIconsEnabled,
+    );
     svgContent += `</svg>`;
 
     console.log('SVG generation completed successfully');
@@ -53,11 +63,17 @@ export class HexMapSvgGenerator {
     grid: HexGrid,
     gameState: GameState,
     cellSize: number,
+    areAccessibilityIconsEnabled: boolean,
   ): string {
     let svgContent = `<g class="hex-grid">`;
 
     grid.forEachCell((cell) => {
-      svgContent += this.createHexCellSvg(gameState, cell, cellSize);
+      svgContent += this.createHexCellSvg(
+        gameState,
+        cell,
+        cellSize,
+        areAccessibilityIconsEnabled,
+      );
     });
 
     svgContent += `</g>`;
@@ -68,6 +84,7 @@ export class HexMapSvgGenerator {
     gameState: GameState,
     cell: HexCell,
     cellSize: number,
+    areAccessibilityIconsEnabled: boolean,
   ): string {
     const { x, y } = this.calculateCellPosition(cell.q, cell.r, cellSize);
 
@@ -93,6 +110,7 @@ export class HexMapSvgGenerator {
       x,
       y,
       cellSize,
+      areAccessibilityIconsEnabled,
     );
 
     cellContent += this.createPlayerMarkersSvg(
@@ -139,7 +157,7 @@ export class HexMapSvgGenerator {
   private getColorForTerrain(terrain: TerrainType): string {
     const colors: Record<TerrainType, string> = {
       zeus: 'none',
-      sea: '#87ceeb',
+      sea: '#C4F4FFFF',
       shallow: 'none',
       monsters: '#d4a574',
       offerings: '#e8c99b',
@@ -507,6 +525,7 @@ export class HexMapSvgGenerator {
     x: number,
     y: number,
     cellSize: number,
+    areAccessibilityIconsEnabled: boolean,
   ): string {
     const centerX = x + cellSize;
     const centerY = y + cellSize;
@@ -514,6 +533,14 @@ export class HexMapSvgGenerator {
     switch (cell.terrain) {
       case 'zeus':
         return this.createHexZeusSvg(centerX, centerY, cellSize);
+      case 'sea':
+        return this.createSeaSvg(
+          centerX,
+          centerY,
+          cellSize,
+          cell.color,
+          areAccessibilityIconsEnabled,
+        );
       case 'city':
         return this.createHexCitySvg(
           gameState,
@@ -567,6 +594,24 @@ export class HexMapSvgGenerator {
     cellSize: number,
   ): string {
     return generateZeusIcon({ centerX, centerY, cellSize });
+  }
+
+  private createSeaSvg(
+    centerX: number,
+    centerY: number,
+    cellSize: number,
+    color: HexColor,
+    areAccessibilityIconsEnabled: boolean,
+  ): string {
+    const accessibleContent = `<text
+      x="${centerX}" y="${centerY}"
+      text-anchor="middle" dominant-baseline="central"
+      font-size="${cellSize * 0.3}"
+      pointer-events="none">
+      ${ViewPlayer.getSymbol(color)}
+    </text>`;
+
+    return areAccessibilityIconsEnabled ? accessibleContent : '';
   }
 
   private createHexCitySvg(

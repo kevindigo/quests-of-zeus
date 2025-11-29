@@ -87,11 +87,11 @@
 - reward: equipment coupon
 - free action: spend coupon to gain equipment
 - free: equipment one-time gains (new task for each specific type)
-  - effect: take statue
-  - effect: take cube
-  - effect: advance any god to top
-  - effect: peek under 2 face-down shrines; flip one and take reward
-  - effect: +3 favor & +oracle card & 2 god advances
+  - effect: get gain statue coupon
+  - effect: get gain cube coupon
+  - effect: advance any god to top (coupon)
+  - effect: peek under 2 face-down shrines; flip one and take reward (coupon)
+  - effect: +3 favor & +oracle card & 2 god advance coupons
 - effect: equipment ongoing (new task for each specific type)
   - stat: +1 range
   - stat: +1 storage
@@ -102,7 +102,8 @@
   - ability: cube load/drop from 1 space away
   - trigger: temple/statue/monster -> 1 god advance
   - trigger (color): rolling a die matching this color -> +2 favor
-  - trigger (color): spend die -> +1 oracle card & +1 favor & +1 god
+  - trigger (color): spend die -> +1 oracle card & +1 favor & +1 god advance
+    coupon
   - free: 1x/turn, spend 3 favor to gain a wild action
 
 == Companions ==
@@ -111,18 +112,18 @@
 - Shrine reward: gain companion coupon
 - Free action: spend coupon to gain companion
 - Companion effects:
-  - effect: +move
-  - effect: -wounds
-  - effect: wild color
+  - effect range: color -> +3 range and land on any color
+  - effect wounds: +2 shield and color -> discard and ignore all wounds
+  - effect wild: gain oracle card and color -> wild
 
 == Ships ==
 
 - setup: ships (new task for each specific ship)
-  - +2 shield
-  - start gods higher
   - +2 range
+  - +2 shield
   - gain favor get +1
-  - remove 1 quest from the game
   - recoloring cost -1
-  - setup: gain 1 oracle card and 1 equipment coupon
   - +2 storage and recolor either direction
+  - effect: start gods higher
+  - setup: gain 1 oracle card and 1 equipment coupon
+  - setup: remove 1 quest from the game

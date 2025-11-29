@@ -3,6 +3,8 @@ import { Resource } from './Resource.ts';
 import type { CoreColor } from './types.ts';
 
 export interface UiState {
+  areAccessibilityIconsEnabled(): boolean;
+
   reset(): void;
   getSelectedResource(): Resource;
   setSelectedResource(resource: Resource): void;
@@ -17,6 +19,10 @@ export class UiStateClass {
   public constructor() {
     this.selectedResource = Resource.none;
     this.selectedCoordinates = null;
+  }
+
+  public areAccessibilityIconsEnabled(): boolean {
+    return true;
   }
 
   public reset(): void {

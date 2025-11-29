@@ -129,7 +129,10 @@ export class ViewGame {
       );
 
       const mapSvgGenerator = new HexMapSvgGenerator();
-      hexMapContainer.innerHTML = mapSvgGenerator.generateSVG(grid, gameState);
+      hexMapContainer.innerHTML = mapSvgGenerator.generateSVG(
+        gameState,
+        this.uiState.areAccessibilityIconsEnabled(),
+      );
     } catch (error) {
       console.error('Error generating SVG:', error);
       const errorMessage = error instanceof Error
