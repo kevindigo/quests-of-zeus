@@ -177,6 +177,12 @@ export class GameState {
     return this.statueHexes;
   }
 
+  public findStatueHexAt(coordinates: HexCoordinates): StatueHex | undefined {
+    return this.getStatueHexes().find((hex) => {
+      return hex.q === coordinates.q && hex.r === coordinates.r;
+    });
+  }
+
   public setStatueHexes(hexes: StatueHex[]): void {
     this.statueHexes = hexes;
   }
