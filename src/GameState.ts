@@ -155,6 +155,12 @@ export class GameState {
     return this.monsterHexes;
   }
 
+  public findMonsterHexAt(coordinates: HexCoordinates): MonsterHex | undefined {
+    return this.getMonsterHexes().find((hex) => {
+      return hex.q === coordinates.q && hex.r === coordinates.r;
+    });
+  }
+
   public setMonsterHexes(hexes: MonsterHex[]): void {
     this.monsterHexes = hexes;
   }
