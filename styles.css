@@ -9,7 +9,7 @@
 body {
   font-family:
     'Atkinson Hyperlegible', 'Ubuntu', 'Verdana', 'Tahoma' sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #0e05bc 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -50,7 +50,7 @@ h1 {
   box-sizing: border-box;
   padding: 0.25rem;
   gap: 0.5rem;
-  background: #8888cc;
+  background: #6f86c2;
   color: black;
   border-radius: 8px;
   text-align: left;
@@ -64,7 +64,7 @@ h1 {
 .player-info {
   grid-row: 1;
   grid-column: 1;
-  background: #ccccff;
+  background: #7788cc;
   border-radius: 8px;
   text-align: left;
   padding: 1rem;
@@ -73,7 +73,7 @@ h1 {
 .phase-display {
   grid-row: 1;
   grid-column: 2;
-  background: #ccccff;
+  background: #7788cc;
   border-radius: 8px;
   text-align: left;
   padding: 1rem;
