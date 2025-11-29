@@ -62,7 +62,7 @@ export class ViewPlayer {
       const background = ViewPlayer.getColorHex(quest.color);
       const symbol = ViewPlayer.getSymbol(quest.color);
       const isCompleted = quest.isCompleted;
-      const opacity = isCompleted ? '0.2' : '1.0';
+      const opacity = isCompleted ? '0.4' : '1.0';
       return `<span class="quest-color-icon" 
         style="background-color: ${background}; opacity: ${opacity}">
           ${symbol}
