@@ -39,12 +39,6 @@ export class Player {
     this.color = color;
     this.shipPosition = { q: shipPosition.q, r: shipPosition.r };
     this.items = [];
-    this.completedQuestTypes = {
-      temple_offering: 0,
-      monster: 0,
-      statue: 0,
-      shrine: 0,
-    };
     this.oracleCards = [];
     this.oracleDice = [];
     this.favor = 0;
@@ -211,12 +205,6 @@ export class Player {
   public readonly color: PlayerColorName;
   private shipPosition: HexCoordinates;
   public items: Item[];
-  public completedQuestTypes: {
-    temple_offering: number;
-    monster: number;
-    statue: number;
-    shrine: number;
-  };
   public oracleDice: CoreColor[];
   public favor: number;
   public shield: number;
