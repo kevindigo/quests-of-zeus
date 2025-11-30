@@ -108,7 +108,7 @@ h1 {
 
 .hex-map-container {
   flex: 1 0 auto; /* grow = 1, shrink = 0, base = auto */
-  background: rgba(255, 255, 255, 0.1);
+  background: #0e05bc;
   border-radius: 8px;
   padding: 1rem;
   backdrop-filter: blur(10px);
