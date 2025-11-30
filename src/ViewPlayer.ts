@@ -3,53 +3,61 @@ import type { QuestType } from './types.ts';
 
 export class ViewPlayer {
   public getPlayerPanelContents(
-    currentPlayer: Player,
+    player: Player,
   ): string {
-    const playerColor = ViewPlayer.getColorHex(currentPlayer.color);
     const content = `
-          <div class="player-info">
-            <h3>Current Player: ${currentPlayer.name}</h3>
-            <div class="player-stats">
-              <div><strong>Color:</strong> 
-                <span class="color-swatch" 
-                style="background-color: ${playerColor}">&nbsp;
-                ${
-      currentPlayer.color.charAt(0).toUpperCase() +
-      currentPlayer.color.slice(1)
-    }
-                &nbsp;</span>
-              </div>
-              <div><strong>Favor:</strong> ${currentPlayer.favor}</div>
-              <div><strong>Shield:</strong> ${currentPlayer.shield}</div>
-            </div>
-            <div class="storage">
-              <h4>Ship cargo</h4>
-              <div class="ship-cargo">
-              ${this.getShipCargoContents(currentPlayer)}
-              </div>
-            </div>
-            <div class="quest-types">
-              <strong>Quests:</strong>
-              <div class="quest-type-item">
-              ${this.getColoredQuestContents(currentPlayer, 'temple')}
-              &nbsp;Temple
-              </div>
-              <div class="quest-type-item">
-                ${this.getColoredQuestContents(currentPlayer, 'monster')}
-                &nbsp;Monster
-                </div>
-              <div class="quest-type-item">
-                ${this.getColoredQuestContents(currentPlayer, 'statue')}
-                &nbsp;Statue
-                </div>
-              <div class="quest-type-item">
-                ${this.getColoredQuestContents(currentPlayer, 'shrine')}
-                &nbsp;Shrine
-              </div>
-            </div>
-          `;
+      <div class="player-info">
+        <h3>Current Player: ${player.name}</h3>
+        <div class="player-stats">
+          ${this.getPlayerStatsContents(player)}
+        </div>
+        <div class="storage">
+          <h4>Ship cargo</h4>
+          <div class="ship-cargo">
+            ${this.getShipCargoContents(player)}
+          </div>
+        </div>
+        <div class="quest-types">
+          ${this.getQuestContents(player)}
+        </div>
+      </div>`;
 
     return content;
+  }
+
+  private getPlayerStatsContents(player: Player): string {
+    const playerColorHex = ViewPlayer.getColorHex(player.color);
+    const playerColorName = player.color;
+    return `
+      <div><strong>Color:</strong> 
+        <span class="color-swatch" 
+        style="background-color: ${playerColorHex}">&nbsp;
+        ${playerColorName}
+        &nbsp;</span>
+      </div>
+      <div><strong>Favor:</strong> ${player.favor}</div>
+      <div><strong>Shield:</strong> ${player.shield}</div>`;
+  }
+
+  private getQuestContents(player: Player) {
+    return `
+      <strong>Quests:</strong>
+      <div class="quest-type-item">
+        ${this.getColoredQuestContents(player, 'temple')}
+        &nbsp;Temple
+      </div>
+      <div class="quest-type-item">
+        ${this.getColoredQuestContents(player, 'monster')}
+        &nbsp;Monster
+      </div>
+      <div class="quest-type-item">
+        ${this.getColoredQuestContents(player, 'statue')}
+        &nbsp;Statue
+      </div>
+      <div class="quest-type-item">
+        ${this.getColoredQuestContents(player, 'shrine')}
+        &nbsp;Shrine
+      </div>`;
   }
 
   private getColoredQuestContents(
