@@ -257,3 +257,8 @@ export interface Item {
   type: ItemType;
   color: CoreColor;
 }
+
+export interface God {
+  color: CoreColor;
+  level: number;
+}

@@ -5,12 +5,14 @@ import {
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import type {
-  CoreColor,
-  Item,
-  PlayerColorName,
-  Quest,
-  QuestType,
+import {
+  COLOR_WHEEL,
+  type CoreColor,
+  type God,
+  type Item,
+  type PlayerColorName,
+  type Quest,
+  type QuestType,
 } from './types.ts';
 
 export type PlayerSnapshot = {
@@ -25,6 +27,7 @@ export type PlayerSnapshot = {
   oracleCards: CoreColor[];
   usedOracleCardThisTurn: boolean;
   quests: Quest[];
+  gods: God[];
 };
 
 export class Player {
@@ -45,6 +48,7 @@ export class Player {
     this.shield = 0;
     this.usedOracleCardThisTurn = false;
     this.quests = [];
+    this.gods = Player.createGods();
   }
 
   public static fromSnapshot(json: PlayerSnapshot): Player {
@@ -61,6 +65,9 @@ export class Player {
     player.shield = json.shield;
     player.usedOracleCardThisTurn = json.usedOracleCardThisTurn;
     player.quests = json.quests;
+    json.gods.forEach((god) => {
+      player.gods.set(god.color, god);
+    });
     return player;
   }
 
@@ -77,6 +84,7 @@ export class Player {
       oracleCards: this.oracleCards,
       usedOracleCardThisTurn: this.usedOracleCardThisTurn,
       quests: this.quests,
+      gods: [...this.gods.values()],
     };
   }
 
@@ -200,6 +208,32 @@ export class Player {
     return new Success('Unloaded');
   }
 
+  public getGod(color: CoreColor): God {
+    return this.gods.get(color)!;
+  }
+
+  public getGodLevel(color: CoreColor): number {
+    return this.getGod(color).level;
+  }
+
+  public advanceGod(color: CoreColor): void {
+    this.getGod(color).level += 1;
+  }
+
+  public resetGod(color: CoreColor): void {
+    this.getGod(color).level = 0;
+  }
+
+  private static createGods(): Map<CoreColor, God> {
+    const map = new Map<CoreColor, God>();
+    COLOR_WHEEL.forEach((color) => {
+      const god: God = { color, level: 0 };
+      map.set(color, god);
+    });
+
+    return map;
+  }
+
   public readonly id: number;
   public readonly name: string;
   public readonly color: PlayerColorName;
@@ -211,4 +245,5 @@ export class Player {
   public oracleCards: CoreColor[];
   public usedOracleCardThisTurn: boolean;
   private quests: Quest[];
+  private gods: Map<CoreColor, God>;
 }

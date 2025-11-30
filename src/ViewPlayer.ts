@@ -1,5 +1,5 @@
 import type { Player } from './Player.ts';
-import type { QuestType } from './types.ts';
+import { COLOR_WHEEL, type CoreColor, type QuestType } from './types.ts';
 
 export class ViewPlayer {
   public getPlayerPanelContents(
@@ -20,6 +20,9 @@ export class ViewPlayer {
         <div class="quest-types">
           ${this.getQuestContents(player)}
         </div>
+        <div class="player-gods">
+          ${this.getPlayerGodContents(player)}
+        </div>
       </div>`;
 
     return content;
@@ -37,6 +40,24 @@ export class ViewPlayer {
       </div>
       <div><strong>Favor:</strong> ${player.favor}</div>
       <div><strong>Shield:</strong> ${player.shield}</div>`;
+  }
+
+  public getShipCargoContents(player: Player) {
+    const contentForEachItem = player.getLoadedItems().map((item) => {
+      const className = item.type === 'cube'
+        ? 'cargo-item-cube'
+        : 'cargo-item-statue';
+      return `<div 
+        class="${className}" style="background-color: ${
+        ViewPlayer.getColorHex(item.color)
+      }">
+        </div>`;
+    });
+
+    if (contentForEachItem.length === 0) {
+      contentForEachItem.push('(none)');
+    }
+    return contentForEachItem.join('&nbsp');
   }
 
   private getQuestContents(player: Player) {
@@ -82,22 +103,36 @@ export class ViewPlayer {
     return `${details}`;
   }
 
-  public getShipCargoContents(player: Player) {
-    const contentForEachItem = player.getLoadedItems().map((item) => {
-      const className = item.type === 'cube'
-        ? 'cargo-item-cube'
-        : 'cargo-item-statue';
-      return `<div 
-        class="${className}" style="background-color: ${
-        ViewPlayer.getColorHex(item.color)
-      }">
-        </div>`;
+  private getPlayerGodContents(player: Player): string {
+    let contents = '<div class="player-gods-header">Gods</div>';
+    COLOR_WHEEL.forEach((color) => {
+      contents += `<div player-god-${color}>
+        ${player.getGodLevel(color)}&nbsp;
+        ${color}&nbsp;
+        ${this.getGodDescription(color)}
+      </div>`;
     });
 
-    if (contentForEachItem.length === 0) {
-      contentForEachItem.push('(none)');
+    return contents;
+  }
+
+  private getGodDescription(color: CoreColor): string {
+    switch (color) {
+      case 'black':
+        return 'Defeat monster';
+      case 'pink':
+        return 'Gain statue';
+      case 'blue':
+        return 'Move anywhere';
+      case 'yellow':
+        return 'Super turn';
+      case 'green':
+        return 'Explore any shrine';
+      case 'red':
+        return 'Heal all wounds';
     }
-    return contentForEachItem.join('&nbsp');
+
+    return '';
   }
 
   public static getSymbol(color: string): string {
