@@ -3,10 +3,7 @@
 
 import { GameState } from './GameState.ts';
 import { GameStateInitializer } from './GameStateInitializer.ts';
-import { MovementSystem } from './MovementSystem.ts';
 import type { Player } from './Player.ts';
-import { ShipMoveHandler } from './ShipMoveHandler.ts';
-import type { MoveShipResult } from './types.ts';
 import { type UiState, UiStateClass } from './UiState.ts';
 
 export class GameManager {
@@ -19,22 +16,6 @@ export class GameManager {
   public startNewGame(): void {
     new GameStateInitializer().initializeGameState(this.state);
     this.uiState.reset();
-  }
-
-  public moveShip(
-    favorSpentToRecolor: number,
-    favorSpentForRange: number,
-  ): MoveShipResult {
-    const movementSystem = new MovementSystem(this.getGameState().getMap());
-    const handler = new ShipMoveHandler(
-      this.getGameState(),
-      movementSystem,
-    );
-    return handler.attemptMoveShip(
-      this.getUiState(),
-      favorSpentToRecolor,
-      favorSpentForRange,
-    );
   }
 
   public getGameState(): GameState {

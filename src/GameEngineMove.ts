@@ -2,7 +2,6 @@ import type { Action, ShipMoveAction } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import { MovementSystem } from './MovementSystem.ts';
 import type { Resource } from './Resource.ts';
 import {
   Failure,
@@ -76,11 +75,7 @@ export class GameEngineMove {
     const currentPlayer = gameState.getCurrentPlayer();
     const favorAvailableForRange = currentPlayer.favor;
 
-    const movementSystem = new MovementSystem(gameState.getMap());
-    const shipMoveHandler = new ShipMoveHandler(
-      gameState,
-      movementSystem,
-    );
+    const shipMoveHandler = new ShipMoveHandler(gameState);
     const availableMoves = shipMoveHandler.getAvailableMoves(
       currentPlayer.getShipPosition(),
       currentPlayer.getRange(),

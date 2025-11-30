@@ -2,17 +2,14 @@
 
 import { assert, assertEquals, assertGreater } from '@std/assert';
 import { GameManager } from '../src/GameManager.ts';
-import { MovementSystem } from '../src/MovementSystem.ts';
 import { Resource } from '../src/Resource.ts';
 import { ShipMoveHandler } from '../src/ShipMoveHandler.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('getAvailableMovesForDie - basic functionality', () => {
   const manager = new GameManager();
-  const movementSystem = new MovementSystem(manager.getGameState().getMap());
   const handler = new ShipMoveHandler(
     manager.getGameState(),
-    movementSystem,
   );
 
   const player = manager.getCurrentPlayer();
@@ -46,10 +43,8 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
 
 Deno.test('getAvailableMovesForDie - favor spending', () => {
   const manager = new GameManager();
-  const movementSystem = new MovementSystem(manager.getGameState().getMap());
   const handler = new ShipMoveHandler(
     manager.getGameState(),
-    movementSystem,
   );
 
   const player = manager.getCurrentPlayer();
@@ -72,8 +67,7 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
 Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   const manager = new GameManager();
   const gameState = manager.getGameState();
-  const movementSystem = new MovementSystem(gameState.getMap());
-  const handler = new ShipMoveHandler(gameState, movementSystem);
+  const handler = new ShipMoveHandler(gameState);
   const player = manager.getCurrentPlayer();
 
   // Set up deterministic test conditions
@@ -108,10 +102,8 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
 
 Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
   const manager = new GameManager();
-  const movementSystem = new MovementSystem(manager.getGameState().getMap());
   const handler = new ShipMoveHandler(
     manager.getGameState(),
-    movementSystem,
   );
 
   const player = manager.getCurrentPlayer();
