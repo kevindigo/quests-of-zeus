@@ -324,6 +324,28 @@ footer {
   border-width: 2px;
 }
 
+/* #player-gods-panel {} */
+
+.god-entry-wrapper {
+  display: flex;
+  align-items: center;
+  margin: 0.2em 0;
+}
+
+.god-level {
+  font-weight: bold;
+  margin-right: 0.3em;
+}
+
+.god-square {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #333;
+  margin-right: 0.3em;
+}
+
+/* .god-description {} */
+
 @keyframes pulse-breathe {
   0%, 100% {
     stroke-opacity: 1;

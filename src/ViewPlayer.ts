@@ -20,7 +20,7 @@ export class ViewPlayer {
         <div class="quest-types">
           ${this.getQuestContents(player)}
         </div>
-        <div class="player-gods">
+        <div class="player-gods-panel">
           ${this.getPlayerGodContents(player)}
         </div>
       </div>`;
@@ -105,15 +105,24 @@ export class ViewPlayer {
 
   private getPlayerGodContents(player: Player): string {
     let contents = '<div class="player-gods-header">Gods</div>';
+    contents += '<div class="player-gods-details">';
     COLOR_WHEEL.forEach((color) => {
-      contents += `<div player-god-${color}>
-        ${player.getGodLevel(color)}&nbsp;
-        ${color}&nbsp;
-        ${this.getGodDescription(color)}
-      </div>`;
+      contents += this.getSinglePlayerGodContents(player, color);
     });
-
+    contents += '</div>';
     return contents;
+  }
+
+  private getSinglePlayerGodContents(player: Player, color: CoreColor): string {
+    const level = player.getGodLevel(color);
+    const description = this.getGodDescription(color);
+
+    return `
+    <span class="god-entry-wrapper">
+        <span class="god-level">${level}</span>
+        <span class="god-square" style="background-color:${color};"></span>
+        <span class="god-description">${description}</span>
+    </span>`;
   }
 
   private getGodDescription(color: CoreColor): string {
