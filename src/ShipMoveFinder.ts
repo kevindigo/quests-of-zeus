@@ -1,4 +1,3 @@
-// Player action implementations for Quests of Zeus
 import type { GameState } from './GameState.ts';
 import { type HexCoordinates, HexGrid } from './hexmap/HexGrid.ts';
 import type { CoreColor, PossibleShipMove } from './types.ts';
