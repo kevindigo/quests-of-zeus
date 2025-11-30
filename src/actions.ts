@@ -48,7 +48,6 @@ export interface AnyResourceAction extends ActionBase {
 
 export interface ColorAction extends ActionBase {
   type: 'color';
-  godColor: CoreColor;
   subType: 'healColor' | 'gainCardFavorGod' | 'advanceGod';
 }
 
