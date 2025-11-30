@@ -2,6 +2,7 @@ import type {
   DropCubeAction,
   DropStatueAction,
   ExploreShrineAction,
+  FightMonsterAction,
   LoadCubeAction,
   LoadStatueAction,
   ShipMoveAction,
@@ -129,6 +130,17 @@ export class ControllerForHexClicks {
         const action: DropStatueAction = {
           type: 'hex',
           subType: 'dropStatue',
+          coordinates,
+          spend: uiState.getSelectedResource(),
+        };
+        const result = GameEngine.doAction(action, gameState);
+        uiState.clearResourceSelection();
+        return result;
+      }
+      case 'monsters': {
+        const action: FightMonsterAction = {
+          type: 'hex',
+          subType: 'fightMonster',
           coordinates,
           spend: uiState.getSelectedResource(),
         };

@@ -91,7 +91,7 @@ export class GameEngineHex {
       case 'dropStatue':
         return this.doDropStatue(action, gameState);
       case 'fightMonster':
-        break;
+        return this.doFightMonster(action, gameState);
       case 'exploreShrine': {
         return this.doExploreShrine(action, gameState);
       }
@@ -187,6 +187,27 @@ export class GameEngineHex {
     }
 
     return [];
+  }
+
+  private static findMatchingQuest(
+    quests: Quest[],
+    color: CoreColor,
+  ): Quest | null {
+    const matching = quests.find((quest) => {
+      return quest.color === color;
+    });
+    if (matching) {
+      return matching;
+    }
+
+    const wild = quests.find((quest) => {
+      return quest.color === 'none';
+    });
+    if (wild) {
+      return wild;
+    }
+
+    return null;
   }
 
   private static willSatisfyQuest(quests: Quest[], color: CoreColor): boolean {
@@ -629,5 +650,63 @@ export class GameEngineHex {
     return new Success(
       `Successfully raised ${effectiveColor} statue (but no companion reward)`,
     );
+  }
+
+  private static doFightMonster(
+    action: HexAction,
+    gameState: GameState,
+  ): ResultWithMessage {
+    const availableActions = GameEngineHex.getHexActions(gameState);
+    if (
+      !availableActions.find((availableAction) => {
+        return this.areEqualHexActions(availableAction, action);
+      })
+    ) {
+      return new Failure(`Action not available ${JSON.stringify(action)}`);
+    }
+
+    const monsterCoordinates = action.coordinates;
+    const monsterHex = gameState.findMonsterHexAt(monsterCoordinates);
+    if (!monsterHex) {
+      return new Failure(
+        'Impossible: no monster hex at ' + JSON.stringify(monsterCoordinates),
+      );
+    }
+    const effectiveColor = action.spend.getEffectiveColor();
+    if (!effectiveColor) {
+      return new Failure(
+        'Impossible: no resource selected',
+      );
+    }
+    const at = monsterHex.monsterColors.indexOf(effectiveColor);
+    if (at < 0) {
+      return new Failure(
+        `Impossible: ${effectiveColor} not a monster in ${monsterHex.monsterColors}`,
+      );
+    }
+    monsterHex.monsterColors.splice(at, 1);
+
+    const player = gameState.getCurrentPlayer();
+    const monsterQuests = player.getQuestsOfType('monster');
+    const quest = this.findMatchingQuest(monsterQuests, effectiveColor);
+    if (!quest) {
+      return new Failure(
+        'Impossible: no quest found matching ' + effectiveColor,
+      );
+    }
+    if (quest.isCompleted) {
+      return new Failure(
+        'Impossible: quest already completed for ' + effectiveColor,
+      );
+    }
+    quest.color = effectiveColor;
+    quest.isCompleted = true;
+
+    const spent = GameEngine.spendResource(gameState, action.spend);
+    if (!spent) {
+      return spent;
+    }
+
+    return new Success(`Fight monster ${effectiveColor} succeeded (no reward)`);
   }
 }
