@@ -124,6 +124,8 @@ but has these differences:
 - **Setup**
   - The map is always a hexagonal grid with radius 6, and each feature is
     individually placed, rather than as part of larger tiles.
+  - Cities are always placed near corners, in the same sequence, with blue in
+    the upper-right (for accessibility).
   - Currently only allows 2 players (but theoretically supports 2-4).
   - Monster and temple quests will each require 2 colors randomly picked from:
     black, green, yellow, and pink. Green and red are always reserved for the

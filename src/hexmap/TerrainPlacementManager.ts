@@ -75,8 +75,7 @@ export class TerrainPlacementManager {
   private placeCities(map: HexMap): void {
     const grid = map.getHexGrid();
     // Create a shuffled copy of the colors to assign randomly to cities
-    const shuffledColors = [...COLOR_WHEEL];
-    UtilityService.shuffleArray(shuffledColors);
+    const cityColors = [...COLOR_WHEEL];
 
     for (let cornerDirection = 0; cornerDirection < 6; cornerDirection++) {
       // Get the corner coordinates
@@ -122,7 +121,7 @@ export class TerrainPlacementManager {
       }
       cell.terrain = 'city';
       // Assign a random color to the city
-      const color = shuffledColors[cornerDirection] || 'none';
+      const color = cityColors[cornerDirection] || 'none';
       cell.color = color;
     }
   }
