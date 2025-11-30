@@ -8,7 +8,7 @@ import {
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import { ShipMoveHandler } from './ShipMoveHandler.ts';
+import { ShipMoveFinder } from './ShipMoveFinder.ts';
 import type { PossibleShipMove } from './types.ts';
 
 export class GameEngineMove {
@@ -75,7 +75,7 @@ export class GameEngineMove {
     const currentPlayer = gameState.getCurrentPlayer();
     const favorAvailableForRange = currentPlayer.favor;
 
-    const shipMoveHandler = new ShipMoveHandler(gameState);
+    const shipMoveHandler = new ShipMoveFinder(gameState);
     const availableMoves = shipMoveHandler.getAvailableMoves(
       currentPlayer.getShipPosition(),
       currentPlayer.getRange(),

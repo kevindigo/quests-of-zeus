@@ -3,7 +3,7 @@
 import { assert, assertEquals } from '@std/assert';
 import { GameManager } from '../src/GameManager.ts';
 import { Resource } from '../src/Resource.ts';
-import { ShipMoveHandler } from '../src/ShipMoveHandler.ts';
+import { ShipMoveFinder } from '../src/ShipMoveFinder.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
@@ -18,7 +18,7 @@ Deno.test('RecolorFavorCalculation - moves account for recoloring cost', () => {
   const gameState = manager.getGameState();
   const recoloredBlack = Resource.createRecoloredDie('black', 1);
   manager.getUiState().setSelectedResource(recoloredBlack);
-  const handler = new ShipMoveHandler(gameState);
+  const handler = new ShipMoveFinder(gameState);
   const availableMoves = handler.getAvailableMovesForColor(
     'pink',
     player.favor - 1,
@@ -58,7 +58,7 @@ Deno.test('RecolorFavorCalculation - high recoloring cost limits moves', () => {
   const blue2 = Resource.createRecoloredDie('blue', 2);
   manager.getUiState().setSelectedResource(blue2);
   const state = manager.getGameState();
-  const handler = new ShipMoveHandler(state);
+  const handler = new ShipMoveFinder(state);
   const movesWithHighRecolor = handler.getAvailableMovesForColor(
     'blue',
     player.favor - 2,
@@ -87,7 +87,7 @@ Deno.test('RecolorFavorCalculation - moves without recoloring unaffected', () =>
   player.favor = 5;
 
   uiState.setSelectedResource(Resource.createDie('black'));
-  const handler = new ShipMoveHandler(gameState);
+  const handler = new ShipMoveFinder(gameState);
   const movesWithoutRecolor = handler.getAvailableMovesForColor(
     'black',
     player.favor,

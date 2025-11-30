@@ -3,13 +3,9 @@ import type { GameState } from './GameState.ts';
 import { type HexCoordinates, HexGrid } from './hexmap/HexGrid.ts';
 import type { CoreColor, PossibleShipMove } from './types.ts';
 
-export class ShipMoveHandler {
-  constructor(
-    private gameState: GameState,
-  ) {}
-
-  public getGameState(): GameState {
-    return this.gameState;
+export class ShipMoveFinder {
+  constructor(gameState: GameState) {
+    this.gameState = gameState;
   }
 
   public getAvailableMovesForColor(
@@ -142,4 +138,6 @@ export class ShipMoveHandler {
 
     return reachableTiles;
   }
+
+  private gameState: GameState;
 }

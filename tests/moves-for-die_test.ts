@@ -3,12 +3,12 @@
 import { assert, assertEquals, assertGreater } from '@std/assert';
 import { GameManager } from '../src/GameManager.ts';
 import { Resource } from '../src/Resource.ts';
-import { ShipMoveHandler } from '../src/ShipMoveHandler.ts';
+import { ShipMoveFinder } from '../src/ShipMoveFinder.ts';
 import type { CoreColor } from '../src/types.ts';
 
 Deno.test('getAvailableMovesForDie - basic functionality', () => {
   const manager = new GameManager();
-  const handler = new ShipMoveHandler(
+  const handler = new ShipMoveFinder(
     manager.getGameState(),
   );
 
@@ -43,7 +43,7 @@ Deno.test('getAvailableMovesForDie - basic functionality', () => {
 
 Deno.test('getAvailableMovesForDie - favor spending', () => {
   const manager = new GameManager();
-  const handler = new ShipMoveHandler(
+  const handler = new ShipMoveFinder(
     manager.getGameState(),
   );
 
@@ -67,7 +67,7 @@ Deno.test('getAvailableMovesForDie - favor spending', () => {
 Deno.test('getAvailableMovesForDie - recoloring intention', () => {
   const manager = new GameManager();
   const gameState = manager.getGameState();
-  const handler = new ShipMoveHandler(gameState);
+  const handler = new ShipMoveFinder(gameState);
   const player = manager.getCurrentPlayer();
 
   // Set up deterministic test conditions
@@ -102,7 +102,7 @@ Deno.test('getAvailableMovesForDie - recoloring intention', () => {
 
 Deno.test('getAvailableMovesForDie - insufficient favor for recoloring', () => {
   const manager = new GameManager();
-  const handler = new ShipMoveHandler(
+  const handler = new ShipMoveFinder(
     manager.getGameState(),
   );
 
