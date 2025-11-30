@@ -133,6 +133,7 @@ export class ViewPlayer {
           ${levelDisplay}
         </span>
         <span class="god-square  ${isSelected ? 'selected-god' : ''}" 
+          data-color="${color}"
           style="background-color: ${ViewPlayer.getColorHex(color)};">
         </span>
         <span class="god-description">${description}</span>

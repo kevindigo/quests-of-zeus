@@ -1,6 +1,7 @@
 == Short-term ==
 
 - action: spend a die to advance god
+- Switch GameManager to be the top level, rather than Controller
 
 == Cosmetic/Usability ==
 

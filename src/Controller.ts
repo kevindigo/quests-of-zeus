@@ -5,6 +5,7 @@ import type {
   Action,
   AnyResourceGainFavorAction,
   AnyResourceGainOracleCardAction,
+  ColorAdvanceGodAction,
   FreeEndTurnAction,
   ShipMoveAction,
 } from './actions.ts';
@@ -120,6 +121,8 @@ export class Controller {
 
     this.viewGame.renderGameState(availableActions);
 
+    this.addHandlersToPlayerPanel();
+
     const hexMapContainer = document.getElementById('hexMapSVG');
     if (!hexMapContainer) return;
     this.addHandlersToSvg();
@@ -127,6 +130,37 @@ export class Controller {
     if (gameState.getPhase() === 'action') {
       this.highlightAvailableHexElements(gameState, availableActions);
     }
+  }
+
+  private addHandlersToPlayerPanel(): void {
+    const panel = document.querySelector('.player-gods-panel');
+    if (!panel) {
+      return;
+    }
+    const selectedSquare = panel.querySelector<HTMLSpanElement>(
+      '.god-square.selected-god',
+    );
+    if (!selectedSquare) {
+      return;
+    }
+    selectedSquare.addEventListener('click', () => {
+      const color = selectedSquare.dataset['color'] as CoreColor;
+      this.onGodClicked(color);
+    });
+  }
+
+  private onGodClicked(color: CoreColor): void {
+    const action: ColorAdvanceGodAction = {
+      type: 'color',
+      subType: 'advanceGod',
+      color,
+    };
+    const result = GameEngine.doAction(action, this.getGameState());
+    if (result.success) {
+      this.clearResourceSelection();
+    }
+    this.showMessage('Clicked god ' + color + ': ' + result.message);
+    this.renderGameState();
   }
 
   private addHandlersToSvg(): void {
