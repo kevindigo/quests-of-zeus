@@ -22,8 +22,14 @@ export class ViewPlayer {
               <div><strong>Favor:</strong> ${currentPlayer.favor}</div>
               <div><strong>Shield:</strong> ${currentPlayer.shield}</div>
             </div>
+            <div class="storage">
+              <h4>Ship cargo</h4>
+              <div class="ship-cargo">
+              ${this.getShipCargoContents(currentPlayer)}
+              </div>
+            </div>
             <div class="quest-types">
-            <strong>Quests:</strong>
+              <strong>Quests:</strong>
               <div class="quest-type-item">
               ${this.getColoredQuestContents(currentPlayer, 'temple')}
               &nbsp;Temple
@@ -41,12 +47,7 @@ export class ViewPlayer {
                 &nbsp;Shrine
               </div>
             </div>
-            <div class="storage">
-              <h4>Ship cargo</h4>
-              <div class="ship-cargo">
-              ${this.getShipCargoContents(currentPlayer)}
-              </div>
-            </div>`;
+          `;
 
     return content;
   }
