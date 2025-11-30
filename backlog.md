@@ -1,8 +1,6 @@
 == Short-term ==
 
-- Monsters
-  - action: monster fight (for now, automatically fight to the death)
-  - no reward
+- action: spend a die to advance god
 
 == Cosmetic/Usability ==
 
@@ -47,6 +45,9 @@
 
 == Quests ==
 
+- Monsters
+  - Should roll dice during battle
+
 == Round end/Game end ==
 
 - effect: free god advance for other players' rolls
@@ -69,8 +70,6 @@
 
 == Gods ==
 
-- setup: gods
-- action: spend a die to advance god
 - Shrine reward: God advance
 - free: god effects:
   - effect: Fully heal
@@ -83,7 +82,7 @@
 == Equipment ==
 
 - setup: equipment
-- reward: equipment coupon
+- reward for raising statue: equipment coupon
 - free action: spend coupon to gain equipment
 - free: equipment one-time gains (new task for each specific type)
   - effect: get gain statue coupon
@@ -108,7 +107,7 @@
 == Companions ==
 
 - setup: companion deck
-- Shrine reward: gain companion coupon
+- Reward for defeating monster: gain companion coupon
 - Free action: spend coupon to gain companion
 - Companion effects:
   - effect range: color -> +3 range and land on any color

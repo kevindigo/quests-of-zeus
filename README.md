@@ -136,6 +136,9 @@ but has these differences:
     or the player runs out of favor.
   - God advances based on other player's rolls are only taken at the start of
     your turn, rather than at the end of each other player's turn.
+  - The equipment that allows you to peek at 2 face-down shrine ("cloud") tiles
+    and explore one behaves differently. Here, after peeking, you can explore
+    any face-down shrine on the board, even if you didn't just peek at it.
 
 ## Contributing
 

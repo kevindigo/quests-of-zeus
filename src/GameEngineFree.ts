@@ -29,14 +29,6 @@ export class GameEngineFree {
     switch (action.subType) {
       case 'endTurn':
         return GameEngineFree.endTurn(action, gameState);
-      case 'continueMonsterFight':
-        break;
-      case 'abandonMonsterFight':
-        break;
-      case 'skipTurnHeal':
-        break;
-      case 'useEquipmentExtraDie':
-        break;
     }
 
     return new Failure(
