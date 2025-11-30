@@ -326,6 +326,8 @@ footer {
 
 /* #player-gods-panel {} */
 
+/* #player-gods-header {} */
+
 .god-entry-wrapper {
   display: flex;
   align-items: center;
@@ -338,10 +340,16 @@ footer {
 }
 
 .god-square {
-  width: 16px;
-  height: 16px;
+  width: 1.2em;
+  aspect-ratio: 1.0 / 1.0;
   border: 1px solid #333;
   margin-right: 0.3em;
+}
+
+.god-square.selected-god {
+  outline: 3px solid black;
+  outline-offset: 2px;
+  cursor: pointer;
 }
 
 /* .god-description {} */

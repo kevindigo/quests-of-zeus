@@ -1,9 +1,11 @@
 import type { Player } from './Player.ts';
 import { COLOR_WHEEL, type CoreColor, type QuestType } from './types.ts';
+import type { UiState } from './UiState.ts';
 
 export class ViewPlayer {
   public getPlayerPanelContents(
     player: Player,
+    uiState: UiState,
   ): string {
     const content = `
       <div class="player-info">
@@ -17,11 +19,11 @@ export class ViewPlayer {
             ${this.getShipCargoContents(player)}
           </div>
         </div>
+        <div class="player-gods-panel">
+          ${this.getPlayerGodContents(player, uiState)}
+        </div>
         <div class="quest-types">
           ${this.getQuestContents(player)}
-        </div>
-        <div class="player-gods-panel">
-          ${this.getPlayerGodContents(player)}
         </div>
       </div>`;
 
@@ -103,24 +105,36 @@ export class ViewPlayer {
     return `${details}`;
   }
 
-  private getPlayerGodContents(player: Player): string {
-    let contents = '<div class="player-gods-header">Gods</div>';
+  private getPlayerGodContents(player: Player, uiState: UiState): string {
+    let contents =
+      '<div class="player-gods-header"><strong>Gods</strong></div>';
     contents += '<div class="player-gods-details">';
     COLOR_WHEEL.forEach((color) => {
-      contents += this.getSinglePlayerGodContents(player, color);
+      contents += this.getSinglePlayerGodContents(player, color, uiState);
     });
     contents += '</div>';
     return contents;
   }
 
-  private getSinglePlayerGodContents(player: Player, color: CoreColor): string {
+  private getSinglePlayerGodContents(
+    player: Player,
+    color: CoreColor,
+    uiState: UiState,
+  ): string {
     const level = player.getGodLevel(color);
+    const levelDisplay = level ? String(4 - level) : '-';
     const description = this.getGodDescription(color);
+    const selectedColor = uiState.getSelectedResource().getEffectiveColor();
+    const isSelected = selectedColor === color;
 
     return `
     <span class="god-entry-wrapper">
-        <span class="god-level">${level}</span>
-        <span class="god-square" style="background-color:${color};"></span>
+        <span class="god-level">
+          ${levelDisplay}
+        </span>
+        <span class="god-square  ${isSelected ? 'selected-god' : ''}" 
+          style="background-color: ${ViewPlayer.getColorHex(color)};">
+        </span>
         <span class="god-description">${description}</span>
     </span>`;
   }

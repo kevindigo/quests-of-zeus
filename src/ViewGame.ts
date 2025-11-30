@@ -71,7 +71,10 @@ export class ViewGame {
     const currentPlayer = gameState.getCurrentPlayer();
 
     const view = new ViewPlayer();
-    playerInfoContainer.innerHTML = view.getPlayerPanelContents(currentPlayer);
+    playerInfoContainer.innerHTML = view.getPlayerPanelContents(
+      currentPlayer,
+      this.uiState,
+    );
   }
 
   private renderMap(gameState: GameState): void {
