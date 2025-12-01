@@ -88,14 +88,14 @@ export class Controller {
     if (resourceToSelect.equals(alreadySelected)) {
       this.clearResourceSelection();
       this.showMessage('Resource selection cleared');
-      this.renderGameState();
+      this.renderGameState(this.getGameState());
       return;
     }
 
     if (resourceType === 'die') {
       if (this.selectDieColor(resourceColor)) {
         this.showMessage(`Selected ${resourceColor} die`);
-        this.renderGameState();
+        this.renderGameState(this.getGameState());
       } else {
         console.log(
           `Player doesn't have ${resourceColor} die. Available dice:`,
@@ -105,7 +105,7 @@ export class Controller {
     } else if (resourceType === 'card') {
       if (this.selectCardColor(resourceColor)) {
         this.showMessage(`Selected ${resourceColor} oracle card`);
-        this.renderGameState();
+        this.renderGameState(this.getGameState());
       } else {
         console.log(
           `Player doesn't have ${resourceColor} oracle card. Available cards:`,
@@ -115,8 +115,7 @@ export class Controller {
     }
   }
 
-  private renderGameState(): void {
-    const gameState = this.gameManager.getGameState();
+  private renderGameState(gameState: GameState): void {
     const availableActions = GameEngine.getAvailableActions(gameState);
 
     this.viewGame.renderGameState(availableActions);
@@ -161,7 +160,7 @@ export class Controller {
     // }
     const result = new Failure('not implemented yet');
     this.showMessage('Clicked god ' + color + ': ' + result.message);
-    this.renderGameState();
+    this.renderGameState(this.getGameState());
   }
 
   private addHandlersToSvg(): void {
@@ -390,12 +389,12 @@ export class Controller {
       this.clearResourceSelection();
     }
     this.showMessage(result.message);
-    this.renderGameState();
+    this.renderGameState(this.getGameState());
   }
 
   private startNewGame(): void {
     this.gameManager.startNewGame();
-    this.renderGameState();
+    this.renderGameState(this.getGameState());
     this.clearMessagePanel();
     this.showMessage(
       "New game started! All players have rolled their dice. Player 1's turn begins.",
@@ -410,7 +409,7 @@ export class Controller {
       this.getSelectedCardColor(),
     );
     if (result.success) {
-      this.renderGameState();
+      this.renderGameState(this.getGameState());
     }
     this.showMessage(result.message);
   }
@@ -450,7 +449,7 @@ export class Controller {
     );
     this.clearResourceSelection();
     this.showMessage(result.message);
-    this.renderGameState();
+    this.renderGameState(this.getGameState());
   }
 
   private clearMessagePanel(): void {
