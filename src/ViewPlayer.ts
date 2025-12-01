@@ -159,12 +159,6 @@ export class ViewPlayer {
         availableAction.spend.getEffectiveColor() === color &&
         availableAction.spend.equals(selectedResource);
     });
-    /// for debugging
-    // const godActions = availableActions.filter((aa) => {
-    //   return aa.type === 'color' && aa.subType === 'advanceGod';
-    // });
-    console.log('ViewPlayer.gSPGC ' + JSON.stringify(available));
-    // end debugging
     const isSelectedClass = available ? 'selected-god' : '';
 
     return `
