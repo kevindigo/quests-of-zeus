@@ -1,5 +1,6 @@
 import type { Action } from './actions.ts';
 import { GameEngineAnyResource } from './GameEngineAnyResource.ts';
+import { GameEngineColor } from './GameEngineColor.ts';
 import { GameEngineFree } from './GameEngineFree.ts';
 import { GameEngineHex } from './GameEngineHex.ts';
 import { GameEngineMove } from './GameEngineMove.ts';
@@ -38,6 +39,8 @@ export class GameEngine {
         return GameEngineHex.doAction(action, gameState);
       case 'move':
         return GameEngineMove.doAction(action, gameState);
+      case 'color':
+        return GameEngineColor.doAction(action, gameState);
     }
 
     return new Failure(
@@ -107,5 +110,9 @@ export class GameEngine {
     if (wildQuest) {
       wildQuest.color = color;
     }
+  }
+
+  public static getMaxGodLevel(gameState: GameState): number {
+    return 2 + gameState.getPlayerCount();
   }
 }
