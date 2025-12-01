@@ -5,7 +5,6 @@ import type {
   Action,
   AnyResourceGainFavorAction,
   AnyResourceGainOracleCardAction,
-  ColorAdvanceGodAction,
   FreeEndTurnAction,
   ShipMoveAction,
 } from './actions.ts';
@@ -17,6 +16,7 @@ import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { Resource } from './Resource.ts';
+import { Failure } from './ResultWithMessage.ts';
 import type { CoreColor, TerrainType } from './types.ts';
 import type { UiState } from './UiState.ts';
 import { ViewGame } from './ViewGame.ts';
@@ -150,15 +150,16 @@ export class Controller {
   }
 
   private onGodClicked(color: CoreColor): void {
-    const action: ColorAdvanceGodAction = {
-      type: 'color',
-      subType: 'advanceGod',
-      color,
-    };
-    const result = GameEngine.doAction(action, this.getGameState());
-    if (result.success) {
-      this.clearResourceSelection();
-    }
+    // const action: ColorAdvanceGodAction = {
+    //   type: 'color',
+    //   subType: 'advanceGod',
+    //   color,
+    // };
+    // const result = GameEngine.doAction(action, this.getGameState());
+    // if (result.success) {
+    //   this.clearResourceSelection();
+    // }
+    const result = new Failure('not implemented yet');
     this.showMessage('Clicked god ' + color + ': ' + result.message);
     this.renderGameState();
   }
