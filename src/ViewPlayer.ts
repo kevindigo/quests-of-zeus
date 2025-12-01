@@ -159,14 +159,20 @@ export class ViewPlayer {
         availableAction.spend.getEffectiveColor() === color &&
         availableAction.spend.equals(selectedResource);
     });
-    const isSelectedClass = available ? 'selected-god' : '';
+    const isGodAdvanceAvailableClass = available ? 'available-god-advance' : '';
+
+    // FixMe: This should check available actions, once those are working!
+    const isGodActionAvailableClass = isAlreadyAtMax
+      ? 'available-god-action'
+      : '';
 
     return `
     <span class="god-entry-wrapper">
-        <span class="god-level">
+        <span class="god-level ${isGodActionAvailableClass}"
+          data-color="${color}">
           ${levelDisplay}
         </span>
-        <span class="god-square  ${isSelectedClass}" 
+        <span class="god-square ${isGodAdvanceAvailableClass}" 
           data-color="${color}"
           style="background-color: ${ViewPlayer.getColorHex(color)};">
         </span>

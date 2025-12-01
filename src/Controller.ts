@@ -135,19 +135,31 @@ export class Controller {
     if (!panel) {
       return;
     }
-    const selectedSquare = panel.querySelector<HTMLSpanElement>(
-      '.god-square.selected-god',
-    );
-    if (!selectedSquare) {
-      return;
+    {
+      const availableGodSquare = panel.querySelector<HTMLSpanElement>(
+        '.god-square.available-god-advance',
+      );
+      if (availableGodSquare) {
+        availableGodSquare.addEventListener('click', () => {
+          const color = availableGodSquare.dataset['color'] as CoreColor;
+          this.onAdvanceGodClicked(color);
+        });
+      }
     }
-    selectedSquare.addEventListener('click', () => {
-      const color = selectedSquare.dataset['color'] as CoreColor;
-      this.onGodClicked(color);
-    });
+    {
+      const godActionButton = panel.querySelector<HTMLSpanElement>(
+        '.god-level.available-god-action',
+      );
+      if (godActionButton) {
+        godActionButton.addEventListener('click', () => {
+          const color = godActionButton.dataset['color'] as CoreColor;
+          this.onActivateGodClicked(color);
+        });
+      }
+    }
   }
 
-  private onGodClicked(color: CoreColor): void {
+  private onAdvanceGodClicked(color: CoreColor): void {
     const action: ColorAdvanceGodAction = {
       type: 'color',
       subType: 'advanceGod',
@@ -157,7 +169,12 @@ export class Controller {
     if (result.success) {
       this.clearResourceSelection();
     }
-    this.showMessage('Clicked god ' + color + ': ' + result.message);
+    this.showMessage('Clicked advance god ' + color + ': ' + result.message);
+    this.renderGameState(this.getGameState());
+  }
+
+  private onActivateGodClicked(color: CoreColor): void {
+    this.showMessage('Clicked activate god ' + color);
     this.renderGameState(this.getGameState());
   }
 
