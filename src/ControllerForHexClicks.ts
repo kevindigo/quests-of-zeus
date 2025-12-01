@@ -9,24 +9,22 @@ import type {
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameManager } from './GameManager.ts';
+import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { Failure, type ResultWithMessage } from './ResultWithMessage.ts';
 import type { UiState } from './UiState.ts';
 
 export class ControllerForHexClicks {
   public constructor(manager: GameManager) {
-    this.gameManager = manager;
-  }
-
-  public getGameManager(): GameManager {
-    return this.gameManager;
+    this.gameState = manager.getGameState();
+    this.uiState = manager.getUiState();
   }
 
   public handleHexClick(
     coordinates: HexCoordinates,
     favorCost: number,
   ): ResultWithMessage {
-    const gameState = this.gameManager.getGameState();
+    const gameState = this.gameState;
     if (gameState.getPhase() !== 'action') {
       return new Failure(
         `Cannot click hexes during the ${gameState.getPhase()} phase`,
@@ -61,9 +59,9 @@ export class ControllerForHexClicks {
       );
     }
 
-    this.gameManager.getUiState().setSelectedCoordinates(coordinates);
+    this.uiState.setSelectedCoordinates(coordinates);
 
-    const cell = this.gameManager.getGameState().getMap().getCell(coordinates);
+    const cell = this.gameState.getMap().getCell(coordinates);
     if (!cell) {
       return new Failure(`No cell found at ${JSON.stringify(coordinates)}`);
     }
@@ -158,8 +156,9 @@ export class ControllerForHexClicks {
   }
 
   private getUiState(): UiState {
-    return this.gameManager.getUiState();
+    return this.uiState;
   }
 
-  private gameManager: GameManager;
+  private gameState: GameState;
+  private uiState: UiState;
 }
