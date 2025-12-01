@@ -18,7 +18,7 @@ export class ControllerForHexClicks {
     this.gameManager = manager;
   }
 
-  public getEngine(): GameManager {
+  public getGameManager(): GameManager {
     return this.gameManager;
   }
 
