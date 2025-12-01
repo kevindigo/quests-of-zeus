@@ -148,7 +148,7 @@ export class ViewPlayer {
     const levelDisplay = isAlreadyAtMax
       ? this.getGodReadySymbol(color)
       : isBelowClouds
-      ? '🏛'
+      ? '◇'
       : String(maxLevel - level);
 
     const selectedResource = uiState.getSelectedResource();
