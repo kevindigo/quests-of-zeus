@@ -23,6 +23,7 @@ export class GameEngine {
     actions.push(...GameEngineAnyResource.getAnyResourceActions(gameState));
     actions.push(...GameEngineHex.getHexActions(gameState));
     actions.push(...GameEngineMove.getMoveActions(gameState));
+    actions.push(...GameEngineColor.getColorActions(gameState));
     return actions;
   }
 

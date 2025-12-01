@@ -1,3 +1,4 @@
+import type { Action } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { Player } from './Player.ts';
@@ -9,6 +10,7 @@ export class ViewPlayer {
     player: Player,
     gameState: GameState,
     uiState: UiState,
+    availableActions: Action[],
   ): string {
     const content = `
       <div class="player-info">
@@ -23,7 +25,9 @@ export class ViewPlayer {
           </div>
         </div>
         <div class="player-gods-panel">
-          ${this.getPlayerGodContents(player, gameState, uiState)}
+          ${
+      this.getPlayerGodContents(player, gameState, uiState, availableActions)
+    }
         </div>
         <div class="quest-types">
           ${this.getQuestContents(player)}
@@ -112,6 +116,7 @@ export class ViewPlayer {
     player: Player,
     gameState: GameState,
     uiState: UiState,
+    availableActions: Action[],
   ): string {
     let contents =
       '<div class="player-gods-header"><strong>Gods</strong></div>';
@@ -122,6 +127,7 @@ export class ViewPlayer {
         godColor,
         gameState,
         uiState,
+        availableActions,
       );
     });
     contents += '</div>';
@@ -133,6 +139,7 @@ export class ViewPlayer {
     color: CoreColor,
     gameState: GameState,
     uiState: UiState,
+    availableActions: Action[],
   ): string {
     const level = player.getGodLevel(color);
     const maxLevel = GameEngine.getMaxGodLevel(gameState);
@@ -144,16 +151,28 @@ export class ViewPlayer {
       ? '🏛'
       : String(maxLevel - level);
 
+    const selectedResource = uiState.getSelectedResource();
     const description = this.getGodDescription(color);
-    const selectedColor = uiState.getSelectedResource().getEffectiveColor();
-    const isSelected = selectedColor === color;
+    const available = availableActions.find((availableAction) => {
+      return availableAction.type === 'color' &&
+        availableAction.subType === 'advanceGod' &&
+        availableAction.spend.getEffectiveColor() === color &&
+        availableAction.spend.equals(selectedResource);
+    });
+    /// for debugging
+    // const godActions = availableActions.filter((aa) => {
+    //   return aa.type === 'color' && aa.subType === 'advanceGod';
+    // });
+    console.log('ViewPlayer.gSPGC ' + JSON.stringify(available));
+    // end debugging
+    const isSelectedClass = available ? 'selected-god' : '';
 
     return `
     <span class="god-entry-wrapper">
         <span class="god-level">
           ${levelDisplay}
         </span>
-        <span class="god-square  ${isSelected ? 'selected-god' : ''}" 
+        <span class="god-square  ${isSelectedClass}" 
           data-color="${color}"
           style="background-color: ${ViewPlayer.getColorHex(color)};">
         </span>

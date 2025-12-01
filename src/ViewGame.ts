@@ -49,7 +49,7 @@ export class ViewGame {
     }
 
     // Update player info display
-    this.updatePlayerInfo(this.gameState);
+    this.updatePlayerInfo(this.gameState, availableActions);
 
     // Render the map with player positions
     this.renderMap(this.gameState);
@@ -63,7 +63,10 @@ export class ViewGame {
     }
   }
 
-  private updatePlayerInfo(gameState: GameState): void {
+  private updatePlayerInfo(
+    gameState: GameState,
+    availableActions: Action[],
+  ): void {
     const playerInfoContainer = document.getElementById('playerInfo');
     if (!playerInfoContainer) return;
 
@@ -75,6 +78,7 @@ export class ViewGame {
       currentPlayer,
       this.gameState,
       this.uiState,
+      availableActions,
     );
   }
 
