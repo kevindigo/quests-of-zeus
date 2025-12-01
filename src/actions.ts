@@ -48,6 +48,7 @@ export interface AnyResourceAction extends ActionBase {
 
 export interface ColorAction extends ActionBase {
   type: 'color';
+  spend: Resource;
   subType: 'healColor' | 'gainCardFavorGod' | 'advanceGod';
 }
 
@@ -150,7 +151,6 @@ export interface AnyResourceGainPeekCouponsAction extends AnyResourceAction {
 // ------------------ Color Actions ------------------
 export interface ColorAdvanceGodAction extends ColorAction {
   subType: 'advanceGod';
-  color: CoreColor;
 }
 
 export interface ColorHealAction extends ColorAction {
