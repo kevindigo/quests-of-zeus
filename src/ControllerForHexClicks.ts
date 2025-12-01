@@ -8,16 +8,15 @@ import type {
   ShipMoveAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
-import type { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { Failure, type ResultWithMessage } from './ResultWithMessage.ts';
 import type { UiState } from './UiState.ts';
 
 export class ControllerForHexClicks {
-  public constructor(manager: GameManager) {
-    this.gameState = manager.getGameState();
-    this.uiState = manager.getUiState();
+  public constructor(gameState: GameState, uiState: UiState) {
+    this.gameState = gameState;
+    this.uiState = uiState;
   }
 
   public handleHexClick(

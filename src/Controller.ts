@@ -379,7 +379,10 @@ export class Controller {
     >;
     const { q, r, favorCost } = customEvent.detail;
     const coordinates: HexCoordinates = { q, r };
-    const handlers = new ControllerForHexClicks(this.gameManager);
+    const handlers = new ControllerForHexClicks(
+      this.getGameState(),
+      this.getUiState(),
+    );
     const result = handlers.handleHexClick(
       coordinates,
       favorCost,

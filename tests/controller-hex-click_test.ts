@@ -34,7 +34,7 @@ let center: HexCoordinates;
 
 function setupWithController(): void {
   setupGame();
-  testHandler = new ControllerForHexClicks(testGameManager);
+  testHandler = new ControllerForHexClicks(testGameState, testUiState);
   center = HexGrid.CENTER;
 }
 
