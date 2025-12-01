@@ -73,6 +73,7 @@ export class ViewGame {
     const view = new ViewPlayer();
     playerInfoContainer.innerHTML = view.getPlayerPanelContents(
       currentPlayer,
+      this.gameState,
       this.uiState,
     );
   }

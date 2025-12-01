@@ -1,3 +1,5 @@
+import { GameEngine } from './GameEngine.ts';
+import type { GameState } from './GameState.ts';
 import type { Player } from './Player.ts';
 import { COLOR_WHEEL, type CoreColor, type QuestType } from './types.ts';
 import type { UiState } from './UiState.ts';
@@ -5,6 +7,7 @@ import type { UiState } from './UiState.ts';
 export class ViewPlayer {
   public getPlayerPanelContents(
     player: Player,
+    gameState: GameState,
     uiState: UiState,
   ): string {
     const content = `
@@ -20,7 +23,7 @@ export class ViewPlayer {
           </div>
         </div>
         <div class="player-gods-panel">
-          ${this.getPlayerGodContents(player, uiState)}
+          ${this.getPlayerGodContents(player, gameState, uiState)}
         </div>
         <div class="quest-types">
           ${this.getQuestContents(player)}
@@ -105,12 +108,21 @@ export class ViewPlayer {
     return `${details}`;
   }
 
-  private getPlayerGodContents(player: Player, uiState: UiState): string {
+  private getPlayerGodContents(
+    player: Player,
+    gameState: GameState,
+    uiState: UiState,
+  ): string {
     let contents =
       '<div class="player-gods-header"><strong>Gods</strong></div>';
     contents += '<div class="player-gods-details">';
-    COLOR_WHEEL.forEach((color) => {
-      contents += this.getSinglePlayerGodContents(player, color, uiState);
+    COLOR_WHEEL.forEach((godColor) => {
+      contents += this.getSinglePlayerGodContents(
+        player,
+        godColor,
+        gameState,
+        uiState,
+      );
     });
     contents += '</div>';
     return contents;
@@ -119,10 +131,19 @@ export class ViewPlayer {
   private getSinglePlayerGodContents(
     player: Player,
     color: CoreColor,
+    gameState: GameState,
     uiState: UiState,
   ): string {
     const level = player.getGodLevel(color);
-    const levelDisplay = level ? String(4 - level) : '-';
+    const maxLevel = GameEngine.getMaxGodLevel(gameState);
+    const isAlreadyAtMax = level === maxLevel;
+    const isBelowClouds = level === 0;
+    const levelDisplay = isAlreadyAtMax
+      ? this.getGodReadySymbol(color)
+      : isBelowClouds
+      ? '🏛'
+      : String(maxLevel - level);
+
     const description = this.getGodDescription(color);
     const selectedColor = uiState.getSelectedResource().getEffectiveColor();
     const isSelected = selectedColor === color;
@@ -138,6 +159,23 @@ export class ViewPlayer {
         </span>
         <span class="god-description">${description}</span>
     </span>`;
+  }
+
+  private getGodReadySymbol(color: CoreColor): string {
+    switch (color) {
+      case 'black':
+        return '⚔️';
+      case 'pink':
+        return '🪶';
+      case 'blue':
+        return '🌊';
+      case 'yellow':
+        return '☀️';
+      case 'green':
+        return '🌲';
+      case 'red':
+        return '💖';
+    }
   }
 
   private getGodDescription(color: CoreColor): string {
