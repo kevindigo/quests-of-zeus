@@ -11,7 +11,7 @@ export class GameEngineColor {
   public static getColorActions(gameState: GameState): ColorAction[] {
     const actions: ColorAction[] = [];
     const player = gameState.getCurrentPlayer();
-    player.getAvailableResourcesWithoutRecoloring().forEach((resource) => {
+    player.getAvailableResourcesWithRecoloring().forEach((resource) => {
       const effectiveColor = resource.getEffectiveColor();
       if (effectiveColor) {
         const level = player.getGodLevel(effectiveColor);
