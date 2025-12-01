@@ -347,11 +347,22 @@ footer {
 }
 
 .god-square.selected-god {
-  outline: 3px solid black;
-  outline-offset: 2px;
+  position: relative; /* needed for pseudo-element positioning */
+  z-index: 10 !important;
   cursor: pointer;
 }
 
+.god-square.selected-god::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 4px;
+  pointer-events: none;
+
+  border: 4px solid darkslategray;
+
+  animation: html-breath 2s ease-in-out infinite;
+}
 /* .god-description {} */
 
 @keyframes pulse-breathe {
@@ -373,5 +384,14 @@ footer {
     stroke-opacity: 1;
     /* filter: drop-shadow(0 0 12px rgba(255, 69, 0, 1.2)); */
     stroke-dasharray: 12, 6;
+  }
+}
+
+@keyframes html-breath {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
   }
 }
