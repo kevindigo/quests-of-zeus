@@ -404,7 +404,10 @@ export class Controller {
   }
 
   private setRecolorIntention(favorCost: number): void {
-    const handler = new ControllerForBasicActions(this.gameManager);
+    const handler = new ControllerForBasicActions(
+      this.getGameState(),
+      this.getUiState(),
+    );
     const result = handler.setRecolorIntention(
       favorCost,
       this.getSelectedDieColor(),

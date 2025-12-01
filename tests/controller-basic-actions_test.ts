@@ -3,15 +3,16 @@ import { ControllerForBasicActions } from '../src/ControllerForBasicActions.ts';
 import {
   assertFailureContains,
   setupGame,
-  testGameManager,
+  testGameState,
   testPlayer,
+  testUiState,
 } from './test-helpers.ts';
 
 let handler: ControllerForBasicActions;
 
 function setup() {
   setupGame();
-  handler = new ControllerForBasicActions(testGameManager);
+  handler = new ControllerForBasicActions(testGameState, testUiState);
 }
 
 Deno.test('Recolor - success recolor die', () => {

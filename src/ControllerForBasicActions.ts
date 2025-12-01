@@ -1,4 +1,4 @@
-import type { GameManager } from './GameManager.ts';
+import type { GameState } from './GameState.ts';
 import { OracleSystem } from './OracleSystem.ts';
 import { Resource } from './Resource.ts';
 import { Failure, type ResultWithMessage } from './ResultWithMessage.ts';
@@ -6,8 +6,9 @@ import type { CoreColor } from './types.ts';
 import type { UiState } from './UiState.ts';
 
 export class ControllerForBasicActions {
-  public constructor(manager: GameManager) {
-    this.gameManager = manager;
+  public constructor(gameState: GameState, uiState: UiState) {
+    this.gameState = gameState;
+    this.uiState = uiState;
   }
 
   public setRecolorIntention(
@@ -22,7 +23,7 @@ export class ControllerForBasicActions {
       );
     }
 
-    const playerFavor = this.gameManager.getCurrentPlayer().favor;
+    const playerFavor = this.gameState.getCurrentPlayer().favor;
     if (favorCost > playerFavor) {
       return new Failure(
         `Cannot spend more favor (${favorCost}) than the player has (${playerFavor})`,
@@ -47,8 +48,9 @@ export class ControllerForBasicActions {
   }
 
   private getUiState(): UiState {
-    return this.gameManager.getUiState();
+    return this.uiState;
   }
 
-  private gameManager: GameManager;
+  private gameState: GameState;
+  private uiState: UiState;
 }
