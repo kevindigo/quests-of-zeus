@@ -71,7 +71,7 @@ export class Controller {
   }
 
   private selectResource(resourceType: string, resourceColor: CoreColor): void {
-    const currentPlayer = this.gameManager.getCurrentPlayer();
+    const currentPlayer = this.gameState.getCurrentPlayer();
     console.log(`selectResource called: ${resourceType}, ${resourceColor}`);
 
     if (resourceType == 'card' && currentPlayer.usedOracleCardThisTurn) {
