@@ -24,18 +24,17 @@ import { ViewGame } from './ViewGame.ts';
 export class Controller {
   constructor() {
     this.gameManager = new GameManager();
-    this.viewGame = new ViewGame(
-      this.gameManager.getGameState(),
-      this.gameManager.getUiState(),
-    );
+    this.gameState = this.gameManager.getGameState();
+    this.uiState = this.gameManager.getUiState();
+    this.viewGame = new ViewGame(this.gameState, this.uiState);
   }
 
   public getGameState(): GameState {
-    return this.gameManager.getGameState();
+    return this.gameState;
   }
 
   public getUiState(): UiState {
-    return this.gameManager.getUiState();
+    return this.uiState;
   }
 
   public initializeGameUI(): void {
@@ -461,5 +460,7 @@ export class Controller {
   }
 
   private gameManager: GameManager;
+  private gameState: GameState;
+  private uiState: UiState;
   private viewGame: ViewGame;
 }
