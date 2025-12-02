@@ -70,7 +70,7 @@ h1 {
   padding: 1rem;
 }
 
-.phase-display {
+.player-turn-display {
   grid-row: 1;
   grid-column: 2;
   background: #7788cc;

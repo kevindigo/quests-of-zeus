@@ -156,7 +156,7 @@ export class ViewGame {
     uiState: UiState,
     availableActions: Action[],
   ): void {
-    const phaseDisplay = document.getElementById('phaseDisplay');
+    const phaseDisplay = document.getElementById('playerTurnDisplay');
     if (!phaseDisplay) return;
 
     const view = new ViewPlayerTurn(gameState, uiState);
