@@ -40,7 +40,7 @@ export class ViewWelcome {
 
   public getPhasePanelContents(): string {
     return `
-        <div class="phase-info">
+        <div class="welcome-info">
           <h3>Ready to Begin</h3>
           <p>Click "Start New Game" to begin your adventure!</p>
           <button id="startGame" class="action-button" autofocus>Start New Game</button>

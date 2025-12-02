@@ -12,19 +12,19 @@ export class ViewPlayerTurn {
     this.uiState = uiState;
   }
 
-  public getPhasePanelContents(availableActions: Action[]): string {
+  public getPlayerTurnPanelContents(availableActions: Action[]): string {
     return `
-        <div class="phase-info">
-          <h3>Current Phase: ${this.gameState.getPhase().toUpperCase()}</h3>
-          <div class="phase-actions">
-            ${this.getPhaseActionsContents(availableActions)}
+        <div class="player-turn-info">
+          <h3>Player turn:</h3>
+          <div class="player-turn-actions">
+            ${this.getPlayerTurnButtonContents(availableActions)}
             ${this.getDiceAndOracleCardsContent()}
           </div>
         </div>
       `;
   }
 
-  private getPhaseActionsContents(availableActions: Action[]): string {
+  private getPlayerTurnButtonContents(availableActions: Action[]): string {
     return `
       <div class="resource-actions" style="margin-bottom: 1rem;">
         <button id="spendResourceForFavor" 

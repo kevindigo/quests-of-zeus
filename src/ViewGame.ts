@@ -3,8 +3,8 @@ import type { GameState } from './GameState.ts';
 import { HexMapSvgGenerator } from './HexMapSvgGenerator.ts';
 import type { CityHex, CubeHex, MonsterHex } from './types.ts';
 import type { UiState } from './UiState.ts';
-import { ViewPlayerTurn } from './ViewPlayerTurn.ts';
 import { ViewPlayer } from './ViewPlayer.ts';
+import { ViewPlayerTurn } from './ViewPlayerTurn.ts';
 import { ViewWelcome } from './ViewWelcome.ts';
 
 export class ViewGame {
@@ -160,7 +160,7 @@ export class ViewGame {
     if (!phaseDisplay) return;
 
     const view = new ViewPlayerTurn(gameState, uiState);
-    phaseDisplay.innerHTML = view.getPhasePanelContents(availableActions);
+    phaseDisplay.innerHTML = view.getPlayerTurnPanelContents(availableActions);
   }
 
   private gameState: GameState;
