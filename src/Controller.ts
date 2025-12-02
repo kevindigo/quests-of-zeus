@@ -3,6 +3,7 @@
 
 import type {
   Action,
+  ColorActivateGodAction,
   FreeEndTurnAction,
   ResourceAdvanceGodAction,
   ResourceGainFavorAction,
@@ -174,7 +175,17 @@ export class Controller {
   }
 
   private onActivateGodClicked(color: CoreColor): void {
-    this.showMessage('Clicked activate god ' + color);
+    const action: ColorActivateGodAction = {
+      type: 'color',
+      subType: 'activateGod',
+      color: color,
+    };
+
+    const result = GameEngine.doAction(action, this.getGameState());
+    if (result.success) {
+      this.clearResourceSelection();
+    }
+    this.showMessage('Clicked activate god ' + color + ': ' + result.message);
     this.renderGameState(this.getGameState());
   }
 
