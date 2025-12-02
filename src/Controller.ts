@@ -111,7 +111,7 @@ export class Controller {
       if (availableGodSquare) {
         availableGodSquare.addEventListener('click', () => {
           const color = availableGodSquare.dataset['color'] as CoreColor;
-          this.onAdvanceGodClicked(color);
+          this.doAdvanceGod(color);
         });
       }
     }
@@ -122,39 +122,10 @@ export class Controller {
       if (godActionButton) {
         godActionButton.addEventListener('click', () => {
           const color = godActionButton.dataset['color'] as CoreColor;
-          this.onActivateGodClicked(color);
+          this.doActivateGod(color);
         });
       }
     }
-  }
-
-  private onAdvanceGodClicked(color: CoreColor): void {
-    const action: ResourceAdvanceGodAction = {
-      type: 'resource',
-      subType: 'advanceGod',
-      spend: this.getUiState().getSelectedResource(),
-    };
-    const result = GameEngine.doAction(action, this.getGameState());
-    if (result.success) {
-      this.clearResourceSelection();
-    }
-    this.showMessage('Clicked advance god ' + color + ': ' + result.message);
-    this.renderGameState(this.getGameState());
-  }
-
-  private onActivateGodClicked(color: CoreColor): void {
-    const action: ColorActivateGodAction = {
-      type: 'color',
-      subType: 'activateGod',
-      color: color,
-    };
-
-    const result = GameEngine.doAction(action, this.getGameState());
-    if (result.success) {
-      this.clearResourceSelection();
-    }
-    this.showMessage('Clicked activate god ' + color + ': ' + result.message);
-    this.renderGameState(this.getGameState());
   }
 
   private addHandlersToSvg(): void {
@@ -224,7 +195,6 @@ export class Controller {
   private setupEventListeners(): void {
     console.log('Setting up event listeners...');
 
-    // Start game button
     document.addEventListener('click', (event) => {
       const target = event.target as HTMLElement;
 
@@ -233,12 +203,10 @@ export class Controller {
       }
     });
 
-    // Hex cell click for movement
     document.addEventListener('hexCellClick', (event: Event) => {
       this.handleHexClickEvent(event);
     });
 
-    // Delegate button clicks
     document.addEventListener('click', (event) => {
       this.handleButtonClick(event);
     });
@@ -470,6 +438,35 @@ export class Controller {
       subType: 'endTurn',
     };
     this.doAction(action);
+  }
+
+  private doAdvanceGod(color: CoreColor): void {
+    const action: ResourceAdvanceGodAction = {
+      type: 'resource',
+      subType: 'advanceGod',
+      spend: this.getUiState().getSelectedResource(),
+    };
+    const result = GameEngine.doAction(action, this.getGameState());
+    if (result.success) {
+      this.clearResourceSelection();
+    }
+    this.showMessage('Clicked advance god ' + color + ': ' + result.message);
+    this.renderGameState(this.getGameState());
+  }
+
+  private doActivateGod(color: CoreColor): void {
+    const action: ColorActivateGodAction = {
+      type: 'color',
+      subType: 'activateGod',
+      color: color,
+    };
+
+    const result = GameEngine.doAction(action, this.getGameState());
+    if (result.success) {
+      this.clearResourceSelection();
+    }
+    this.showMessage('Clicked activate god ' + color + ': ' + result.message);
+    this.renderGameState(this.getGameState());
   }
 
   private doAction(action: Action): void {
