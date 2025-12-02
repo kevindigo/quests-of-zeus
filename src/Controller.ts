@@ -4,7 +4,13 @@
 import type {
   Action,
   ColorActivateGodAction,
+  DropCubeAction,
+  DropStatueAction,
+  ExploreShrineAction,
+  FightMonsterAction,
   FreeEndTurnAction,
+  LoadCubeAction,
+  LoadStatueAction,
   ResourceAdvanceGodAction,
   ResourceGainFavorAction,
   ResourceGainOracleCardAction,
@@ -12,13 +18,12 @@ import type {
   TeleportAction,
 } from './actions.ts';
 import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
-import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
 import { GameEngine } from './GameEngine.ts';
 import { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import { PhaseWelcome } from './phases.ts';
+import { PhaseMain, PhaseTeleporting, PhaseWelcome } from './phases.ts';
 import { Resource } from './Resource.ts';
 import type { CoreColor, TerrainType } from './types.ts';
 import type { UiState } from './UiState.ts';
@@ -420,42 +425,130 @@ export class Controller {
     }
   }
 
-  //FixMe: this should assemble each Action and pass it along (even for land)
   private handleHexClickEvent(event: Event): void {
     const customEvent = event as CustomEvent<
       { q: number; r: number; terrain: TerrainType; favorCost: number }
     >;
     const { q, r, favorCost } = customEvent.detail;
     const coordinates: HexCoordinates = { q, r };
-    const handlers = new ControllerForHexClicks(
-      this.getGameState(),
-      this.getUiState(),
-    );
+    this.uiState.setSelectedCoordinates(coordinates);
 
-    const moveAction: ShipMoveAction = {
-      type: 'move',
-      spend: this.getUiState().getSelectedResource(),
-      destination: coordinates,
-      favorToExtendRange: favorCost,
-    };
-    const teleportAction: TeleportAction = {
-      type: 'teleport',
-      coordinates: coordinates,
-    };
-    const action = this.gameState.getPhase().getName() === 'move'
-      ? moveAction
-      : teleportAction;
-    const result = handlers.handleHexClick(
-      action,
-      coordinates,
+    const action = this.getHexClickAction(
+      this.gameState,
+      this.uiState,
       favorCost,
     );
+    if (!action) {
+      this.showMessage('Failed to create action');
+      return;
+    }
 
+    const result = GameEngine.doAction(action, this.gameState);
     if (result.success) {
       this.clearResourceSelection();
     }
     this.showMessage(result.message);
     this.renderGameState(this.getGameState());
+  }
+
+  private getHexClickAction(
+    gameState: GameState,
+    uiState: UiState,
+    favorCost: number,
+  ): Action | null {
+    const phase = gameState.getPhase();
+    const coordinates = uiState.getSelectedCoordinates();
+    if (!coordinates) {
+      return null;
+    }
+
+    if (phase.getName() === PhaseTeleporting.phaseName) {
+      const action: TeleportAction = {
+        type: 'teleport',
+        coordinates: coordinates,
+      };
+      return action;
+    }
+
+    const resource = uiState.getSelectedResource();
+    const map = gameState.getMap();
+    const cell = map.getCell(coordinates);
+    if (!cell) {
+      return null;
+    }
+    if (phase.getName() === PhaseMain.phaseName) {
+      switch (cell.terrain) {
+        case 'zeus':
+          return null;
+        case 'sea': {
+          const action: ShipMoveAction = {
+            type: 'move',
+            destination: coordinates,
+            spend: resource,
+            favorToExtendRange: favorCost,
+          };
+          return action;
+        }
+        case 'shallow':
+          return null;
+        case 'monsters': {
+          const action: FightMonsterAction = {
+            type: 'hex',
+            subType: 'fightMonster',
+            coordinates,
+            spend: resource,
+          };
+          return action;
+        }
+        case 'offerings': {
+          const action: LoadCubeAction = {
+            type: 'hex',
+            subType: 'loadCube',
+            coordinates,
+            spend: uiState.getSelectedResource(),
+          };
+          return action;
+        }
+        case 'temple': {
+          const action: DropCubeAction = {
+            type: 'hex',
+            subType: 'dropCube',
+            coordinates,
+            spend: uiState.getSelectedResource(),
+          };
+          return action;
+        }
+        case 'shrine': {
+          const action: ExploreShrineAction = {
+            type: 'hex',
+            subType: 'exploreShrine',
+            coordinates,
+            spend: uiState.getSelectedResource(),
+          };
+          return action;
+        }
+        case 'city': {
+          const action: LoadStatueAction = {
+            type: 'hex',
+            subType: 'loadStatue',
+            coordinates,
+            spend: uiState.getSelectedResource(),
+          };
+          return action;
+        }
+        case 'statue': {
+          const action: DropStatueAction = {
+            type: 'hex',
+            subType: 'dropStatue',
+            coordinates,
+            spend: uiState.getSelectedResource(),
+          };
+          return action;
+        }
+      }
+    }
+
+    return null;
   }
 
   private startNewGame(): void {
