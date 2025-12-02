@@ -120,15 +120,6 @@ export class GameEngineAnyResource {
     );
   }
 
-  public static areEqualAnyResourceActions(
-    aa: Action,
-    action: Action,
-  ): boolean {
-    return aa.type === 'anyResource' && action.type === 'anyResource' &&
-      aa.subType === action.subType &&
-      aa.spend.equals(action.spend);
-  }
-
   private static removeColoringFrom(action: AnyResourceAction): void {
     action.spend = action.spend.withoutRecoloring();
   }
