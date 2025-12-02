@@ -1,8 +1,9 @@
-import type {
-  Action,
-  FreeAction,
-  FreeActivateGodAction,
-  FreeEndTurnAction,
+import {
+  type Action,
+  Actions,
+  type FreeAction,
+  type FreeActivateGodAction,
+  type FreeEndTurnAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
@@ -77,12 +78,7 @@ export class GameEngineFree {
     gameState: GameState,
   ): ResultWithMessage {
     const availableActions = GameEngineFree.getFreeActions(gameState);
-    const found = availableActions.find((availableAction) => {
-      return GameEngineFree.areEqualFreeActions(
-        availableAction,
-        action as Action,
-      );
-    });
+    const found = Actions.find(availableActions, action as Action);
     if (!found) {
       return new Failure('End turn not available');
     }

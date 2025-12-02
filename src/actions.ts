@@ -238,6 +238,22 @@ export type Action =
   | ShipMoveAction;
 
 export class Actions {
+  public static find(actions: Action[], lookFor: Action): Action | undefined {
+    return actions.find((candidate) => {
+      return Actions.areEqual(candidate, lookFor);
+    });
+  }
+
+  public static findOne(
+    actions: Action[],
+    lookFor: Action,
+  ): Action | undefined {
+    const matches = actions.filter((candidate) => {
+      return Actions.areEqual(candidate, lookFor);
+    });
+    return (matches.length === 1 ? matches[0] : undefined);
+  }
+
   public static filter(actions: Action[], lookFor: Action): Action[] {
     return actions.filter((candidate) => {
       return Actions.areEqual(candidate, lookFor);
