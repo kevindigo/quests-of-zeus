@@ -268,15 +268,30 @@ export class Actions {
       case 'free':
         return this.areEqualFree(candidate, reference as FreeAction);
       case 'coupon':
+        break;
       case 'anyResource':
+        return this.areEqualAny(candidate, reference as AnyResourceAction);
       case 'color':
+        break;
       case 'hex':
+        break;
       case 'move':
+        break;
     }
 
     throw new Error(
       'Actions.areEqual not implemented for ' + JSON.stringify(candidate),
     );
+  }
+
+  public static areEqualAny(
+    candidate: AnyResourceAction,
+    reference: AnyResourceAction,
+  ): boolean {
+    if (candidate.subType !== reference.subType) {
+      return false;
+    }
+    return candidate.spend.equals(reference.spend);
   }
 
   public static areEqualFree(

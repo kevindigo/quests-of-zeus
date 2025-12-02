@@ -1,8 +1,9 @@
-import type {
-  Action,
-  AnyResourceAction,
-  AnyResourceGainFavorAction,
-  AnyResourceGainOracleCardAction,
+import {
+  type Action,
+  Actions,
+  type AnyResourceAction,
+  type AnyResourceGainFavorAction,
+  type AnyResourceGainOracleCardAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
@@ -70,9 +71,7 @@ export class GameEngineAnyResource {
     this.removeColoringFrom(action);
 
     const availableActions = this.getAnyResourceActions(gameState);
-    const found = availableActions.find((availableAction) => {
-      return this.areEqualAnyResourceActions(availableAction, action);
-    });
+    const found = Actions.find(availableActions, action);
     if (!found) {
       return new Failure('Action not available');
     }
@@ -97,9 +96,7 @@ export class GameEngineAnyResource {
     this.removeColoringFrom(action);
 
     const availableActions = this.getAnyResourceActions(gameState);
-    const found = availableActions.find((availableAction) => {
-      return this.areEqualAnyResourceActions(availableAction, action);
-    });
+    const found = Actions.find(availableActions, action);
     if (!found) {
       return new Failure('Gain oracle card not available');
     }
