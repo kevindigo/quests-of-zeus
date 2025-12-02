@@ -272,7 +272,7 @@ export class Actions {
       case 'anyResource':
         return this.areEqualAny(candidate, reference as AnyResourceAction);
       case 'color':
-        break;
+        return this.areEqualColor(candidate, reference as ColorAction);
       case 'hex':
         break;
       case 'move':
@@ -287,6 +287,16 @@ export class Actions {
   public static areEqualAny(
     candidate: AnyResourceAction,
     reference: AnyResourceAction,
+  ): boolean {
+    if (candidate.subType !== reference.subType) {
+      return false;
+    }
+    return candidate.spend.equals(reference.spend);
+  }
+
+  public static areEqualColor(
+    candidate: ColorAction,
+    reference: ColorAction,
   ): boolean {
     if (candidate.subType !== reference.subType) {
       return false;

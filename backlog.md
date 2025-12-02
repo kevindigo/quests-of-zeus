@@ -1,5 +1,8 @@
 == Short-term ==
 
+- Create and use helpers for dealing with Action objects of different types
+- Merge AnyResourceAction and ColorAction into ResourceAction
+
 == Cosmetic/Usability ==
 
 - Clicking on a shrine with shield reward doesn't update the display immediately

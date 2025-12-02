@@ -1,6 +1,6 @@
 import { assert } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
-import type { ColorAdvanceGodAction } from '../src/actions.ts';
+import { Actions, type ColorAdvanceGodAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineColor } from '../src/GameEngineColor.ts';
 import { Resource } from '../src/Resource.ts';
@@ -47,10 +47,8 @@ Deno.test('GameEngineColor AdvanceGod available - can advance', () => {
   };
 
   const availableActions = GameEngineColor.getColorActions(testGameState);
-  const found = availableActions.filter((availableAction) => {
-    return GameEngineColor.areEqualColorActions(availableAction, action);
-  });
-  assertEquals(found.length, 1);
+  const found = Actions.findOne(availableActions, action);
+  assert(found);
 });
 
 Deno.test('GameEngineColor AdvanceGod doAction - not available', () => {

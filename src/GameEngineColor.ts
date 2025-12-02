@@ -1,4 +1,8 @@
-import type { Action, ColorAction, ColorAdvanceGodAction } from './actions.ts';
+import {
+  Actions,
+  type ColorAction,
+  type ColorAdvanceGodAction,
+} from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import {
@@ -45,19 +49,11 @@ export class GameEngineColor {
     );
   }
 
-  public static areEqualColorActions(aa: Action, action: Action): boolean {
-    return aa.type === 'color' && action.type === 'color' &&
-      aa.subType === action.subType &&
-      aa.spend.equals(action.spend);
-  }
-
   private static doAdvanceGod(
     action: ColorAction,
     gameState: GameState,
   ): ResultWithMessage {
-    const found = this.getColorActions(gameState).find((availableAction) => {
-      return this.areEqualColorActions(availableAction, action);
-    });
+    const found = Actions.find(this.getColorActions(gameState), action);
     if (!found) {
       return new Failure(
         'Advance god not available: ' + JSON.stringify(action),
