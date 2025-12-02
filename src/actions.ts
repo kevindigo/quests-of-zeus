@@ -18,14 +18,14 @@ export interface ActionBase {
 export interface FreeAction extends ActionBase {
   type: 'free';
   subType:
-    | 'gainDieFromFavor'
     | 'endTurn'
     | 'teleport'
     | 'superturn'
     | 'exploreAnyShrine'
     | 'healAll'
     | 'defeatMonster'
-    | 'grabAnyStatue';
+    | 'grabAnyStatue'
+    | 'gainDieFromFavor';
 }
 
 export interface CouponAction extends ActionBase {
@@ -70,10 +70,6 @@ export interface FreeEndTurnAction extends FreeAction {
   subType: 'endTurn';
 }
 
-export interface FreeGainDieFromFavorAction extends FreeAction {
-  subType: 'gainDieFromFavor';
-}
-
 export interface FreeTeleportAction extends FreeAction {
   subType: 'teleport';
   coordinates: HexCoordinates;
@@ -101,6 +97,10 @@ export interface FreeDefeatMonsterAction extends FreeAction {
 export interface FreeGrabAnyStatueAction extends FreeAction {
   subType: 'grabAnyStatue';
   color: CoreColor;
+}
+
+export interface FreeGainDieFromFavorAction extends FreeAction {
+  subType: 'gainDieFromFavor';
 }
 
 // ------------------ Coupon Actions ------------------
