@@ -3,7 +3,6 @@ import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
 import {
   Actions,
-  type FreeAction,
   type FreeActivateGodAction,
   type FreeEndTurnAction,
 } from '../src/actions.ts';
@@ -13,13 +12,11 @@ import { setupGame, testGameState } from './test-helpers.ts';
 
 Deno.test('GameEngineFree - getFreeActions action phase', () => {
   setupGame();
+  const endTurnAction: FreeEndTurnAction = { type: 'free', subType: 'endTurn' };
+
   const actions = GameEngineFree.getFreeActions(testGameState);
-  const endTurnActions = actions.filter((action) => {
-    if (action.type === 'free') {
-      const freeAction = action as FreeAction;
-      return (freeAction.subType === 'endTurn');
-    }
-    return false;
+  const endTurnActions = actions.filter((availableAction) => {
+    return Actions.areEqual(availableAction, endTurnAction);
   });
   assertEquals(endTurnActions.length, 1);
 });
