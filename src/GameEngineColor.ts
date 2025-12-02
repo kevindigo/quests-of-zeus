@@ -1,7 +1,12 @@
 import type { Action, ColorAction, ColorActivateGodAction } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
-import { Failure, type ResultWithMessage } from './ResultWithMessage.ts';
+import { createPhase, PhaseTeleporting } from './phases.ts';
+import {
+  Failure,
+  type ResultWithMessage,
+  Success,
+} from './ResultWithMessage.ts';
 import { COLOR_WHEEL } from './types.ts';
 
 export class GameEngineColor {
@@ -36,9 +41,28 @@ export class GameEngineColor {
   }
 
   public static doAction(
-    _action: ColorAction,
-    _gameState: GameState,
+    action: ColorAction,
+    gameState: GameState,
   ): ResultWithMessage {
-    return new Failure('Color actions not implemented yet');
+    const color = action.color;
+    switch (color) {
+      case 'black':
+        return new Failure('Activate god not implemented :' + color);
+      case 'pink':
+        return new Failure('Activate god not implemented :' + color);
+      case 'blue':
+        return this.doTeleport(gameState);
+      case 'yellow':
+        return new Failure('Activate god not implemented :' + color);
+      case 'green':
+        return new Failure('Activate god not implemented :' + color);
+      case 'red':
+        return new Failure('Activate god not implemented :' + color);
+    }
+  }
+
+  private static doTeleport(gameState: GameState): ResultWithMessage {
+    gameState.setPhase(createPhase(PhaseTeleporting.phaseName));
+    return new Success('Switched phase to teleport');
   }
 }

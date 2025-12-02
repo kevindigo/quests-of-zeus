@@ -5,7 +5,7 @@ import {
   type FreeEndTurnAction,
 } from './actions.ts';
 import type { GameState } from './GameState.ts';
-import { createPhase } from './phases.ts';
+import { createPhase, PhaseWelcome } from './phases.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -24,7 +24,7 @@ export class GameEngineFree {
   }
 
   private static getEndTurnActions(gameState: GameState): FreeEndTurnAction[] {
-    if (gameState.getPhase().getName() !== 'main') {
+    if (gameState.getPhase().getName() === PhaseWelcome.phaseName) {
       return [];
     }
 

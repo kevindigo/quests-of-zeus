@@ -7,7 +7,8 @@ export type ActionType =
   | 'color'
   | 'resource'
   | 'hex'
-  | 'move';
+  | 'move'
+  | 'teleport';
 
 export interface ActionBase {
   type: ActionType;
@@ -104,6 +105,11 @@ export interface ShipMoveAction extends ActionBase {
 }
 
 // ------------------ Miscellaneous Actions ------------------
+export interface TeleportAction extends ActionBase {
+  type: 'teleport';
+  coordinates: HexCoordinates;
+}
+
 export type Action =
   // implemented
   | FreeEndTurnAction
@@ -117,10 +123,10 @@ export type Action =
   | DropStatueAction
   | FightMonsterAction
   | ExploreShrineAction
-  | ShipMoveAction;
+  | ShipMoveAction
+  | TeleportAction; // blue god
 // speculation
 // | FreeGainDieFromFavorAction // equipment
-// | FreeTeleportAction // blue god
 // | FreeSuperturnAction // yellow god
 // | FreeExploreAnyShrineAction // green god
 // | FreeHealAllAction // red god

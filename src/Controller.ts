@@ -9,6 +9,7 @@ import type {
   ResourceGainFavorAction,
   ResourceGainOracleCardAction,
   ShipMoveAction,
+  TeleportAction,
 } from './actions.ts';
 import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { ControllerForHexClicks } from './ControllerForHexClicks.ts';
@@ -17,6 +18,7 @@ import { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import { PhaseWelcome } from './phases.ts';
 import { Resource } from './Resource.ts';
 import type { CoreColor, TerrainType } from './types.ts';
 import type { UiState } from './UiState.ts';
@@ -126,7 +128,7 @@ export class Controller {
     if (!hexMapContainer) return;
     this.addHandlersToSvg();
 
-    if (gameState.getPhase().getName() === 'main') {
+    if (gameState.getPhase().getName() !== PhaseWelcome.phaseName) {
       this.highlightAvailableHexElements(gameState, availableActions);
     }
   }
@@ -258,7 +260,7 @@ export class Controller {
     availableActions: Action[],
   ): void {
     this.highlightAvailableShipMoves(availableActions);
-
+    this.highlightAvailableTeleports(availableActions);
     this.highlightAvailableLands(gameState, availableActions);
   }
 
@@ -275,42 +277,60 @@ export class Controller {
 
     legalMoveActions.forEach((action) => {
       const destination = action.destination;
-      // Highlight the new hex-highlight polygons (centered, won't cover colored border)
-      const hexToHighlight = document.querySelector(
-        `.hex-highlight[data-q="${destination.q}"][data-r="${destination.r}"]`,
-      );
-
-      if (hexToHighlight) {
-        if (action.favorToExtendRange > 0) {
-          hexToHighlight.classList.add('available-move-favor');
-        } else {
-          hexToHighlight.classList.add('available-move');
-        }
-      } else {
-        console.warn(
-          `Could not find hex-highlight element for (${destination.q}, ${destination.r})`,
-        );
-      }
-
-      // Find the corresponding clickable element
-      const hexCell = document.querySelector<SVGElement>(
-        `.hex-cell[data-q="${destination.q}"][data-r="${destination.r}"]`,
-      );
-
-      if (hexCell) {
-        // Attach the favor cost so click handler can read it
-        hexCell.setAttribute(
-          'data-favor-cost',
-          String(action.favorToExtendRange),
-        );
-      } else {
-        console.warn(
-          `Could not find hex-cell element for (${destination.q}, ${destination.r})`,
-        );
-      }
+      const favorCost = action.favorToExtendRange;
+      this.highlighSeaHex(destination, favorCost);
     });
   }
 
+  private highlightAvailableTeleports(
+    availableActions: Action[],
+  ): void {
+    const teleportActions = availableActions.filter((action) => {
+      return action.type === 'teleport';
+    });
+
+    teleportActions.forEach((action) => {
+      const destination = action.coordinates;
+      const favorCost = 0;
+      this.highlighSeaHex(destination, favorCost);
+    });
+  }
+
+  private highlighSeaHex(destination: HexCoordinates, favorCost: number) {
+    // Highlight the new hex-highlight polygons (centered, won't cover colored border)
+    const hexToHighlight = document.querySelector(
+      `.hex-highlight[data-q="${destination.q}"][data-r="${destination.r}"]`,
+    );
+
+    if (hexToHighlight) {
+      if (favorCost > 0) {
+        hexToHighlight.classList.add('available-move-favor');
+      } else {
+        hexToHighlight.classList.add('available-move');
+      }
+    } else {
+      console.warn(
+        `Could not find hex-highlight element for (${destination.q}, ${destination.r})`,
+      );
+    }
+
+    // Find the corresponding clickable element
+    const hexCell = document.querySelector<SVGElement>(
+      `.hex-cell[data-q="${destination.q}"][data-r="${destination.r}"]`,
+    );
+
+    if (hexCell) {
+      // Attach the favor cost so click handler can read it
+      hexCell.setAttribute(
+        'data-favor-cost',
+        String(favorCost),
+      );
+    } else {
+      console.warn(
+        `Could not find hex-cell element for (${destination.q}, ${destination.r})`,
+      );
+    }
+  }
   private highlightAvailableLands(
     gameState: GameState,
     availableActions: Action[],
@@ -400,6 +420,7 @@ export class Controller {
     }
   }
 
+  //FixMe: this should assemble each Action and pass it along (even for land)
   private handleHexClickEvent(event: Event): void {
     const customEvent = event as CustomEvent<
       { q: number; r: number; terrain: TerrainType; favorCost: number }
@@ -410,10 +431,26 @@ export class Controller {
       this.getGameState(),
       this.getUiState(),
     );
+
+    const moveAction: ShipMoveAction = {
+      type: 'move',
+      spend: this.getUiState().getSelectedResource(),
+      destination: coordinates,
+      favorToExtendRange: favorCost,
+    };
+    const teleportAction: TeleportAction = {
+      type: 'teleport',
+      coordinates: coordinates,
+    };
+    const action = this.gameState.getPhase().getName() === 'move'
+      ? moveAction
+      : teleportAction;
     const result = handlers.handleHexClick(
+      action,
       coordinates,
       favorCost,
     );
+
     if (result.success) {
       this.clearResourceSelection();
     }

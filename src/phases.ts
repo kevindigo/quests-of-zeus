@@ -1,4 +1,4 @@
-import type { Action } from './actions.ts';
+import type { Action, FreeEndTurnAction, TeleportAction } from './actions.ts';
 import { GameEngineColor } from './GameEngineColor.ts';
 import { GameEngineFree } from './GameEngineFree.ts';
 import { GameEngineHex } from './GameEngineHex.ts';
@@ -20,6 +20,8 @@ export function createPhase(phaseName: string): Phase {
       return new PhaseWelcome();
     case PhaseMain.phaseName:
       return new PhaseMain();
+    case PhaseTeleporting.phaseName:
+      return new PhaseTeleporting();
   }
 
   throw new Error('Cannot create unknown phase: ' + phaseName);
@@ -42,13 +44,13 @@ export class PhaseMain implements Phase {
     return PhaseMain.phaseName;
   }
 
-  public getAvailableActions(GameState: GameState): Action[] {
+  public getAvailableActions(gameState: GameState): Action[] {
     const actions: Action[] = [];
-    actions.push(...GameEngineColor.getColorActions(GameState));
-    actions.push(...GameEngineFree.getFreeActions(GameState));
-    actions.push(...GameEngineResource.getAnyResourceActions(GameState));
-    actions.push(...GameEngineHex.getHexActions(GameState));
-    actions.push(...GameEngineMove.getMoveActions(GameState));
+    actions.push(...GameEngineColor.getColorActions(gameState));
+    actions.push(...GameEngineFree.getFreeActions(gameState));
+    actions.push(...GameEngineResource.getAnyResourceActions(gameState));
+    actions.push(...GameEngineHex.getHexActions(gameState));
+    actions.push(...GameEngineMove.getMoveActions(gameState));
     return actions;
   }
 
@@ -61,8 +63,32 @@ export class PhaseMain implements Phase {
 //   private remainingCount: number;
 // }
 
-// export class PhaseTeleporting implements Phase {
-// }
+export class PhaseTeleporting implements Phase {
+  public getName(): string {
+    return PhaseTeleporting.phaseName;
+  }
+
+  public getAvailableActions(gameState: GameState): Action[] {
+    const actions: Action[] = [];
+
+    const teleportActions = gameState.getMap().getCellsByTerrain('sea').map(
+      (cell) => {
+        const action: TeleportAction = {
+          type: 'teleport',
+          coordinates: cell.getCoordinates(),
+        };
+        return action;
+      },
+    );
+    actions.push(...teleportActions);
+
+    const endTurn: FreeEndTurnAction = { type: 'free', subType: 'endTurn' };
+    actions.push(endTurn);
+
+    return actions;
+  }
+  public static readonly phaseName = 'teleporting';
+}
 
 // export class PhasePeeking implements Phase {
 // }

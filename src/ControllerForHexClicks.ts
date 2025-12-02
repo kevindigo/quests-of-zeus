@@ -1,4 +1,5 @@
 import type {
+  Action,
   DropCubeAction,
   DropStatueAction,
   ExploreShrineAction,
@@ -6,6 +7,7 @@ import type {
   LoadCubeAction,
   LoadStatueAction,
   ShipMoveAction,
+  TeleportAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
@@ -19,44 +21,13 @@ export class ControllerForHexClicks {
     this.uiState = uiState;
   }
 
+  // FixMe: This should always rely on action rather than creating them
   public handleHexClick(
+    action: Action,
     coordinates: HexCoordinates,
     favorCost: number,
   ): ResultWithMessage {
     const gameState = this.gameState;
-    if (gameState.getPhase().getName() !== 'main') {
-      return new Failure(
-        `Cannot click hexes during the ${gameState.getPhase()} phase`,
-      );
-    }
-
-    const effectiveColor = this.getUiState().getEffectiveSelectedColor();
-    if (!effectiveColor) {
-      return new Failure(
-        'Please select a resource (die or oracle card) first!!',
-      );
-    }
-
-    const currentPlayer = gameState.getCurrentPlayer();
-    const resource = this.getUiState().getSelectedResource();
-
-    if (resource.isCard() && currentPlayer.usedOracleCardThisTurn) {
-      return new Failure('Cannot use more than 1 oracle card per turn');
-    }
-
-    const dice = currentPlayer.oracleDice;
-    if (resource.isDie() && !dice.includes(resource.getBaseColor())) {
-      const color = resource.getBaseColor();
-      return new Failure(`Color ${color} not in dice ${JSON.stringify(dice)}`);
-    }
-
-    const cards = currentPlayer.oracleCards;
-    if (resource.isCard() && !cards.includes(resource.getBaseColor())) {
-      const color = resource.getBaseColor();
-      return new Failure(
-        `Color ${color} not in cards ${JSON.stringify(cards)}`,
-      );
-    }
 
     this.uiState.setSelectedCoordinates(coordinates);
 
@@ -69,15 +40,26 @@ export class ControllerForHexClicks {
     const terrain = cell.terrain;
     switch (terrain) {
       case 'sea': {
-        const action: ShipMoveAction = {
-          type: 'move',
-          destination: coordinates,
-          spend: uiState.getSelectedResource(),
-          favorToExtendRange: favorCost,
-        };
-        const result = GameEngine.doAction(action, gameState);
-        uiState.clearResourceSelection();
-        return result;
+        if (action.type === 'move') {
+          const action: ShipMoveAction = {
+            type: 'move',
+            destination: coordinates,
+            spend: uiState.getSelectedResource(),
+            favorToExtendRange: favorCost,
+          };
+          const result = GameEngine.doAction(action, gameState);
+          uiState.clearResourceSelection();
+          return result;
+        } else if (action.type === 'teleport') {
+          const action: TeleportAction = {
+            type: 'teleport',
+            coordinates: coordinates,
+          };
+          const result = GameEngine.doAction(action, gameState);
+          return result;
+        } else {
+          return new Failure('Hex click for unknown reason!');
+        }
       }
       case 'shrine': {
         const action: ExploreShrineAction = {
