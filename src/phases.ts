@@ -1,5 +1,5 @@
 import type { Action } from './actions.ts';
-import { GameEngineAnyResource } from './GameEngineAnyResource.ts';
+import { GameEngineResource } from './GameEngineResource.ts';
 import { GameEngineColor } from './GameEngineColor.ts';
 import { GameEngineFree } from './GameEngineFree.ts';
 import { GameEngineHex } from './GameEngineHex.ts';
@@ -45,7 +45,7 @@ export class PhaseMain implements Phase {
   public getAvailableActions(GameState: GameState): Action[] {
     const actions: Action[] = [];
     actions.push(...GameEngineFree.getFreeActions(GameState));
-    actions.push(...GameEngineAnyResource.getAnyResourceActions(GameState));
+    actions.push(...GameEngineResource.getAnyResourceActions(GameState));
     actions.push(...GameEngineHex.getHexActions(GameState));
     actions.push(...GameEngineMove.getMoveActions(GameState));
     actions.push(...GameEngineColor.getColorActions(GameState));

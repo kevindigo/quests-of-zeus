@@ -3,10 +3,10 @@ import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
 import { assertStringIncludes } from '@std/assert/string-includes';
 import type {
-  AnyResourceGainFavorAction,
-  AnyResourceGainOracleCardAction,
+  ResourceGainFavorAction,
+  ResourceGainOracleCardAction,
 } from '../src/actions.ts';
-import { GameEngineAnyResource } from '../src/GameEngineAnyResource.ts';
+import { GameEngineResource } from '../src/GameEngineResource.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { Resource } from '../src/Resource.ts';
@@ -25,7 +25,7 @@ function setup(): void {
   player.oracleCards = cards;
 }
 
-function createGainFavorAction(spend: Resource): AnyResourceGainFavorAction {
+function createGainFavorAction(spend: Resource): ResourceGainFavorAction {
   return {
     type: 'anyResource',
     subType: 'gainFavor',
@@ -35,7 +35,7 @@ function createGainFavorAction(spend: Resource): AnyResourceGainFavorAction {
 
 function createGainCardAction(
   spend: Resource,
-): AnyResourceGainOracleCardAction {
+): ResourceGainOracleCardAction {
   return {
     type: 'anyResource',
     subType: 'gainOracleCard',
@@ -47,13 +47,13 @@ Deno.test('GameEngineAnyResource - available actions already used card', () => {
   setup();
   const player = gameState.getCurrentPlayer();
   player.usedOracleCardThisTurn = true;
-  const actions = GameEngineAnyResource.getAnyResourceActions(gameState);
+  const actions = GameEngineResource.getAnyResourceActions(gameState);
   assertEquals(actions.length, 2);
 });
 
 Deno.test('GameEngineAnyResource - available actions dice and cards', () => {
   setup();
-  const actions = GameEngineAnyResource.getAnyResourceActions(gameState);
+  const actions = GameEngineResource.getAnyResourceActions(gameState);
   assertEquals(actions.length, 6, JSON.stringify(actions));
 });
 
@@ -61,14 +61,14 @@ Deno.test('GameEngineAnyResource - available actions empty deck', () => {
   setup();
   gameState.getOracleCardDeck().splice(0);
 
-  const actions = GameEngineAnyResource.getAnyResourceActions(gameState);
+  const actions = GameEngineResource.getAnyResourceActions(gameState);
   assertEquals(actions.length, 3, JSON.stringify(actions));
 });
 
 Deno.test('GameEngineAnyResource - gain favor nothing selected', () => {
   setup();
 
-  const result = GameEngineAnyResource.doAction(
+  const result = GameEngineResource.doAction(
     createGainFavorAction(Resource.none),
     gameState,
   );
@@ -81,7 +81,7 @@ Deno.test('GameEngineAnyResource - gain favor with die success', () => {
   const oldFavor = player.favor;
   const oldDiceCount = player.oracleDice.length;
 
-  const result = GameEngineAnyResource.doAction(
+  const result = GameEngineResource.doAction(
     createGainFavorAction(Resource.createDie('red')),
     gameState,
   );
@@ -97,7 +97,7 @@ Deno.test('GameEngineAnyResource - gain favor with card success', () => {
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
 
-  const result = GameEngineAnyResource.doAction(
+  const result = GameEngineResource.doAction(
     createGainFavorAction(Resource.createCard('blue')),
     gameState,
   );
@@ -113,7 +113,7 @@ Deno.test('GameEngineAnyResource - gain favor ignore recolor', () => {
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
 
-  const result = GameEngineAnyResource.doAction(
+  const result = GameEngineResource.doAction(
     createGainFavorAction(Resource.createRecoloredCard('blue', 2)),
     gameState,
   );
@@ -125,7 +125,7 @@ Deno.test('GameEngineAnyResource - gain favor ignore recolor', () => {
 Deno.test('GameEngineAnyResource - gain card nothing selected', () => {
   setup();
 
-  const result = GameEngineAnyResource.doAction(
+  const result = GameEngineResource.doAction(
     createGainCardAction(Resource.none),
     gameState,
   );
@@ -137,7 +137,7 @@ Deno.test('GameEngineAnyResource - gain card with die success', () => {
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
 
-  const result = GameEngineAnyResource.doAction(
+  const result = GameEngineResource.doAction(
     createGainCardAction(Resource.createDie('red')),
     gameState,
   );
@@ -154,7 +154,7 @@ Deno.test('GameEngineAnyResource - gain card with card success', () => {
   const player = gameState.getCurrentPlayer();
   const oldFavor = player.favor;
 
-  const result = GameEngineAnyResource.doAction(
+  const result = GameEngineResource.doAction(
     createGainCardAction(Resource.createCard('blue')),
     gameState,
   );
@@ -170,7 +170,7 @@ Deno.test('GameEngineAnyResource - gain card with die ignore recolor', () => {
   setup();
   const player = gameState.getCurrentPlayer();
 
-  const result = GameEngineAnyResource.doAction(
+  const result = GameEngineResource.doAction(
     createGainCardAction(Resource.createRecoloredDie('red', 2)),
     gameState,
   );

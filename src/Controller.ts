@@ -3,10 +3,10 @@
 
 import type {
   Action,
-  AnyResourceGainFavorAction,
-  AnyResourceGainOracleCardAction,
   ColorAdvanceGodAction,
   FreeEndTurnAction,
+  ResourceGainFavorAction,
+  ResourceGainOracleCardAction,
   ShipMoveAction,
 } from './actions.ts';
 import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
@@ -437,7 +437,7 @@ export class Controller {
 
   private spendResourceForFavor(): void {
     const selectedResource = this.getUiState().getSelectedResource();
-    const action: AnyResourceGainFavorAction = {
+    const action: ResourceGainFavorAction = {
       type: 'anyResource',
       subType: 'gainFavor',
       spend: selectedResource,
@@ -447,7 +447,7 @@ export class Controller {
 
   private drawOracleCard(): void {
     const selectedResource = this.getUiState().getSelectedResource();
-    const action: AnyResourceGainOracleCardAction = {
+    const action: ResourceGainOracleCardAction = {
       type: 'anyResource',
       subType: 'gainOracleCard',
       spend: selectedResource,

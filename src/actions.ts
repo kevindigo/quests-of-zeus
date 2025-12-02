@@ -41,7 +41,7 @@ export interface CouponAction extends ActionBase {
     | 'gainEquipment';
 }
 
-export interface AnyResourceAction extends ActionBase {
+export interface ResourceAction extends ActionBase {
   type: 'anyResource';
   spend: Resource;
   subType: 'gainFavor' | 'gainOracleCard' | 'gainPeekCoupons';
@@ -142,15 +142,15 @@ export interface CouponGainEquipmentAction extends CouponAction {
 }
 
 // ------------------ Any-resource Actions ------------------
-export interface AnyResourceGainFavorAction extends AnyResourceAction {
+export interface ResourceGainFavorAction extends ResourceAction {
   subType: 'gainFavor';
 }
 
-export interface AnyResourceGainOracleCardAction extends AnyResourceAction {
+export interface ResourceGainOracleCardAction extends ResourceAction {
   subType: 'gainOracleCard';
 }
 
-export interface AnyResourceGainPeekCouponsAction extends AnyResourceAction {
+export interface ResourceGainPeekCouponsAction extends ResourceAction {
   subType: 'gainPeekCoupons';
 }
 
@@ -220,9 +220,9 @@ export type Action =
   | CouponGainCompanionAction // reward for statue
   | CouponGainEquipmentAction // reward for monster
   // anyResource
-  | AnyResourceGainFavorAction
-  | AnyResourceGainOracleCardAction
-  | AnyResourceGainPeekCouponsAction
+  | ResourceGainFavorAction
+  | ResourceGainOracleCardAction
+  | ResourceGainPeekCouponsAction
   // color
   | ColorAdvanceGodAction // advance that god
   | ColorHealAction // heal all of that color
@@ -270,7 +270,7 @@ export class Actions {
       case 'coupon':
         break;
       case 'anyResource':
-        return this.areEqualAny(candidate, reference as AnyResourceAction);
+        return this.areEqualAny(candidate, reference as ResourceAction);
       case 'color':
         return this.areEqualColor(candidate, reference as ColorAction);
       case 'hex':
@@ -285,8 +285,8 @@ export class Actions {
   }
 
   public static areEqualAny(
-    candidate: AnyResourceAction,
-    reference: AnyResourceAction,
+    candidate: ResourceAction,
+    reference: ResourceAction,
   ): boolean {
     if (candidate.subType !== reference.subType) {
       return false;

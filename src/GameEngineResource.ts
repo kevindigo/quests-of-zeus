@@ -1,9 +1,9 @@
 import {
   type Action,
   Actions,
-  type AnyResourceAction,
-  type AnyResourceGainFavorAction,
-  type AnyResourceGainOracleCardAction,
+  type ResourceAction,
+  type ResourceGainFavorAction,
+  type ResourceGainOracleCardAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
@@ -13,7 +13,7 @@ import {
   Success,
 } from './ResultWithMessage.ts';
 
-export class GameEngineAnyResource {
+export class GameEngineResource {
   public static getAnyResourceActions(gameState: GameState): Action[] {
     if (gameState.getPhase().getName() !== 'main') {
       return [];
@@ -23,7 +23,7 @@ export class GameEngineAnyResource {
     const availableResources = player.getAvailableResourcesWithoutRecoloring();
 
     const actions = availableResources.flatMap((resource) => {
-      const gainFavorAction: AnyResourceGainFavorAction = {
+      const gainFavorAction: ResourceGainFavorAction = {
         type: 'anyResource',
         subType: 'gainFavor',
         spend: resource,
@@ -31,7 +31,7 @@ export class GameEngineAnyResource {
       const actionsForThisResource: Action[] = [gainFavorAction];
 
       if (gameState.getOracleCardDeck().length > 0) {
-        const gainCardAction: AnyResourceGainOracleCardAction = {
+        const gainCardAction: ResourceGainOracleCardAction = {
           type: 'anyResource',
           subType: 'gainOracleCard',
           spend: resource,
@@ -46,14 +46,14 @@ export class GameEngineAnyResource {
   }
 
   public static doAction(
-    action: AnyResourceAction,
+    action: ResourceAction,
     gameState: GameState,
   ): ResultWithMessage {
     switch (action.subType) {
       case 'gainFavor':
-        return GameEngineAnyResource.spendResourceForFavor(gameState, action);
+        return GameEngineResource.spendResourceForFavor(gameState, action);
       case 'gainOracleCard':
-        return GameEngineAnyResource.spendResourceForOracleCard(
+        return GameEngineResource.spendResourceForOracleCard(
           gameState,
           action,
         );
@@ -66,7 +66,7 @@ export class GameEngineAnyResource {
 
   public static spendResourceForFavor(
     gameState: GameState,
-    action: AnyResourceAction,
+    action: ResourceAction,
   ): ResultWithMessage {
     this.removeColoringFrom(action);
 
@@ -91,7 +91,7 @@ export class GameEngineAnyResource {
 
   public static spendResourceForOracleCard(
     gameState: GameState,
-    action: AnyResourceAction,
+    action: ResourceAction,
   ): ResultWithMessage {
     this.removeColoringFrom(action);
 
@@ -120,7 +120,7 @@ export class GameEngineAnyResource {
     );
   }
 
-  private static removeColoringFrom(action: AnyResourceAction): void {
+  private static removeColoringFrom(action: ResourceAction): void {
     action.spend = action.spend.withoutRecoloring();
   }
 }
