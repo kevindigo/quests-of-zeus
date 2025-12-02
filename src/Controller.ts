@@ -222,11 +222,11 @@ export class Controller {
     );
 
     if (target.id === 'spendResourceForFavor') {
-      this.spendResourceForFavor();
+      this.dospendResourceForFavor();
     } else if (target.id === 'drawOracleCard') {
-      this.drawOracleCard();
+      this.doSpendResourceForCard();
     } else if (target.id === 'endTurn') {
-      this.endTurn();
+      this.doEndTurn();
     } else if (target.classList.contains('die')) {
       const dieColor = target.getAttribute('data-die-color') as CoreColor;
       if (dieColor) {
@@ -412,7 +412,7 @@ export class Controller {
     this.showMessage(result.message);
   }
 
-  private spendResourceForFavor(): void {
+  private dospendResourceForFavor(): void {
     const selectedResource = this.getUiState().getSelectedResource();
     const action: ResourceGainFavorAction = {
       type: 'resource',
@@ -422,7 +422,7 @@ export class Controller {
     this.doAction(action);
   }
 
-  private drawOracleCard(): void {
+  private doSpendResourceForCard(): void {
     const selectedResource = this.getUiState().getSelectedResource();
     const action: ResourceGainOracleCardAction = {
       type: 'resource',
@@ -432,7 +432,7 @@ export class Controller {
     this.doAction(action);
   }
 
-  private endTurn(): void {
+  private doEndTurn(): void {
     const action: FreeEndTurnAction = {
       type: 'free',
       subType: 'endTurn',
