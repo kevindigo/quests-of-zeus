@@ -17,10 +17,10 @@ import type {
   ShipMoveAction,
   TeleportAction,
 } from './actions.ts';
+import { ControllerHighlighter } from './ControllerHighlighter.ts';
 import { GameEngine } from './GameEngine.ts';
 import { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
-import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { PhaseMain, PhaseTeleporting, PhaseWelcome } from './phases.ts';
 import { Resource } from './Resource.ts';
@@ -29,6 +29,7 @@ import type { CoreColor, TerrainType } from './types.ts';
 import type { UiState } from './UiState.ts';
 import { ViewGame } from './ViewGame.ts';
 
+//NOTE: This class is referenced by build.ts
 export class Controller {
   constructor() {
     this.gameManager = new GameManager();
@@ -45,6 +46,7 @@ export class Controller {
     return this.uiState;
   }
 
+  //NOTE: This is invoked directly by index.html
   public initializeGameUI(): void {
     this.viewGame.viewWelcome();
     this.setupEventListeners();
@@ -52,16 +54,6 @@ export class Controller {
 
   public clearResourceSelection(): void {
     this.getUiState().clearResourceSelection();
-  }
-
-  public getSelectedDieColor(): CoreColor | null {
-    const selected = this.getUiState().getSelectedResource();
-    return selected.isDie() ? selected.getBaseColor() : null;
-  }
-
-  public getSelectedCardColor(): CoreColor | null {
-    const selected = this.getUiState().getSelectedResource();
-    return selected.isCard() ? selected.getBaseColor() : null;
   }
 
   public selectDieColor(color: CoreColor): boolean {
@@ -133,8 +125,13 @@ export class Controller {
     if (!hexMapContainer) return;
     this.addHandlersToSvg();
 
+    const highligher = new ControllerHighlighter();
     if (gameState.getPhase().getName() !== PhaseWelcome.phaseName) {
-      this.highlightAvailableHexElements(gameState, availableActions);
+      highligher.highlightAvailableHexElements(
+        gameState,
+        this.uiState,
+        availableActions,
+      );
     }
   }
 
@@ -258,111 +255,6 @@ export class Controller {
         }
       }
     });
-  }
-
-  private highlightAvailableHexElements(
-    gameState: GameState,
-    availableActions: Action[],
-  ): void {
-    this.highlightAvailableShipMoves(availableActions);
-    this.highlightAvailableTeleports(availableActions);
-    this.highlightAvailableLands(gameState, availableActions);
-  }
-
-  private highlightAvailableShipMoves(
-    availableActions: Action[],
-  ): void {
-    const selectedResource = this.getUiState().getSelectedResource();
-    const moveActions: ShipMoveAction[] = availableActions.filter((action) => {
-      return action.type === 'move';
-    });
-    const legalMoveActions = moveActions.filter((action) => {
-      return action.spend.equals(selectedResource);
-    });
-
-    legalMoveActions.forEach((action) => {
-      const destination = action.destination;
-      const favorCost = action.favorToExtendRange;
-      this.highlighSeaHex(destination, favorCost);
-    });
-  }
-
-  private highlightAvailableTeleports(
-    availableActions: Action[],
-  ): void {
-    const teleportActions = availableActions.filter((action) => {
-      return action.type === 'teleport';
-    });
-
-    teleportActions.forEach((action) => {
-      const destination = action.coordinates;
-      const favorCost = 0;
-      this.highlighSeaHex(destination, favorCost);
-    });
-  }
-
-  private highlighSeaHex(destination: HexCoordinates, favorCost: number) {
-    // Highlight the new hex-highlight polygons (centered, won't cover colored border)
-    const hexToHighlight = document.querySelector(
-      `.hex-highlight[data-q="${destination.q}"][data-r="${destination.r}"]`,
-    );
-
-    if (hexToHighlight) {
-      if (favorCost > 0) {
-        hexToHighlight.classList.add('available-move-favor');
-      } else {
-        hexToHighlight.classList.add('available-move');
-      }
-    } else {
-      console.warn(
-        `Could not find hex-highlight element for (${destination.q}, ${destination.r})`,
-      );
-    }
-
-    // Find the corresponding clickable element
-    const hexCell = document.querySelector<SVGElement>(
-      `.hex-cell[data-q="${destination.q}"][data-r="${destination.r}"]`,
-    );
-
-    if (hexCell) {
-      // Attach the favor cost so click handler can read it
-      hexCell.setAttribute(
-        'data-favor-cost',
-        String(favorCost),
-      );
-    } else {
-      console.warn(
-        `Could not find hex-cell element for (${destination.q}, ${destination.r})`,
-      );
-    }
-  }
-  private highlightAvailableLands(
-    gameState: GameState,
-    availableActions: Action[],
-  ): void {
-    const selectedResource = this.getUiState().getSelectedResource();
-    availableActions.forEach((action) => {
-      if (action.type === 'hex' && action.spend.equals(selectedResource)) {
-        const cell = gameState.getMap().getCell(action.coordinates);
-        if (cell) {
-          this.highlightLand(cell);
-        }
-      }
-    });
-  }
-
-  private highlightLand(cell: HexCell): void {
-    const hexToHighlight = document.querySelector(
-      `.hex-highlight[data-q="${cell.q}"][data-r="${cell.r}"]`,
-    );
-    if (!hexToHighlight) {
-      console.warn(
-        `Could not find hex-highlight element for (${cell.q}, ${cell.r})`,
-      );
-      return;
-    }
-
-    hexToHighlight.classList.add('available-land');
   }
 
   private setupEventListeners(): void {
