@@ -2,6 +2,7 @@ import {
   type Action,
   Actions,
   type ResourceAction,
+  type ResourceAdvanceGodAction,
   type ResourceGainFavorAction,
   type ResourceGainOracleCardAction,
 } from './actions.ts';
@@ -42,6 +43,22 @@ export class GameEngineResource {
       return actionsForThisResource;
     });
 
+    player.getAvailableResourcesWithRecoloring().forEach((resource) => {
+      const effectiveColor = resource.getEffectiveColor();
+      if (effectiveColor) {
+        const level = player.getGodLevel(effectiveColor);
+        const maxLevel = GameEngine.getMaxGodLevel(gameState);
+        if (level < maxLevel) {
+          const action: ResourceAdvanceGodAction = {
+            type: 'anyResource',
+            subType: 'advanceGod',
+            spend: resource,
+          };
+          actions.push(action);
+        }
+      }
+    });
+
     return actions;
   }
 
@@ -50,6 +67,8 @@ export class GameEngineResource {
     gameState: GameState,
   ): ResultWithMessage {
     switch (action.subType) {
+      case 'advanceGod':
+        return this.doAdvanceGod(action, gameState);
       case 'gainFavor':
         return GameEngineResource.spendResourceForFavor(gameState, action);
       case 'gainOracleCard':
@@ -118,6 +137,33 @@ export class GameEngineResource {
     return new Success(
       `Spent ${action.spend.getBaseColor()} to gain ${card} card`,
     );
+  }
+
+  private static doAdvanceGod(
+    action: ResourceAction,
+    gameState: GameState,
+  ): ResultWithMessage {
+    const found = Actions.find(this.getAnyResourceActions(gameState), action);
+    if (!found) {
+      return new Failure(
+        'Advance god not available: ' + JSON.stringify(action),
+      );
+    }
+    const effectiveColor = action.spend.getEffectiveColor();
+    if (!effectiveColor) {
+      return new Failure('Impossible: No resource selected');
+    }
+    const player = gameState.getCurrentPlayer();
+    player.getGod(effectiveColor).level += 1;
+
+    const spent = GameEngine.spendResource(gameState, action.spend);
+    if (!spent.success) {
+      return new Failure(
+        'Impossible: Unable to spend for action ' + JSON.stringify(action),
+      );
+    }
+
+    return new Success('Advanced god ' + effectiveColor);
   }
 
   private static removeColoringFrom(action: ResourceAction): void {

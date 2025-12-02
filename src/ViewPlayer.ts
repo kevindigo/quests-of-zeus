@@ -154,7 +154,7 @@ export class ViewPlayer {
     const selectedResource = uiState.getSelectedResource();
     const description = this.getGodDescription(color);
     const availableAdvanceActions = availableActions.find((availableAction) => {
-      return availableAction.type === 'color' &&
+      return availableAction.type === 'anyResource' &&
         availableAction.subType === 'advanceGod' &&
         availableAction.spend.getEffectiveColor() === color &&
         availableAction.spend.equals(selectedResource);

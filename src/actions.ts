@@ -44,13 +44,13 @@ export interface CouponAction extends ActionBase {
 export interface ResourceAction extends ActionBase {
   type: 'anyResource';
   spend: Resource;
-  subType: 'gainFavor' | 'gainOracleCard' | 'gainPeekCoupons';
+  subType: 'gainFavor' | 'gainOracleCard' | 'gainPeekCoupons' | 'advanceGod';
 }
 
 export interface ColorAction extends ActionBase {
   type: 'color';
   spend: Resource;
-  subType: 'healColor' | 'gainCardFavorGod' | 'advanceGod';
+  subType: 'healColor' | 'gainCardFavorGod';
 }
 
 export interface HexAction extends ActionBase {
@@ -154,11 +154,11 @@ export interface ResourceGainPeekCouponsAction extends ResourceAction {
   subType: 'gainPeekCoupons';
 }
 
-// ------------------ Color Actions ------------------
-export interface ColorAdvanceGodAction extends ColorAction {
+export interface ResourceAdvanceGodAction extends ResourceAction {
   subType: 'advanceGod';
 }
 
+// ------------------ Color Actions ------------------
 export interface ColorHealAction extends ColorAction {
   subType: 'healColor';
 }
@@ -224,7 +224,7 @@ export type Action =
   | ResourceGainOracleCardAction
   | ResourceGainPeekCouponsAction
   // color
-  | ColorAdvanceGodAction // advance that god
+  | ResourceAdvanceGodAction // advance that god
   | ColorHealAction // heal all of that color
   | ColorGainCardFavorGodAction // get card+favor+god advance coupon
   // Hex

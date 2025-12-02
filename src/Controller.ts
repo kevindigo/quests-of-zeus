@@ -3,8 +3,8 @@
 
 import type {
   Action,
-  ColorAdvanceGodAction,
   FreeEndTurnAction,
+  ResourceAdvanceGodAction,
   ResourceGainFavorAction,
   ResourceGainOracleCardAction,
   ShipMoveAction,
@@ -160,8 +160,8 @@ export class Controller {
   }
 
   private onAdvanceGodClicked(color: CoreColor): void {
-    const action: ColorAdvanceGodAction = {
-      type: 'color',
+    const action: ResourceAdvanceGodAction = {
+      type: 'anyResource',
       subType: 'advanceGod',
       spend: this.getUiState().getSelectedResource(),
     };
