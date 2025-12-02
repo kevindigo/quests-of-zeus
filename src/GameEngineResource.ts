@@ -80,6 +80,10 @@ export class GameEngineResource {
         return new Failure(
           'GameEngineAnyResource.gainPeakCoupons not implemented yet',
         );
+      case 'healColor':
+        return new Failure('healColor not implemented yet');
+      case 'gainCardFavorGod':
+        return new Failure('gainCardFavorGod not implemented yet');
     }
   }
 

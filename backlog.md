@@ -1,9 +1,5 @@
 == Short-term ==
 
-- Create and use helpers for dealing with Action objects of different types
-- Merge AnyResourceAction and ColorAction into ResourceAction
-- Merge ShipMoveAction into HexAction?
-
 == Cosmetic/Usability ==
 
 - Clicking on a shrine with shield reward doesn't update the display immediately
@@ -40,6 +36,7 @@
 
 == Code improvement ==
 
+- Merge ShipMoveAction into HexAction?
 - Switch GameManager to be the top level, rather than Controller
   - This doesn't seem possible, because Controller interacts with document,
     which doesn't exist during unit tests

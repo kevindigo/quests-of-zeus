@@ -44,13 +44,19 @@ export interface CouponAction extends ActionBase {
 export interface ResourceAction extends ActionBase {
   type: 'resource';
   spend: Resource;
-  subType: 'gainFavor' | 'gainOracleCard' | 'gainPeekCoupons' | 'advanceGod';
+  subType:
+    | 'gainFavor'
+    | 'gainOracleCard'
+    | 'gainPeekCoupons'
+    | 'advanceGod'
+    | 'healColor'
+    | 'gainCardFavorGod';
 }
 
 export interface ColorAction extends ActionBase {
   type: 'color';
   spend: Resource;
-  subType: 'healColor' | 'gainCardFavorGod';
+  subType: '';
 }
 
 export interface HexAction extends ActionBase {
@@ -141,7 +147,7 @@ export interface CouponGainEquipmentAction extends CouponAction {
   equipmentId: number;
 }
 
-// ------------------ Any-resource Actions ------------------
+// ------------------ Resource Actions ------------------
 export interface ResourceGainFavorAction extends ResourceAction {
   subType: 'gainFavor';
 }
@@ -158,15 +164,15 @@ export interface ResourceAdvanceGodAction extends ResourceAction {
   subType: 'advanceGod';
 }
 
-// ------------------ Color Actions ------------------
-export interface ColorHealAction extends ColorAction {
+export interface ColorHealAction extends ResourceAction {
   subType: 'healColor';
 }
 
-export interface ColorGainCardFavorGodAction extends ColorAction {
+export interface ColorGainCardFavorGodAction extends ResourceAction {
   subType: 'gainCardFavorGod';
 }
 
+// ------------------ Color Actions ------------------
 // ------------------ Hex Actions ------------------
 export interface LoadCubeAction extends HexAction {
   subType: 'loadCube';
@@ -219,12 +225,12 @@ export type Action =
   | CouponGrabStatueAction // equipment
   | CouponGainCompanionAction // reward for statue
   | CouponGainEquipmentAction // reward for monster
-  // anyResource
+  // resource
   | ResourceGainFavorAction
   | ResourceGainOracleCardAction
   | ResourceGainPeekCouponsAction
-  // color
   | ResourceAdvanceGodAction // advance that god
+  // color
   | ColorHealAction // heal all of that color
   | ColorGainCardFavorGodAction // get card+favor+god advance coupon
   // Hex
@@ -271,8 +277,6 @@ export class Actions {
         break;
       case 'resource':
         return this.areEqualAny(candidate, reference as ResourceAction);
-      case 'color':
-        return this.areEqualColor(candidate, reference as ColorAction);
       case 'hex':
         return this.areEqualHex(candidate, reference as HexAction);
       case 'move':
@@ -287,16 +291,6 @@ export class Actions {
   public static areEqualAny(
     candidate: ResourceAction,
     reference: ResourceAction,
-  ): boolean {
-    if (candidate.subType !== reference.subType) {
-      return false;
-    }
-    return candidate.spend.equals(reference.spend);
-  }
-
-  public static areEqualColor(
-    candidate: ColorAction,
-    reference: ColorAction,
   ): boolean {
     if (candidate.subType !== reference.subType) {
       return false;

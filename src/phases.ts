@@ -1,9 +1,8 @@
 import type { Action } from './actions.ts';
-import { GameEngineResource } from './GameEngineResource.ts';
-import { GameEngineColor } from './GameEngineColor.ts';
 import { GameEngineFree } from './GameEngineFree.ts';
 import { GameEngineHex } from './GameEngineHex.ts';
 import { GameEngineMove } from './GameEngineMove.ts';
+import { GameEngineResource } from './GameEngineResource.ts';
 import type { GameState } from './GameState.ts';
 
 // each player will have:
@@ -48,7 +47,6 @@ export class PhaseMain implements Phase {
     actions.push(...GameEngineResource.getAnyResourceActions(GameState));
     actions.push(...GameEngineHex.getHexActions(GameState));
     actions.push(...GameEngineMove.getMoveActions(GameState));
-    actions.push(...GameEngineColor.getColorActions(GameState));
     return actions;
   }
 
