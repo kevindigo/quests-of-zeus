@@ -266,6 +266,7 @@ export class Actions {
     }
     switch (candidate.subType) {
       case 'endTurn':
+        return true;
       case 'activateGod':
         return this.areEqualActivateGod(
           candidate as FreeActivateGodAction,
