@@ -1,15 +1,19 @@
 import { assert } from '@std/assert/assert';
 import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
-import type { FreeAction, FreeEndTurnAction } from '../src/actions.ts';
+import {
+  Actions,
+  type FreeAction,
+  type FreeActivateGodAction,
+  type FreeEndTurnAction,
+} from '../src/actions.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineFree } from '../src/GameEngineFree.ts';
-import { GameState } from '../src/GameState.ts';
-import { GameStateInitializer } from '../src/GameStateInitializer.ts';
+import { setupGame, testGameState } from './test-helpers.ts';
 
 Deno.test('GameEngineFree - getFreeActions action phase', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
-  const actions = GameEngineFree.getFreeActions(gameState);
+  setupGame();
+  const actions = GameEngineFree.getFreeActions(testGameState);
   const endTurnActions = actions.filter((action) => {
     if (action.type === 'free') {
       const freeAction = action as FreeAction;
@@ -20,27 +24,44 @@ Deno.test('GameEngineFree - getFreeActions action phase', () => {
   assertEquals(endTurnActions.length, 1);
 });
 
+Deno.test('GameEngineFree - getFreeActions god', () => {
+  setupGame();
+  const player = testGameState.getCurrentPlayer();
+  const redGod = player.getGod('red');
+  redGod.level = GameEngine.getMaxGodLevel(testGameState);
+  const action: FreeActivateGodAction = {
+    type: 'free',
+    subType: 'activateGod',
+    godColor: 'red',
+  };
+
+  const availableActions = GameEngineFree.getFreeActions(testGameState);
+  const redGodActions = availableActions.filter((availableAction) => {
+    return Actions.areEqual(availableAction, action);
+  });
+  assertEquals(redGodActions.length, 1);
+});
+
 Deno.test('GameEngineFree - end turn action success', () => {
-  const gameState = new GameState();
-  new GameStateInitializer().initializeGameState(gameState);
-  const oldPlayer = gameState.getCurrentPlayer();
+  setupGame();
+  const oldPlayer = testGameState.getCurrentPlayer();
   oldPlayer.oracleDice = ['red'];
   oldPlayer.oracleCards = ['blue'];
   oldPlayer.usedOracleCardThisTurn = true;
-  assertEquals(gameState.getRound(), 1);
+  assertEquals(testGameState.getRound(), 1);
 
   const action: FreeEndTurnAction = { type: 'free', subType: 'endTurn' };
 
-  const result = GameEngineFree.doAction(action, gameState);
+  const result = GameEngineFree.doAction(action, testGameState);
   assert(result.success, result.message);
   assertEquals(oldPlayer.oracleDice.length, 3);
   assertEquals(oldPlayer.oracleCards.length, 1);
   assertFalse(oldPlayer.usedOracleCardThisTurn);
-  assertEquals(gameState.getCurrentPlayerIndex(), 1);
-  assertEquals(gameState.getPhase().getName(), 'main');
-  assertEquals(gameState.getRound(), 1);
+  assertEquals(testGameState.getCurrentPlayerIndex(), 1);
+  assertEquals(testGameState.getPhase().getName(), 'main');
+  assertEquals(testGameState.getRound(), 1);
 
-  GameEngineFree.doAction(action, gameState);
-  assertEquals(gameState.getCurrentPlayerIndex(), 0);
-  assertEquals(gameState.getRound(), 2);
+  GameEngineFree.doAction(action, testGameState);
+  assertEquals(testGameState.getCurrentPlayerIndex(), 0);
+  assertEquals(testGameState.getRound(), 2);
 });

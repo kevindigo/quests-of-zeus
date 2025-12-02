@@ -1,4 +1,10 @@
-import type { Action, FreeAction, FreeEndTurnAction } from './actions.ts';
+import type {
+  Action,
+  FreeAction,
+  FreeActivateGodAction,
+  FreeEndTurnAction,
+} from './actions.ts';
+import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import { createPhase } from './phases.ts';
 import {
@@ -12,6 +18,14 @@ export class GameEngineFree {
   public static getFreeActions(
     gameState: GameState,
   ): Action[] {
+    const actions = [];
+    actions.push(...this.getEndTurnActions(gameState));
+    actions.push(...this.getActivateGodActions(gameState));
+
+    return actions;
+  }
+
+  private static getEndTurnActions(gameState: GameState): FreeEndTurnAction[] {
     if (gameState.getPhase().getName() !== 'main') {
       return [];
     }
@@ -21,6 +35,27 @@ export class GameEngineFree {
       subType: 'endTurn',
     };
     return [endTurnAction];
+  }
+
+  private static getActivateGodActions(
+    gameState: GameState,
+  ): FreeActivateGodAction[] {
+    const actions: FreeActivateGodAction[] = [];
+
+    const maxLevel = GameEngine.getMaxGodLevel(gameState);
+    const player = gameState.getCurrentPlayer();
+    COLOR_WHEEL.forEach((color) => {
+      const level = player.getGodLevel(color);
+      if (level >= maxLevel) {
+        const action: FreeActivateGodAction = {
+          type: 'free',
+          subType: 'activateGod',
+          godColor: color,
+        };
+        actions.push(action);
+      }
+    });
+    return actions;
   }
 
   public static doAction(

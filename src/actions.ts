@@ -19,6 +19,7 @@ export interface FreeAction extends ActionBase {
   type: 'free';
   subType:
     | 'endTurn'
+    | 'activateGod'
     | 'teleport'
     | 'superturn'
     | 'exploreAnyShrine'
@@ -65,9 +66,14 @@ export interface HexAction extends ActionBase {
     | 'exploreShrine';
 }
 
-// ------------------ Free Regular Actions ------------------
+// ------------------ Free Actions ------------------
 export interface FreeEndTurnAction extends FreeAction {
   subType: 'endTurn';
+}
+
+export interface FreeActivateGodAction extends FreeAction {
+  subType: 'activateGod';
+  godColor: CoreColor;
 }
 
 export interface FreeTeleportAction extends FreeAction {
@@ -198,6 +204,7 @@ export interface ShipMoveAction extends ActionBase {
 export type Action =
   // free
   | FreeEndTurnAction
+  | FreeActivateGodAction
   | FreeGainDieFromFavorAction // equipment
   | FreeTeleportAction // blue god
   | FreeSuperturnAction // yellow god
@@ -229,3 +236,75 @@ export type Action =
   | ExploreShrineAction
   // move
   | ShipMoveAction;
+
+export class Actions {
+  public static areEqual(candidate: Action, reference: Action): boolean {
+    if (candidate.type !== reference.type) {
+      return false;
+    }
+    switch (candidate.type) {
+      case 'free':
+        return this.areEqualFree(candidate, reference as FreeAction);
+      case 'coupon':
+      case 'anyResource':
+      case 'color':
+      case 'hex':
+      case 'move':
+    }
+
+    throw new Error(
+      'Actions.areEqual not implemented for ' + JSON.stringify(candidate),
+    );
+  }
+
+  public static areEqualFree(
+    candidate: FreeAction,
+    reference: FreeAction,
+  ): boolean {
+    if (candidate.subType !== reference.subType) {
+      return false;
+    }
+    switch (candidate.subType) {
+      case 'endTurn':
+      case 'activateGod':
+        return this.areEqualActivateGod(
+          candidate as FreeActivateGodAction,
+          reference as FreeActivateGodAction,
+        );
+      case 'teleport':
+      case 'superturn':
+      case 'exploreAnyShrine':
+      case 'healAll':
+      case 'defeatMonster':
+      case 'grabAnyStatue':
+      case 'gainDieFromFavor':
+    }
+    throw new Error(
+      'Actions.areEqualFree not implemented for ' + JSON.stringify(candidate),
+    );
+  }
+
+  public static areEqualActivateGod(
+    candidate: FreeActivateGodAction,
+    reference: FreeActivateGodAction,
+  ): boolean {
+    return candidate.godColor === reference.godColor;
+  }
+
+  public static extractFreeActivateGodActions(
+    actions: Action[],
+  ): FreeActivateGodAction[] {
+    return actions.flatMap(
+      (availableAction) => {
+        if (
+          availableAction.type === 'free' &&
+          availableAction.subType === 'activateGod'
+        ) {
+          return [availableAction];
+        } else {
+          return [];
+        }
+      },
+    );
+  }
+}

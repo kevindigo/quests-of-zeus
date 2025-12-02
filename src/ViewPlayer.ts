@@ -153,16 +153,22 @@ export class ViewPlayer {
 
     const selectedResource = uiState.getSelectedResource();
     const description = this.getGodDescription(color);
-    const available = availableActions.find((availableAction) => {
+    const availableAdvanceActions = availableActions.find((availableAction) => {
       return availableAction.type === 'color' &&
         availableAction.subType === 'advanceGod' &&
         availableAction.spend.getEffectiveColor() === color &&
         availableAction.spend.equals(selectedResource);
     });
-    const isGodAdvanceAvailableClass = available ? 'available-god-advance' : '';
+    const isGodAdvanceAvailableClass = availableAdvanceActions
+      ? 'available-god-advance'
+      : '';
 
-    // FixMe: This should check available actions, once those are working!
-    const isGodActionAvailableClass = isAlreadyAtMax
+    const availableActivateAction = availableActions.find((availableAction) => {
+      return availableAction.type === 'free' &&
+        availableAction.subType === 'activateGod' &&
+        availableAction.godColor === color;
+    });
+    const isGodActionAvailableClass = availableActivateAction
       ? 'available-god-action'
       : '';
 
