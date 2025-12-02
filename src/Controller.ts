@@ -56,32 +56,13 @@ export class Controller {
     this.getUiState().clearResourceSelection();
   }
 
-  public selectDieColor(color: CoreColor): boolean {
-    this.getUiState().clearResourceSelection();
-    const die = Resource.createDie(color);
-    this.getUiState().setSelectedResource(die);
-    return true;
-  }
-
-  public selectCardColor(color: CoreColor): boolean {
-    this.getUiState().clearResourceSelection();
-    const card = Resource.createCard(color);
-    this.getUiState().setSelectedResource(card);
-    return true;
-  }
-
-  private selectResource(resourceType: string, resourceColor: CoreColor): void {
+  private selectResource(resourceToSelect: Resource): void {
     const currentPlayer = this.gameState.getCurrentPlayer();
-    console.log(`selectResource called: ${resourceType}, ${resourceColor}`);
 
-    if (resourceType == 'card' && currentPlayer.usedOracleCardThisTurn) {
+    if (resourceToSelect.isCard() && currentPlayer.usedOracleCardThisTurn) {
       this.showMessage('Cannot use a second oracle card in one turn');
       return;
     }
-
-    const resourceToSelect = (resourceType === 'die')
-      ? Resource.createDie(resourceColor)
-      : Resource.createCard(resourceColor);
 
     const alreadySelected = this.getUiState().getSelectedResource();
     if (resourceToSelect.equals(alreadySelected)) {
@@ -91,27 +72,10 @@ export class Controller {
       return;
     }
 
-    if (resourceType === 'die') {
-      if (this.selectDieColor(resourceColor)) {
-        this.showMessage(`Selected ${resourceColor} die`);
-        this.renderGameState(this.getGameState());
-      } else {
-        console.log(
-          `Player doesn't have ${resourceColor} die. Available dice:`,
-          currentPlayer.oracleDice,
-        );
-      }
-    } else if (resourceType === 'card') {
-      if (this.selectCardColor(resourceColor)) {
-        this.showMessage(`Selected ${resourceColor} oracle card`);
-        this.renderGameState(this.getGameState());
-      } else {
-        console.log(
-          `Player doesn't have ${resourceColor} oracle card. Available cards:`,
-          currentPlayer.oracleCards,
-        );
-      }
-    }
+    this.getUiState().clearResourceSelection();
+    this.getUiState().setSelectedResource(resourceToSelect);
+    this.showMessage(`Selected ${resourceToSelect.getBaseColor()}`);
+    this.renderGameState(this.getGameState());
   }
 
   private renderGameState(gameState: GameState): void {
@@ -299,7 +263,7 @@ export class Controller {
       const dieColor = target.getAttribute('data-die-color') as CoreColor;
       if (dieColor) {
         console.log(`Die clicked: ${dieColor}`);
-        this.selectResource('die', dieColor);
+        this.selectResource(Resource.createDie(dieColor));
       }
     } else if (target.classList.contains('oracle-card')) {
       const cardColor = target.getAttribute(
@@ -307,7 +271,7 @@ export class Controller {
       ) as CoreColor;
       if (cardColor) {
         console.log(`Oracle card clicked: ${cardColor}`);
-        this.selectResource('card', cardColor);
+        this.selectResource(Resource.createCard(cardColor));
       }
     } else if (
       target instanceof HTMLInputElement && target.name === 'recolorOption'
