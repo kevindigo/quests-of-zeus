@@ -30,7 +30,7 @@ export class ControllerHighlighter {
     legalMoveActions.forEach((action) => {
       const destination = action.destination;
       const favorCost = action.favorToExtendRange;
-      this.highlighSeaHex(destination, favorCost);
+      this.highlightSeaHex(destination, favorCost);
     });
   }
 
@@ -44,11 +44,11 @@ export class ControllerHighlighter {
     teleportActions.forEach((action) => {
       const destination = action.coordinates;
       const favorCost = 0;
-      this.highlighSeaHex(destination, favorCost);
+      this.highlightSeaHex(destination, favorCost);
     });
   }
 
-  private highlighSeaHex(destination: HexCoordinates, favorCost: number) {
+  private highlightSeaHex(destination: HexCoordinates, favorCost: number) {
     // Highlight the new hex-highlight polygons (centered, won't cover colored border)
     const hexToHighlight = document.querySelector(
       `.hex-highlight[data-q="${destination.q}"][data-r="${destination.r}"]`,
