@@ -17,7 +17,6 @@ import type {
   ShipMoveAction,
   TeleportAction,
 } from './actions.ts';
-import { ControllerForBasicActions } from './ControllerForBasicActions.ts';
 import { GameEngine } from './GameEngine.ts';
 import { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
@@ -25,6 +24,7 @@ import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { PhaseMain, PhaseTeleporting, PhaseWelcome } from './phases.ts';
 import { Resource } from './Resource.ts';
+import { Success } from './ResultWithMessage.ts';
 import type { CoreColor, TerrainType } from './types.ts';
 import type { UiState } from './UiState.ts';
 import { ViewGame } from './ViewGame.ts';
@@ -561,15 +561,27 @@ export class Controller {
   }
 
   private setRecolorIntention(favorCost: number): void {
-    const handler = new ControllerForBasicActions(
-      this.getGameState(),
-      this.getUiState(),
+    const playerFavor = this.gameState.getCurrentPlayer().favor;
+    if (favorCost > playerFavor) {
+      this.showMessage(
+        `Cannot spend(${favorCost}) favor when player only has (${playerFavor})`,
+      );
+      return;
+    }
+
+    const selectedResource = this.getUiState().getSelectedResource();
+    const baseColor = selectedResource.getBaseColor();
+    const resource = selectedResource.isDie()
+      ? Resource.createRecoloredDie(baseColor, favorCost)
+      : selectedResource.isCard()
+      ? Resource.createRecoloredCard(baseColor, favorCost)
+      : Resource.none;
+    this.getUiState().setSelectedResource(resource);
+
+    const result = new Success(
+      `Will recolor ${baseColor} to ${resource.getEffectiveColor()}`,
     );
-    const result = handler.setRecolorIntention(
-      favorCost,
-      this.getSelectedDieColor(),
-      this.getSelectedCardColor(),
-    );
+
     if (result.success) {
       this.renderGameState(this.getGameState());
     }

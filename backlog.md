@@ -77,7 +77,6 @@
 - Shrine reward: God advance
 - free: god effects:
   - effect: Fully heal
-  - effect: Teleport
   - effect: Defeat (adjacent) monster
   - effect: Superturn
   - effect: Grab non-adjacent statue (when adjacent to a city)
