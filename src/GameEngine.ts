@@ -18,13 +18,7 @@ export class GameEngine {
   public static getAvailableActions(
     gameState: GameState,
   ): Action[] {
-    const actions: Action[] = [];
-    actions.push(...GameEngineFree.getFreeActions(gameState));
-    actions.push(...GameEngineAnyResource.getAnyResourceActions(gameState));
-    actions.push(...GameEngineHex.getHexActions(gameState));
-    actions.push(...GameEngineMove.getMoveActions(gameState));
-    actions.push(...GameEngineColor.getColorActions(gameState));
-    return actions;
+    return gameState.getPhase().getAvailableActions(gameState);
   }
 
   public static doAction(
