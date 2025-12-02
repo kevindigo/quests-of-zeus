@@ -139,6 +139,10 @@ but has these differences:
   - The equipment that allows you to peek at 2 face-down shrine ("cloud") tiles
     and explore one behaves differently. Here, after peeking, you can explore
     any face-down shrine on the board, even if you didn't just peek at it.
+  - Gods cannot be activated in the middle of other actions, such as between the
+    god advances gained as a reward for building a shrine.
+  - The green god can be used to build a shrine on a revealed tile, whereas in
+    the original game it could only be used on unflipped tiles.
 
 ## Contributing
 

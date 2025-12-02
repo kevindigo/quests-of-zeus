@@ -1,8 +1,5 @@
 == Short-term ==
 
-- action: spend a die to advance god
-- Switch GameManager to be the top level, rather than Controller
-
 == Cosmetic/Usability ==
 
 - Clicking on a shrine with shield reward doesn't update the display immediately
@@ -39,6 +36,9 @@
 
 == Code improvement ==
 
+- Switch GameManager to be the top level, rather than Controller
+  - This doesn't seem possible, because Controller interacts with document,
+    which doesn't exist during unit tests
 - Put all the map navigation in one place
 - Should ship loading rules enforcement all be in one place?
   - Currently, duplicate and full ship are in player, but
@@ -68,6 +68,8 @@
 - During fight, bad roll causes injury
 - Shrine quest reward: Heal injuries
   - Any reason not to pick random color from among "most"?
+    - The player might know they are about to get a companion
+    - Or they might be about to use a die to heal a color
 
 == Gods ==
 
@@ -79,6 +81,7 @@
   - effect: Superturn
   - effect: Grab non-adjacent statue (when adjacent to a city)
   - effect: Flip any face-down shrine
+- Can spend any god to draw an oracle card
 
 == Equipment ==
 
