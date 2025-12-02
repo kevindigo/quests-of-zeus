@@ -1,6 +1,6 @@
-import { assertEquals } from '@std/assert';
+import { assertEquals, assertFalse } from '@std/assert';
 import { assert } from '@std/assert/assert';
-import type { ShipMoveAction } from '../src/actions.ts';
+import { Actions, type ShipMoveAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineMove } from '../src/GameEngineMove.ts';
 import { GameState } from '../src/GameState.ts';
@@ -41,10 +41,8 @@ Deno.test('GameEngineMove - cannot move to current position', () => {
   };
 
   const actions = GameEngineMove.getMoveActions(gameState);
-  const adjacentMoves = actions.filter((availableAction) => {
-    return GameEngineMove.areEqualMoveActions(availableAction, simpleMove);
-  });
-  assertEquals(adjacentMoves.length, 0);
+  const adjacentMove = Actions.find(actions, simpleMove);
+  assertFalse(adjacentMove);
 });
 
 Deno.test('GameEngineMove - available no resource available', () => {
@@ -64,10 +62,8 @@ Deno.test('GameEngineMove - available no resource available', () => {
   };
 
   const actions = GameEngineMove.getMoveActions(gameState);
-  const adjacentMoves = actions.filter((availableAction) => {
-    return GameEngineMove.areEqualMoveActions(availableAction, simpleMove);
-  });
-  assertEquals(adjacentMoves.length, 0);
+  const adjacentMove = Actions.find(actions, simpleMove);
+  assertFalse(adjacentMove);
 });
 
 Deno.test('GameEngineMove - available cannot move beyond range', () => {
@@ -87,10 +83,8 @@ Deno.test('GameEngineMove - available cannot move beyond range', () => {
   };
 
   const actions = GameEngineMove.getMoveActions(gameState);
-  const adjacentMoves = actions.filter((availableAction) => {
-    return GameEngineMove.areEqualMoveActions(availableAction, simpleMove);
-  });
-  assertEquals(adjacentMoves.length, 0);
+  const adjacentMove = Actions.find(actions, simpleMove);
+  assertFalse(adjacentMove);
 });
 
 Deno.test('GameEngineMove - available simple move die no favor', () => {
@@ -109,10 +103,8 @@ Deno.test('GameEngineMove - available simple move die no favor', () => {
   };
 
   const actions = GameEngineMove.getMoveActions(gameState);
-  const adjacentMoves = actions.filter((availableAction) => {
-    return GameEngineMove.areEqualMoveActions(availableAction, simpleMove);
-  });
-  assertEquals(adjacentMoves.length, 1);
+  const adjacentMove = Actions.findOne(actions, simpleMove);
+  assert(adjacentMove);
 });
 
 Deno.test('GameEngineMove - available simple move card no favor', () => {
@@ -132,10 +124,8 @@ Deno.test('GameEngineMove - available simple move card no favor', () => {
   };
 
   const actions = GameEngineMove.getMoveActions(gameState);
-  const adjacentMoves = actions.filter((availableAction) => {
-    return GameEngineMove.areEqualMoveActions(availableAction, simpleMove);
-  });
-  assertEquals(adjacentMoves.length, 1);
+  const adjacentMove = Actions.findOne(actions, simpleMove);
+  assert(adjacentMove);
 });
 
 Deno.test('GameEngineMove - available move die with favor for range', () => {
@@ -153,10 +143,8 @@ Deno.test('GameEngineMove - available move die with favor for range', () => {
   };
 
   const actions = GameEngineMove.getMoveActions(gameState);
-  const adjacentMoves = actions.filter((availableAction) => {
-    return GameEngineMove.areEqualMoveActions(availableAction, simpleMove);
-  });
-  assertEquals(adjacentMoves.length, 1);
+  const adjacentMove = Actions.findOne(actions, simpleMove);
+  assert(adjacentMove);
 });
 
 Deno.test('GameEngineMove - available move card with favor for range', () => {
@@ -175,10 +163,8 @@ Deno.test('GameEngineMove - available move card with favor for range', () => {
   };
 
   const actions = GameEngineMove.getMoveActions(gameState);
-  const adjacentMoves = actions.filter((availableAction) => {
-    return GameEngineMove.areEqualMoveActions(availableAction, simpleMove);
-  });
-  assertEquals(adjacentMoves.length, 1);
+  const adjacentMove = Actions.findOne(actions, simpleMove);
+  assert(adjacentMove);
 });
 
 Deno.test('GameEngineMove - available move die with favor for recoloring', () => {
@@ -198,10 +184,8 @@ Deno.test('GameEngineMove - available move die with favor for recoloring', () =>
   };
 
   const actions = GameEngineMove.getMoveActions(gameState);
-  const adjacentMoves = actions.filter((availableAction) => {
-    return GameEngineMove.areEqualMoveActions(availableAction, simpleMove);
-  });
-  assertEquals(adjacentMoves.length, 1);
+  const adjacentMove = Actions.findOne(actions, simpleMove);
+  assert(adjacentMove);
 });
 
 Deno.test('GameEngineMove - available move card with favor for recoloring', () => {
@@ -222,10 +206,8 @@ Deno.test('GameEngineMove - available move card with favor for recoloring', () =
   };
 
   const actions = GameEngineMove.getMoveActions(gameState);
-  const adjacentMoves = actions.filter((availableAction) => {
-    return GameEngineMove.areEqualMoveActions(availableAction, simpleMove);
-  });
-  assertEquals(adjacentMoves.length, 1);
+  const adjacentMove = Actions.findOne(actions, simpleMove);
+  assert(adjacentMove);
 });
 
 Deno.test('GameEngineMove - available should offer die and card for same move', () => {
@@ -251,14 +233,10 @@ Deno.test('GameEngineMove - available should offer die and card for same move', 
   };
 
   const actions = GameEngineMove.getMoveActions(gameState);
-  const dieMoves = actions.filter((availableAction) => {
-    return GameEngineMove.areEqualMoveActions(availableAction, dieMove);
-  });
-  assertEquals(dieMoves.length, 1);
-  const cardMoves = actions.filter((availableAction) => {
-    return GameEngineMove.areEqualMoveActions(availableAction, cardMove);
-  });
-  assertEquals(cardMoves.length, 1);
+  const dieMoves = Actions.findOne(actions, dieMove);
+  assert(dieMoves);
+  const cardMoves = Actions.findOne(actions, cardMove);
+  assert(cardMoves);
 });
 
 Deno.test('GameEngineMove - do action not available', () => {

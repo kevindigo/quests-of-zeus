@@ -1,4 +1,4 @@
-import type { Action, ShipMoveAction } from './actions.ts';
+import { type Action, Actions, type ShipMoveAction } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
@@ -43,11 +43,7 @@ export class GameEngineMove {
     gameState: GameState,
   ): ResultWithMessage {
     const availableActions = this.getMoveActions(gameState);
-    if (
-      !availableActions.find((availableAction) => {
-        return this.areEqualMoveActions(availableAction, action);
-      })
-    ) {
+    if (!Actions.find(availableActions, action)) {
       return new Failure(
         `ShipMoveAction not available ${JSON.stringify(action)}`,
       );

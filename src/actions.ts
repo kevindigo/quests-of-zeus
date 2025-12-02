@@ -276,7 +276,7 @@ export class Actions {
       case 'hex':
         return this.areEqualHex(candidate, reference as HexAction);
       case 'move':
-        break;
+        return this.areEqualMove(candidate, reference as ShipMoveAction);
     }
 
     throw new Error(
@@ -350,20 +350,11 @@ export class Actions {
       HexGrid.isSameLocation(candidate.coordinates, reference.coordinates);
   }
 
-  public static extractFreeActivateGodActions(
-    actions: Action[],
-  ): FreeActivateGodAction[] {
-    return actions.flatMap(
-      (availableAction) => {
-        if (
-          availableAction.type === 'free' &&
-          availableAction.subType === 'activateGod'
-        ) {
-          return [availableAction];
-        } else {
-          return [];
-        }
-      },
-    );
+  public static areEqualMove(
+    candidate: ShipMoveAction,
+    reference: ShipMoveAction,
+  ): boolean {
+    return candidate.spend.equals(reference.spend) &&
+      HexGrid.isSameLocation(candidate.destination, reference.destination);
   }
 }

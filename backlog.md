@@ -2,6 +2,7 @@
 
 - Create and use helpers for dealing with Action objects of different types
 - Merge AnyResourceAction and ColorAction into ResourceAction
+- Merge ShipMoveAction into HexAction?
 
 == Cosmetic/Usability ==
 
