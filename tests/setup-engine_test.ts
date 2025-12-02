@@ -12,7 +12,7 @@ Deno.test('GameEngine setup - initialization', () => {
   assert(state.getMap());
   assertEquals(state.getPlayerCount(), 2);
   assertEquals(state.getRound(), 1);
-  assertEquals(state.getPhase(), 'action'); // Game starts in action phase since dice are already rolled
+  assertEquals(state.getPhase().getName(), 'main');
 
   for (let playerId = 0; playerId < state.getPlayerCount(); ++playerId) {
     const player = state.getPlayer(playerId);

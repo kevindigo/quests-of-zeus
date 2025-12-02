@@ -43,7 +43,7 @@ export class ViewGame {
   }
 
   public renderGameState(availableActions: Action[]): void {
-    if (this.gameState.getPhase() === 'setup') {
+    if (this.gameState.getPhase().getName() === 'welcome') {
       this.viewWelcome();
       return;
     }

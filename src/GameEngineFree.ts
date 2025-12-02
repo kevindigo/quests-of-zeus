@@ -1,5 +1,6 @@
 import type { Action, FreeAction, FreeEndTurnAction } from './actions.ts';
 import type { GameState } from './GameState.ts';
+import { createPhase } from './phases.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -11,7 +12,7 @@ export class GameEngineFree {
   public static getFreeActions(
     gameState: GameState,
   ): Action[] {
-    if (gameState.getPhase() !== 'action') {
+    if (gameState.getPhase().getName() !== 'main') {
       return [];
     }
 
@@ -73,7 +74,7 @@ export class GameEngineFree {
     if (gameState.getCurrentPlayerIndex() === 0) {
       gameState.advanceRound();
     }
-    gameState.setPhase('action');
+    gameState.setPhase(createPhase('main'));
     return new Success(`Player ${currentPlayer.color} turn ended`);
   }
 

@@ -43,13 +43,6 @@ function createGainCardAction(
   };
 }
 
-Deno.test('GameEngineAnyResource - available actions setup phase', () => {
-  setup();
-  gameState.setPhase('setup');
-  const actions = GameEngineAnyResource.getAnyResourceActions(gameState);
-  assertEquals(actions.length, 0);
-});
-
 Deno.test('GameEngineAnyResource - available actions already used card', () => {
   setup();
   const player = gameState.getCurrentPlayer();

@@ -29,6 +29,8 @@ Deno.test('DiceRolling - all players start with dice rolled', () => {
 
   // Initialize the game
   const state = engine.getGameState();
+  const phase = state.getPhase();
+  assertEquals(phase.getName(), 'main');
 
   // All players should start with dice already rolled
   for (let playerId = 0; playerId < state.getPlayerCount(); ++playerId) {
@@ -51,7 +53,7 @@ Deno.test('DiceRolling - all players start with dice rolled', () => {
   }
 
   // Game should start in action phase since dice are already rolled
-  assertEquals(state.getPhase(), 'action', 'Game should start in action phase');
+  assertEquals(phase.getName(), 'main');
 });
 
 Deno.test('Shield resource - players start with 0 shield', () => {

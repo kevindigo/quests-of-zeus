@@ -14,7 +14,7 @@ import {
 
 export class GameEngineAnyResource {
   public static getAnyResourceActions(gameState: GameState): Action[] {
-    if (gameState.getPhase() !== 'action') {
+    if (gameState.getPhase().getName() !== 'main') {
       return [];
     }
 

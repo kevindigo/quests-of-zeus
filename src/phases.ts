@@ -11,20 +11,35 @@ import type { GameState } from './GameState.ts';
 
 export interface Phase {
   getName(): string;
-  getAvailableActions(GameState: GameState): Action[];
+  getAvailableActions(gameState: GameState): Action[];
 }
 
 export function createPhase(phaseName: string): Phase {
-  if (phaseName === 'main') {
-    return new PhaseMain();
+  switch (phaseName) {
+    case PhaseWelcome.phaseName:
+      return new PhaseWelcome();
+    case PhaseMain.phaseName:
+      return new PhaseMain();
   }
 
   throw new Error('Cannot create unknown phase: ' + phaseName);
 }
 
+export class PhaseWelcome implements Phase {
+  public getName(): string {
+    return PhaseWelcome.phaseName;
+  }
+
+  public getAvailableActions(_gameState: GameState): Action[] {
+    return [];
+  }
+
+  public static readonly phaseName = 'welcome';
+}
+
 export class PhaseMain implements Phase {
   public getName(): string {
-    return 'main';
+    return PhaseMain.phaseName;
   }
 
   public getAvailableActions(GameState: GameState): Action[] {
@@ -36,6 +51,8 @@ export class PhaseMain implements Phase {
     actions.push(...GameEngineColor.getColorActions(GameState));
     return actions;
   }
+
+  public static readonly phaseName = 'main';
 }
 
 // export class PhaseAdvancingGod implements Phase {

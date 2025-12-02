@@ -1,5 +1,6 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMap, type HexMapSnapshot } from './hexmap/HexMap.ts';
+import { createPhase, type Phase, PhaseWelcome } from './phases.ts';
 import { Player, type PlayerSnapshot } from './Player.ts';
 import type { Resource } from './Resource.ts';
 import {
@@ -13,7 +14,6 @@ import {
   type CoreColor,
   type CubeHex,
   type MonsterHex,
-  type Phase,
   type ShrineHex,
   type StatueHex,
 } from './types.ts';
@@ -24,7 +24,7 @@ export type GameStateSnapshot = {
   players: PlayerSnapshot[];
   currentPlayerIndex: number;
   round: number;
-  phase: Phase;
+  phaseName: string;
   cubeHexes: CubeHex[];
   monsterHexes: MonsterHex[];
   cityHexes: CityHex[];
@@ -39,7 +39,7 @@ export class GameState {
     this.players = [];
     this.currentPlayerIndex = 0;
     this.round = 1;
-    this.phase = 'setup';
+    this.phase = createPhase(PhaseWelcome.phaseName);
     this.cubeHexes = [];
     this.monsterHexes = [];
     this.cityHexes = [];
@@ -56,7 +56,7 @@ export class GameState {
     state.players = json.players.map((player) => Player.fromSnapshot(player));
     state.currentPlayerIndex = json.currentPlayerIndex;
     state.round = json.round;
-    state.phase = json.phase;
+    state.phase = createPhase(json.phaseName);
     state.cubeHexes = json.cubeHexes;
     state.monsterHexes = json.monsterHexes;
     state.cityHexes = json.cityHexes;
@@ -74,7 +74,7 @@ export class GameState {
       }),
       currentPlayerIndex: this.currentPlayerIndex,
       round: this.round,
-      phase: this.phase,
+      phaseName: this.phase.getName(),
       cubeHexes: this.cubeHexes,
       monsterHexes: this.monsterHexes,
       cityHexes: this.cityHexes,

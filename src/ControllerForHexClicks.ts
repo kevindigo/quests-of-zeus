@@ -24,7 +24,7 @@ export class ControllerForHexClicks {
     favorCost: number,
   ): ResultWithMessage {
     const gameState = this.gameState;
-    if (gameState.getPhase() !== 'action') {
+    if (gameState.getPhase().getName() !== 'main') {
       return new Failure(
         `Cannot click hexes during the ${gameState.getPhase()} phase`,
       );

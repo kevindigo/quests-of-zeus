@@ -125,7 +125,7 @@ export class Controller {
     if (!hexMapContainer) return;
     this.addHandlersToSvg();
 
-    if (gameState.getPhase() === 'action') {
+    if (gameState.getPhase().getName() === 'main') {
       this.highlightAvailableHexElements(gameState, availableActions);
     }
   }

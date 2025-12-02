@@ -249,8 +249,6 @@ export interface MoveShipResult {
   };
 }
 
-export type Phase = 'setup' | 'action' | 'end';
-
 export type ItemType = 'cube' | 'statue';
 
 export interface Item {

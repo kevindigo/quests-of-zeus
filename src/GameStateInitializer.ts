@@ -3,6 +3,7 @@ import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import type { HexMap } from './hexmap/HexMap.ts';
+import { createPhase, PhaseMain } from './phases.ts';
 import { Player } from './Player.ts';
 import {
   CityHex,
@@ -50,7 +51,7 @@ export class GameStateInitializer {
 
     state.resetOracleCardDeck();
 
-    state.setPhase('action');
+    state.setPhase(createPhase(PhaseMain.phaseName));
   }
 
   /**

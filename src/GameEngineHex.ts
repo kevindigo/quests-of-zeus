@@ -23,7 +23,7 @@ import type { CoreColor, Item, Quest } from './types.ts';
 export class GameEngineHex {
   public static getHexActions(gameState: GameState): Action[] {
     const actions: Action[] = [];
-    if (gameState.getPhase() !== 'action') {
+    if (gameState.getPhase().getName() !== 'main') {
       return actions;
     }
 

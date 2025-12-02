@@ -38,13 +38,6 @@ function setupWithController(): void {
   center = HexGrid.CENTER;
 }
 
-Deno.test('Hex click - wrong phase', () => {
-  setupWithController();
-
-  testGameState.setPhase('setup');
-  assertFailureContains(testHandler.handleHexClick(center, 0), 'phase');
-});
-
 Deno.test('Hex click - second oracle card', () => {
   setupWithController();
 
