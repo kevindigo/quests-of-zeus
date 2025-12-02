@@ -238,6 +238,12 @@ export type Action =
   | ShipMoveAction;
 
 export class Actions {
+  public static filter(actions: Action[], lookFor: Action): Action[] {
+    return actions.filter((candidate) => {
+      return Actions.areEqual(candidate, lookFor);
+    });
+  }
+
   public static areEqual(candidate: Action, reference: Action): boolean {
     if (candidate.type !== reference.type) {
       return false;

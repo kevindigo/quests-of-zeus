@@ -15,9 +15,7 @@ Deno.test('GameEngineFree - getFreeActions action phase', () => {
   const endTurnAction: FreeEndTurnAction = { type: 'free', subType: 'endTurn' };
 
   const actions = GameEngineFree.getFreeActions(testGameState);
-  const endTurnActions = actions.filter((availableAction) => {
-    return Actions.areEqual(availableAction, endTurnAction);
-  });
+  const endTurnActions = Actions.filter(actions, endTurnAction);
   assertEquals(endTurnActions.length, 1);
 });
 
@@ -33,9 +31,7 @@ Deno.test('GameEngineFree - getFreeActions god', () => {
   };
 
   const availableActions = GameEngineFree.getFreeActions(testGameState);
-  const redGodActions = availableActions.filter((availableAction) => {
-    return Actions.areEqual(availableAction, action);
-  });
+  const redGodActions = Actions.filter(availableActions, action);
   assertEquals(redGodActions.length, 1);
 });
 
