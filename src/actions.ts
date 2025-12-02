@@ -1,4 +1,4 @@
-import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import { type HexCoordinates, HexGrid } from './hexmap/HexGrid.ts';
 import type { Resource } from './Resource.ts';
 import type { CoreColor } from './types.ts';
 
@@ -274,7 +274,7 @@ export class Actions {
       case 'color':
         return this.areEqualColor(candidate, reference as ColorAction);
       case 'hex':
-        break;
+        return this.areEqualHex(candidate, reference as HexAction);
       case 'move':
         break;
     }
@@ -337,6 +337,17 @@ export class Actions {
     reference: FreeActivateGodAction,
   ): boolean {
     return candidate.godColor === reference.godColor;
+  }
+
+  public static areEqualHex(
+    candidate: HexAction,
+    reference: HexAction,
+  ): boolean {
+    if (candidate.subType !== reference.subType) {
+      return false;
+    }
+    return candidate.spend.equals(reference.spend) &&
+      HexGrid.isSameLocation(candidate.coordinates, reference.coordinates);
   }
 
   public static extractFreeActivateGodActions(

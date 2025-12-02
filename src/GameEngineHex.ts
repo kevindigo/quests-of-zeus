@@ -1,12 +1,13 @@
-import type {
-  Action,
-  DropCubeAction,
-  DropStatueAction,
-  ExploreShrineAction,
-  FightMonsterAction,
-  HexAction,
-  LoadCubeAction,
-  LoadStatueAction,
+import {
+  type Action,
+  Actions,
+  type DropCubeAction,
+  type DropStatueAction,
+  type ExploreShrineAction,
+  type FightMonsterAction,
+  type HexAction,
+  type LoadCubeAction,
+  type LoadStatueAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
@@ -369,10 +370,7 @@ export class GameEngineHex {
     gameState: GameState,
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
-    const isAvailable = availableActions.find((aa) => {
-      return this.areEqualHexActions(aa, action as Action);
-    });
-    if (!isAvailable) {
+    if (!Actions.find(availableActions, action)) {
       return new Failure(`Action not available ${JSON.stringify(action)}`);
     }
 
@@ -454,11 +452,7 @@ export class GameEngineHex {
     gameState: GameState,
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
-    if (
-      !availableActions.find((availableAction) => {
-        return this.areEqualHexActions(availableAction, action);
-      })
-    ) {
+    if (!Actions.find(availableActions, action)) {
       return new Failure(`Action not available ${JSON.stringify(action)}`);
     }
 
@@ -507,11 +501,7 @@ export class GameEngineHex {
     gameState: GameState,
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
-    if (
-      !availableActions.find((availableAction) => {
-        return this.areEqualHexActions(availableAction, action);
-      })
-    ) {
+    if (!Actions.find(availableActions, action)) {
       return new Failure(`Action not available ${JSON.stringify(action)}`);
     }
 
@@ -548,11 +538,7 @@ export class GameEngineHex {
     gameState: GameState,
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
-    if (
-      !availableActions.find((availableAction) => {
-        return this.areEqualHexActions(availableAction, action);
-      })
-    ) {
+    if (!Actions.find(availableActions, action)) {
       return new Failure(`Action not available ${JSON.stringify(action)}`);
     }
 
@@ -592,11 +578,7 @@ export class GameEngineHex {
     gameState: GameState,
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
-    if (
-      !availableActions.find((availableAction) => {
-        return this.areEqualHexActions(availableAction, action);
-      })
-    ) {
+    if (!Actions.find(availableActions, action)) {
       return new Failure(`Action not available ${JSON.stringify(action)}`);
     }
 
@@ -649,11 +631,7 @@ export class GameEngineHex {
     gameState: GameState,
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
-    if (
-      !availableActions.find((availableAction) => {
-        return this.areEqualHexActions(availableAction, action);
-      })
-    ) {
+    if (!Actions.find(availableActions, action)) {
       return new Failure(`Action not available ${JSON.stringify(action)}`);
     }
 

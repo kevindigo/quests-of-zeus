@@ -1,5 +1,10 @@
-import { assert, assertAlmostEquals, assertEquals } from '@std/assert';
-import type { LoadStatueAction } from '../src/actions.ts';
+import {
+  assert,
+  assertAlmostEquals,
+  assertEquals,
+  assertFalse,
+} from '@std/assert';
+import { Actions, type LoadStatueAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
@@ -86,10 +91,8 @@ Deno.test('GameEngineHex - city no resource of that color', () => {
   const action = createLoadStatueAction();
 
   const availableActions = GameEngineHex.getHexActions(gameState);
-  const availableLoadCity = availableActions.filter((availableAction) => {
-    return GameEngineHex.areEqualHexActions(availableAction, action);
-  });
-  assertEquals(availableLoadCity.length, 0);
+  const availableLoadCity = Actions.find(availableActions, action);
+  assertFalse(availableLoadCity);
 });
 
 Deno.test('GameEngineHex - city no statues available', () => {
@@ -98,10 +101,8 @@ Deno.test('GameEngineHex - city no statues available', () => {
   const action = createLoadStatueAction();
 
   const availableActions = GameEngineHex.getHexActions(gameState);
-  const availableLoadCity = availableActions.filter((availableAction) => {
-    return GameEngineHex.areEqualHexActions(availableAction, action);
-  });
-  assertEquals(availableLoadCity.length, 0);
+  const availableLoadCity = Actions.find(availableActions, action);
+  assertFalse(availableLoadCity);
 });
 
 Deno.test('GameEngineHex - city resource no space yes quest yes', () => {
@@ -115,10 +116,8 @@ Deno.test('GameEngineHex - city resource no space yes quest yes', () => {
   const action = createLoadStatueAction();
 
   const availableActions = GameEngineHex.getHexActions(gameState);
-  const availableLoadCity = availableActions.filter((availableAction) => {
-    return GameEngineHex.areEqualHexActions(availableAction, action);
-  });
-  assertEquals(availableLoadCity.length, 0);
+  const availableLoadCity = Actions.find(availableActions, action);
+  assertFalse(availableLoadCity);
 });
 
 Deno.test('GameEngineHex - city resource yes space no quest yes', () => {
@@ -131,10 +130,8 @@ Deno.test('GameEngineHex - city resource yes space no quest yes', () => {
   const action = createLoadStatueAction();
 
   const availableActions = GameEngineHex.getHexActions(gameState);
-  const availableLoadCity = availableActions.filter((availableAction) => {
-    return GameEngineHex.areEqualHexActions(availableAction, action);
-  });
-  assertEquals(availableLoadCity.length, 0);
+  const availableLoadCity = Actions.find(availableActions, action);
+  assertFalse(availableLoadCity);
 });
 
 Deno.test('GameEngineHex - city resource yes space yes quest all complete', () => {
@@ -147,10 +144,8 @@ Deno.test('GameEngineHex - city resource yes space yes quest all complete', () =
   const action = createLoadStatueAction();
 
   const availableActions = GameEngineHex.getHexActions(gameState);
-  const availableLoadCity = availableActions.filter((availableAction) => {
-    return GameEngineHex.areEqualHexActions(availableAction, action);
-  });
-  assertEquals(availableLoadCity.length, 0);
+  const availableLoadCity = Actions.find(availableActions, action);
+  assertFalse(availableLoadCity);
 });
 
 Deno.test('GameEngineHex - city resource yes space yes quest duplicate color', () => {
@@ -162,10 +157,8 @@ Deno.test('GameEngineHex - city resource yes space yes quest duplicate color', (
   const action = createLoadStatueAction();
 
   const availableActions = GameEngineHex.getHexActions(gameState);
-  const availableLoadCity = availableActions.filter((availableAction) => {
-    return GameEngineHex.areEqualHexActions(availableAction, action);
-  });
-  assertEquals(availableLoadCity.length, 0, JSON.stringify(availableActions));
+  const availableLoadCity = Actions.find(availableActions, action);
+  assertFalse(availableLoadCity);
 });
 
 Deno.test('GameEngineHex - city no action available', () => {

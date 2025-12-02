@@ -1,7 +1,8 @@
 import { assert } from '@std/assert/assert';
 import { assertEquals } from '@std/assert/equals';
+import { assertFalse } from '@std/assert/false';
 import { assertLess } from '@std/assert/less';
-import type { FightMonsterAction } from '../src/actions.ts';
+import { Actions, type FightMonsterAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import type { HexCoordinates } from '../src/hexmap/HexGrid.ts';
@@ -68,12 +69,8 @@ Deno.test('GameEngineHex monter - available resource no quest yes monster yes', 
     resource,
   );
 
-  const availableActions = GameEngineHex.getHexActions(testGameState).filter(
-    (availableAction) => {
-      return GameEngineHex.areEqualHexActions(availableAction, action);
-    },
-  );
-  assertEquals(availableActions.length, 0);
+  const availableActions = GameEngineHex.getHexActions(testGameState);
+  assertFalse(Actions.findOne(availableActions, action));
 });
 
 Deno.test('GameEngineHex monter - available resource yes monster no quest yes', () => {
@@ -92,12 +89,8 @@ Deno.test('GameEngineHex monter - available resource yes monster no quest yes', 
     resource,
   );
 
-  const availableActions = GameEngineHex.getHexActions(testGameState).filter(
-    (availableAction) => {
-      return GameEngineHex.areEqualHexActions(availableAction, action);
-    },
-  );
-  assertEquals(availableActions.length, 0);
+  const availableActions = GameEngineHex.getHexActions(testGameState);
+  assertFalse(Actions.findOne(availableActions, action));
 });
 
 Deno.test('GameEngineHex monter - available resource yes monster yes quest wild completed', () => {
@@ -116,12 +109,8 @@ Deno.test('GameEngineHex monter - available resource yes monster yes quest wild 
     resource,
   );
 
-  const availableActions = GameEngineHex.getHexActions(testGameState).filter(
-    (availableAction) => {
-      return GameEngineHex.areEqualHexActions(availableAction, action);
-    },
-  );
-  assertEquals(availableActions.length, 0);
+  const availableActions = GameEngineHex.getHexActions(testGameState);
+  assertFalse(Actions.findOne(availableActions, action));
 });
 
 Deno.test('GameEngineHex monter - available resource yes monster yes quest matching completed', () => {
@@ -140,12 +129,8 @@ Deno.test('GameEngineHex monter - available resource yes monster yes quest match
     resource,
   );
 
-  const availableActions = GameEngineHex.getHexActions(testGameState).filter(
-    (availableAction) => {
-      return GameEngineHex.areEqualHexActions(availableAction, action);
-    },
-  );
-  assertEquals(availableActions.length, 0);
+  const availableActions = GameEngineHex.getHexActions(testGameState);
+  assertFalse(Actions.findOne(availableActions, action));
 });
 
 Deno.test('GameEngineHex monter - available success', () => {
@@ -159,13 +144,8 @@ Deno.test('GameEngineHex monter - available success', () => {
     resource,
   );
 
-  const allActions = GameEngineHex.getHexActions(testGameState);
-  const availableActions = allActions.filter(
-    (availableAction) => {
-      return GameEngineHex.areEqualHexActions(availableAction, action);
-    },
-  );
-  assertEquals(availableActions.length, 1);
+  const availableActions = GameEngineHex.getHexActions(testGameState);
+  assert(Actions.findOne(availableActions, action));
 });
 
 Deno.test('GameEngineHex monster - doAction not available', () => {
