@@ -48,7 +48,7 @@ export class ViewPlayerTurn {
   private getFavorButtonStatus(availableActions: Action[]): string {
     const selectedResource = this.uiState.getSelectedResource();
     const canGainFavor = availableActions.find((action) => {
-      return action.type === 'anyResource' && action.subType === 'gainFavor' &&
+      return action.type === 'resource' && action.subType === 'gainFavor' &&
         action.spend.equals(selectedResource);
     });
     return canGainFavor ? '' : 'disabled';
@@ -57,7 +57,7 @@ export class ViewPlayerTurn {
   private getCardButtonStatus(availableActions: Action[]): string {
     const selectedResource = this.uiState.getSelectedResource();
     const canGainCard = availableActions.find((action) => {
-      return action.type === 'anyResource' &&
+      return action.type === 'resource' &&
         action.subType === 'gainOracleCard' &&
         action.spend.equals(selectedResource);
     });

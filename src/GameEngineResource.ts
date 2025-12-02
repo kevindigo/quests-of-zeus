@@ -25,7 +25,7 @@ export class GameEngineResource {
 
     const actions = availableResources.flatMap((resource) => {
       const gainFavorAction: ResourceGainFavorAction = {
-        type: 'anyResource',
+        type: 'resource',
         subType: 'gainFavor',
         spend: resource,
       };
@@ -33,7 +33,7 @@ export class GameEngineResource {
 
       if (gameState.getOracleCardDeck().length > 0) {
         const gainCardAction: ResourceGainOracleCardAction = {
-          type: 'anyResource',
+          type: 'resource',
           subType: 'gainOracleCard',
           spend: resource,
         };
@@ -50,7 +50,7 @@ export class GameEngineResource {
         const maxLevel = GameEngine.getMaxGodLevel(gameState);
         if (level < maxLevel) {
           const action: ResourceAdvanceGodAction = {
-            type: 'anyResource',
+            type: 'resource',
             subType: 'advanceGod',
             spend: resource,
           };

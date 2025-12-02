@@ -161,7 +161,7 @@ export class Controller {
 
   private onAdvanceGodClicked(color: CoreColor): void {
     const action: ResourceAdvanceGodAction = {
-      type: 'anyResource',
+      type: 'resource',
       subType: 'advanceGod',
       spend: this.getUiState().getSelectedResource(),
     };
@@ -438,7 +438,7 @@ export class Controller {
   private spendResourceForFavor(): void {
     const selectedResource = this.getUiState().getSelectedResource();
     const action: ResourceGainFavorAction = {
-      type: 'anyResource',
+      type: 'resource',
       subType: 'gainFavor',
       spend: selectedResource,
     };
@@ -448,7 +448,7 @@ export class Controller {
   private drawOracleCard(): void {
     const selectedResource = this.getUiState().getSelectedResource();
     const action: ResourceGainOracleCardAction = {
-      type: 'anyResource',
+      type: 'resource',
       subType: 'gainOracleCard',
       spend: selectedResource,
     };

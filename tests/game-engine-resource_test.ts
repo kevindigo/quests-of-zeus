@@ -36,7 +36,7 @@ function setup(): void {
 
 function createGainFavorAction(spend: Resource): ResourceGainFavorAction {
   return {
-    type: 'anyResource',
+    type: 'resource',
     subType: 'gainFavor',
     spend,
   };
@@ -46,7 +46,7 @@ function createGainCardAction(
   spend: Resource,
 ): ResourceGainOracleCardAction {
   return {
-    type: 'anyResource',
+    type: 'resource',
     subType: 'gainOracleCard',
     spend,
   };
@@ -95,7 +95,7 @@ Deno.test('GameEngineColor AdvanceGod available - god already at top', () => {
     testGameState,
   );
   const advanceGodActions = availableActions.filter((availableAction) => {
-    return (availableAction.type === 'anyResource' &&
+    return (availableAction.type === 'resource' &&
       availableAction.subType === 'advanceGod');
   });
   assertEquals(advanceGodActions.length, 0);
@@ -107,7 +107,7 @@ Deno.test('GameEngineColor AdvanceGod available - can advance', () => {
   testPlayer.oracleDice = [color];
   testPlayer.getGod(color).level = GameEngine.getMaxGodLevel(testGameState) - 1;
   const action: ResourceAdvanceGodAction = {
-    type: 'anyResource',
+    type: 'resource',
     subType: 'advanceGod',
     spend: Resource.createDie(color),
   };
@@ -238,7 +238,7 @@ Deno.test('GameEngineColor AdvanceGod doAction - not available', () => {
   setupGame();
   testPlayer.oracleDice = [];
   const action: ResourceAdvanceGodAction = {
-    type: 'anyResource',
+    type: 'resource',
     subType: 'advanceGod',
     spend: Resource.createDie('blue'),
   };
@@ -254,7 +254,7 @@ Deno.test('GameEngineColor AdvanceGod doAction - success', () => {
   testPlayer.oracleDice = [color];
   testPlayer.getGod(color).level = maxGodLevel - 1;
   const action: ResourceAdvanceGodAction = {
-    type: 'anyResource',
+    type: 'resource',
     subType: 'advanceGod',
     spend: Resource.createDie(color),
   };

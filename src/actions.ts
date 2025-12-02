@@ -5,7 +5,7 @@ import type { CoreColor } from './types.ts';
 export type ActionType =
   | 'free'
   | 'coupon'
-  | 'anyResource'
+  | 'resource'
   | 'color'
   | 'hex'
   | 'move'
@@ -42,7 +42,7 @@ export interface CouponAction extends ActionBase {
 }
 
 export interface ResourceAction extends ActionBase {
-  type: 'anyResource';
+  type: 'resource';
   spend: Resource;
   subType: 'gainFavor' | 'gainOracleCard' | 'gainPeekCoupons' | 'advanceGod';
 }
@@ -269,7 +269,7 @@ export class Actions {
         return this.areEqualFree(candidate, reference as FreeAction);
       case 'coupon':
         break;
-      case 'anyResource':
+      case 'resource':
         return this.areEqualAny(candidate, reference as ResourceAction);
       case 'color':
         return this.areEqualColor(candidate, reference as ColorAction);
