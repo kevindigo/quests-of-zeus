@@ -6,7 +6,7 @@ import { COLOR_WHEEL } from './types.ts';
 import type { UiState } from './UiState.ts';
 import { ViewPlayer } from './ViewPlayer.ts';
 
-export class ViewPhase {
+export class ViewPlayerTurn {
   public constructor(gameState: GameState, uiState: UiState) {
     this.gameState = gameState;
     this.uiState = uiState;

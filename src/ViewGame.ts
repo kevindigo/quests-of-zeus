@@ -3,7 +3,7 @@ import type { GameState } from './GameState.ts';
 import { HexMapSvgGenerator } from './HexMapSvgGenerator.ts';
 import type { CityHex, CubeHex, MonsterHex } from './types.ts';
 import type { UiState } from './UiState.ts';
-import { ViewPhase } from './ViewPhase.ts';
+import { ViewPlayerTurn } from './ViewPlayerTurn.ts';
 import { ViewPlayer } from './ViewPlayer.ts';
 import { ViewWelcome } from './ViewWelcome.ts';
 
@@ -159,7 +159,7 @@ export class ViewGame {
     const phaseDisplay = document.getElementById('phaseDisplay');
     if (!phaseDisplay) return;
 
-    const view = new ViewPhase(gameState, uiState);
+    const view = new ViewPlayerTurn(gameState, uiState);
     phaseDisplay.innerHTML = view.getPhasePanelContents(availableActions);
   }
 
