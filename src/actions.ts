@@ -168,27 +168,22 @@ export interface LoadCubeAction extends HexAction {
 
 export interface DropCubeAction extends HexAction {
   subType: 'dropCube';
-  coordinates: HexCoordinates;
 }
 
 export interface LoadStatueAction extends HexAction {
   subType: 'loadStatue';
-  coordinates: HexCoordinates;
 }
 
 export interface DropStatueAction extends HexAction {
   subType: 'dropStatue';
-  coordinates: HexCoordinates;
 }
 
 export interface FightMonsterAction extends HexAction {
   subType: 'fightMonster';
-  coordinates: HexCoordinates;
 }
 
 export interface ExploreShrineAction extends HexAction {
   subType: 'exploreShrine';
-  coordinates: HexCoordinates;
 }
 
 // ------------------ Ship Move Actions ------------------
