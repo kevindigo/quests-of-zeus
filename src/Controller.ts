@@ -346,7 +346,7 @@ export class Controller {
       this.handleHexClickEvent(event);
     });
 
-    // Delegate phase action buttons
+    // Delegate button clicks
     document.addEventListener('click', (event) => {
       this.handleButtonClick(event);
     });

@@ -54,8 +54,12 @@ export class ViewGame {
     // Render the map with player positions
     this.renderMap(this.gameState);
 
-    // Update game phase display
-    this.updatePhaseDisplay(this.gameState, this.uiState, availableActions);
+    // Update player turn display
+    this.updatePlayerTurnDisplay(
+      this.gameState,
+      this.uiState,
+      availableActions,
+    );
 
     const newGameButton = document.getElementById('newGame');
     if (newGameButton) {
@@ -151,16 +155,18 @@ export class ViewGame {
     }
   }
 
-  private updatePhaseDisplay(
+  private updatePlayerTurnDisplay(
     gameState: GameState,
     uiState: UiState,
     availableActions: Action[],
   ): void {
-    const phaseDisplay = document.getElementById('playerTurnDisplay');
-    if (!phaseDisplay) return;
+    const playerTurnDisplay = document.getElementById('playerTurnDisplay');
+    if (!playerTurnDisplay) return;
 
     const view = new ViewPlayerTurn(gameState, uiState);
-    phaseDisplay.innerHTML = view.getPlayerTurnPanelContents(availableActions);
+    playerTurnDisplay.innerHTML = view.getPlayerTurnPanelContents(
+      availableActions,
+    );
   }
 
   private gameState: GameState;

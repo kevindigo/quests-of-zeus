@@ -10,9 +10,9 @@ export class ViewWelcome {
       questInfoContainer.innerHTML = this.getQuestPanelContents();
     }
 
-    const phaseDisplay = document.getElementById('playerTurnDisplay');
-    if (phaseDisplay) {
-      phaseDisplay.innerHTML = this.getPhasePanelContents();
+    const playerTurnDisplay = document.getElementById('playerTurnDisplay');
+    if (playerTurnDisplay) {
+      playerTurnDisplay.innerHTML = this.getPhasePanelContents();
     }
 
     const hexMapContainer = document.getElementById('hexMapSVG');
