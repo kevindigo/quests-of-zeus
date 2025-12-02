@@ -4,6 +4,7 @@ import type { CoreColor } from './types.ts';
 
 export type ActionType =
   | 'free'
+  | 'color'
   | 'resource'
   | 'hex'
   | 'move';
@@ -24,9 +25,14 @@ export interface FreeEndTurnAction extends FreeAction {
   subType: 'endTurn';
 }
 
-export interface FreeActivateGodAction extends FreeAction {
+// ------------------ Color Actions ------------------
+export interface ColorAction extends ActionBase {
+  type: 'color';
+  color: CoreColor;
+}
+
+export interface ColorActivateGodAction extends ColorAction {
   subType: 'activateGod';
-  godColor: CoreColor;
 }
 
 // ------------------ Resource Actions ------------------
@@ -101,7 +107,7 @@ export interface ShipMoveAction extends ActionBase {
 export type Action =
   // implemented
   | FreeEndTurnAction
-  | FreeActivateGodAction
+  | ColorActivateGodAction
   | ResourceGainFavorAction
   | ResourceGainOracleCardAction
   | ResourceAdvanceGodAction
@@ -160,6 +166,8 @@ export class Actions {
     switch (candidate.type) {
       case 'free':
         return this.areEqualFree(candidate, reference as FreeAction);
+      case 'color':
+        return this.areEqualColor(candidate, reference as ColorAction);
       case 'resource':
         return this.areEqualAny(candidate, reference as ResourceAction);
       case 'hex':
@@ -193,22 +201,17 @@ export class Actions {
     switch (candidate.subType) {
       case 'endTurn':
         return true;
-      case 'activateGod':
-        return this.areEqualActivateGod(
-          candidate as FreeActivateGodAction,
-          reference as FreeActivateGodAction,
-        );
     }
     throw new Error(
       'Actions.areEqualFree not implemented for ' + JSON.stringify(candidate),
     );
   }
 
-  public static areEqualActivateGod(
-    candidate: FreeActivateGodAction,
-    reference: FreeActivateGodAction,
+  public static areEqualColor(
+    candidate: ColorAction,
+    reference: ColorAction,
   ): boolean {
-    return candidate.godColor === reference.godColor;
+    return candidate.color === reference.color;
   }
 
   public static areEqualHex(

@@ -1,12 +1,7 @@
 import { assert } from '@std/assert/assert';
 import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
-import {
-  Actions,
-  type FreeActivateGodAction,
-  type FreeEndTurnAction,
-} from '../src/actions.ts';
-import { GameEngine } from '../src/GameEngine.ts';
+import { Actions, type FreeEndTurnAction } from '../src/actions.ts';
 import { GameEngineFree } from '../src/GameEngineFree.ts';
 import { setupGame, testGameState } from './test-helpers.ts';
 
@@ -17,22 +12,6 @@ Deno.test('GameEngineFree - getFreeActions action phase', () => {
   const actions = GameEngineFree.getFreeActions(testGameState);
   const endTurnActions = Actions.filter(actions, endTurnAction);
   assertEquals(endTurnActions.length, 1);
-});
-
-Deno.test('GameEngineFree - getFreeActions god', () => {
-  setupGame();
-  const player = testGameState.getCurrentPlayer();
-  const redGod = player.getGod('red');
-  redGod.level = GameEngine.getMaxGodLevel(testGameState);
-  const action: FreeActivateGodAction = {
-    type: 'free',
-    subType: 'activateGod',
-    godColor: 'red',
-  };
-
-  const availableActions = GameEngineFree.getFreeActions(testGameState);
-  const redGodActions = Actions.filter(availableActions, action);
-  assertEquals(redGodActions.length, 1);
 });
 
 Deno.test('GameEngineFree - end turn action success', () => {

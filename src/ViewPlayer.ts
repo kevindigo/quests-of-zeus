@@ -164,9 +164,9 @@ export class ViewPlayer {
       : '';
 
     const availableActivateAction = availableActions.find((availableAction) => {
-      return availableAction.type === 'free' &&
+      return availableAction.type === 'color' &&
         availableAction.subType === 'activateGod' &&
-        availableAction.godColor === color;
+        availableAction.color === color;
     });
     const isGodActionAvailableClass = availableActivateAction
       ? 'available-god-action'

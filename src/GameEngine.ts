@@ -1,4 +1,5 @@
 import type { Action } from './actions.ts';
+import { GameEngineColor } from './GameEngineColor.ts';
 import { GameEngineFree } from './GameEngineFree.ts';
 import { GameEngineHex } from './GameEngineHex.ts';
 import { GameEngineMove } from './GameEngineMove.ts';
@@ -25,6 +26,8 @@ export class GameEngine {
     gameState: GameState,
   ): ResultWithMessage {
     switch (action.type) {
+      case 'color':
+        return GameEngineColor.doAction(action, gameState);
       case 'resource':
         return GameEngineResource.doAction(action, gameState);
       case 'free':
