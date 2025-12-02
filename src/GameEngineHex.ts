@@ -35,42 +35,7 @@ export class GameEngineHex {
     const resources = player.getAvailableResourcesWithRecoloring();
     resources.forEach((resource) => {
       neighbors.forEach((neighbor) => {
-        switch (neighbor.terrain) {
-          case 'shrine':
-            actions.push(
-              ...this.getShrineActions(gameState, neighbor, resource),
-            );
-            break;
-          case 'offerings':
-            actions.push(
-              ...this.getOfferingActions(
-                gameState,
-                neighbor,
-                resource,
-              ),
-            );
-            break;
-          case 'temple':
-            actions.push(
-              ...this.getTempleActions(gameState, neighbor, resource),
-            );
-            break;
-          case 'city':
-            actions.push(
-              ...this.getCityActions(gameState, neighbor, resource),
-            );
-            break;
-          case 'statue':
-            actions.push(
-              ...this.getStatueActions(gameState, neighbor, resource),
-            );
-            break;
-          case 'monsters':
-            actions.push(
-              ...this.getMonsterActions(gameState, neighbor, resource),
-            );
-            break;
-        }
+        actions.push(...this.getActionsForHex(gameState, resource, neighbor));
       });
     });
 
@@ -109,11 +74,38 @@ export class GameEngineHex {
       aa.spend.equals(action.spend);
   }
 
+  private static getActionsForHex(
+    gameState: GameState,
+    resource: Resource,
+    neighbor: HexCell,
+  ): HexAction[] {
+    switch (neighbor.terrain) {
+      case 'shrine':
+        return this.getShrineActions(gameState, neighbor, resource);
+      case 'offerings':
+        return this.getOfferingActions(
+          gameState,
+          neighbor,
+          resource,
+        );
+      case 'temple':
+        return this.getTempleActions(gameState, neighbor, resource);
+      case 'city':
+        return this.getCityActions(gameState, neighbor, resource);
+      case 'statue':
+        return this.getStatueActions(gameState, neighbor, resource);
+      case 'monsters':
+        return this.getMonsterActions(gameState, neighbor, resource);
+    }
+
+    return [];
+  }
+
   private static getShrineActions(
     gameState: GameState,
     shrineCell: HexCell,
     resource: Resource,
-  ): Action[] {
+  ): HexAction[] {
     if (shrineCell.color !== resource.getEffectiveColor()) {
       return [];
     }
