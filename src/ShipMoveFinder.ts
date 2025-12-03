@@ -7,42 +7,6 @@ export class ShipMoveFinder {
     this.gameState = gameState;
   }
 
-  public getAvailableMovesForColor(
-    effectiveColor: CoreColor,
-    maxFavorForMovement: number,
-  ): PossibleShipMove[] {
-    const player = this.gameState.getCurrentPlayer();
-    const origin = player.getShipPosition();
-    const baseRange = player.getRange();
-    const map = this.gameState.getMap();
-
-    const availableMoves: PossibleShipMove[] = [];
-    for (let favorSpent = 0; favorSpent <= maxFavorForMovement; favorSpent++) {
-      const moves = this.getAvailableMoves(origin, baseRange, favorSpent);
-      const relevantMoves = moves.filter((move) => {
-        if (move.q === origin.q && move.r === origin.r) {
-          return false;
-        }
-        const cell = map.getCell({ q: move.q, r: move.r });
-        if (!cell) {
-          return false;
-        }
-        if (cell.color !== effectiveColor) {
-          return false;
-        }
-        return true;
-      });
-
-      relevantMoves.forEach((possibleMove) => {
-        if (!this.alreadyContainsMove(availableMoves, possibleMove)) {
-          availableMoves.push(possibleMove);
-        }
-      });
-    }
-
-    return availableMoves;
-  }
-
   public getAvailableMoves(
     origin: HexCoordinates,
     baseRange: number,
