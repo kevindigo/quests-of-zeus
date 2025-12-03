@@ -141,8 +141,9 @@ but has these differences:
     any face-down shrine on the board, even if you didn't just peek at it.
   - Gods cannot be activated in the middle of other actions, such as between the
     god advances gained as a reward for building a shrine.
-  - The green god can be used to build a shrine on a revealed tile, whereas in
-    the original game it could only be used on unflipped tiles.
+  - When a god is activated, it is immediately reset, so any god advances that
+    are earned as part of that can be applied to the god that was just
+    activated.
 
 ## Contributing
 

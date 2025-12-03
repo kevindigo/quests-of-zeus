@@ -24,6 +24,7 @@ import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import {
   PhaseAdvancingGod,
+  PhaseExploring,
   PhaseMain,
   PhaseTeleporting,
   PhaseWelcome,
@@ -312,6 +313,16 @@ export class Controller {
       const action: TeleportAction = {
         type: 'teleport',
         coordinates: coordinates,
+      };
+      return action;
+    }
+
+    if (phase.getName() === PhaseExploring.phaseName) {
+      const action: ExploreShrineAction = {
+        type: 'hex',
+        subType: 'exploreShrine',
+        coordinates: coordinates,
+        spend: Resource.none,
       };
       return action;
     }

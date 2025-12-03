@@ -2,7 +2,7 @@ import { assert, assertEquals } from '@std/assert';
 import { Actions, type ColorActivateGodAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineColor } from '../src/GameEngineColor.ts';
-import { PhaseTeleporting } from '../src/phases.ts';
+import { PhaseExploring, PhaseTeleporting } from '../src/phases.ts';
 import { setupGame, testGameState } from './test-helpers.ts';
 
 Deno.test('GameEngineFree - getFreeActions god', () => {
@@ -24,8 +24,8 @@ Deno.test('GameEngineFree - getFreeActions god', () => {
 Deno.test('GameEngineFree - doAction activate blue god', () => {
   setupGame();
   const player = testGameState.getCurrentPlayer();
-  const redGod = player.getGod('blue');
-  redGod.level = GameEngine.getMaxGodLevel(testGameState);
+  const god = player.getGod('blue');
+  god.level = GameEngine.getMaxGodLevel(testGameState);
   const action: ColorActivateGodAction = {
     type: 'color',
     subType: 'activateGod',
@@ -35,4 +35,20 @@ Deno.test('GameEngineFree - doAction activate blue god', () => {
   const result = GameEngine.doAction(action, testGameState);
   assert(result.success, result.message);
   assertEquals(testGameState.getPhase().getName(), PhaseTeleporting.phaseName);
+});
+
+Deno.test('GameEngineFree - doAction activate green god', () => {
+  setupGame();
+  const player = testGameState.getCurrentPlayer();
+  const god = player.getGod('green');
+  god.level = GameEngine.getMaxGodLevel(testGameState);
+  const action: ColorActivateGodAction = {
+    type: 'color',
+    subType: 'activateGod',
+    color: 'green',
+  };
+
+  const result = GameEngine.doAction(action, testGameState);
+  assert(result.success, result.message);
+  assertEquals(testGameState.getPhase().getName(), PhaseExploring.phaseName);
 });

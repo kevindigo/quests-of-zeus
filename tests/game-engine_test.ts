@@ -16,6 +16,7 @@ import {
   assertFailureContains,
   setupGame,
   testGameState,
+  testPlayer,
 } from './test-helpers.ts';
 
 Deno.test('GameEngine - available simplest case', () => {
@@ -87,6 +88,7 @@ Deno.test('GameEngine - spend resource card success', () => {
 Deno.test('GameEngine - doAction teleport', () => {
   setupGame();
   const player = testGameState.getCurrentPlayer();
+  testPlayer.getGod('blue').level = GameEngine.getMaxGodLevel(testGameState);
   const shipAt = player.getShipPosition();
   const map = testGameState.getMap();
   const seaCells = map.getCellsByTerrain('sea');
@@ -113,4 +115,5 @@ Deno.test('GameEngine - doAction teleport', () => {
   assert(result.success, result.message);
   assert(HexGrid.isSameLocation(destination, player.getShipPosition()));
   assertEquals(testGameState.getPhase().getName(), PhaseMain.phaseName);
+  assertEquals(testPlayer.getGod('blue').level, 0);
 });

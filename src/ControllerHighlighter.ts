@@ -1,6 +1,5 @@
 import type { Action, ShipMoveAction } from './actions.ts';
 import type { GameState } from './GameState.ts';
-import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import type { UiState } from './UiState.ts';
 
@@ -84,28 +83,25 @@ export class ControllerHighlighter {
     }
   }
   private highlightAvailableLands(
-    gameState: GameState,
+    _gameState: GameState,
     uiState: UiState,
     availableActions: Action[],
   ): void {
     const selectedResource = uiState.getSelectedResource();
     availableActions.forEach((action) => {
       if (action.type === 'hex' && action.spend.equals(selectedResource)) {
-        const cell = gameState.getMap().getCell(action.coordinates);
-        if (cell) {
-          this.highlightLand(cell);
-        }
+        this.highlightLand(action.coordinates);
       }
     });
   }
 
-  private highlightLand(cell: HexCell): void {
+  private highlightLand(coordinates: HexCoordinates): void {
     const hexToHighlight = document.querySelector(
-      `.hex-highlight[data-q="${cell.q}"][data-r="${cell.r}"]`,
+      `.hex-highlight[data-q="${coordinates.q}"][data-r="${coordinates.r}"]`,
     );
     if (!hexToHighlight) {
       console.warn(
-        `Could not find hex-highlight element for (${cell.q}, ${cell.r})`,
+        `Could not find hex-highlight element for (${coordinates.q}, ${coordinates.r})`,
       );
       return;
     }

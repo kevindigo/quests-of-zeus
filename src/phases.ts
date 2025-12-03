@@ -1,5 +1,6 @@
 import type {
   Action,
+  ExploreShrineAction,
   FreeEndTurnAction,
   ResourceAdvanceGodAction,
   TeleportAction,
@@ -23,6 +24,8 @@ export function createPhase(phaseName: string): Phase {
   switch (phaseName) {
     case PhaseAdvancingGod.phaseName:
       return new PhaseAdvancingGod();
+    case PhaseExploring.phaseName:
+      return new PhaseExploring();
     case PhaseMain.phaseName:
       return new PhaseMain();
     case PhaseTeleporting.phaseName:
@@ -121,10 +124,53 @@ export class PhaseTeleporting implements Phase {
   public static readonly phaseName = 'teleporting';
 }
 
-// export class PhasePeeking implements Phase {
-// }
+export class PhaseExploring implements Phase {
+  public getName(): string {
+    return PhaseExploring.phaseName;
+  }
 
-// export class PhaseExploringAnyShrine implements Phase {
+  public getAvailableActions(gameState: GameState): Action[] {
+    const actions: Action[] = [];
+
+    actions.push(...this.getAvailableExploreActions(gameState));
+
+    const endTurn: FreeEndTurnAction = { type: 'free', subType: 'endTurn' };
+    actions.push(endTurn);
+
+    return actions;
+  }
+
+  private getAvailableExploreActions(
+    gameState: GameState,
+  ): ExploreShrineAction[] {
+    const maxLevel = GameEngine.getMaxGodLevel(gameState);
+    const player = gameState.getCurrentPlayer();
+    const greenGodLevel = player.getGodLevel('green');
+    if (greenGodLevel < maxLevel) {
+      console.log('Impossible: Exploring phase without the green god ready');
+      gameState.endPhase();
+      return [];
+    }
+
+    const shrineHexes = gameState.getShrineHexes();
+    const availableShrineHexes = shrineHexes.filter((hex) => {
+      return hex.status === 'hidden';
+    });
+    return availableShrineHexes.map((hex): ExploreShrineAction => {
+      const action: ExploreShrineAction = {
+        type: 'hex',
+        subType: 'exploreShrine',
+        coordinates: hex.getCoordinates(),
+        spend: Resource.none,
+      };
+      return action;
+    });
+  }
+
+  public static readonly phaseName = 'exploring';
+}
+
+// export class PhasePeeking implements Phase {
 // }
 
 // export class PhaseGrabbingStatue implements Phase {

@@ -13,14 +13,14 @@ import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import { PhaseAdvancingGod } from './phases.ts';
+import { PhaseAdvancingGod, PhaseExploring } from './phases.ts';
 import type { Resource } from './Resource.ts';
 import {
   Failure,
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import type { CoreColor, Item, Quest } from './types.ts';
+import type { CoreColor, Item, Quest, ShrineHex } from './types.ts';
 
 export class GameEngineHex {
   public static getHexActions(gameState: GameState): Action[] {
@@ -370,7 +370,7 @@ export class GameEngineHex {
     action: HexAction,
     gameState: GameState,
   ): ResultWithMessage {
-    const availableActions = GameEngineHex.getHexActions(gameState);
+    const availableActions = GameEngine.getAvailableActions(gameState);
     if (!Actions.find(availableActions, action)) {
       return new Failure(`Action not available ${JSON.stringify(action)}`);
     }
@@ -387,36 +387,56 @@ export class GameEngineHex {
         `Explore shrine not where expected: ${JSON.stringify(action)}`,
       );
     }
-    const color = action.spend.getEffectiveColor();
-    if (!color) {
-      return new Failure(
-        `Explore shrine without a color selected ${JSON.stringify(action)}`,
-      );
-    }
 
     const player = gameState.getCurrentPlayer();
-    if (shrineHex.owner === player.color) {
-      const unfilledShrineQuest = player.getQuestsOfType('shrine').find(
-        (quest) => {
-          return !quest.isCompleted;
-        },
-      );
-      if (!unfilledShrineQuest) {
-        return new Failure('All shrines were already built!?');
-      }
-      unfilledShrineQuest.isCompleted = true;
-      shrineHex.status = 'filled';
-      const spent = GameEngine.spendResource(gameState, action.spend);
-      if (!spent.success) {
-        return new Failure(
-          'Completed the quest, but failed spendResource: ' + spent.message,
-        );
-      }
-      gameState.queuePhase(PhaseAdvancingGod.phaseName);
-      gameState.endPhase();
-      return new Success(`Shrine quest completed`);
+    if (gameState.getPhaseName() === PhaseExploring.phaseName) {
+      player.resetGod('green');
     }
 
+    const isOurs = shrineHex.owner === player.color;
+    const result = isOurs
+      ? this.exploreShrineOurs(gameState, shrineHex)
+      : this.exploreShrineNotOurs(gameState, shrineHex);
+
+    if (result.success) {
+      if (action.spend.hasColor()) {
+        const spent = GameEngine.spendResource(gameState, action.spend);
+        if (!spent.success) {
+          return new Failure(
+            'Built shrine, but failed spendResource: ' + spent.message,
+          );
+        }
+      }
+      gameState.endPhase();
+    }
+    return result;
+  }
+
+  private static exploreShrineOurs(
+    gameState: GameState,
+    shrineHex: ShrineHex,
+  ) {
+    const player = gameState.getCurrentPlayer();
+    const unfilledShrineQuest = player.getQuestsOfType('shrine').find(
+      (quest) => {
+        return !quest.isCompleted;
+      },
+    );
+    if (!unfilledShrineQuest) {
+      return new Failure('All shrines were already built!?');
+    }
+    unfilledShrineQuest.isCompleted = true;
+    shrineHex.status = 'filled';
+
+    gameState.queuePhase(PhaseAdvancingGod.phaseName);
+    return new Success(`Shrine quest completed`);
+  }
+
+  private static exploreShrineNotOurs(
+    gameState: GameState,
+    shrineHex: ShrineHex,
+  ) {
+    const player = gameState.getCurrentPlayer();
     shrineHex.status = 'visible';
     switch (shrineHex.reward) {
       case 'favor':
@@ -427,7 +447,7 @@ export class GameEngineHex {
         for (let i = 0; i < 2; ++i) {
           const card = deck.pop();
           if (!card) {
-            return new Failure('Cloud flipped -- oracle card deck is empty');
+            return new Failure('Oracle card deck is empty');
           }
           player.oracleCards.push(card);
         }
@@ -437,21 +457,13 @@ export class GameEngineHex {
         gameState.queuePhase(PhaseAdvancingGod.phaseName);
         gameState.queuePhase(PhaseAdvancingGod.phaseName);
         gameState.queuePhase(PhaseAdvancingGod.phaseName);
-        gameState.endPhase();
-        GameEngine.spendResource(gameState, action.spend);
-        return new Success('Cloud flipped -- 3 god advances');
+        break;
       case 'shield':
         player.shield += 1;
-        return new Failure(
-          'Cloud flipped and gained shield -- healing injuries not available yet',
-        );
+        // FixMe: Need to heal injuries here
+        break;
     }
-    const spent = GameEngine.spendResource(gameState, action.spend);
-    if (!spent.success) {
-      return new Failure(
-        'Cloud flipped but spend failed: ' + spent.message,
-      );
-    }
+
     return new Success(`Cloud flipped -- reward ${shrineHex.reward}`);
   }
 

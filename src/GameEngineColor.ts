@@ -1,7 +1,7 @@
 import type { Action, ColorAction, ColorActivateGodAction } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
-import { PhaseTeleporting } from './phases.ts';
+import { PhaseExploring, PhaseTeleporting } from './phases.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -65,7 +65,7 @@ export class GameEngineColor {
       case 'yellow':
         return new Failure('Activate god not implemented :' + color);
       case 'green':
-        return new Failure('Activate god not implemented :' + color);
+        return this.doExplore(gameState);
       case 'red':
         return new Failure('Activate god not implemented :' + color);
     }
@@ -75,5 +75,11 @@ export class GameEngineColor {
     gameState.queuePhase(PhaseTeleporting.phaseName);
     gameState.endPhase();
     return new Success('Switched phase to teleport');
+  }
+
+  private static doExplore(gameState: GameState): ResultWithMessage {
+    gameState.queuePhase(PhaseExploring.phaseName);
+    gameState.endPhase();
+    return new Success('Switched phase to explore');
   }
 }

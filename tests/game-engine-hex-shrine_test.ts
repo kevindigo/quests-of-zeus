@@ -1,14 +1,16 @@
 import {
   assert,
   assertGreaterOrEqual,
+  assertNotEquals,
   assertStringIncludes,
 } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
 import type { ExploreShrineAction } from '../src/actions.ts';
+import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
-import { PhaseAdvancingGod, PhaseMain } from '../src/phases.ts';
+import { PhaseAdvancingGod, PhaseExploring, PhaseMain } from '../src/phases.ts';
 import { Resource } from '../src/Resource.ts';
 import {
   COLOR_WHEEL,
@@ -16,7 +18,7 @@ import {
   type ShrineReward,
 } from '../src/types.ts';
 import { type UiState, UiStateClass } from '../src/UiState.ts';
-import { assertFailureContains } from './test-helpers.ts';
+import { setupGame, testGameState, testPlayer } from './test-helpers.ts';
 
 let gameState: GameState;
 let uiState: UiState;
@@ -121,8 +123,8 @@ Deno.test('GameEngineHex - doShrineExplore (ours)', () => {
     },
   );
   assertEquals(completedShrineQuests.length, 1);
-  assert(player.usedOracleCardThisTurn);
   assertEquals(player.oracleCards.length, 5);
+  assert(player.usedOracleCardThisTurn);
   assertEquals(gameState.getPhaseName(), PhaseAdvancingGod.phaseName);
 });
 
@@ -172,8 +174,7 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, shield)', () => {
 
   const action = createExploreAction();
   const result = GameEngineHex.doAction(action, gameState);
-  assertFailureContains(result, 'shield');
-  assertFailureContains(result, 'yet');
+  assert(result.success, result.message);
   assertEquals(shrineHex.status, 'visible');
   const player = gameState.getCurrentPlayer();
   const completedShrineQuests = player.getQuestsOfType('shrine').filter(
@@ -183,7 +184,7 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, shield)', () => {
   );
   assertEquals(completedShrineQuests.length, 0);
   assertEquals(player.shield, 1);
-  // assertEquals(player.oracleDice.length, 0);
+  assertEquals(player.oracleDice.length, 0);
 });
 
 Deno.test('GameEngineHex - doShrineExplore (not ours, god)', () => {
@@ -229,4 +230,31 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, card)', () => {
   assertEquals(completedShrineQuests.length, 0);
   assertEquals(player.oracleCards.length, 7);
   assertEquals(player.oracleDice.length, 0);
+});
+
+Deno.test('GameEngineHex - exploring phase doShrineExplore', () => {
+  setupGame();
+  const maxLevel = GameEngine.getMaxGodLevel(testGameState);
+  const greenGod = testPlayer.getGod('green');
+  greenGod.level = maxLevel;
+  const ShrineHex = testGameState.getShrineHexes().find((hex) => {
+    return hex.owner !== testPlayer.color && hex.reward === 'favor';
+  });
+  assert(ShrineHex);
+  const shrineCoordinates = ShrineHex.getCoordinates();
+  testGameState.queuePhase(PhaseExploring.phaseName);
+  testGameState.endPhase();
+  const action: ExploreShrineAction = {
+    type: 'hex',
+    subType: 'exploreShrine',
+    coordinates: shrineCoordinates,
+    spend: Resource.none,
+  };
+
+  const result = GameEngine.doAction(action, testGameState);
+  assert(result.success, result.message);
+  assertNotEquals(ShrineHex.status, 'hidden');
+  assertEquals(testGameState.getPhaseName(), PhaseMain.phaseName);
+  assertEquals(greenGod.level, 0);
+  assertEquals(testPlayer.favor, 7);
 });
