@@ -1,6 +1,7 @@
 import type { Action } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
+import { PhaseAdvancingGod } from './phases.ts';
 import type { Player } from './Player.ts';
 import { COLOR_WHEEL, type CoreColor, type QuestType } from './types.ts';
 import type { UiState } from './UiState.ts';
@@ -153,21 +154,17 @@ export class ViewPlayer {
 
     const selectedResource = uiState.getSelectedResource();
     const description = this.getGodDescription(color);
+    const isFree = gameState.getPhaseName() === PhaseAdvancingGod.phaseName;
     const resourceAdvanceActions = availableActions.find((availableAction) => {
-      return availableAction.type === 'resource' &&
+      return (
+        availableAction.type === 'resource' &&
         availableAction.subType === 'advanceGod' &&
         availableAction.spend.getEffectiveColor() === color &&
-        availableAction.spend.equals(selectedResource);
-    });
-    const colorAdvanceActions = availableActions.find((availableAction) => {
-      return availableAction.type === 'color' &&
-        availableAction.subType === 'advanceGod' &&
-        availableAction.color === color;
+        (availableAction.spend.equals(selectedResource) || isFree)
+      );
     });
     const isGodAdvanceAvailableClass = resourceAdvanceActions
       ? 'available-god-resource-advance'
-      : colorAdvanceActions
-      ? 'available-god-color-advance'
       : '';
 
     const availableActivateAction = availableActions.find((availableAction) => {

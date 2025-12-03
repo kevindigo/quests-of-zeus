@@ -8,6 +8,7 @@ import {
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
+import { PhaseAdvancingGod } from './phases.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -139,7 +140,10 @@ export class GameEngineResource {
     action: ResourceAction,
     gameState: GameState,
   ): ResultWithMessage {
-    const found = Actions.find(this.getAnyResourceActions(gameState), action);
+    const found = Actions.find(
+      GameEngine.getAvailableActions(gameState),
+      action,
+    );
     if (!found) {
       return new Failure(
         'Advance god not available: ' + JSON.stringify(action),
@@ -152,13 +156,16 @@ export class GameEngineResource {
     const player = gameState.getCurrentPlayer();
     player.getGod(effectiveColor).level += 1;
 
-    const spent = GameEngine.spendResource(gameState, action.spend);
-    if (!spent.success) {
-      return new Failure(
-        'Impossible: Unable to spend for action ' + JSON.stringify(action),
-      );
+    if (gameState.getPhaseName() !== PhaseAdvancingGod.phaseName) {
+      const spent = GameEngine.spendResource(gameState, action.spend);
+      if (!spent.success) {
+        return new Failure(
+          'Impossible: Unable to spend for action ' + JSON.stringify(action),
+        );
+      }
     }
 
+    gameState.endPhase();
     return new Success('Advanced god ' + effectiveColor);
   }
 

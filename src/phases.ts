@@ -1,7 +1,7 @@
 import type {
   Action,
-  ColorAdvanceGodAction,
   FreeEndTurnAction,
+  ResourceAdvanceGodAction,
   TeleportAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
@@ -11,6 +11,7 @@ import { GameEngineHex } from './GameEngineHex.ts';
 import { GameEngineMove } from './GameEngineMove.ts';
 import { GameEngineResource } from './GameEngineResource.ts';
 import type { GameState } from './GameState.ts';
+import { Resource } from './Resource.ts';
 import { COLOR_WHEEL } from './types.ts';
 
 export interface Phase {
@@ -76,10 +77,10 @@ export class PhaseAdvancingGod implements Phase {
     COLOR_WHEEL.forEach((color) => {
       const level = player.getGodLevel(color);
       if (level < maxLevel) {
-        const action: ColorAdvanceGodAction = {
-          type: 'color',
+        const action: ResourceAdvanceGodAction = {
+          type: 'resource',
           subType: 'advanceGod',
-          color: color,
+          spend: Resource.createDie(color),
         };
         actions.push(action);
       }

@@ -4,7 +4,6 @@
 import type {
   Action,
   ColorActivateGodAction,
-  ColorAdvanceGodAction,
   DropCubeAction,
   DropStatueAction,
   ExploreShrineAction,
@@ -23,7 +22,12 @@ import { GameEngine } from './GameEngine.ts';
 import { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import { PhaseMain, PhaseTeleporting, PhaseWelcome } from './phases.ts';
+import {
+  PhaseAdvancingGod,
+  PhaseMain,
+  PhaseTeleporting,
+  PhaseWelcome,
+} from './phases.ts';
 import { Resource } from './Resource.ts';
 import { Success } from './ResultWithMessage.ts';
 import type { CoreColor, TerrainType } from './types.ts';
@@ -106,35 +110,32 @@ export class Controller {
       return;
     }
     {
-      const availableGodSquare = panel.querySelector<HTMLSpanElement>(
-        '.god-square.available-god-resource-advance',
-      );
-      if (availableGodSquare) {
-        availableGodSquare.addEventListener('click', () => {
-          const action: ResourceAdvanceGodAction = {
-            type: 'resource',
-            subType: 'advanceGod',
-            spend: this.getUiState().getSelectedResource(),
-          };
-          this.doAdvanceGod(action);
-        });
-      }
-    }
-    {
-      const availableGodSquare = panel.querySelector<HTMLSpanElement>(
-        '.god-square.available-god-color-advance',
-      );
-      if (availableGodSquare) {
-        availableGodSquare.addEventListener('click', () => {
-          const color = availableGodSquare.dataset['color'] as CoreColor;
-          const action: ColorAdvanceGodAction = {
-            type: 'color',
-            subType: 'advanceGod',
-            color: color,
-          };
-          this.doAdvanceGod(action);
-        });
-      }
+      panel.addEventListener('click', (event) => {
+        const square = (event.target as HTMLElement)
+          .closest<HTMLSpanElement>(
+            '.god-square.available-god-resource-advance',
+          );
+
+        if (!square) return;
+
+        const clickedColor = square.dataset['color'] as CoreColor;
+
+        const phaseName = this.getGameState().getPhaseName();
+        const isAdvancingGodPhase = phaseName === PhaseAdvancingGod.phaseName;
+
+        const selectedResource = this.getUiState().getSelectedResource();
+        const resource = isAdvancingGodPhase
+          ? Resource.createDie(clickedColor)
+          : selectedResource;
+
+        const action: ResourceAdvanceGodAction = {
+          type: 'resource',
+          subType: 'advanceGod',
+          spend: resource,
+        };
+
+        this.doAdvanceGod(action);
+      });
     }
     {
       const godActionButton = panel.querySelector<HTMLSpanElement>(

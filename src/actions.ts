@@ -29,16 +29,12 @@ export interface FreeEndTurnAction extends FreeAction {
 // ------------------ Color Actions ------------------
 export interface ColorAction extends ActionBase {
   type: 'color';
-  subType: 'activateGod' | 'advanceGod';
+  subType: 'activateGod';
   color: CoreColor;
 }
 
 export interface ColorActivateGodAction extends ColorAction {
   subType: 'activateGod';
-}
-
-export interface ColorAdvanceGodAction extends ColorAction {
-  subType: 'advanceGod';
 }
 
 // ------------------ Resource Actions ------------------
@@ -118,7 +114,6 @@ export interface TeleportAction extends ActionBase {
 export type Action =
   // implemented
   | FreeEndTurnAction
-  | ColorAdvanceGodAction
   | ColorActivateGodAction
   | ResourceGainFavorAction
   | ResourceGainOracleCardAction

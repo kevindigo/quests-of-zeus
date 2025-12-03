@@ -12,6 +12,7 @@ import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineResource } from '../src/GameEngineResource.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
+import { PhaseAdvancingGod, PhaseMain } from '../src/phases.ts';
 import { Resource } from '../src/Resource.ts';
 import { COLOR_WHEEL, type CoreColor } from '../src/types.ts';
 import {
@@ -263,4 +264,22 @@ Deno.test('GameEngineColor AdvanceGod doAction - success', () => {
   assert(result.success, result.message);
   assertEquals(testPlayer.getGodLevel(color), maxGodLevel);
   assertEquals(testPlayer.oracleDice.length, 0);
+});
+
+Deno.test('GameEngineResource - doAction free advance god', () => {
+  setupGame();
+  testGameState.queuePhase(PhaseAdvancingGod.phaseName);
+  testGameState.endPhase();
+  const action: ResourceAdvanceGodAction = {
+    type: 'resource',
+    subType: 'advanceGod',
+    spend: Resource.createDie('red'),
+  };
+
+  const result = GameEngine.doAction(action, testGameState);
+  assert(result.success, result.message);
+  const player = testGameState.getCurrentPlayer();
+  assertEquals(player.getGodLevel('red'), 1);
+  assertEquals(player.oracleDice.length, 3);
+  assertEquals(testGameState.getPhaseName(), PhaseMain.phaseName);
 });

@@ -47,8 +47,6 @@ export class GameEngineColor {
     switch (action.subType) {
       case 'activateGod':
         return this.doActivateGod(action, gameState);
-      case 'advanceGod':
-        return this.doAdvanceGod(action, gameState);
     }
   }
 
@@ -71,17 +69,6 @@ export class GameEngineColor {
       case 'red':
         return new Failure('Activate god not implemented :' + color);
     }
-  }
-
-  private static doAdvanceGod(
-    action: ColorAction,
-    gameState: GameState,
-  ): ResultWithMessage {
-    const player = gameState.getCurrentPlayer();
-    const color = action.color;
-    player.advanceGod(color);
-    gameState.endPhase();
-    return new Success('Advanced god ' + color);
   }
 
   private static doTeleport(gameState: GameState): ResultWithMessage {
