@@ -1,11 +1,5 @@
 == Short-term ==
 
-- Implement GameState.phaseQueue: string[], .queuePhase(string), and .endPhase()
-  - Activating blue god would queue teleport and endPhase
-  - Teleporting would endPhase
-  - Game initialization and endTurn would jsut endPhase
-  - if endPhase is called when the queue is empty, set phase to main
-
 == Cosmetic/Usability ==
 
 - Clicking on a shrine with shield reward doesn't update the display immediately
@@ -80,7 +74,6 @@
 
 == Gods ==
 
-- Shrine reward: God advance
 - free: god effects:
   - effect: Fully heal
   - effect: Defeat (adjacent) monster

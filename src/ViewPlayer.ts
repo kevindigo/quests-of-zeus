@@ -153,14 +153,21 @@ export class ViewPlayer {
 
     const selectedResource = uiState.getSelectedResource();
     const description = this.getGodDescription(color);
-    const availableAdvanceActions = availableActions.find((availableAction) => {
+    const resourceAdvanceActions = availableActions.find((availableAction) => {
       return availableAction.type === 'resource' &&
         availableAction.subType === 'advanceGod' &&
         availableAction.spend.getEffectiveColor() === color &&
         availableAction.spend.equals(selectedResource);
     });
-    const isGodAdvanceAvailableClass = availableAdvanceActions
-      ? 'available-god-advance'
+    const colorAdvanceActions = availableActions.find((availableAction) => {
+      return availableAction.type === 'color' &&
+        availableAction.subType === 'advanceGod' &&
+        availableAction.color === color;
+    });
+    const isGodAdvanceAvailableClass = resourceAdvanceActions
+      ? 'available-god-resource-advance'
+      : colorAdvanceActions
+      ? 'available-god-color-advance'
       : '';
 
     const availableActivateAction = availableActions.find((availableAction) => {

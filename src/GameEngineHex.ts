@@ -13,6 +13,7 @@ import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import { PhaseAdvancingGod } from './phases.ts';
 import type { Resource } from './Resource.ts';
 import {
   Failure,
@@ -411,7 +412,9 @@ export class GameEngineHex {
           'Completed the quest, but failed spendResource: ' + spent.message,
         );
       }
-      return new Success(`Shrine quest completed -- God reward not available`);
+      gameState.queuePhase(PhaseAdvancingGod.phaseName);
+      gameState.endPhase();
+      return new Success(`Shrine quest completed`);
     }
 
     shrineHex.status = 'visible';

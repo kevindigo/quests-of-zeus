@@ -8,6 +8,7 @@ import type { ExploreShrineAction } from '../src/actions.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
+import { PhaseAdvancingGod } from '../src/phases.ts';
 import { Resource } from '../src/Resource.ts';
 import {
   COLOR_WHEEL,
@@ -107,8 +108,8 @@ Deno.test('GameEngineHex - available next to our visible shrine', () => {
 Deno.test('GameEngineHex - doShrineExplore (ours)', () => {
   setupNextToShrine(true, null);
   const shrineHex = getSelectedShrineHex();
-
   const action = createExploreAction();
+
   const result = GameEngineHex.doAction(action, gameState);
   assert(result.success, result.message);
   assertStringIncludes(result.message, 'completed');
@@ -122,6 +123,7 @@ Deno.test('GameEngineHex - doShrineExplore (ours)', () => {
   assertEquals(completedShrineQuests.length, 1);
   assert(player.usedOracleCardThisTurn);
   assertEquals(player.oracleCards.length, 5);
+  assertEquals(gameState.getPhaseName(), PhaseAdvancingGod.phaseName);
 });
 
 Deno.test('GameEngineHex - doShrineExplore (ours already visible)', () => {

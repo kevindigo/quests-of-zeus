@@ -4,6 +4,7 @@
 import type {
   Action,
   ColorActivateGodAction,
+  ColorAdvanceGodAction,
   DropCubeAction,
   DropStatueAction,
   ExploreShrineAction,
@@ -106,12 +107,32 @@ export class Controller {
     }
     {
       const availableGodSquare = panel.querySelector<HTMLSpanElement>(
-        '.god-square.available-god-advance',
+        '.god-square.available-god-resource-advance',
+      );
+      if (availableGodSquare) {
+        availableGodSquare.addEventListener('click', () => {
+          const action: ResourceAdvanceGodAction = {
+            type: 'resource',
+            subType: 'advanceGod',
+            spend: this.getUiState().getSelectedResource(),
+          };
+          this.doAdvanceGod(action);
+        });
+      }
+    }
+    {
+      const availableGodSquare = panel.querySelector<HTMLSpanElement>(
+        '.god-square.available-god-color-advance',
       );
       if (availableGodSquare) {
         availableGodSquare.addEventListener('click', () => {
           const color = availableGodSquare.dataset['color'] as CoreColor;
-          this.doAdvanceGod(color);
+          const action: ColorAdvanceGodAction = {
+            type: 'color',
+            subType: 'advanceGod',
+            color: color,
+          };
+          this.doAdvanceGod(action);
         });
       }
     }
@@ -440,17 +461,12 @@ export class Controller {
     this.doAction(action);
   }
 
-  private doAdvanceGod(color: CoreColor): void {
-    const action: ResourceAdvanceGodAction = {
-      type: 'resource',
-      subType: 'advanceGod',
-      spend: this.getUiState().getSelectedResource(),
-    };
+  private doAdvanceGod(action: Action): void {
     const result = GameEngine.doAction(action, this.getGameState());
     if (result.success) {
       this.clearResourceSelection();
     }
-    this.showMessage('Clicked advance god ' + color + ': ' + result.message);
+    this.showMessage('Clicked advance god: ' + result.message);
     this.renderGameState(this.getGameState());
   }
 

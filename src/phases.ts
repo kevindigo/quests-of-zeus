@@ -1,13 +1,17 @@
-import type { Action, FreeEndTurnAction, TeleportAction } from './actions.ts';
+import type {
+  Action,
+  ColorAdvanceGodAction,
+  FreeEndTurnAction,
+  TeleportAction,
+} from './actions.ts';
+import { GameEngine } from './GameEngine.ts';
 import { GameEngineColor } from './GameEngineColor.ts';
 import { GameEngineFree } from './GameEngineFree.ts';
 import { GameEngineHex } from './GameEngineHex.ts';
 import { GameEngineMove } from './GameEngineMove.ts';
 import { GameEngineResource } from './GameEngineResource.ts';
 import type { GameState } from './GameState.ts';
-
-// each player will have:
-//  export const phaseQueue: Phase[] = [];
+import { COLOR_WHEEL } from './types.ts';
 
 export interface Phase {
   getName(): string;
@@ -16,12 +20,14 @@ export interface Phase {
 
 export function createPhase(phaseName: string): Phase {
   switch (phaseName) {
-    case PhaseWelcome.phaseName:
-      return new PhaseWelcome();
+    case PhaseAdvancingGod.phaseName:
+      return new PhaseAdvancingGod();
     case PhaseMain.phaseName:
       return new PhaseMain();
     case PhaseTeleporting.phaseName:
       return new PhaseTeleporting();
+    case PhaseWelcome.phaseName:
+      return new PhaseWelcome();
   }
 
   throw new Error('Cannot create unknown phase: ' + phaseName);
@@ -57,11 +63,35 @@ export class PhaseMain implements Phase {
   public static readonly phaseName = 'main';
 }
 
-// export class PhaseAdvancingGod implements Phase {
-//   private allowedColors: CoreColor[];
-//   private canAdvanceFromZero: boolean;
-//   private remainingCount: number;
-// }
+export class PhaseAdvancingGod implements Phase {
+  getName(): string {
+    return PhaseAdvancingGod.phaseName;
+  }
+
+  public getAvailableActions(gameState: GameState): Action[] {
+    const actions: Action[] = [];
+
+    const maxLevel = GameEngine.getMaxGodLevel(gameState);
+    const player = gameState.getCurrentPlayer();
+    COLOR_WHEEL.forEach((color) => {
+      const level = player.getGodLevel(color);
+      if (level < maxLevel) {
+        const action: ColorAdvanceGodAction = {
+          type: 'color',
+          subType: 'advanceGod',
+          color: color,
+        };
+        actions.push(action);
+      }
+    });
+
+    const endTurn: FreeEndTurnAction = { type: 'free', subType: 'endTurn' };
+    actions.push(endTurn);
+
+    return actions;
+  }
+  public static readonly phaseName = 'advancingGod';
+}
 
 export class PhaseTeleporting implements Phase {
   public getName(): string {

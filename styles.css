@@ -364,13 +364,15 @@ footer {
   margin-right: 0.3em;
 }
 
-.god-square.available-god-advance {
+.god-square.available-god-resource-advance,
+.god-square.available-god-color-advance {
   position: relative; /* needed for pseudo-element positioning */
   z-index: 10 !important;
   cursor: pointer;
 }
 
-.god-square.available-god-advance::before {
+.god-square.available-god-resource-advance::before,
+.god-square.available-god-color-advance::before {
   content: '';
   position: absolute;
   inset: -4px;
