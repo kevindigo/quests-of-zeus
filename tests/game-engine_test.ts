@@ -5,11 +5,18 @@ import {
   assertStringIncludes,
 } from '@std/assert';
 import { assertFalse } from '@std/assert/false';
+import type { TeleportAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
+import { HexGrid } from '../src/hexmap/HexGrid.ts';
+import { createPhase, PhaseMain, PhaseTeleporting } from '../src/phases.ts';
 import { Resource } from '../src/Resource.ts';
-import { assertFailureContains } from './test-helpers.ts';
+import {
+  assertFailureContains,
+  setupGame,
+  testGameState,
+} from './test-helpers.ts';
 
 Deno.test('GameEngine - available simplest case', () => {
   const gameState = new GameState();
@@ -75,4 +82,34 @@ Deno.test('GameEngine - spend resource card success', () => {
   assertGreaterOrEqual(player.oracleCards.indexOf('blue'), 0);
   assertGreaterOrEqual(player.oracleCards.indexOf('red'), 0);
   assert(player.usedOracleCardThisTurn);
+});
+
+Deno.test('GameEngine - doAction teleport', () => {
+  setupGame();
+  const player = testGameState.getCurrentPlayer();
+  const shipAt = player.getShipPosition();
+  const map = testGameState.getMap();
+  const seaCells = map.getCellsByTerrain('sea');
+  const randomDistantSeaCell = seaCells.find((cell) => {
+    const coordinates = cell.getCoordinates();
+    const distance = HexGrid.hexDistance(
+      coordinates.q,
+      coordinates.r,
+      shipAt.q,
+      shipAt.r,
+    );
+    return distance > 2;
+  });
+  assert(randomDistantSeaCell);
+  const destination = randomDistantSeaCell.getCoordinates();
+  testGameState.setPhase(createPhase(PhaseTeleporting.phaseName));
+  const action: TeleportAction = {
+    type: 'teleport',
+    coordinates: destination,
+  };
+
+  const result = GameEngine.doAction(action, testGameState);
+  assert(result.success, result.message);
+  assert(HexGrid.isSameLocation(destination, player.getShipPosition()));
+  assertEquals(testGameState.getPhase().getName(), PhaseMain.phaseName);
 });
