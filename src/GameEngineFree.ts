@@ -5,7 +5,7 @@ import {
   type FreeEndTurnAction,
 } from './actions.ts';
 import type { GameState } from './GameState.ts';
-import { createPhase, PhaseWelcome } from './phases.ts';
+import { PhaseWelcome } from './phases.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -81,7 +81,7 @@ export class GameEngineFree {
     if (gameState.getCurrentPlayerIndex() === 0) {
       gameState.advanceRound();
     }
-    gameState.setPhase(createPhase('main'));
+    gameState.endPhase();
     return new Success(`Player ${currentPlayer.color} turn ended`);
   }
 }

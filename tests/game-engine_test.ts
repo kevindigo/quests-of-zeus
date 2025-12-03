@@ -10,7 +10,7 @@ import { GameEngine } from '../src/GameEngine.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
-import { createPhase, PhaseMain, PhaseTeleporting } from '../src/phases.ts';
+import { PhaseMain, PhaseTeleporting } from '../src/phases.ts';
 import { Resource } from '../src/Resource.ts';
 import {
   assertFailureContains,
@@ -102,7 +102,8 @@ Deno.test('GameEngine - doAction teleport', () => {
   });
   assert(randomDistantSeaCell);
   const destination = randomDistantSeaCell.getCoordinates();
-  testGameState.setPhase(createPhase(PhaseTeleporting.phaseName));
+  testGameState.queuePhase(PhaseTeleporting.phaseName);
+  testGameState.endPhase();
   const action: TeleportAction = {
     type: 'teleport',
     coordinates: destination,

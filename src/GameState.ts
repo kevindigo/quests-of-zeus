@@ -1,6 +1,6 @@
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { HexMap, type HexMapSnapshot } from './hexmap/HexMap.ts';
-import { createPhase, type Phase, PhaseWelcome } from './phases.ts';
+import { createPhase, type Phase, PhaseMain, PhaseWelcome } from './phases.ts';
 import { Player, type PlayerSnapshot } from './Player.ts';
 import type { Resource } from './Resource.ts';
 import {
@@ -25,6 +25,7 @@ export type GameStateSnapshot = {
   currentPlayerIndex: number;
   round: number;
   phaseName: string;
+  phaseQueue: string[];
   cubeHexes: CubeHex[];
   monsterHexes: MonsterHex[];
   cityHexes: CityHex[];
@@ -40,6 +41,7 @@ export class GameState {
     this.currentPlayerIndex = 0;
     this.round = 1;
     this.phase = createPhase(PhaseWelcome.phaseName);
+    this.phaseQueue = [];
     this.cubeHexes = [];
     this.monsterHexes = [];
     this.cityHexes = [];
@@ -57,6 +59,7 @@ export class GameState {
     state.currentPlayerIndex = json.currentPlayerIndex;
     state.round = json.round;
     state.phase = createPhase(json.phaseName);
+    state.phaseQueue = json.phaseQueue;
     state.cubeHexes = json.cubeHexes;
     state.monsterHexes = json.monsterHexes;
     state.cityHexes = json.cityHexes;
@@ -75,6 +78,7 @@ export class GameState {
       currentPlayerIndex: this.currentPlayerIndex,
       round: this.round,
       phaseName: this.phase.getName(),
+      phaseQueue: this.phaseQueue,
       cubeHexes: this.cubeHexes,
       monsterHexes: this.monsterHexes,
       cityHexes: this.cityHexes,
@@ -133,8 +137,17 @@ export class GameState {
     return this.phase;
   }
 
-  public setPhase(newPhase: Phase): void {
-    this.phase = newPhase;
+  public getPhaseName(): string {
+    return this.getPhase().getName();
+  }
+
+  public endPhase(): void {
+    const newPhaseName = this.phaseQueue.shift() ?? PhaseMain.phaseName;
+    this.phase = createPhase(newPhaseName);
+  }
+
+  public queuePhase(newPhaseName: string): void {
+    this.phaseQueue.push(newPhaseName);
   }
 
   public getCubeHexes(): CubeHex[] {
@@ -250,6 +263,7 @@ export class GameState {
   private currentPlayerIndex: number;
   private round: number;
   private phase: Phase;
+  private phaseQueue: string[];
   private cubeHexes: CubeHex[];
   private monsterHexes: MonsterHex[];
   private cityHexes: CityHex[];

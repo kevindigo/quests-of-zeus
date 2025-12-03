@@ -1,7 +1,7 @@
 import type { Action, ColorAction, ColorActivateGodAction } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
-import { createPhase, PhaseTeleporting } from './phases.ts';
+import { PhaseTeleporting } from './phases.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -62,7 +62,8 @@ export class GameEngineColor {
   }
 
   private static doTeleport(gameState: GameState): ResultWithMessage {
-    gameState.setPhase(createPhase(PhaseTeleporting.phaseName));
+    gameState.queuePhase(PhaseTeleporting.phaseName);
+    gameState.endPhase();
     return new Success('Switched phase to teleport');
   }
 }

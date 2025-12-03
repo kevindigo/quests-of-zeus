@@ -5,7 +5,6 @@ import { GameEngineHex } from './GameEngineHex.ts';
 import { GameEngineMove } from './GameEngineMove.ts';
 import { GameEngineResource } from './GameEngineResource.ts';
 import type { GameState } from './GameState.ts';
-import { createPhase, PhaseMain } from './phases.ts';
 import type { Player } from './Player.ts';
 import type { Resource } from './Resource.ts';
 import {
@@ -41,7 +40,7 @@ export class GameEngine {
         const player = gameState.getCurrentPlayer();
         player.setShipPosition(action.coordinates);
         player.resetGod('blue');
-        gameState.setPhase(createPhase(PhaseMain.phaseName));
+        gameState.endPhase();
         return new Success('Teleported!');
       }
     }
