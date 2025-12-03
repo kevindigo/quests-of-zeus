@@ -434,7 +434,12 @@ export class GameEngineHex {
         break;
       }
       case 'god':
-        return new Failure('Cloud flipped -- god reward not available yet');
+        gameState.queuePhase(PhaseAdvancingGod.phaseName);
+        gameState.queuePhase(PhaseAdvancingGod.phaseName);
+        gameState.queuePhase(PhaseAdvancingGod.phaseName);
+        gameState.endPhase();
+        GameEngine.spendResource(gameState, action.spend);
+        return new Success('Cloud flipped -- 3 god advances');
       case 'shield':
         player.shield += 1;
         return new Failure(

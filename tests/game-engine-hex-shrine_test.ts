@@ -8,7 +8,7 @@ import type { ExploreShrineAction } from '../src/actions.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
-import { PhaseAdvancingGod } from '../src/phases.ts';
+import { PhaseAdvancingGod, PhaseMain } from '../src/phases.ts';
 import { Resource } from '../src/Resource.ts';
 import {
   COLOR_WHEEL,
@@ -192,8 +192,8 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, god)', () => {
 
   const action = createExploreAction();
   const result = GameEngineHex.doAction(action, gameState);
-  assertFailureContains(result, 'god');
-  assertFailureContains(result, 'yet');
+  assert(result.success, result.message);
+  assertStringIncludes(result.message, 'god');
   assertEquals(shrineHex.status, 'visible');
   const player = gameState.getCurrentPlayer();
   const completedShrineQuests = player.getQuestsOfType('shrine').filter(
@@ -202,8 +202,14 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, god)', () => {
     },
   );
   assertEquals(completedShrineQuests.length, 0);
-  // assert 3 god coupons
-  // assertEquals(player.oracleCards.length, 0);
+  assertEquals(gameState.getPhaseName(), PhaseAdvancingGod.phaseName);
+  gameState.endPhase();
+  assertEquals(gameState.getPhaseName(), PhaseAdvancingGod.phaseName);
+  gameState.endPhase();
+  assertEquals(gameState.getPhaseName(), PhaseAdvancingGod.phaseName);
+  gameState.endPhase();
+  assertEquals(gameState.getPhaseName(), PhaseMain.phaseName);
+  assertEquals(player.oracleCards.length, 5);
 });
 
 Deno.test('GameEngineHex - doShrineExplore (not ours, card)', () => {
