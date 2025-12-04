@@ -36,13 +36,6 @@ export class GameEngine {
         return GameEngineHex.doAction(action, gameState);
       case 'move':
         return GameEngineMove.doAction(action, gameState);
-      case 'teleport': {
-        const player = gameState.getCurrentPlayer();
-        player.setShipPosition(action.coordinates);
-        player.resetGod('blue');
-        gameState.endPhase();
-        return new Success('Teleported!');
-      }
     }
 
     return new Failure(

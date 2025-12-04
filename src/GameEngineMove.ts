@@ -2,6 +2,7 @@ import { type Action, Actions, type ShipMoveAction } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import { PhaseTeleporting } from './phases.ts';
 import type { Resource } from './Resource.ts';
 import {
   Failure,
@@ -42,7 +43,7 @@ export class GameEngineMove {
     action: ShipMoveAction,
     gameState: GameState,
   ): ResultWithMessage {
-    const availableActions = this.getMoveActions(gameState);
+    const availableActions = GameEngine.getAvailableActions(gameState);
     if (!Actions.find(availableActions, action)) {
       return new Failure(
         `ShipMoveAction not available ${JSON.stringify(action)}`,
@@ -53,7 +54,11 @@ export class GameEngineMove {
     GameEngine.spendResource(gameState, action.spend);
     player.setShipPosition(action.destination);
     player.favor -= action.favorToExtendRange;
+    if (gameState.getPhaseName() === PhaseTeleporting.phaseName) {
+      player.resetGod('blue');
+    }
 
+    gameState.endPhase();
     return new Success(`Ship moved per ${action}`);
   }
 

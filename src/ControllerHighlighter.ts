@@ -37,11 +37,11 @@ export class ControllerHighlighter {
     availableActions: Action[],
   ): void {
     const teleportActions = availableActions.filter((action) => {
-      return action.type === 'teleport';
+      return action.type === 'move';
     });
 
     teleportActions.forEach((action) => {
-      const destination = action.coordinates;
+      const destination = action.destination;
       const favorCost = 0;
       this.highlightSeaHex(destination, favorCost);
     });

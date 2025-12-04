@@ -5,7 +5,7 @@ import {
   assertStringIncludes,
 } from '@std/assert';
 import { assertFalse } from '@std/assert/false';
-import type { TeleportAction } from '../src/actions.ts';
+import type { ShipMoveAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
@@ -100,9 +100,11 @@ Deno.test('GameEngine - doAction teleport', () => {
   const destination = randomDistantSeaCell.getCoordinates();
   testGameState.queuePhase(PhaseTeleporting.phaseName);
   testGameState.endPhase();
-  const action: TeleportAction = {
-    type: 'teleport',
-    coordinates: destination,
+  const action: ShipMoveAction = {
+    type: 'move',
+    destination: destination,
+    spend: Resource.none,
+    favorToExtendRange: 0,
   };
 
   const result = GameEngine.doAction(action, testGameState);

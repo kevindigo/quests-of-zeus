@@ -15,7 +15,6 @@ import type {
   ResourceGainFavorAction,
   ResourceGainOracleCardAction,
   ShipMoveAction,
-  TeleportAction,
 } from './actions.ts';
 import { ControllerHighlighter } from './ControllerHighlighter.ts';
 import { GameEngine } from './GameEngine.ts';
@@ -310,9 +309,11 @@ export class Controller {
     }
 
     if (phase.getName() === PhaseTeleporting.phaseName) {
-      const action: TeleportAction = {
-        type: 'teleport',
-        coordinates: coordinates,
+      const action: ShipMoveAction = {
+        type: 'move',
+        destination: coordinates,
+        spend: Resource.none,
+        favorToExtendRange: 0,
       };
       return action;
     }

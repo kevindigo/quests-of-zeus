@@ -3,7 +3,7 @@ import type {
   ExploreShrineAction,
   FreeEndTurnAction,
   ResourceAdvanceGodAction,
-  TeleportAction,
+  ShipMoveAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import { GameEngineColor } from './GameEngineColor.ts';
@@ -107,9 +107,11 @@ export class PhaseTeleporting implements Phase {
 
     const teleportActions = gameState.getMap().getCellsByTerrain('sea').map(
       (cell) => {
-        const action: TeleportAction = {
-          type: 'teleport',
-          coordinates: cell.getCoordinates(),
+        const action: ShipMoveAction = {
+          type: 'move',
+          destination: cell.getCoordinates(),
+          spend: Resource.none,
+          favorToExtendRange: 0,
         };
         return action;
       },
