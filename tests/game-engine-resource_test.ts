@@ -53,6 +53,33 @@ function createGainCardAction(
   };
 }
 
+Deno.test('GameEngineResource - Actions.areEqual', () => {
+  const redCard: ResourceAdvanceGodAction = {
+    type: 'resource',
+    subType: 'advanceGod',
+    spend: Resource.createCard('red'),
+  };
+  const redCard2: ResourceAdvanceGodAction = {
+    type: 'resource',
+    subType: 'advanceGod',
+    spend: Resource.createCard('red'),
+  };
+  const redDie: ResourceAdvanceGodAction = {
+    type: 'resource',
+    subType: 'advanceGod',
+    spend: Resource.createDie('red'),
+  };
+  const blueCard: ResourceAdvanceGodAction = {
+    type: 'resource',
+    subType: 'advanceGod',
+    spend: Resource.createCard('blue'),
+  };
+
+  assert(Actions.areEqual(redCard, redCard2));
+  assertFalse(Actions.areEqual(redCard, redDie));
+  assertFalse(Actions.areEqual(redCard, blueCard));
+});
+
 Deno.test('GameEngineAnyResource - available actions already used card', () => {
   setup();
   const player = gameState.getCurrentPlayer();
