@@ -12,12 +12,7 @@ import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { PhaseMain, PhaseTeleporting } from '../src/phases.ts';
 import { Resource } from '../src/Resource.ts';
-import {
-  assertFailureContains,
-  setupGame,
-  testGameState,
-  testPlayer,
-} from './test-helpers.ts';
+import { setupGame, testGameState, testPlayer } from './test-helpers.ts';
 
 Deno.test('GameEngine - available simplest case', () => {
   const gameState = new GameState();
@@ -38,8 +33,7 @@ Deno.test('GameEngine - spend resource nothing selected', () => {
   new GameStateInitializer().initializeGameState(gameState);
 
   const result = GameEngine.spendResource(gameState, Resource.none);
-  assertFalse(result.success, result.message);
-  assertFailureContains(result, 'select');
+  assert(result.success, result.message);
 });
 
 Deno.test('GameEngine - spend resource with pending recolor', () => {

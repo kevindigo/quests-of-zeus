@@ -399,13 +399,11 @@ export class GameEngineHex {
       : this.exploreShrineNotOurs(gameState, shrineHex);
 
     if (result.success) {
-      if (action.spend.hasColor()) {
-        const spent = GameEngine.spendResource(gameState, action.spend);
-        if (!spent.success) {
-          return new Failure(
-            'Built shrine, but failed spendResource: ' + spent.message,
-          );
-        }
+      const spent = GameEngine.spendResource(gameState, action.spend);
+      if (!spent.success) {
+        return new Failure(
+          'Built shrine, but failed spendResource: ' + spent.message,
+        );
       }
       gameState.endPhase();
     }

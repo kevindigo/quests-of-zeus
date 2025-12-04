@@ -59,7 +59,7 @@ export class GameEngine {
     const player = gameState.getCurrentPlayer();
 
     if (!resource.hasColor()) {
-      return new Failure('Nothing selected to spend');
+      return new Success('Nothing spent');
     }
 
     player.favor -= resource.getRecolorCost();

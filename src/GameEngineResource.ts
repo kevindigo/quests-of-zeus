@@ -156,6 +156,7 @@ export class GameEngineResource {
     const player = gameState.getCurrentPlayer();
     player.getGod(effectiveColor).level += 1;
 
+    // FixMe: After advance god has none, this if can go away
     if (gameState.getPhaseName() !== PhaseAdvancingGod.phaseName) {
       const spent = GameEngine.spendResource(gameState, action.spend);
       if (!spent.success) {
