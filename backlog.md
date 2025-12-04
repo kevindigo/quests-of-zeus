@@ -2,10 +2,6 @@
 
 == Cosmetic/Usability ==
 
-- Clicking on a shrine with shield reward doesn't update the display immediately
-  - Working as intended, since no other failure causes a re-rendering
-  - When it is working, and returns success, it will redraw
-- Can't click on anything on a hex (icon, cubes, monsters)
 - Make monster triangles larger
 - Make statue bar taller
 - Move city icon down slightly

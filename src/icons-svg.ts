@@ -24,7 +24,8 @@ export function generateZeusIcon(options: IconOptions): string {
   const zStrokeWidth = 2.5 * scale; // Thick Z stroke
 
   return `
-    <g transform="translate(${centerX}, ${centerY})" class="zeus-icon">
+    <g pointer-events="none"
+      transform="translate(${centerX}, ${centerY})" class="zeus-icon">
       <!-- Thick black circle that almost fills the hex -->
       <circle 
         cx="0" 
@@ -73,7 +74,8 @@ export function generateCityIcon(options: IconOptions): string {
   const fillColor = hexColor || 'none';
 
   return `
-    <g transform="translate(${centerX}, ${centerY})" class="city-icon">
+    <g pointer-events="none"
+      transform="translate(${centerX}, ${centerY})" class="city-icon">
       <!-- Left building: Temple-style with triangular pediment -->
       <path d="
         M ${-size * 0.8} ${size * 0.3}
@@ -173,7 +175,8 @@ export function generateTempleIcon(options: IconOptions): string {
   const fillColor = hexColor || 'none';
 
   return `
-    <g transform="translate(${centerX}, ${centerY})" class="temple-icon">
+    <g pointer-events="none"
+      transform="translate(${centerX}, ${centerY})" class="temple-icon">
       <!-- Square base with bottom line and no top line -->
       <path d="
         M ${-size * 0.4} ${-size * 0.3}
@@ -220,7 +223,8 @@ export function generateMonsterIcon(options: IconOptions): string {
   const strokeWidth = 2.5 * scale; // Thick black lines
 
   return `
-    <g transform="translate(${centerX}, ${centerY})" class="monster-icon">
+    <g pointer-events="none"
+      transform="translate(${centerX}, ${centerY})" class="monster-icon">
       <!-- Large main paw pad (heart-shaped for realism) -->
       <path d="
         M ${-size * 0.5} ${size * 0.1}
@@ -344,7 +348,8 @@ export function generateOfferingsIcon(options: IconOptions): string {
   const strokeWidth = 2.5 * scale; // Thick black lines
 
   return `
-    <g transform="translate(${centerX}, ${centerY})" class="offerings-icon">
+    <g pointer-events="none"
+      transform="translate(${centerX}, ${centerY})" class="offerings-icon">
       <!-- 3D Cube - front face (larger and more prominent) -->
       <path d="
         M ${-size * 0.5} ${size * 0.3}
@@ -536,7 +541,8 @@ export function generateStatueIcons(
   }
 
   return `
-    <g transform="translate(${centerX}, ${centerY})" class="statue-icons">
+    <g pointer-events="none"
+      transform="translate(${centerX}, ${centerY})" class="statue-icons">
       ${statuesContent}
     </g>
   `;
@@ -558,7 +564,8 @@ export function generateCloudsIcon(options: IconOptions): string {
   const strokeWidth = 2.5 * scale; // Thick black lines
 
   return `
-    <g transform="translate(${centerX}, ${centerY})" class="clouds-icon">
+    <g pointer-events="none"
+      transform="translate(${centerX}, ${centerY})" class="clouds-icon">
       <!-- Simplified cloud shape - single clean outline -->
       <path d="
         M ${-size * 0.6} ${-size * 0.1}
@@ -614,7 +621,8 @@ export function generateStatueBasesIcon(options: IconOptions): string {
   const horizontalShift = verticalShift * 2; // Twice the vertical shift amount
 
   return `
-    <g transform="translate(${centerX}, ${centerY})" class="statue-icon">
+    <g pointer-events="none"
+      transform="translate(${centerX}, ${centerY})" class="statue-icon">
       <!-- Top parallelogram (near top of hex) - moved up by 50% of height -->
       <polygon points="
         ${-size * 0.1} ${-size * 0.6 - verticalShift},
