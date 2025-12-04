@@ -116,7 +116,7 @@ export class Controller {
       panel.addEventListener('click', (event) => {
         const square = (event.target as HTMLElement)
           .closest<HTMLSpanElement>(
-            '.god-square.available-god-resource-advance',
+            '.god-square.available-god-resource-advance,.god-entry-wrapper.available-god-resource-advance',
           );
 
         if (!square) return;
@@ -140,7 +140,7 @@ export class Controller {
     }
     {
       const godActionButton = panel.querySelector<HTMLSpanElement>(
-        '.god-level.available-god-action',
+        '.god-level.available-god-action, .god-entry-wrapper.available-god-action',
       );
       if (godActionButton) {
         godActionButton.addEventListener('click', () => {

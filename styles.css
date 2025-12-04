@@ -339,13 +339,15 @@ footer {
   margin-right: 0.3em;
 }
 
-.god-level.available-god-action {
+.god-level.available-god-action,
+.god-entry-wrapper.available-god-action {
   position: relative; /* needed for pseudo-element positioning */
   z-index: 10 !important;
   cursor: pointer;
 }
 
-.god-level.available-god-action::before {
+.god-level.available-god-action::before,
+.god-entry-wrapper.available-god-action::before {
   content: '';
   position: absolute;
   inset: -4px;
@@ -364,13 +366,15 @@ footer {
   margin-right: 0.3em;
 }
 
-.god-square.available-god-resource-advance {
+.god-square.available-god-resource-advance,
+.god-entry-wrapper.available-god-resource-advance {
   position: relative; /* needed for pseudo-element positioning */
   z-index: 10 !important;
   cursor: pointer;
 }
 
-.god-square.available-god-resource-advance::before {
+.god-square.available-god-resource-advance::before,
+.god-entry-wrapper.available-god-resource-advance::before {
   content: '';
   position: absolute;
   inset: -4px;

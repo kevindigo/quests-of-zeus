@@ -170,17 +170,18 @@ export class ViewPlayer {
         availableAction.subType === 'activateGod' &&
         availableAction.color === color;
     });
-    const isGodActionAvailableClass = availableActivateAction
+    const isGodActivateAvailableClass = availableActivateAction
       ? 'available-god-action'
       : '';
 
     return `
-    <span class="god-entry-wrapper">
-        <span class="god-level ${isGodActionAvailableClass}"
+    <span class="god-entry-wrapper ${isGodActivateAvailableClass} ${isGodAdvanceAvailableClass}"
+          data-color="${color}">
+        <span class="god-level "
           data-color="${color}">
           ${levelDisplay}
         </span>
-        <span class="god-square ${isGodAdvanceAvailableClass}" 
+        <span class="god-square " 
           data-color="${color}"
           style="background-color: ${ViewPlayer.getColorHex(color)};">
         </span>

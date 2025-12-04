@@ -1,20 +1,5 @@
 == Short-term ==
 
-- action: peek at up to 2 shrine tiles
-
-== Quests ==
-
-- Monsters
-  - Should roll dice during battle
-
-== Round end/Game end ==
-
-- effect: free god advance for other players' rolls
-- effect: ability to move to zeus after 12 quests completed
-- round: detect end of game and determine winner
-
-== Peek ==
-
 == Injuries ==
 
 - setup: injury deck
@@ -24,6 +9,17 @@
 - During fight, bad roll causes injury (easy after multi-round fight is done)
 - turn: if too many injuries, skip and heal (not too hard)
 - Shrine quest reward: Heal injuries (not too hard)
+
+== Round end/Game end ==
+
+- effect: free god advance for other players' rolls
+- effect: ability to move to zeus after 12 quests completed
+- round: detect end of game and determine winner
+
+== Quests ==
+
+- Monsters
+  - Should roll dice during battle
 
 == Gods ==
 
