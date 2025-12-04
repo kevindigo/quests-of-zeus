@@ -10,16 +10,8 @@
   - Statue 🪦 ⛏️ ⛲ 🗿
   - Monster 💀 ⚔️
   - Shrine ☁️ ⛩️
-- Display symbols for accessibility: ➰🌀♨️🔆🌱🌸
-  - Black: Cloverleaf 🔲🔳 🌢 ➰ ⧇ ⬟ ⧉ ▣ ▩
-  - Blue: @ 🌀
-  - Red: Bell U 💢 📛 ♨️
-  - Pink: 8 / infinity / hourglass ∞ ⌛ Ꝏ 🌸 🩷
-  - Yellow: * 🔆
-  - Green: Leaf 🌱
 - Ideally sort cards by color
 - Ideally only highlight the actual selected die/card
-- Ideally unselect (clear) a die/card by clicking it again
 
 == Features/bugs ==
 
