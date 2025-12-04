@@ -1,4 +1,4 @@
-import { OracleSystem } from './OracleSystem.ts';
+import { GameEngine } from './GameEngine.ts';
 import type { CoreColor } from './types.ts';
 
 export type ResourceType = 'die' | 'card' | 'none';
@@ -88,7 +88,7 @@ export class Resource {
     const selectedColor = this.getBaseColor();
 
     const favorForRecoloring = this.getRecolorCost();
-    const effectiveColor = OracleSystem.applyRecolor(
+    const effectiveColor = GameEngine.applyRecolor(
       selectedColor,
       favorForRecoloring,
     );

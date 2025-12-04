@@ -13,7 +13,7 @@ import {
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import type { CoreColor, Item } from './types.ts';
+import { COLOR_WHEEL, type CoreColor, type Item } from './types.ts';
 
 export class GameEngine {
   public static getAvailableActions(
@@ -112,5 +112,15 @@ export class GameEngine {
 
   public static getMaxGodLevel(gameState: GameState): number {
     return 2 + gameState.getPlayerCount();
+  }
+
+  public static applyRecolor(original: CoreColor, favor: number): CoreColor {
+    const originalIndex = COLOR_WHEEL.indexOf(original);
+    const newIndex = (originalIndex + favor) % COLOR_WHEEL.length;
+    const newColor = COLOR_WHEEL[newIndex];
+    if (!newColor) {
+      throw new Error(`Unable to recolor ${original} by ${favor}`);
+    }
+    return newColor;
   }
 }

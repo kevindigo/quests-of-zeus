@@ -9,7 +9,6 @@ import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
-import { OracleSystem } from '../src/OracleSystem.ts';
 import { Resource } from '../src/Resource.ts';
 import {
   type CityHex,
@@ -86,7 +85,7 @@ Deno.test('GameEngineHex - city no resource of that color', () => {
   const color = cityCell?.color;
   assert(color && color !== 'none');
   const player = gameState.getCurrentPlayer();
-  player.oracleDice = [OracleSystem.applyRecolor(color, 1)];
+  player.oracleDice = [GameEngine.applyRecolor(color, 1)];
   player.oracleCards = [];
   const action = createLoadStatueAction();
 
@@ -111,7 +110,7 @@ Deno.test('GameEngineHex - city resource no space yes quest yes', () => {
   const color = cityCell?.color;
   assert(color && color !== 'none');
   const player = gameState.getCurrentPlayer();
-  player.oracleDice = [OracleSystem.applyRecolor(color, 1)];
+  player.oracleDice = [GameEngine.applyRecolor(color, 1)];
   player.oracleCards = [];
   const action = createLoadStatueAction();
 
