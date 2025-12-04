@@ -149,7 +149,7 @@ export class ViewPlayer {
     const levelDisplay = isAlreadyAtMax
       ? this.getGodReadySymbol(color)
       : isBelowClouds
-      ? '◇'
+      ? '∞'
       : String(maxLevel - level);
 
     const description = this.getGodDescription(color);
@@ -177,13 +177,13 @@ export class ViewPlayer {
     return `
     <span class="god-entry-wrapper ${isGodActivateAvailableClass} ${isGodAdvanceAvailableClass}"
           data-color="${color}">
-        <span class="god-level "
-          data-color="${color}">
-          ${levelDisplay}
-        </span>
         <span class="god-square " 
           data-color="${color}"
           style="background-color: ${ViewPlayer.getColorHex(color)};">
+        </span>
+        <span class="god-level "
+          data-color="${color}">
+          ${levelDisplay}
         </span>
         <span class="god-description">${description}</span>
     </span>`;
