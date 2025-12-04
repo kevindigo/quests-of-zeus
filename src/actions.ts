@@ -169,7 +169,7 @@ export class Actions {
       case 'color':
         return this.areEqualColor(candidate, reference as ColorAction);
       case 'resource':
-        return this.areEqualAny(candidate, reference as ResourceAction);
+        return this.areEqualResource(candidate, reference as ResourceAction);
       case 'hex':
         return this.areEqualHex(candidate, reference as HexAction);
       case 'move':
@@ -181,7 +181,7 @@ export class Actions {
     );
   }
 
-  public static areEqualAny(
+  public static areEqualResource(
     candidate: ResourceAction,
     reference: ResourceAction,
   ): boolean {
