@@ -2,19 +2,15 @@ import { assert } from '@std/assert/assert';
 import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
 import { assertStringIncludes } from '@std/assert/string-includes';
-import {
-  Actions,
-  type ResourceAdvanceGodAction,
-  type ResourceGainFavorAction,
-  type ResourceGainOracleCardAction,
+import type {
+  ResourceGainFavorAction,
+  ResourceGainOracleCardAction,
 } from '../src/actions.ts';
-import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineResource } from '../src/GameEngineResource.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
-import { PhaseAdvancingGod, PhaseMain } from '../src/phases.ts';
 import { Resource } from '../src/Resource.ts';
-import { COLOR_WHEEL, type CoreColor } from '../src/types.ts';
+import type { CoreColor } from '../src/types.ts';
 import {
   assertFailureContains,
   setupGame,
@@ -53,98 +49,36 @@ function createGainCardAction(
   };
 }
 
-Deno.test('GameEngineResource - Actions.areEqual', () => {
-  const redCard: ResourceAdvanceGodAction = {
-    type: 'resource',
-    subType: 'advanceGod',
-    spend: Resource.createCard('red'),
-  };
-  const redCard2: ResourceAdvanceGodAction = {
-    type: 'resource',
-    subType: 'advanceGod',
-    spend: Resource.createCard('red'),
-  };
-  const redDie: ResourceAdvanceGodAction = {
-    type: 'resource',
-    subType: 'advanceGod',
-    spend: Resource.createDie('red'),
-  };
-  const blueCard: ResourceAdvanceGodAction = {
-    type: 'resource',
-    subType: 'advanceGod',
-    spend: Resource.createCard('blue'),
-  };
-
-  assert(Actions.areEqual(redCard, redCard2));
-  assertFalse(Actions.areEqual(redCard, redDie));
-  assertFalse(Actions.areEqual(redCard, blueCard));
-});
-
-Deno.test('GameEngineAnyResource - available actions already used card', () => {
+Deno.test('GameEngineResource - available actions already used card', () => {
   setup();
   const player = gameState.getCurrentPlayer();
   player.usedOracleCardThisTurn = true;
-  const actions = GameEngineResource.getAnyResourceActions(gameState);
-  assertEquals(actions.length, 1 + 1 + 2, JSON.stringify(actions));
+  const actions = GameEngineResource.getResourceActions(gameState);
+  assertEquals(actions.length, 2, JSON.stringify(actions));
 });
 
-Deno.test('GameEngineAnyResource - available actions dice and cards', () => {
+Deno.test('GameEngineResource - available actions dice and cards', () => {
   setup();
-  const actions = GameEngineResource.getAnyResourceActions(gameState);
-  assertEquals(actions.length, 3 * 4, JSON.stringify(actions));
+  const actions = GameEngineResource.getResourceActions(gameState);
+  assertEquals(actions.length, 2 + 2 * 2, JSON.stringify(actions));
 });
 
-Deno.test('GameEngineAnyResource - available actions empty deck', () => {
+Deno.test('GameEngineResource - available actions empty deck', () => {
   setup();
   gameState.getOracleCardDeck().splice(0);
 
-  const actions = GameEngineResource.getAnyResourceActions(gameState);
-  assertEquals(actions.length, 3 * 3, JSON.stringify(actions));
+  const actions = GameEngineResource.getResourceActions(gameState);
+  assertEquals(actions.length, 1 + 2, JSON.stringify(actions));
 });
 
-Deno.test('GameEngineColor AdvanceGod available - no resource', () => {
+Deno.test('GameEngineResource - no resource', () => {
   setupGame();
   testPlayer.oracleDice = [];
 
-  const availableActions = GameEngineResource.getAnyResourceActions(
+  const availableActions = GameEngineResource.getResourceActions(
     testGameState,
   );
   assertEquals(availableActions.length, 0);
-});
-
-Deno.test('GameEngineColor AdvanceGod available - god already at top', () => {
-  setupGame();
-  COLOR_WHEEL.forEach((color) => {
-    const god = testPlayer.getGod(color);
-    god.level = GameEngine.getMaxGodLevel(testGameState);
-  });
-
-  const availableActions = GameEngineResource.getAnyResourceActions(
-    testGameState,
-  );
-  const advanceGodActions = availableActions.filter((availableAction) => {
-    return (availableAction.type === 'resource' &&
-      availableAction.subType === 'advanceGod');
-  });
-  assertEquals(advanceGodActions.length, 0);
-});
-
-Deno.test('GameEngineColor AdvanceGod available - can advance', () => {
-  setupGame();
-  const color = 'blue';
-  testPlayer.oracleDice = [color];
-  testPlayer.getGod(color).level = GameEngine.getMaxGodLevel(testGameState) - 1;
-  const action: ResourceAdvanceGodAction = {
-    type: 'resource',
-    subType: 'advanceGod',
-    spend: Resource.createDie(color),
-  };
-
-  const availableActions = GameEngineResource.getAnyResourceActions(
-    testGameState,
-  );
-  const found = Actions.findOne(availableActions, action);
-  assert(found);
 });
 
 Deno.test('GameEngineAnyResource - gain favor nothing selected', () => {
@@ -260,53 +194,4 @@ Deno.test('GameEngineAnyResource - gain card with die ignore recolor', () => {
   assertStringIncludes(result.message, 'gain');
   assertEquals(player.oracleDice.length, 1);
   assertEquals(player.oracleCards.length, 3);
-});
-
-Deno.test('GameEngineColor AdvanceGod doAction - not available', () => {
-  setupGame();
-  testPlayer.oracleDice = [];
-  const action: ResourceAdvanceGodAction = {
-    type: 'resource',
-    subType: 'advanceGod',
-    spend: Resource.createDie('blue'),
-  };
-
-  const result = GameEngine.doAction(action, testGameState);
-  assertFailureContains(result, 'not available');
-});
-
-Deno.test('GameEngineColor AdvanceGod doAction - success', () => {
-  setupGame();
-  const maxGodLevel = GameEngine.getMaxGodLevel(testGameState);
-  const color = 'blue';
-  testPlayer.oracleDice = [color];
-  testPlayer.getGod(color).level = maxGodLevel - 1;
-  const action: ResourceAdvanceGodAction = {
-    type: 'resource',
-    subType: 'advanceGod',
-    spend: Resource.createDie(color),
-  };
-
-  const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
-  assertEquals(testPlayer.getGodLevel(color), maxGodLevel);
-  assertEquals(testPlayer.oracleDice.length, 0);
-});
-
-Deno.test('GameEngineResource - doAction free advance god', () => {
-  setupGame();
-  testGameState.queuePhase(PhaseAdvancingGod.phaseName);
-  testGameState.endPhase();
-  const action: ResourceAdvanceGodAction = {
-    type: 'resource',
-    subType: 'advanceGod',
-    spend: Resource.createDie('red'),
-  };
-
-  const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
-  const player = testGameState.getCurrentPlayer();
-  assertEquals(player.getGodLevel('red'), 1);
-  assertEquals(player.oracleDice.length, 3);
-  assertEquals(testGameState.getPhaseName(), PhaseMain.phaseName);
 });

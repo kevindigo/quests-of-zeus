@@ -6,6 +6,7 @@ export type ActionType =
   | 'free'
   | 'color'
   | 'resource'
+  | 'advance'
   | 'hex'
   | 'move';
 
@@ -42,8 +43,7 @@ export interface ResourceAction extends ActionBase {
   spend: Resource;
   subType:
     | 'gainFavor'
-    | 'gainOracleCard'
-    | 'advanceGod';
+    | 'gainOracleCard';
 }
 
 export interface ResourceGainFavorAction extends ResourceAction {
@@ -54,8 +54,10 @@ export interface ResourceGainOracleCardAction extends ResourceAction {
   subType: 'gainOracleCard';
 }
 
-export interface ResourceAdvanceGodAction extends ResourceAction {
-  subType: 'advanceGod';
+// ------------------ God (advance) Actions ------------------
+export interface AdvanceGodAction extends ActionBase {
+  type: 'advance';
+  spend: Resource;
 }
 
 // ------------------ Hex Actions ------------------
@@ -111,7 +113,7 @@ export type Action =
   | ColorActivateGodAction
   | ResourceGainFavorAction
   | ResourceGainOracleCardAction
-  | ResourceAdvanceGodAction
+  | AdvanceGodAction
   | HexLoadCubeAction
   | HexDropCubeAction
   | HexLoadStatueAction
@@ -165,6 +167,8 @@ export class Actions {
         return this.areEqualColor(candidate, reference as ColorAction);
       case 'resource':
         return this.areEqualResource(candidate, reference as ResourceAction);
+      case 'advance':
+        return this.areEqualAdvance(candidate, reference as AdvanceGodAction);
       case 'hex':
         return this.areEqualHex(candidate, reference as HexAction);
       case 'move':
@@ -174,16 +178,6 @@ export class Actions {
     throw new Error(
       'Actions.areEqual not implemented for ' + JSON.stringify(candidate),
     );
-  }
-
-  public static areEqualResource(
-    candidate: ResourceAction,
-    reference: ResourceAction,
-  ): boolean {
-    if (candidate.subType !== reference.subType) {
-      return false;
-    }
-    return candidate.spend.equals(reference.spend);
   }
 
   public static areEqualFree(
@@ -207,6 +201,23 @@ export class Actions {
     reference: ColorAction,
   ): boolean {
     return candidate.color === reference.color;
+  }
+
+  public static areEqualResource(
+    candidate: ResourceAction,
+    reference: ResourceAction,
+  ): boolean {
+    if (candidate.subType !== reference.subType) {
+      return false;
+    }
+    return candidate.spend.equals(reference.spend);
+  }
+
+  public static areEqualAdvance(
+    candidate: AdvanceGodAction,
+    reference: AdvanceGodAction,
+  ): boolean {
+    return candidate.spend.equals(reference.spend);
   }
 
   public static areEqualHex(

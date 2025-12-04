@@ -3,6 +3,7 @@
 
 import type {
   Action,
+  AdvanceGodAction,
   ColorActivateGodAction,
   FreeEndTurnAction,
   HexDropCubeAction,
@@ -12,7 +13,6 @@ import type {
   HexLoadCubeAction,
   HexLoadStatueAction,
   MoveShipAction,
-  ResourceAdvanceGodAction,
   ResourceGainFavorAction,
   ResourceGainOracleCardAction,
 } from './actions.ts';
@@ -128,9 +128,8 @@ export class Controller {
           ? Resource.createDie(clickedColor)
           : selectedResource;
 
-        const action: ResourceAdvanceGodAction = {
-          type: 'resource',
-          subType: 'advanceGod',
+        const action: AdvanceGodAction = {
+          type: 'advance',
           spend: resource,
         };
 

@@ -157,8 +157,7 @@ export class ViewPlayer {
     const isFree = gameState.getPhaseName() === PhaseAdvancingGod.phaseName;
     const resourceAdvanceActions = availableActions.find((availableAction) => {
       return (
-        availableAction.type === 'resource' &&
-        availableAction.subType === 'advanceGod' &&
+        availableAction.type === 'advance' &&
         availableAction.spend.getEffectiveColor() === color &&
         (availableAction.spend.equals(selectedResource) || isFree)
       );

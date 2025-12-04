@@ -1,11 +1,12 @@
 import type {
   Action,
+  AdvanceGodAction,
   FreeEndTurnAction,
   HexExploreShrineAction,
   MoveShipAction,
-  ResourceAdvanceGodAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
+import { GameEngineAdvance } from './GameEngineAdvance.ts';
 import { GameEngineColor } from './GameEngineColor.ts';
 import { GameEngineFree } from './GameEngineFree.ts';
 import { GameEngineHex } from './GameEngineHex.ts';
@@ -56,9 +57,10 @@ export class PhaseMain implements Phase {
 
   public getAvailableActions(gameState: GameState): Action[] {
     const actions: Action[] = [];
-    actions.push(...GameEngineColor.getColorActions(gameState));
     actions.push(...GameEngineFree.getFreeActions(gameState));
-    actions.push(...GameEngineResource.getAnyResourceActions(gameState));
+    actions.push(...GameEngineColor.getColorActions(gameState));
+    actions.push(...GameEngineResource.getResourceActions(gameState));
+    actions.push(...GameEngineAdvance.getAdvanceActions(gameState));
     actions.push(...GameEngineHex.getHexActions(gameState));
     actions.push(...GameEngineMove.getMoveActions(gameState));
     return actions;
@@ -80,9 +82,8 @@ export class PhaseAdvancingGod implements Phase {
     COLOR_WHEEL.forEach((color) => {
       const level = player.getGodLevel(color);
       if (level < maxLevel) {
-        const action: ResourceAdvanceGodAction = {
-          type: 'resource',
-          subType: 'advanceGod',
+        const action: AdvanceGodAction = {
+          type: 'advance',
           spend: Resource.createDie(color),
         };
         actions.push(action);
