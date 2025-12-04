@@ -19,7 +19,7 @@ export function generateZeusIcon(options: IconOptions): string {
   const size = 14 * scale * 2.5; // 2.5x larger to fill more space
 
   // Monochrome black color
-  const strokeColor = '#000000';
+  const strokeColor = 'white';
   const circleStrokeWidth = 3 * scale; // Thick circle border
   const zStrokeWidth = 2.5 * scale; // Thick Z stroke
 
@@ -40,8 +40,6 @@ export function generateZeusIcon(options: IconOptions): string {
       <path d="
         M ${-size * 0.5} ${-size * 0.4}
         L ${size * 0.5} ${-size * 0.4}
-        L ${-size * 0.3} ${0}
-        L ${size * 0.3} ${0}
         L ${-size * 0.5} ${size * 0.4}
         L ${size * 0.5} ${size * 0.4}
       " 
