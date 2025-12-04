@@ -122,19 +122,14 @@ export type Action =
 // speculation
 // | FreeGainDieFromFavorAction // equipment
 // | FreeSuperturnAction // yellow god
-// | FreeExploreAnyShrineAction // green god
 // | FreeHealAllAction // red god
-// | FreeDefeatMonsterAction // black god
-// | FreeGrabAnyStatueAction // pink god
 // | CouponSkipTurnAction //automatic
-// | CouponPeekAction // die action (2x)
-// | CouponGrabCubeAction // equipment
-// | CouponGrabStatueAction // equipment
-// | CouponGainCompanionAction // reward for statue
-// | CouponGainEquipmentAction // reward for monster
-// | ResourceGainPeekCouponsAction
-// | ColorHealAction // heal all of that color
-// | ColorGainCardFavorGodAction; // get card+favor+god advance coupon
+// | HexPeekAction // die action (2x)
+// | GainCompanionAction // reward for statue
+// | GainEquipmentAction // reward for monster
+// | ResourceGainPeeksAction
+// | ResourceHealColorAction // heal all of that color
+// | ResourceGainCardFavorGodAction; // get card+favor+god advance
 
 export class Actions {
   public static find(actions: Action[], lookFor: Action): Action | undefined {
