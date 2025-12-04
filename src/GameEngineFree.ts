@@ -5,7 +5,6 @@ import {
   type FreeEndTurnAction,
 } from './actions.ts';
 import type { GameState } from './GameState.ts';
-import { PhaseWelcome } from './phases.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -24,7 +23,8 @@ export class GameEngineFree {
   }
 
   private static getEndTurnActions(gameState: GameState): FreeEndTurnAction[] {
-    if (gameState.getPhase().getName() === PhaseWelcome.phaseName) {
+    const player = gameState.getCurrentPlayer();
+    if (player.oracleDice.length > 0) {
       return [];
     }
 

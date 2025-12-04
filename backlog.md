@@ -1,7 +1,5 @@
 == Short-term ==
 
-Disable End Turn if in Main phase and dice remain unspent
-
 == Cosmetic/Usability ==
 
 - Clicking on a shrine with shield reward doesn't update the display immediately

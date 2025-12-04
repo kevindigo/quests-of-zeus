@@ -5,19 +5,23 @@ import { Actions, type FreeEndTurnAction } from '../src/actions.ts';
 import { GameEngineFree } from '../src/GameEngineFree.ts';
 import { setupGame, testGameState } from './test-helpers.ts';
 
-Deno.test('GameEngineFree - getFreeActions action phase', () => {
+Deno.test('GameEngineFree - getFreeActions cannot end with dice remaining', () => {
   setupGame();
   const endTurnAction: FreeEndTurnAction = { type: 'free', subType: 'endTurn' };
 
-  const actions = GameEngineFree.getFreeActions(testGameState);
-  const endTurnActions = Actions.filter(actions, endTurnAction);
-  assertEquals(endTurnActions.length, 1);
+  const actionsWithDiceUnspent = GameEngineFree.getFreeActions(testGameState);
+  assertEquals(Actions.filter(actionsWithDiceUnspent, endTurnAction).length, 0);
+
+  const player = testGameState.getCurrentPlayer();
+  player.oracleDice = [];
+  const actionsNoDiceLeft = GameEngineFree.getFreeActions(testGameState);
+  assertEquals(Actions.filter(actionsNoDiceLeft, endTurnAction).length, 1);
 });
 
 Deno.test('GameEngineFree - end turn action success', () => {
   setupGame();
   const oldPlayer = testGameState.getCurrentPlayer();
-  oldPlayer.oracleDice = ['red'];
+  oldPlayer.oracleDice = [];
   oldPlayer.oracleCards = ['blue'];
   oldPlayer.usedOracleCardThisTurn = true;
   assertEquals(testGameState.getRound(), 1);
@@ -32,6 +36,7 @@ Deno.test('GameEngineFree - end turn action success', () => {
   assertEquals(testGameState.getCurrentPlayerIndex(), 1);
   assertEquals(testGameState.getPhase().getName(), 'main');
   assertEquals(testGameState.getRound(), 1);
+  testGameState.getCurrentPlayer().oracleDice = [];
 
   GameEngineFree.doAction(action, testGameState);
   assertEquals(testGameState.getCurrentPlayerIndex(), 0);

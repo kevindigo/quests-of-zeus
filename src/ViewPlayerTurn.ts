@@ -38,8 +38,8 @@ export class ViewPlayerTurn {
             +Oracle Card
         </button>
         <button id="endTurn" 
-          class="action-button secondary 
-          ${this.getEndTurnStatus(availableActions)}">
+          class="action-button secondary" 
+          ${this.getEndTurnStatus(availableActions)}>
             End Turn
         </button>
       </div>`;
