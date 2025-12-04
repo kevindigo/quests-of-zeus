@@ -16,24 +16,54 @@ import {
 Deno.test('GameEngineResource - Actions.areEqual', () => {
   const redCard: AdvanceGodAction = {
     type: 'advance',
+    godColor: 'red',
     spend: Resource.createCard('red'),
   };
   const redCard2: AdvanceGodAction = {
     type: 'advance',
+    godColor: 'red',
     spend: Resource.createCard('red'),
   };
   const redDie: AdvanceGodAction = {
     type: 'advance',
+    godColor: 'red',
     spend: Resource.createDie('red'),
   };
   const blueCard: AdvanceGodAction = {
     type: 'advance',
+    godColor: 'blue',
     spend: Resource.createCard('blue'),
+  };
+  const blackBlack: AdvanceGodAction = {
+    type: 'advance',
+    godColor: 'black',
+    spend: Resource.createCard('black'),
+  };
+
+  const blackNone: AdvanceGodAction = {
+    type: 'advance',
+    godColor: 'black',
+    spend: Resource.none,
+  };
+
+  const blackNone2: AdvanceGodAction = {
+    type: 'advance',
+    godColor: 'black',
+    spend: Resource.none,
+  };
+
+  const pinkNone: AdvanceGodAction = {
+    type: 'advance',
+    godColor: 'pink',
+    spend: Resource.none,
   };
 
   assert(Actions.areEqual(redCard, redCard2));
+  assert(Actions.areEqual(blackNone, blackNone2));
   assertFalse(Actions.areEqual(redCard, redDie));
   assertFalse(Actions.areEqual(redCard, blueCard));
+  assertFalse(Actions.areEqual(blackBlack, blackNone));
+  assertFalse(Actions.areEqual(blackNone, pinkNone));
 });
 
 Deno.test('GameEngineColor AdvanceGod available - god already at top', () => {
@@ -59,6 +89,7 @@ Deno.test('GameEngineColor AdvanceGod available - can advance', () => {
   testPlayer.getGod(color).level = GameEngine.getMaxGodLevel(testGameState) - 1;
   const action: AdvanceGodAction = {
     type: 'advance',
+    godColor: color,
     spend: Resource.createDie(color),
   };
 
@@ -74,6 +105,7 @@ Deno.test('GameEngineColor AdvanceGod doAction - not available', () => {
   testPlayer.oracleDice = [];
   const action: AdvanceGodAction = {
     type: 'advance',
+    godColor: 'blue',
     spend: Resource.createDie('blue'),
   };
 
@@ -89,6 +121,7 @@ Deno.test('GameEngineColor AdvanceGod doAction - success', () => {
   testPlayer.getGod(color).level = maxGodLevel - 1;
   const action: AdvanceGodAction = {
     type: 'advance',
+    godColor: color,
     spend: Resource.createDie(color),
   };
 
@@ -104,7 +137,8 @@ Deno.test('GameEngineResource - doAction free advance god', () => {
   testGameState.endPhase();
   const action: AdvanceGodAction = {
     type: 'advance',
-    spend: Resource.createDie('red'),
+    godColor: 'red',
+    spend: Resource.none,
   };
 
   const result = GameEngine.doAction(action, testGameState);

@@ -57,6 +57,7 @@ export interface ResourceGainOracleCardAction extends ResourceAction {
 // ------------------ God (advance) Actions ------------------
 export interface AdvanceGodAction extends ActionBase {
   type: 'advance';
+  godColor: CoreColor;
   spend: Resource;
 }
 
@@ -217,7 +218,8 @@ export class Actions {
     candidate: AdvanceGodAction,
     reference: AdvanceGodAction,
   ): boolean {
-    return candidate.spend.equals(reference.spend);
+    return candidate.godColor === reference.godColor &&
+      candidate.spend.equals(reference.spend);
   }
 
   public static areEqualHex(

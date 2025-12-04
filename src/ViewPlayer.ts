@@ -15,7 +15,7 @@ export class ViewPlayer {
   ): string {
     const content = `
       <div class="player-info">
-        <h3>Current Player: ${player.name}</h3>
+        <h3>${player.name} (${gameState.getPhaseName()})</h3>
         <div class="player-stats">
           ${this.getPlayerStatsContents(player)}
         </div>
@@ -152,14 +152,13 @@ export class ViewPlayer {
       ? '◇'
       : String(maxLevel - level);
 
-    const selectedResource = uiState.getSelectedResource();
     const description = this.getGodDescription(color);
     const isFree = gameState.getPhaseName() === PhaseAdvancingGod.phaseName;
     const resourceAdvanceActions = availableActions.find((availableAction) => {
       return (
         availableAction.type === 'advance' &&
-        availableAction.spend.getEffectiveColor() === color &&
-        (availableAction.spend.equals(selectedResource) || isFree)
+        availableAction.godColor === color &&
+        (isFree || uiState.getEffectiveSelectedColor() === color)
       );
     });
     const isGodAdvanceAvailableClass = resourceAdvanceActions

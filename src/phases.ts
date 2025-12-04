@@ -84,7 +84,8 @@ export class PhaseAdvancingGod implements Phase {
       if (level < maxLevel) {
         const action: AdvanceGodAction = {
           type: 'advance',
-          spend: Resource.createDie(color),
+          godColor: color,
+          spend: Resource.none,
         };
         actions.push(action);
       }

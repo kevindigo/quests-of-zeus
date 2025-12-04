@@ -124,12 +124,11 @@ export class Controller {
         const isAdvancingGodPhase = phaseName === PhaseAdvancingGod.phaseName;
 
         const selectedResource = this.getUiState().getSelectedResource();
-        const resource = isAdvancingGodPhase
-          ? Resource.createDie(clickedColor)
-          : selectedResource;
+        const resource = isAdvancingGodPhase ? Resource.none : selectedResource;
 
         const action: AdvanceGodAction = {
           type: 'advance',
+          godColor: clickedColor,
           spend: resource,
         };
 

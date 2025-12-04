@@ -1,7 +1,6 @@
 import { type Action, Actions, type AdvanceGodAction } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
-import { PhaseAdvancingGod } from './phases.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -24,6 +23,7 @@ export class GameEngineAdvance {
         if (level < maxLevel) {
           const action: AdvanceGodAction = {
             type: 'advance',
+            godColor: effectiveColor,
             spend: resource,
           };
           actions.push(action);
@@ -38,30 +38,29 @@ export class GameEngineAdvance {
     action: AdvanceGodAction,
     gameState: GameState,
   ): ResultWithMessage {
-    const found = Actions.find(
-      GameEngine.getAvailableActions(gameState),
-      action,
-    );
+    const availableActions = GameEngine.getAvailableActions(gameState);
+    const found = Actions.find(availableActions, action);
     if (!found) {
+      const advanceActions = availableActions.filter(
+        (action) => {
+          action.type === 'advance';
+        },
+      );
       return new Failure(
-        'Advance god not available: ' + JSON.stringify(action),
+        `Advance god ${JSON.stringify(action)} not available in ${
+          JSON.stringify(advanceActions)
+        }`,
       );
     }
-    const effectiveColor = action.spend.getEffectiveColor();
-    if (!effectiveColor) {
-      return new Failure('Impossible: No resource selected');
-    }
+    const effectiveColor = action.godColor;
     const player = gameState.getCurrentPlayer();
     player.getGod(effectiveColor).level += 1;
 
-    // FixMe: After advance god has none, this if can go away
-    if (gameState.getPhaseName() !== PhaseAdvancingGod.phaseName) {
-      const spent = GameEngine.spendResource(gameState, action.spend);
-      if (!spent.success) {
-        return new Failure(
-          'Impossible: Unable to spend for action ' + JSON.stringify(action),
-        );
-      }
+    const spent = GameEngine.spendResource(gameState, action.spend);
+    if (!spent.success) {
+      return new Failure(
+        'Impossible: Unable to spend for action ' + JSON.stringify(action),
+      );
     }
 
     gameState.endPhase();
