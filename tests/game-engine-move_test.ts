@@ -1,6 +1,6 @@
 import { assertEquals, assertFalse } from '@std/assert';
 import { assert } from '@std/assert/assert';
-import { Actions, type ShipMoveAction } from '../src/actions.ts';
+import { Actions, type MoveShipAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineMove } from '../src/GameEngineMove.ts';
 import { GameState } from '../src/GameState.ts';
@@ -33,7 +33,7 @@ Deno.test('GameEngineMove - cannot move to current position', () => {
   const player = gameState.getCurrentPlayer();
   player.oracleDice = [centerColor];
   player.favor = 0;
-  const simpleMove: ShipMoveAction = {
+  const simpleMove: MoveShipAction = {
     type: 'move',
     destination: HexGrid.CENTER,
     spend: Resource.createDie(centerColor),
@@ -54,7 +54,7 @@ Deno.test('GameEngineMove - available no resource available', () => {
   const player = gameState.getCurrentPlayer();
   player.oracleDice = [];
   player.favor = 0;
-  const simpleMove: ShipMoveAction = {
+  const simpleMove: MoveShipAction = {
     type: 'move',
     destination: destination,
     spend: Resource.createDie(colorAdjacent),
@@ -75,7 +75,7 @@ Deno.test('GameEngineMove - available cannot move beyond range', () => {
   player.favor = 0;
   player.oracleDice = [colorDistant];
   player.oracleCards = [colorDistant];
-  const simpleMove: ShipMoveAction = {
+  const simpleMove: MoveShipAction = {
     type: 'move',
     destination: { q: 0, r },
     spend: Resource.createDie(colorDistant),
@@ -95,7 +95,7 @@ Deno.test('GameEngineMove - available simple move die no favor', () => {
   const player = gameState.getCurrentPlayer();
   player.oracleDice = [colorAdjacent];
   player.favor = 0;
-  const simpleMove: ShipMoveAction = {
+  const simpleMove: MoveShipAction = {
     type: 'move',
     destination: { q: 0, r },
     spend: Resource.createDie(colorAdjacent),
@@ -116,7 +116,7 @@ Deno.test('GameEngineMove - available simple move card no favor', () => {
   player.oracleDice = [];
   player.oracleCards = [colorAdjacent];
   player.favor = 0;
-  const simpleMove: ShipMoveAction = {
+  const simpleMove: MoveShipAction = {
     type: 'move',
     destination: { q: 0, r },
     spend: Resource.createCard(colorAdjacent),
@@ -135,7 +135,7 @@ Deno.test('GameEngineMove - available move die with favor for range', () => {
   assert(colorDistant);
   const player = gameState.getCurrentPlayer();
   player.oracleDice = [colorDistant];
-  const simpleMove: ShipMoveAction = {
+  const simpleMove: MoveShipAction = {
     type: 'move',
     destination: { q: 0, r },
     spend: Resource.createDie(colorDistant),
@@ -155,7 +155,7 @@ Deno.test('GameEngineMove - available move card with favor for range', () => {
   const player = gameState.getCurrentPlayer();
   player.oracleDice = [];
   player.oracleCards = [colorDistant];
-  const simpleMove: ShipMoveAction = {
+  const simpleMove: MoveShipAction = {
     type: 'move',
     destination: { q: 0, r },
     spend: Resource.createCard(colorDistant),
@@ -176,7 +176,7 @@ Deno.test('GameEngineMove - available move die with favor for recoloring', () =>
   assert(baseColor);
   const player = gameState.getCurrentPlayer();
   player.oracleDice = [baseColor];
-  const simpleMove: ShipMoveAction = {
+  const simpleMove: MoveShipAction = {
     type: 'move',
     destination: { q: 0, r },
     spend: Resource.createRecoloredDie(baseColor, 2),
@@ -198,7 +198,7 @@ Deno.test('GameEngineMove - available move card with favor for recoloring', () =
   const player = gameState.getCurrentPlayer();
   player.oracleDice = [];
   player.oracleCards = [baseColor];
-  const simpleMove: ShipMoveAction = {
+  const simpleMove: MoveShipAction = {
     type: 'move',
     destination: { q: 0, r },
     spend: Resource.createRecoloredCard(baseColor, 2),
@@ -219,13 +219,13 @@ Deno.test('GameEngineMove - available should offer die and card for same move', 
   player.oracleDice = [colorAdjacent];
   player.oracleCards = [colorAdjacent];
   player.favor = 0;
-  const dieMove: ShipMoveAction = {
+  const dieMove: MoveShipAction = {
     type: 'move',
     destination: { q: 0, r },
     spend: Resource.createDie(colorAdjacent),
     favorToExtendRange: 0,
   };
-  const cardMove: ShipMoveAction = {
+  const cardMove: MoveShipAction = {
     type: 'move',
     destination: { q: 0, r },
     spend: Resource.createCard(colorAdjacent),
@@ -246,7 +246,7 @@ Deno.test('GameEngineMove - do action not available', () => {
   const centerCell = gameState.getMap().getCell(HexGrid.CENTER);
   assert(centerCell && centerCell.color !== 'none');
   player.oracleDice = [centerCell.color];
-  const moveAlreadyThere: ShipMoveAction = {
+  const moveAlreadyThere: MoveShipAction = {
     type: 'move',
     destination: HexGrid.CENTER,
     spend: Resource.createDie(centerCell.color),
@@ -268,7 +268,7 @@ Deno.test('GameEngineMove - do action card move favor worked', () => {
   const player = gameState.getCurrentPlayer();
   player.oracleDice = [];
   player.oracleCards = [baseColor];
-  const moveRecoloredCardPlusRange: ShipMoveAction = {
+  const moveRecoloredCardPlusRange: MoveShipAction = {
     type: 'move',
     destination: destination,
     spend: Resource.createRecoloredCard(baseColor, 1),

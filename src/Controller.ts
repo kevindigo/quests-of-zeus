@@ -4,17 +4,17 @@
 import type {
   Action,
   ColorActivateGodAction,
-  DropCubeAction,
-  DropStatueAction,
-  ExploreShrineAction,
-  FightMonsterAction,
   FreeEndTurnAction,
-  LoadCubeAction,
-  LoadStatueAction,
+  HexDropCubeAction,
+  HexDropStatueAction,
+  HexExploreShrineAction,
+  HexFightMonsterAction,
+  HexLoadCubeAction,
+  HexLoadStatueAction,
+  MoveShipAction,
   ResourceAdvanceGodAction,
   ResourceGainFavorAction,
   ResourceGainOracleCardAction,
-  ShipMoveAction,
 } from './actions.ts';
 import { ControllerHighlighter } from './ControllerHighlighter.ts';
 import { GameEngine } from './GameEngine.ts';
@@ -309,7 +309,7 @@ export class Controller {
     }
 
     if (phase.getName() === PhaseTeleporting.phaseName) {
-      const action: ShipMoveAction = {
+      const action: MoveShipAction = {
         type: 'move',
         destination: coordinates,
         spend: Resource.none,
@@ -319,7 +319,7 @@ export class Controller {
     }
 
     if (phase.getName() === PhaseExploring.phaseName) {
-      const action: ExploreShrineAction = {
+      const action: HexExploreShrineAction = {
         type: 'hex',
         subType: 'exploreShrine',
         coordinates: coordinates,
@@ -339,7 +339,7 @@ export class Controller {
         case 'zeus':
           return null;
         case 'sea': {
-          const action: ShipMoveAction = {
+          const action: MoveShipAction = {
             type: 'move',
             destination: coordinates,
             spend: resource,
@@ -350,7 +350,7 @@ export class Controller {
         case 'shallow':
           return null;
         case 'monsters': {
-          const action: FightMonsterAction = {
+          const action: HexFightMonsterAction = {
             type: 'hex',
             subType: 'fightMonster',
             coordinates,
@@ -359,7 +359,7 @@ export class Controller {
           return action;
         }
         case 'offerings': {
-          const action: LoadCubeAction = {
+          const action: HexLoadCubeAction = {
             type: 'hex',
             subType: 'loadCube',
             coordinates,
@@ -368,7 +368,7 @@ export class Controller {
           return action;
         }
         case 'temple': {
-          const action: DropCubeAction = {
+          const action: HexDropCubeAction = {
             type: 'hex',
             subType: 'dropCube',
             coordinates,
@@ -377,7 +377,7 @@ export class Controller {
           return action;
         }
         case 'shrine': {
-          const action: ExploreShrineAction = {
+          const action: HexExploreShrineAction = {
             type: 'hex',
             subType: 'exploreShrine',
             coordinates,
@@ -386,7 +386,7 @@ export class Controller {
           return action;
         }
         case 'city': {
-          const action: LoadStatueAction = {
+          const action: HexLoadStatueAction = {
             type: 'hex',
             subType: 'loadStatue',
             coordinates,
@@ -395,7 +395,7 @@ export class Controller {
           return action;
         }
         case 'statue': {
-          const action: DropStatueAction = {
+          const action: HexDropStatueAction = {
             type: 'hex',
             subType: 'dropStatue',
             coordinates,

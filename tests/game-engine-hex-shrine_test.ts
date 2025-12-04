@@ -5,7 +5,7 @@ import {
   assertStringIncludes,
 } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
-import type { ExploreShrineAction } from '../src/actions.ts';
+import type { HexExploreShrineAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
@@ -65,14 +65,14 @@ function getSelectedShrineHex(): ShrineHex {
   return shrineHex;
 }
 
-function createExploreAction(): ExploreShrineAction {
+function createExploreAction(): HexExploreShrineAction {
   const shrineHex = getSelectedShrineHex();
   const shrineCell = gameState.getMap().getCell(shrineHex.getCoordinates());
   const shrineColor = shrineCell?.color;
   assert(shrineColor && shrineColor != 'none');
   uiState.setSelectedResource(Resource.createCard(shrineColor));
   uiState.setSelectedCoordinates(shrineCell.getCoordinates());
-  const action: ExploreShrineAction = {
+  const action: HexExploreShrineAction = {
     type: 'hex',
     subType: 'exploreShrine',
     coordinates: shrineHex.getCoordinates(),
@@ -244,7 +244,7 @@ Deno.test('GameEngineHex - exploring phase doShrineExplore', () => {
   const shrineCoordinates = ShrineHex.getCoordinates();
   testGameState.queuePhase(PhaseExploring.phaseName);
   testGameState.endPhase();
-  const action: ExploreShrineAction = {
+  const action: HexExploreShrineAction = {
     type: 'hex',
     subType: 'exploreShrine',
     coordinates: shrineCoordinates,

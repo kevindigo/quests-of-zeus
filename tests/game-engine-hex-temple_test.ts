@@ -1,6 +1,6 @@
 import { assert } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
-import type { DropCubeAction } from '../src/actions.ts';
+import type { HexDropCubeAction } from '../src/actions.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
@@ -65,11 +65,11 @@ function loadCubeForWildQuest(color: CoreColor): Quest {
   return wildQuest;
 }
 
-function createDropCubeAction(color: CoreColor): DropCubeAction {
+function createDropCubeAction(color: CoreColor): HexDropCubeAction {
   const templeCell = getSelectedTempleCell();
   uiState.setSelectedResource(Resource.createCard(color));
   uiState.setSelectedCoordinates(templeCell.getCoordinates());
-  const action: DropCubeAction = {
+  const action: HexDropCubeAction = {
     type: 'hex',
     subType: 'dropCube',
     coordinates: templeCell.getCoordinates(),

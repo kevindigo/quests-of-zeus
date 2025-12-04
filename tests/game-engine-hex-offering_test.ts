@@ -1,6 +1,6 @@
 import { assert, assertGreaterOrEqual } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
-import type { LoadCubeAction } from '../src/actions.ts';
+import type { HexLoadCubeAction } from '../src/actions.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
@@ -65,13 +65,13 @@ function getSelectedOfferingHex(): CubeHex {
   return offeringHex;
 }
 
-function createLoadCubeAction(color: CoreColor): LoadCubeAction {
+function createLoadCubeAction(color: CoreColor): HexLoadCubeAction {
   const offeringHex = getSelectedOfferingHex();
   const offeringCell = gameState.getMap().getCell(offeringHex.getCoordinates());
   assert(offeringCell);
   uiState.setSelectedResource(Resource.createCard(color));
   uiState.setSelectedCoordinates(offeringCell.getCoordinates());
-  const action: LoadCubeAction = {
+  const action: HexLoadCubeAction = {
     type: 'hex',
     subType: 'loadCube',
     coordinates: offeringHex.getCoordinates(),

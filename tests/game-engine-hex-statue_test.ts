@@ -2,7 +2,7 @@ import { assertGreaterOrEqual, assertLess } from '@std/assert';
 import { assert } from '@std/assert/assert';
 import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
-import type { DropStatueAction } from '../src/actions.ts';
+import type { HexDropStatueAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import type { HexCoordinates } from '../src/hexmap/HexGrid.ts';
@@ -43,7 +43,7 @@ function setup(color: CoreColor): StatueHex {
 function createDropStatueAction(
   coordinates: HexCoordinates,
   spend: Resource,
-): DropStatueAction {
+): HexDropStatueAction {
   return { type: 'hex', subType: 'dropStatue', coordinates, spend };
 }
 
@@ -116,7 +116,7 @@ Deno.test('GameEngineHex statue available - loaded yes, base yes, resource yes',
 
 Deno.test('GameEngineHex statue doAction - not available', () => {
   const statueHex = setup('red');
-  const action: DropStatueAction = {
+  const action: HexDropStatueAction = {
     type: 'hex',
     subType: 'dropStatue',
     coordinates: statueHex.getCoordinates(),
@@ -137,7 +137,7 @@ Deno.test('GameEngineHex statue doAction - success', () => {
   });
   assert(aWildQuest);
   aWildQuest.color = 'red';
-  const action: DropStatueAction = {
+  const action: HexDropStatueAction = {
     type: 'hex',
     subType: 'dropStatue',
     coordinates: statueHex.getCoordinates(),
@@ -181,7 +181,7 @@ Deno.test('GameEngineHex statue doAction - success 2nd statue on hex', () => {
   });
   assert(aWildQuest);
   aWildQuest.color = 'red';
-  const action: DropStatueAction = {
+  const action: HexDropStatueAction = {
     type: 'hex',
     subType: 'dropStatue',
     coordinates: statueHex.getCoordinates(),

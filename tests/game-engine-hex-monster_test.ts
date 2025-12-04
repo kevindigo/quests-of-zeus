@@ -2,7 +2,7 @@ import { assert } from '@std/assert/assert';
 import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
 import { assertLess } from '@std/assert/less';
-import { Actions, type FightMonsterAction } from '../src/actions.ts';
+import { Actions, type HexFightMonsterAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import type { HexCoordinates } from '../src/hexmap/HexGrid.ts';
@@ -53,7 +53,7 @@ function setShipNextToMonster(color: CoreColor) {
 function createFightMonsterAction(
   coordinates: HexCoordinates,
   spend: Resource,
-): FightMonsterAction {
+): HexFightMonsterAction {
   return { type: 'hex', subType: 'fightMonster', coordinates, spend };
 }
 

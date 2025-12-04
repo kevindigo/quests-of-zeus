@@ -1,4 +1,4 @@
-import { type Action, Actions, type ShipMoveAction } from './actions.ts';
+import { type Action, Actions, type MoveShipAction } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
@@ -14,7 +14,7 @@ import type { PossibleShipMove } from './types.ts';
 
 export class GameEngineMove {
   public static getMoveActions(gameState: GameState): Action[] {
-    const possibleActionsWithAvailableResources: ShipMoveAction[] = [];
+    const possibleActionsWithAvailableResources: MoveShipAction[] = [];
 
     const allTheoreticallyPossibleMoves = this
       .getAllShipMovesIgnoringAvailableResources(
@@ -40,7 +40,7 @@ export class GameEngineMove {
   }
 
   public static doAction(
-    action: ShipMoveAction,
+    action: MoveShipAction,
     gameState: GameState,
   ): ResultWithMessage {
     const availableActions = GameEngine.getAvailableActions(gameState);
@@ -89,7 +89,7 @@ export class GameEngineMove {
     move: PossibleShipMove,
     availableFavor: number,
     availableResources: Resource[],
-  ): ShipMoveAction[] {
+  ): MoveShipAction[] {
     const suitableResources = availableResources.filter((resource) => {
       return (
         move.effectiveColor === resource.getEffectiveColor() &&
@@ -113,8 +113,8 @@ export class GameEngineMove {
     destination: HexCoordinates,
     spend: Resource,
     favorToExtendRange: number,
-  ): ShipMoveAction {
-    const action: ShipMoveAction = {
+  ): MoveShipAction {
+    const action: MoveShipAction = {
       type: 'move',
       destination,
       spend,

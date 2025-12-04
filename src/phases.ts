@@ -1,9 +1,9 @@
 import type {
   Action,
-  ExploreShrineAction,
   FreeEndTurnAction,
+  HexExploreShrineAction,
+  MoveShipAction,
   ResourceAdvanceGodAction,
-  ShipMoveAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import { GameEngineColor } from './GameEngineColor.ts';
@@ -107,7 +107,7 @@ export class PhaseTeleporting implements Phase {
 
     const teleportActions = gameState.getMap().getCellsByTerrain('sea').map(
       (cell) => {
-        const action: ShipMoveAction = {
+        const action: MoveShipAction = {
           type: 'move',
           destination: cell.getCoordinates(),
           spend: Resource.none,
@@ -144,7 +144,7 @@ export class PhaseExploring implements Phase {
 
   private getAvailableExploreActions(
     gameState: GameState,
-  ): ExploreShrineAction[] {
+  ): HexExploreShrineAction[] {
     const maxLevel = GameEngine.getMaxGodLevel(gameState);
     const player = gameState.getCurrentPlayer();
     const greenGodLevel = player.getGodLevel('green');
@@ -158,8 +158,8 @@ export class PhaseExploring implements Phase {
     const availableShrineHexes = shrineHexes.filter((hex) => {
       return hex.status === 'hidden';
     });
-    return availableShrineHexes.map((hex): ExploreShrineAction => {
-      const action: ExploreShrineAction = {
+    return availableShrineHexes.map((hex): HexExploreShrineAction => {
+      const action: HexExploreShrineAction = {
         type: 'hex',
         subType: 'exploreShrine',
         coordinates: hex.getCoordinates(),

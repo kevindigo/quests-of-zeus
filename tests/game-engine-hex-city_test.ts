@@ -4,7 +4,7 @@ import {
   assertEquals,
   assertFalse,
 } from '@std/assert';
-import { Actions, type LoadStatueAction } from '../src/actions.ts';
+import { Actions, type HexLoadStatueAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineHex } from '../src/GameEngineHex.ts';
 import { GameState } from '../src/GameState.ts';
@@ -63,7 +63,7 @@ function getSelectedCityHex(): CityHex {
   return cityHex;
 }
 
-function createLoadStatueAction(): LoadStatueAction {
+function createLoadStatueAction(): HexLoadStatueAction {
   const cityHex = getSelectedCityHex();
   const cityCell = gameState.getMap().getCell(cityHex.getCoordinates());
   assert(cityCell);
@@ -71,7 +71,7 @@ function createLoadStatueAction(): LoadStatueAction {
   assert(color !== 'none');
   uiState.setSelectedResource(Resource.createCard(color));
   uiState.setSelectedCoordinates(cityCell.getCoordinates());
-  const action: LoadStatueAction = {
+  const action: HexLoadStatueAction = {
     type: 'hex',
     subType: 'loadStatue',
     coordinates: cityHex.getCoordinates(),

@@ -72,32 +72,32 @@ export interface HexAction extends ActionBase {
     | 'exploreShrine';
 }
 
-export interface LoadCubeAction extends HexAction {
+export interface HexLoadCubeAction extends HexAction {
   subType: 'loadCube';
 }
 
-export interface DropCubeAction extends HexAction {
+export interface HexDropCubeAction extends HexAction {
   subType: 'dropCube';
 }
 
-export interface LoadStatueAction extends HexAction {
+export interface HexLoadStatueAction extends HexAction {
   subType: 'loadStatue';
 }
 
-export interface DropStatueAction extends HexAction {
+export interface HexDropStatueAction extends HexAction {
   subType: 'dropStatue';
 }
 
-export interface FightMonsterAction extends HexAction {
+export interface HexFightMonsterAction extends HexAction {
   subType: 'fightMonster';
 }
 
-export interface ExploreShrineAction extends HexAction {
+export interface HexExploreShrineAction extends HexAction {
   subType: 'exploreShrine';
 }
 
 // ------------------ Ship Move Actions ------------------
-export interface ShipMoveAction extends ActionBase {
+export interface MoveShipAction extends ActionBase {
   type: 'move';
   destination: HexCoordinates;
   spend: Resource;
@@ -112,13 +112,13 @@ export type Action =
   | ResourceGainFavorAction
   | ResourceGainOracleCardAction
   | ResourceAdvanceGodAction
-  | LoadCubeAction
-  | DropCubeAction
-  | LoadStatueAction
-  | DropStatueAction
-  | FightMonsterAction
-  | ExploreShrineAction
-  | ShipMoveAction;
+  | HexLoadCubeAction
+  | HexDropCubeAction
+  | HexLoadStatueAction
+  | HexDropStatueAction
+  | HexFightMonsterAction
+  | HexExploreShrineAction
+  | MoveShipAction;
 // speculation
 // | FreeGainDieFromFavorAction // equipment
 // | FreeSuperturnAction // yellow god
@@ -168,7 +168,7 @@ export class Actions {
       case 'hex':
         return this.areEqualHex(candidate, reference as HexAction);
       case 'move':
-        return this.areEqualMove(candidate, reference as ShipMoveAction);
+        return this.areEqualMove(candidate, reference as MoveShipAction);
     }
 
     throw new Error(
@@ -221,8 +221,8 @@ export class Actions {
   }
 
   public static areEqualMove(
-    candidate: ShipMoveAction,
-    reference: ShipMoveAction,
+    candidate: MoveShipAction,
+    reference: MoveShipAction,
   ): boolean {
     return candidate.spend.equals(reference.spend) &&
       HexGrid.isSameLocation(candidate.destination, reference.destination);

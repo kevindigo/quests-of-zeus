@@ -1,13 +1,13 @@
 import {
   type Action,
   Actions,
-  type DropCubeAction,
-  type DropStatueAction,
-  type ExploreShrineAction,
-  type FightMonsterAction,
   type HexAction,
-  type LoadCubeAction,
-  type LoadStatueAction,
+  type HexDropCubeAction,
+  type HexDropStatueAction,
+  type HexExploreShrineAction,
+  type HexFightMonsterAction,
+  type HexLoadCubeAction,
+  type HexLoadStatueAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
@@ -114,7 +114,7 @@ export class GameEngineHex {
 
     const coordinates = shrineCell.getCoordinates();
     if (GameEngineHex.canExploreShrine(gameState, coordinates)) {
-      const action: ExploreShrineAction = {
+      const action: HexExploreShrineAction = {
         type: 'hex',
         subType: 'exploreShrine',
         spend: resource,
@@ -148,7 +148,7 @@ export class GameEngineHex {
     gameState: GameState,
     offeringCell: HexCell,
     resource: Resource,
-  ): LoadCubeAction[] {
+  ): HexLoadCubeAction[] {
     const effectiveColor = resource.getEffectiveColor();
     if (!effectiveColor) {
       return [];
@@ -171,7 +171,7 @@ export class GameEngineHex {
     }
 
     if (offeringHex.cubeColors.indexOf(effectiveColor) >= 0) {
-      const action: LoadCubeAction = {
+      const action: HexLoadCubeAction = {
         type: 'hex',
         subType: 'loadCube',
         coordinates: offeringCell.getCoordinates(),
@@ -227,7 +227,7 @@ export class GameEngineHex {
     gameState: GameState,
     templeCell: HexCell,
     resource: Resource,
-  ): DropCubeAction[] {
+  ): HexDropCubeAction[] {
     const selectedColor = resource.getEffectiveColor();
     const templeColor = templeCell.color;
     if (
@@ -244,7 +244,7 @@ export class GameEngineHex {
       return [];
     }
 
-    const action: DropCubeAction = {
+    const action: HexDropCubeAction = {
       type: 'hex',
       subType: 'dropCube',
       coordinates: templeCell.getCoordinates(),
@@ -257,7 +257,7 @@ export class GameEngineHex {
     gameState: GameState,
     cityCell: HexCell,
     resource: Resource,
-  ): LoadStatueAction[] {
+  ): HexLoadStatueAction[] {
     const effectiveColor = resource.getEffectiveColor();
     const cityColor = cityCell.color;
     if (cityColor !== effectiveColor) {
@@ -290,7 +290,7 @@ export class GameEngineHex {
       return [];
     }
 
-    const action: LoadStatueAction = {
+    const action: HexLoadStatueAction = {
       type: 'hex',
       subType: 'loadStatue',
       coordinates: cityCoordinates,
@@ -303,7 +303,7 @@ export class GameEngineHex {
     gameState: GameState,
     statueCell: HexCell,
     resource: Resource,
-  ): DropStatueAction[] {
+  ): HexDropStatueAction[] {
     const effectiveColor = resource.getEffectiveColor();
     if (!effectiveColor) {
       return [];
@@ -324,7 +324,7 @@ export class GameEngineHex {
       return [];
     }
 
-    const action: DropStatueAction = {
+    const action: HexDropStatueAction = {
       type: 'hex',
       subType: 'dropStatue',
       coordinates: statueCoordinates,
@@ -337,7 +337,7 @@ export class GameEngineHex {
     gameState: GameState,
     monsterCell: HexCell,
     resource: Resource,
-  ): FightMonsterAction[] {
+  ): HexFightMonsterAction[] {
     const color = resource.getEffectiveColor();
     if (!color) {
       return [];
@@ -357,7 +357,7 @@ export class GameEngineHex {
       return [];
     }
 
-    const action: FightMonsterAction = {
+    const action: HexFightMonsterAction = {
       type: 'hex',
       subType: 'fightMonster',
       coordinates: monsterCoordinates,

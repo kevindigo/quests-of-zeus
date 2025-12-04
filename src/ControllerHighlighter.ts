@@ -1,4 +1,4 @@
-import type { Action, ShipMoveAction } from './actions.ts';
+import type { Action, MoveShipAction } from './actions.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import type { UiState } from './UiState.ts';
@@ -19,7 +19,7 @@ export class ControllerHighlighter {
     availableActions: Action[],
   ): void {
     const selectedResource = uiState.getSelectedResource();
-    const moveActions: ShipMoveAction[] = availableActions.filter((action) => {
+    const moveActions: MoveShipAction[] = availableActions.filter((action) => {
       return action.type === 'move';
     });
     const legalMoveActions = moveActions.filter((action) => {
