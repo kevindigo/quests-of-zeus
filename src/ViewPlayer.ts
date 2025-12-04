@@ -33,6 +33,9 @@ export class ViewPlayer {
         <div class="quest-types">
           ${this.getQuestContents(player)}
         </div>
+        <div class="wound-panel">
+          ${this.getWoundPanelContents(player)}
+        </div>
       </div>`;
 
     return content;
@@ -225,9 +228,22 @@ export class ViewPlayer {
     return '';
   }
 
+  private getWoundPanelContents(
+    player: Player,
+  ): string {
+    let content = '';
+
+    COLOR_WHEEL.forEach((color) => {
+      const count = player.getWoundCount(color);
+      content += `[${ViewPlayer.getSymbol(color)}${count}]`;
+    });
+
+    return content;
+  }
+
   public static getSymbol(color: string): string {
     const symbols: Record<string, string> = {
-      'none': '🌈',
+      'none': '?',
       'red': '♨️',
       'pink': '🌸',
       'blue': '🌀',

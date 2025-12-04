@@ -50,6 +50,9 @@ export class GameStateInitializer {
 
     state.resetOracleCardDeck();
 
+    state.resetWoundDeck();
+    this.distributeInitialWounds(state);
+
     state.endPhase();
   }
 
@@ -358,5 +361,18 @@ export class GameStateInitializer {
     });
 
     return shrineHexes;
+  }
+
+  private distributeInitialWounds(gameState: GameState): void {
+    for (
+      let playerIndex = 0;
+      playerIndex < gameState.getPlayerCount();
+      ++playerIndex
+    ) {
+      const woundColor = gameState.drawWound() as CoreColor;
+      const player = gameState.getPlayer(playerIndex);
+      player.addWound(woundColor);
+      player.advanceGod(woundColor);
+    }
   }
 }

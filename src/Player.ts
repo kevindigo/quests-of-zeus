@@ -28,6 +28,7 @@ export type PlayerSnapshot = {
   usedOracleCardThisTurn: boolean;
   quests: Quest[];
   gods: God[];
+  wounds: CoreColor[];
 };
 
 export class Player {
@@ -49,6 +50,7 @@ export class Player {
     this.usedOracleCardThisTurn = false;
     this.quests = [];
     this.gods = Player.createGods();
+    this.wounds = [];
   }
 
   public static fromSnapshot(json: PlayerSnapshot): Player {
@@ -68,6 +70,7 @@ export class Player {
     json.gods.forEach((god) => {
       player.gods.set(god.color, god);
     });
+    player.wounds = json.wounds;
     return player;
   }
 
@@ -85,6 +88,7 @@ export class Player {
       usedOracleCardThisTurn: this.usedOracleCardThisTurn,
       quests: this.quests,
       gods: [...this.gods.values()],
+      wounds: [...this.wounds],
     };
   }
 
@@ -234,6 +238,20 @@ export class Player {
     return map;
   }
 
+  public addWound(color: CoreColor): void {
+    this.wounds.push(color);
+  }
+
+  public getTotalWoundCount(): number {
+    return this.wounds.length;
+  }
+
+  public getWoundCount(color: CoreColor): number {
+    return this.wounds.filter((wound) => {
+      return wound === color;
+    }).length;
+  }
+
   public readonly id: number;
   public readonly name: string;
   public readonly color: PlayerColorName;
@@ -246,4 +264,5 @@ export class Player {
   public usedOracleCardThisTurn: boolean;
   private quests: Quest[];
   private gods: Map<CoreColor, God>;
+  private wounds: CoreColor[];
 }

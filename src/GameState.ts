@@ -32,6 +32,7 @@ export type GameStateSnapshot = {
   statueHexes: StatueHex[];
   shrineHexes: ShrineHex[];
   oracleCardDeck: CoreColor[];
+  woundDeck: CoreColor[];
 };
 
 export class GameState {
@@ -49,6 +50,8 @@ export class GameState {
     this.shrineHexes = [];
     this.oracleCardDeck = [];
     this.resetOracleCardDeck();
+    this.woundDeck = [];
+    this.resetWoundDeck();
   }
 
   public static fromSnapshot(snapshot: unknown): GameState {
@@ -66,6 +69,7 @@ export class GameState {
     state.statueHexes = json.statueHexes;
     state.shrineHexes = json.shrineHexes;
     state.oracleCardDeck = json.oracleCardDeck;
+    state.woundDeck = json.woundDeck;
     return state;
   }
 
@@ -85,6 +89,7 @@ export class GameState {
       statueHexes: this.statueHexes,
       shrineHexes: this.shrineHexes,
       oracleCardDeck: this.oracleCardDeck,
+      woundDeck: this.woundDeck,
     };
   }
 
@@ -258,6 +263,23 @@ export class GameState {
     UtilityService.shuffleArray(this.oracleCardDeck);
   }
 
+  public drawWound(): CoreColor | null {
+    return this.woundDeck.shift() ?? null;
+  }
+
+  public resetWoundDeck(): void {
+    this.woundDeck = [];
+
+    const cardColors = [...COLOR_WHEEL];
+    for (const color of cardColors) {
+      for (let i = 0; i < 7; i++) {
+        this.woundDeck.push(color);
+      }
+    }
+
+    UtilityService.shuffleArray(this.woundDeck);
+  }
+
   private map: HexMap;
   private players: Player[];
   private currentPlayerIndex: number;
@@ -270,4 +292,5 @@ export class GameState {
   private statueHexes: StatueHex[];
   private shrineHexes: ShrineHex[];
   private oracleCardDeck: CoreColor[];
+  private woundDeck: CoreColor[];
 }
