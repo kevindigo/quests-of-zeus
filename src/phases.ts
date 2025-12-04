@@ -3,6 +3,7 @@ import type {
   AdvanceGodAction,
   FreeEndTurnAction,
   HexExploreShrineAction,
+  HexPeekShrineAction,
   MoveShipAction,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
@@ -29,6 +30,8 @@ export function createPhase(phaseName: string): Phase {
       return new PhaseExploring();
     case PhaseMain.phaseName:
       return new PhaseMain();
+    case PhasePeeking.phaseName:
+      return new PhasePeeking();
     case PhaseTeleporting.phaseName:
       return new PhaseTeleporting();
     case PhaseWelcome.phaseName:
@@ -174,8 +177,35 @@ export class PhaseExploring implements Phase {
   public static readonly phaseName = 'exploring';
 }
 
-// export class PhasePeeking implements Phase {
-// }
+export class PhasePeeking implements Phase {
+  getName(): string {
+    return PhasePeeking.phaseName;
+  }
+  getAvailableActions(gameState: GameState): Action[] {
+    const actions = [];
+
+    const hiddenShrineHexes = gameState.getShrineHexes().filter((hex) => {
+      return hex.status === 'hidden';
+    });
+    const peekActions = hiddenShrineHexes.map((hex) => {
+      const action: HexPeekShrineAction = {
+        type: 'hex',
+        subType: 'peekShrine',
+        coordinates: hex.getCoordinates(),
+        spend: Resource.none,
+      };
+      return action;
+    });
+    actions.push(...peekActions);
+
+    const endTurn: FreeEndTurnAction = { type: 'free', subType: 'endTurn' };
+    actions.push(endTurn);
+
+    return actions;
+  }
+
+  public static readonly phaseName = 'peeking';
+}
 
 // export class PhaseGrabbingStatue implements Phase {
 //   private allowedColors: CoreColor[];

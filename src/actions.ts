@@ -43,7 +43,8 @@ export interface ResourceAction extends ActionBase {
   spend: Resource;
   subType:
     | 'gainFavor'
-    | 'gainOracleCard';
+    | 'gainOracleCard'
+    | 'gainTwoPeeks';
 }
 
 export interface ResourceGainFavorAction extends ResourceAction {
@@ -52,6 +53,10 @@ export interface ResourceGainFavorAction extends ResourceAction {
 
 export interface ResourceGainOracleCardAction extends ResourceAction {
   subType: 'gainOracleCard';
+}
+
+export interface ResourceGainTwoPeeks extends ResourceAction {
+  subType: 'gainTwoPeeks';
 }
 
 // ------------------ God (advance) Actions ------------------
@@ -72,7 +77,8 @@ export interface HexAction extends ActionBase {
     | 'loadStatue'
     | 'dropStatue'
     | 'fightMonster'
-    | 'exploreShrine';
+    | 'exploreShrine'
+    | 'peekShrine';
 }
 
 export interface HexLoadCubeAction extends HexAction {
@@ -99,6 +105,10 @@ export interface HexExploreShrineAction extends HexAction {
   subType: 'exploreShrine';
 }
 
+export interface HexPeekShrineAction extends HexAction {
+  subType: 'peekShrine';
+}
+
 // ------------------ Ship Move Actions ------------------
 export interface MoveShipAction extends ActionBase {
   type: 'move';
@@ -114,6 +124,7 @@ export type Action =
   | ColorActivateGodAction
   | ResourceGainFavorAction
   | ResourceGainOracleCardAction
+  | ResourceGainTwoPeeks
   | AdvanceGodAction
   | HexLoadCubeAction
   | HexDropCubeAction
@@ -121,13 +132,13 @@ export type Action =
   | HexDropStatueAction
   | HexFightMonsterAction
   | HexExploreShrineAction
+  | HexPeekShrineAction
   | MoveShipAction;
 // speculation
 // | FreeGainDieFromFavorAction // equipment
 // | FreeSuperturnAction // yellow god
 // | FreeHealAllAction // red god
 // | CouponSkipTurnAction //automatic
-// | HexPeekAction // die action (2x)
 // | GainCompanionAction // reward for statue
 // | GainEquipmentAction // reward for monster
 // | ResourceGainPeeksAction

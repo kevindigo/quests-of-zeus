@@ -15,7 +15,14 @@ export class ViewPlayerTurn {
   public getPlayerTurnPanelContents(availableActions: Action[]): string {
     return `
         <div class="player-turn-info">
-          <h3>Player turn:</h3>
+          <h3>
+            Phase: ${this.gameState.getPhaseName()}
+            <button id="endTurn" 
+              class="action-button secondary" 
+              ${this.getEndTurnStatus(availableActions)}>
+              End Turn
+            </button>
+          </h3>
           <div class="player-turn-actions">
             ${this.getPlayerTurnButtonContents(availableActions)}
             ${this.getDiceAndOracleCardsContent()}
@@ -37,10 +44,10 @@ export class ViewPlayerTurn {
           ${this.getCardButtonStatus(availableActions)}>
             +Oracle Card
         </button>
-        <button id="endTurn" 
-          class="action-button secondary" 
-          ${this.getEndTurnStatus(availableActions)}>
-            End Turn
+        <button id="peek"              
+          class="action-button" 
+          ${this.getPeekButtonStatus(availableActions)}>
+            Peek 2
         </button>
       </div>`;
   }
@@ -62,6 +69,16 @@ export class ViewPlayerTurn {
         action.spend.equals(selectedResource);
     });
     return canGainCard ? '' : 'disabled';
+  }
+
+  private getPeekButtonStatus(availableActions: Action[]): string {
+    const selectedResource = this.uiState.getSelectedResource();
+    const canPeek = availableActions.find((action) => {
+      return action.type === 'resource' &&
+        action.subType === 'gainTwoPeeks' &&
+        action.spend.equals(selectedResource);
+    });
+    return canPeek ? '' : 'disabled';
   }
 
   private getEndTurnStatus(availableActions: Action[]): string {

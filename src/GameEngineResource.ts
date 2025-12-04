@@ -4,20 +4,25 @@ import {
   type ResourceAction,
   type ResourceGainFavorAction,
   type ResourceGainOracleCardAction,
+  type ResourceGainTwoPeeks,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
+import { PhasePeeking } from './phases.ts';
 import {
   Failure,
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
+import type { ShrineHex } from './types.ts';
 
 export class GameEngineResource {
   public static getResourceActions(gameState: GameState): Action[] {
     if (gameState.getPhase().getName() !== 'main') {
       return [];
     }
+
+    const hiddenShrineHexes = this.getHiddenShrineHexes(gameState);
 
     const player = gameState.getCurrentPlayer();
     const availableResources = player.getAvailableResourcesWithoutRecoloring();
@@ -39,6 +44,15 @@ export class GameEngineResource {
         actionsForThisResource.push(gainCardAction);
       }
 
+      if (hiddenShrineHexes.length > 0) {
+        const gainTwoPeeksAction: ResourceGainTwoPeeks = {
+          type: 'resource',
+          subType: 'gainTwoPeeks',
+          spend: resource,
+        };
+        actionsForThisResource.push(gainTwoPeeksAction);
+      }
+
       return actionsForThisResource;
     });
 
@@ -57,6 +71,8 @@ export class GameEngineResource {
           gameState,
           action,
         );
+      case 'gainTwoPeeks':
+        return GameEngineResource.spendResourceForPeeks(gameState, action);
     }
   }
 
@@ -116,7 +132,38 @@ export class GameEngineResource {
     );
   }
 
+  public static spendResourceForPeeks(
+    gameState: GameState,
+    action: ResourceAction,
+  ): ResultWithMessage {
+    this.removeColoringFrom(action);
+
+    const availableActions = this.getResourceActions(gameState);
+    const found = Actions.find(availableActions, action);
+    if (!found) {
+      return new Failure('Action not available');
+    }
+
+    const hiddenShrineHexes = this.getHiddenShrineHexes(gameState);
+    const count = Math.min(hiddenShrineHexes.length, 2);
+    for (let i = 0; i < count; ++i) {
+      gameState.queuePhase(PhasePeeking.phaseName);
+    }
+
+    GameEngine.spendResource(gameState, action.spend);
+    gameState.endPhase();
+    return new Success(`Granted ${count} peeks`);
+  }
+
   private static removeColoringFrom(action: ResourceAction): void {
     action.spend = action.spend.withoutRecoloring();
+  }
+
+  private static getHiddenShrineHexes(gameState: GameState): ShrineHex[] {
+    const hiddenShrineHexes = gameState.getShrineHexes().filter((hex) => {
+      return hex.status === 'hidden';
+    });
+
+    return hiddenShrineHexes;
   }
 }

@@ -15,7 +15,7 @@ export class ViewPlayer {
   ): string {
     const content = `
       <div class="player-info">
-        <h3>${player.name} (${gameState.getPhaseName()})</h3>
+        <h3>${player.name}</h3>
         <div class="player-stats">
           ${this.getPlayerStatsContents(player)}
         </div>

@@ -12,9 +12,11 @@ import type {
   HexFightMonsterAction,
   HexLoadCubeAction,
   HexLoadStatueAction,
+  HexPeekShrineAction,
   MoveShipAction,
   ResourceGainFavorAction,
   ResourceGainOracleCardAction,
+  ResourceGainTwoPeeks,
 } from './actions.ts';
 import { ControllerHighlighter } from './ControllerHighlighter.ts';
 import { GameEngine } from './GameEngine.ts';
@@ -25,6 +27,7 @@ import {
   PhaseAdvancingGod,
   PhaseExploring,
   PhaseMain,
+  PhasePeeking,
   PhaseTeleporting,
   PhaseWelcome,
 } from './phases.ts';
@@ -245,6 +248,8 @@ export class Controller {
       this.dospendResourceForFavor();
     } else if (target.id === 'drawOracleCard') {
       this.doSpendResourceForCard();
+    } else if (target.id === 'peekShrine') {
+      this.doSpendResourceForTwoPeeks();
     } else if (target.id === 'endTurn') {
       this.doEndTurn();
     } else if (target.classList.contains('die')) {
@@ -320,6 +325,16 @@ export class Controller {
       const action: HexExploreShrineAction = {
         type: 'hex',
         subType: 'exploreShrine',
+        coordinates: coordinates,
+        spend: Resource.none,
+      };
+      return action;
+    }
+
+    if (phase.getName() === PhasePeeking.phaseName) {
+      const action: HexPeekShrineAction = {
+        type: 'hex',
+        subType: 'peekShrine',
         coordinates: coordinates,
         spend: Resource.none,
       };
@@ -459,6 +474,16 @@ export class Controller {
     const action: ResourceGainOracleCardAction = {
       type: 'resource',
       subType: 'gainOracleCard',
+      spend: selectedResource,
+    };
+    this.doAction(action);
+  }
+
+  private doSpendResourceForTwoPeeks(): void {
+    const selectedResource = this.getUiState().getSelectedResource();
+    const action: ResourceGainTwoPeeks = {
+      type: 'resource',
+      subType: 'gainTwoPeeks',
       spend: selectedResource,
     };
     this.doAction(action);

@@ -59,9 +59,10 @@ export class GameEngineHex {
         return this.doDropStatue(action, gameState);
       case 'fightMonster':
         return this.doFightMonster(action, gameState);
-      case 'exploreShrine': {
+      case 'exploreShrine':
         return this.doExploreShrine(action, gameState);
-      }
+      case 'peekShrine':
+        return this.doPeekShrine(action, gameState);
     }
     return new Failure(
       `GameHexAction.doAction(${JSON.stringify(action)}) not yet implemented`,
@@ -696,5 +697,34 @@ export class GameEngineHex {
     }
 
     return new Success(`Fight monster ${effectiveColor} succeeded (no reward)`);
+  }
+
+  private static doPeekShrine(
+    action: HexAction,
+    gameState: GameState,
+  ): ResultWithMessage {
+    const availableActions = GameEngine.getAvailableActions(gameState);
+    if (!Actions.find(availableActions, action)) {
+      return new Failure(`Action not available ${JSON.stringify(action)}`);
+    }
+
+    const selectedCoordinates = action.coordinates;
+    if (!selectedCoordinates) {
+      return new Failure(
+        `No coordinates selected for action ${JSON.stringify(action)}`,
+      );
+    }
+    const shrineHex = gameState.findShrineHexAt(selectedCoordinates);
+    if (!shrineHex) {
+      return new Failure(
+        `Explore shrine not where expected: ${JSON.stringify(action)}`,
+      );
+    }
+
+    gameState.endPhase();
+    return new Success(
+      `Peek revealed ${shrineHex.owner} ${shrineHex.reward}` +
+        ` at ${JSON.stringify(shrineHex.getCoordinates())}`,
+    );
   }
 }
