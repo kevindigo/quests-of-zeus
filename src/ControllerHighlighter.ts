@@ -1,6 +1,7 @@
 import type { Action, MoveShipAction } from './actions.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import { PhaseTeleporting } from './phases.ts';
 import type { UiState } from './UiState.ts';
 
 export class ControllerHighlighter {
@@ -10,7 +11,7 @@ export class ControllerHighlighter {
     availableActions: Action[],
   ): void {
     this.highlightAvailableShipMoves(uiState, availableActions);
-    this.highlightAvailableTeleports(availableActions);
+    this.highlightAvailableTeleports(gameState, availableActions);
     this.highlightAvailableLands(gameState, uiState, availableActions);
   }
 
@@ -34,8 +35,13 @@ export class ControllerHighlighter {
   }
 
   private highlightAvailableTeleports(
+    gameState: GameState,
     availableActions: Action[],
   ): void {
+    if (gameState.getPhaseName() !== PhaseTeleporting.phaseName) {
+      return;
+    }
+
     const teleportActions = availableActions.filter((action) => {
       return action.type === 'move';
     });
