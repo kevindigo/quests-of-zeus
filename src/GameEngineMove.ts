@@ -59,7 +59,7 @@ export class GameEngineMove {
     }
 
     gameState.endPhase();
-    return new Success(`Ship moved per ${action}`);
+    return new Success(`Ship moved per ${JSON.stringify(action)}`);
   }
 
   public static areEqualMoveActions(aa: Action, action: Action): boolean {
