@@ -3,7 +3,6 @@
 
 import type {
   Action,
-  AdvanceGodAction,
   ColorActivateGodAction,
   FreeEndTurnAction,
   HexDropCubeAction,
@@ -24,7 +23,6 @@ import type { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import {
-  PhaseAdvancingGod,
   PhaseExploring,
   PhaseMain,
   PhasePeeking,
@@ -88,20 +86,12 @@ export class Controller {
         if (!square) return;
 
         const clickedColor = square.dataset['color'] as CoreColor;
-
-        const phaseName = this.getGameState().getPhaseName();
-        const isAdvancingGodPhase = phaseName === PhaseAdvancingGod.phaseName;
-
-        const selectedResource = this.getUiState().getSelectedResource();
-        const resource = isAdvancingGodPhase ? Resource.none : selectedResource;
-
-        const action: AdvanceGodAction = {
-          type: 'advance',
-          godColor: clickedColor,
-          spend: resource,
-        };
-
-        this.doAdvanceGod(action);
+        const result = this.gameManager.doAdvanceGod(clickedColor);
+        if (result.success) {
+          this.clearResourceSelection();
+        }
+        this.showMessage('Clicked advance god: ' + result.message);
+        this.renderGameState(this.getGameState());
       });
     }
     {
@@ -489,15 +479,6 @@ export class Controller {
       subType: 'endTurn',
     };
     this.doAction(action);
-  }
-
-  private doAdvanceGod(action: Action): void {
-    const result = GameEngine.doAction(action, this.getGameState());
-    if (result.success) {
-      this.clearResourceSelection();
-    }
-    this.showMessage('Clicked advance god: ' + result.message);
-    this.renderGameState(this.getGameState());
   }
 
   private doActivateGod(color: CoreColor): void {
