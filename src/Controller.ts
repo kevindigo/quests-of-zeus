@@ -7,7 +7,6 @@ import type { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import { Resource } from './Resource.ts';
-import { Success } from './ResultWithMessage.ts';
 import type { CoreColor, TerrainType } from './types.ts';
 import type { UiState } from './UiState.ts';
 import { View } from './View.ts';
@@ -262,32 +261,15 @@ export class Controller {
   }
 
   private setRecolorIntention(favorCost: number): void {
-    const playerFavor = this.getGameState().getCurrentPlayer().favor;
-    if (favorCost > playerFavor) {
-      this.showMessage(
-        `Cannot spend(${favorCost}) favor when player only has (${playerFavor})`,
-      );
-      return;
-    }
-
     const uiState = this.getUiState();
     const selectedResource = uiState.getSelectedResource();
     const baseColor = selectedResource.getBaseColor();
-    const resource = selectedResource.isDie()
-      ? Resource.createRecoloredDie(baseColor, favorCost)
-      : selectedResource.isCard()
-      ? Resource.createRecoloredCard(baseColor, favorCost)
-      : Resource.none;
-    uiState.setSelectedResource(resource);
+    uiState.setSelectedResource(selectedResource.withRecoloring(favorCost));
 
-    const result = new Success(
-      `Will recolor ${baseColor} to ${resource.getEffectiveColor()}`,
-    );
-
-    if (result.success) {
-      this.renderGameState(this.getGameState(), uiState);
-    }
-    this.showMessage(result.message);
+    const message =
+      `Will recolor ${baseColor} to ${uiState.getEffectiveSelectedColor()}`;
+    this.showMessage(message);
+    this.renderGameState(this.getGameState(), uiState);
   }
 
   private clearMessagePanel(): void {
