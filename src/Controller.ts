@@ -1,7 +1,6 @@
 // Game Controller for Quests of Zeus
 // Manages the game UI and user interactions
 
-import type { Action, FreeEndTurnAction } from './actions.ts';
 import { ControllerHighlighter } from './ControllerHighlighter.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameManager } from './GameManager.ts';
@@ -198,7 +197,7 @@ export class Controller {
     } else if (target.id === 'peekShrine') {
       this.gameManager.doSpendResourceForTwoPeeks();
     } else if (target.id === 'endTurn') {
-      this.doEndTurn();
+      this.gameManager.doEndTurn();
     } else if (target.classList.contains('die')) {
       const dieColor = target.getAttribute('data-die-color') as CoreColor;
       if (dieColor) {
@@ -293,24 +292,6 @@ export class Controller {
       this.renderGameState(this.getGameState());
     }
     this.showMessage(result.message);
-  }
-
-  private doEndTurn(): void {
-    const action: FreeEndTurnAction = {
-      type: 'free',
-      subType: 'endTurn',
-    };
-    this.doAction(action);
-  }
-
-  private doAction(action: Action): void {
-    const result = GameEngine.doAction(
-      action,
-      this.getGameState(),
-    );
-    this.clearResourceSelection();
-    this.showMessage(result.message);
-    this.renderGameState(this.getGameState());
   }
 
   private clearMessagePanel(): void {

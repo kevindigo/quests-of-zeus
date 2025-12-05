@@ -5,6 +5,7 @@ import type {
   Action,
   AdvanceGodAction,
   ColorActivateGodAction,
+  FreeEndTurnAction,
   HexDropCubeAction,
   HexDropStatueAction,
   HexExploreShrineAction,
@@ -64,6 +65,14 @@ export class GameManager {
 
   public getUiState(): UiState {
     return this.uiState;
+  }
+
+  public doEndTurn(): void {
+    const action: FreeEndTurnAction = {
+      type: 'free',
+      subType: 'endTurn',
+    };
+    this.doAction(action);
   }
 
   public dospendResourceForFavor(): void {
