@@ -61,10 +61,12 @@
     </div>
 
     <script type="module">
+      import { GameManager } from './dist/GameManager.js';
       import { Controller } from './dist/Controller.js';
 
-      // Initialize the game controller
-      const gameController = new Controller();
+      // Initialize the game
+      const gameManager = new GameManager();
+      const gameController = new Controller(gameManager);
 
       document.addEventListener('DOMContentLoaded', () => {
         console.log('Page loaded, initializing game...');

@@ -37,7 +37,7 @@ async function build() {
     // Build all TypeScript files to dist/
     const result = await esbuild.build({
       entryPoints: [
-        'src/HexMapSvgGenerator.ts',
+        'src/GameManager.ts',
         'src/Controller.ts',
       ],
       bundle: true,

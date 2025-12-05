@@ -20,7 +20,7 @@ import type {
 } from './actions.ts';
 import { ControllerHighlighter } from './ControllerHighlighter.ts';
 import { GameEngine } from './GameEngine.ts';
-import { GameManager } from './GameManager.ts';
+import type { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import {
@@ -38,8 +38,8 @@ import { ViewGame } from './ViewGame.ts';
 
 //NOTE: This class is referenced by build.ts
 export class Controller {
-  constructor() {
-    this.gameManager = new GameManager();
+  constructor(gameManager: GameManager) {
+    this.gameManager = gameManager;
     this.gameState = this.gameManager.getGameState();
     this.uiState = this.gameManager.getUiState();
     this.viewGame = new ViewGame(this.gameState, this.uiState);
