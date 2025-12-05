@@ -92,8 +92,6 @@ export class Controller {
 
     this.addHandlersToPlayerPanel();
 
-    const hexMapContainer = document.getElementById('hexMapSVG');
-    if (!hexMapContainer) return;
     this.addHandlersToSvg();
 
     const highligher = new ControllerHighlighter();
@@ -149,7 +147,9 @@ export class Controller {
   }
 
   private addHandlersToSvg(): void {
-    // Hex map interaction
+    const hexMapContainer = document.getElementById('hexMapSVG');
+    if (!hexMapContainer) return;
+
     const svg = document.querySelector('.hex-map-svg');
     if (!svg) {
       return;
