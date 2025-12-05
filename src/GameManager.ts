@@ -8,7 +8,6 @@ import { GameStateInitializer } from './GameStateInitializer.ts';
 import { PhaseAdvancingGod } from './phases.ts';
 import type { Player } from './Player.ts';
 import { Resource } from './Resource.ts';
-import type { ResultWithMessage } from './ResultWithMessage.ts';
 import type { CoreColor, GameEvent } from './types.ts';
 import { type UiState, UiStateClass } from './UiState.ts';
 
@@ -67,14 +66,16 @@ export class GameManager {
     this.notifyStateChanged();
   }
 
-  public doActivateGod(godColor: CoreColor): ResultWithMessage {
+  public doActivateGod(godColor: CoreColor): void {
     const action: ColorActivateGodAction = {
       type: 'color',
       subType: 'activateGod',
       color: godColor,
     };
 
-    return GameEngine.doAction(action, this.getGameState());
+    const result = GameEngine.doAction(action, this.getGameState());
+    this.showMessage('Clicked activate god: ' + result.message);
+    this.notifyStateChanged();
   }
 
   private showMessage(message: string): void {

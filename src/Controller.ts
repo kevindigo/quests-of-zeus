@@ -110,14 +110,7 @@ export class Controller {
       if (godActionButton) {
         godActionButton.addEventListener('click', () => {
           const color = godActionButton.dataset['color'] as CoreColor;
-          const result = this.gameManager.doActivateGod(color);
-          if (result.success) {
-            this.clearResourceSelection();
-          }
-          this.showMessage(
-            'Clicked activate god ' + color + ': ' + result.message,
-          );
-          this.renderGameState(this.getGameState());
+          this.gameManager.doActivateGod(color);
         });
       }
     }
