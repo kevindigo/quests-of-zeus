@@ -8,9 +8,7 @@ import { ViewPlayerTurn } from './ViewPlayerTurn.ts';
 import { ViewWelcome } from './ViewWelcome.ts';
 
 export class ViewGame {
-  public constructor(gameState: GameState, uiState: UiState) {
-    this.gameState = gameState;
-    this.uiState = uiState;
+  public constructor() {
   }
 
   public clearMessagePanel(): void {
@@ -42,22 +40,26 @@ export class ViewGame {
     viewWelcome.showWelcomeScreen();
   }
 
-  public renderGameState(availableActions: Action[]): void {
-    if (this.gameState.getPhase().getName() === 'welcome') {
+  public renderGameState(
+    gameState: GameState,
+    uiState: UiState,
+    availableActions: Action[],
+  ): void {
+    if (gameState.getPhase().getName() === 'welcome') {
       this.viewWelcome();
       return;
     }
 
     // Update player info display
-    this.updatePlayerInfo(this.gameState, availableActions);
+    this.updatePlayerInfo(gameState, uiState, availableActions);
 
     // Render the map with player positions
-    this.renderMap(this.gameState);
+    this.renderMap(gameState, uiState);
 
     // Update player turn display
     this.updatePlayerTurnDisplay(
-      this.gameState,
-      this.uiState,
+      gameState,
+      uiState,
       availableActions,
     );
 
@@ -69,6 +71,7 @@ export class ViewGame {
 
   private updatePlayerInfo(
     gameState: GameState,
+    uiState: UiState,
     availableActions: Action[],
   ): void {
     const playerInfoContainer = document.getElementById('playerInfo');
@@ -80,13 +83,13 @@ export class ViewGame {
     const view = new ViewPlayer();
     playerInfoContainer.innerHTML = view.getPlayerPanelContents(
       currentPlayer,
-      this.gameState,
-      this.uiState,
+      gameState,
+      uiState,
       availableActions,
     );
   }
 
-  private renderMap(gameState: GameState): void {
+  private renderMap(gameState: GameState, uiState: UiState): void {
     const hexMapContainer = document.getElementById('hexMapSVG');
     if (!hexMapContainer) return;
 
@@ -143,7 +146,7 @@ export class ViewGame {
       const mapSvgGenerator = new HexMapSvgGenerator();
       hexMapContainer.innerHTML = mapSvgGenerator.generateSVG(
         gameState,
-        this.uiState.areAccessibilityIconsEnabled(),
+        uiState.areAccessibilityIconsEnabled(),
       );
     } catch (error) {
       console.error('Error generating SVG:', error);
@@ -168,7 +171,4 @@ export class ViewGame {
       availableActions,
     );
   }
-
-  private gameState: GameState;
-  private uiState: UiState;
 }

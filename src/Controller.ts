@@ -23,7 +23,7 @@ export class Controller {
         this.getGameState().getPhaseName(),
     );
     this.uiState = this.gameManager.getUiState();
-    this.viewGame = new ViewGame(this.gameState, this.uiState);
+    this.viewGame = new ViewGame();
   }
 
   //NOTE: This is invoked directly by index.html
@@ -50,7 +50,11 @@ export class Controller {
   private renderGameState(gameState: GameState): void {
     const availableActions = GameEngine.getAvailableActions(gameState);
 
-    this.viewGame.renderGameState(availableActions);
+    this.viewGame.renderGameState(
+      gameState,
+      this.getUiState(),
+      availableActions,
+    );
 
     this.addHandlersToPlayerPanel();
 
