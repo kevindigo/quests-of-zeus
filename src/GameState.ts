@@ -33,7 +33,7 @@ export type GameStateSnapshot = {
   shrineHexes: ShrineHex[];
   oracleCardDeck: CoreColor[];
   woundDeck: CoreColor[];
-  lastRolled: CoreColor[][];
+  lastRolled: Set<CoreColor>[];
 };
 
 export class GameState {
@@ -284,8 +284,8 @@ export class GameState {
     UtilityService.shuffleArray(this.woundDeck);
   }
 
-  public getLastRolledColors(playerIndex: number): CoreColor[] {
-    return this.lastRolledColors[playerIndex] || [];
+  public getLastRolledColors(playerIndex: number): Set<CoreColor> {
+    return this.lastRolledColors[playerIndex] || new Set();
   }
 
   private map: HexMap;
@@ -301,5 +301,5 @@ export class GameState {
   private shrineHexes: ShrineHex[];
   private oracleCardDeck: CoreColor[];
   private woundDeck: CoreColor[];
-  private lastRolledColors: CoreColor[][];
+  private lastRolledColors: Set<CoreColor>[];
 }

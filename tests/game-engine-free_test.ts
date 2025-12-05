@@ -1,7 +1,9 @@
 import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
+import { assertGreater } from '@std/assert/greater';
 import { Actions, type FreeEndTurnAction } from '../src/actions.ts';
 import { GameEngineFree } from '../src/GameEngineFree.ts';
+import type { CoreColor } from '../src/types.ts';
 import { assertSuccess, setupGame, testGameState } from './test-helpers.ts';
 
 Deno.test('GameEngineFree - getFreeActions cannot end with dice remaining', () => {
@@ -40,4 +42,13 @@ Deno.test('GameEngineFree - end turn action success', () => {
   GameEngineFree.doAction(action, testGameState);
   assertEquals(testGameState.getCurrentPlayerIndex(), 0);
   assertEquals(testGameState.getRound(), 2);
+  const dice = testGameState.getCurrentPlayer().oracleDice;
+  assertEquals(dice.length, 3);
+  const colors: Set<CoreColor> = new Set();
+  dice.forEach((die) => {
+    if (!colors.has(die)) {
+      colors.add(die);
+    }
+  });
+  assertGreater(colors.size, 0);
 });

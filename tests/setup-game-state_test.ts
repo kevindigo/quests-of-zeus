@@ -50,6 +50,6 @@ Deno.test('GameState initializer starts all lastRolled arrays empty', () => {
     playerIndex < testGameState.getPlayerCount();
     ++playerIndex
   ) {
-    assertEquals(testGameState.getLastRolledColors(playerIndex).length, 0);
+    assertEquals(testGameState.getLastRolledColors(playerIndex).size, 0);
   }
 });
