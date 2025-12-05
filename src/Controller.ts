@@ -1,6 +1,3 @@
-// Game Controller for Quests of Zeus
-// Manages the game UI and user interactions
-
 import { ControllerHighlighter } from './ControllerHighlighter.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameManager } from './GameManager.ts';
@@ -11,7 +8,7 @@ import type { CoreColor, TerrainType } from './types.ts';
 import type { UiState } from './UiState.ts';
 import { View } from './View.ts';
 
-//NOTE: This class is referenced by build.ts
+//NOTE: This class is referenced by build.ts and index.html
 export class Controller {
   //NOTE: This is invoked directly by index.html
   constructor(gameManager: GameManager) {
