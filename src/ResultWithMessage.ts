@@ -2,29 +2,12 @@ export interface ResultWithMessage {
   success: boolean;
   message(): string;
   getMessages(): string[];
+  addMessage(message: string): void;
 }
 
-export class Success implements ResultWithMessage {
-  public constructor(message: string) {
-    this.success = true;
-    this.text = [message];
-  }
-
-  public message(): string {
-    return this.text.join('\n');
-  }
-
-  public getMessages(): string[] {
-    return this.text;
-  }
-
-  public success: boolean;
-  public text: string[];
-}
-
-export class Failure implements ResultWithMessage {
-  public constructor(message: string) {
-    this.success = false;
+class Result implements ResultWithMessage {
+  public constructor(status: boolean, message: string) {
+    this.success = status;
     this.text = [message];
   }
 
@@ -42,4 +25,16 @@ export class Failure implements ResultWithMessage {
 
   public success: boolean;
   public text: string[];
+}
+
+export class Success extends Result {
+  public constructor(message: string) {
+    super(true, message);
+  }
+}
+
+export class Failure extends Result {
+  public constructor(message: string) {
+    super(false, message);
+  }
 }
