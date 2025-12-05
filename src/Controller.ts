@@ -45,11 +45,11 @@ export class Controller {
     this.viewGame = new ViewGame(this.gameState, this.uiState);
   }
 
-  public getGameState(): GameState {
+  private getGameState(): GameState {
     return this.gameState;
   }
 
-  public getUiState(): UiState {
+  private getUiState(): UiState {
     return this.uiState;
   }
 
@@ -59,7 +59,7 @@ export class Controller {
     this.setupEventListeners();
   }
 
-  public clearResourceSelection(): void {
+  private clearResourceSelection(): void {
     this.getUiState().clearResourceSelection();
   }
 
