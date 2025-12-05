@@ -29,7 +29,6 @@ import {
   PhaseMain,
   PhasePeeking,
   PhaseTeleporting,
-  PhaseWelcome,
 } from './phases.ts';
 import { Resource } from './Resource.ts';
 import { Success } from './ResultWithMessage.ts';
@@ -98,13 +97,11 @@ export class Controller {
     this.addHandlersToSvg();
 
     const highligher = new ControllerHighlighter();
-    if (gameState.getPhase().getName() !== PhaseWelcome.phaseName) {
-      highligher.highlightAvailableHexElements(
-        gameState,
-        this.uiState,
-        availableActions,
-      );
-    }
+    highligher.highlightAvailableHexElements(
+      gameState,
+      this.uiState,
+      availableActions,
+    );
   }
 
   private addHandlersToPlayerPanel(): void {

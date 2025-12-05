@@ -1,25 +1,39 @@
 == Short-term ==
 
-== Injuries ==
-
-- setup: injury deck
-- setup: initial injury and god advance (easy)
-- action: spend a die to heal (easy)
 - round: end of round, roll Titan die and apply injuries (not too hard)
-- During fight, bad roll causes injury (easy after multi-round fight is done)
+  - QUESTION: Are phases needed for this? Maybe not yet???
+  - New PhaseRoundEnd, queued by endTurn
+    - Checking end of game (later)
+    - Rolling titan die and issuing wounds
+    - Clearing the list of dice rolled this round
+    - Setting current player back to 0
+    - Set phase to PhaseStartTurn
+    - End phase 
+  - New PhaseStartTurn
+    - Advance gods based on other players' rolls
+      - When endTurn reRolls, add to the list of dice rolled this round
+    - Check for skipping turn
+      - Ask player which wounds to heal
+      - endTurn but don't reroll!
+    - end phase
+
+== Wounds ==
+
+- action: spend a die to heal (not too hard)
 - turn: if too many injuries, skip and heal (not too hard)
 - Shrine quest reward: Heal injuries (not too hard)
 
 == Round end/Game end ==
 
-- effect: free god advance for other players' rolls
-- effect: ability to move to zeus after 12 quests completed
-- round: detect end of game and determine winner
+- effect: free god advance for other players' rolls (not too hard)
+- effect: ability to move to zeus after 12 quests completed (somewhat hard)
+- round: detect end of game and determine winner (easy after round end done)
 
 == Quests ==
 
 - Monsters
   - Should roll dice during battle
+  - During fight, bad roll causes wound (easy after fight rolls are done)
 
 == Gods ==
 
@@ -78,6 +92,7 @@
 
 == Cosmetic/Usability ==
 
+- Improve wound display
 - Make monster triangles larger
 - Make statue bar taller
 - Move city icon down slightly
