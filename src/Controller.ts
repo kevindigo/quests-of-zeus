@@ -56,32 +56,6 @@ export class Controller {
     this.renderGameState(this.getGameState());
   }
 
-  private clearResourceSelection(): void {
-    this.getUiState().clearResourceSelection();
-  }
-
-  private selectResource(resourceToSelect: Resource): void {
-    const currentPlayer = this.gameState.getCurrentPlayer();
-
-    if (resourceToSelect.isCard() && currentPlayer.usedOracleCardThisTurn) {
-      this.showMessage('Cannot use a second oracle card in one turn');
-      return;
-    }
-
-    const alreadySelected = this.getUiState().getSelectedResource();
-    if (resourceToSelect.equals(alreadySelected)) {
-      this.clearResourceSelection();
-      this.showMessage('Resource selection cleared');
-      this.renderGameState(this.getGameState());
-      return;
-    }
-
-    this.getUiState().clearResourceSelection();
-    this.getUiState().setSelectedResource(resourceToSelect);
-    this.showMessage(`Selected ${resourceToSelect.getBaseColor()}`);
-    this.renderGameState(this.getGameState());
-  }
-
   private renderGameState(gameState: GameState): void {
     const availableActions = GameEngine.getAvailableActions(gameState);
 
@@ -423,6 +397,32 @@ export class Controller {
     this.showMessage(
       "New game started! All players have rolled their dice. Player 1's turn begins.",
     );
+  }
+
+  private clearResourceSelection(): void {
+    this.getUiState().clearResourceSelection();
+  }
+
+  private selectResource(resourceToSelect: Resource): void {
+    const currentPlayer = this.gameState.getCurrentPlayer();
+
+    if (resourceToSelect.isCard() && currentPlayer.usedOracleCardThisTurn) {
+      this.showMessage('Cannot use a second oracle card in one turn');
+      return;
+    }
+
+    const alreadySelected = this.getUiState().getSelectedResource();
+    if (resourceToSelect.equals(alreadySelected)) {
+      this.clearResourceSelection();
+      this.showMessage('Resource selection cleared');
+      this.renderGameState(this.getGameState());
+      return;
+    }
+
+    this.getUiState().clearResourceSelection();
+    this.getUiState().setSelectedResource(resourceToSelect);
+    this.showMessage(`Selected ${resourceToSelect.getBaseColor()}`);
+    this.renderGameState(this.getGameState());
   }
 
   private setRecolorIntention(favorCost: number): void {
