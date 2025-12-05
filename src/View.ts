@@ -7,7 +7,7 @@ import { ViewPlayer } from './ViewPlayer.ts';
 import { ViewPlayerTurn } from './ViewPlayerTurn.ts';
 import { ViewWelcome } from './ViewWelcome.ts';
 
-export class ViewGame {
+export class View {
   public constructor() {
   }
 

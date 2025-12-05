@@ -10,7 +10,7 @@ import { Resource } from './Resource.ts';
 import { Success } from './ResultWithMessage.ts';
 import type { CoreColor, TerrainType } from './types.ts';
 import type { UiState } from './UiState.ts';
-import { ViewGame } from './ViewGame.ts';
+import { View } from './View.ts';
 
 //NOTE: This class is referenced by build.ts
 export class Controller {
@@ -23,7 +23,7 @@ export class Controller {
         this.getGameState().getPhaseName(),
     );
     this.uiState = this.gameManager.getUiState();
-    this.viewGame = new ViewGame();
+    this.viewGame = new View();
   }
 
   //NOTE: This is invoked directly by index.html
@@ -317,5 +317,5 @@ export class Controller {
   private gameManager: GameManager;
   private gameState: GameState;
   private uiState: UiState;
-  private viewGame: ViewGame;
+  private viewGame: View;
 }
