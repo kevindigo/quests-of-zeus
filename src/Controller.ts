@@ -1,29 +1,12 @@
 // Game Controller for Quests of Zeus
 // Manages the game UI and user interactions
 
-import type {
-  Action,
-  FreeEndTurnAction,
-  HexDropCubeAction,
-  HexDropStatueAction,
-  HexExploreShrineAction,
-  HexFightMonsterAction,
-  HexLoadCubeAction,
-  HexLoadStatueAction,
-  HexPeekShrineAction,
-  MoveShipAction,
-} from './actions.ts';
+import type { Action, FreeEndTurnAction } from './actions.ts';
 import { ControllerHighlighter } from './ControllerHighlighter.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
-import {
-  PhaseExploring,
-  PhaseMain,
-  PhasePeeking,
-  PhaseTeleporting,
-} from './phases.ts';
 import { Resource } from './Resource.ts';
 import { Success } from './ResultWithMessage.ts';
 import type { CoreColor, TerrainType } from './types.ts';
@@ -246,144 +229,7 @@ export class Controller {
     const coordinates: HexCoordinates = { q, r };
     this.uiState.setSelectedCoordinates(coordinates);
 
-    const action = this.getHexClickAction(
-      this.gameState,
-      this.uiState,
-      favorCost,
-    );
-    if (!action) {
-      this.showMessage('Failed to create action');
-      return;
-    }
-
-    const result = GameEngine.doAction(action, this.gameState);
-    if (result.success) {
-      this.clearResourceSelection();
-    }
-    this.showMessage(result.message);
-    this.renderGameState(this.getGameState());
-  }
-
-  private getHexClickAction(
-    gameState: GameState,
-    uiState: UiState,
-    favorCost: number,
-  ): Action | null {
-    const phase = gameState.getPhase();
-    const coordinates = uiState.getSelectedCoordinates();
-    if (!coordinates) {
-      return null;
-    }
-
-    if (phase.getName() === PhaseTeleporting.phaseName) {
-      const action: MoveShipAction = {
-        type: 'move',
-        destination: coordinates,
-        spend: Resource.none,
-        favorToExtendRange: 0,
-      };
-      return action;
-    }
-
-    if (phase.getName() === PhaseExploring.phaseName) {
-      const action: HexExploreShrineAction = {
-        type: 'hex',
-        subType: 'exploreShrine',
-        coordinates: coordinates,
-        spend: Resource.none,
-      };
-      return action;
-    }
-
-    if (phase.getName() === PhasePeeking.phaseName) {
-      const action: HexPeekShrineAction = {
-        type: 'hex',
-        subType: 'peekShrine',
-        coordinates: coordinates,
-        spend: Resource.none,
-      };
-      return action;
-    }
-
-    const resource = uiState.getSelectedResource();
-    const map = gameState.getMap();
-    const cell = map.getCell(coordinates);
-    if (!cell) {
-      return null;
-    }
-    if (phase.getName() === PhaseMain.phaseName) {
-      switch (cell.terrain) {
-        case 'zeus':
-          return null;
-        case 'sea': {
-          const action: MoveShipAction = {
-            type: 'move',
-            destination: coordinates,
-            spend: resource,
-            favorToExtendRange: favorCost,
-          };
-          return action;
-        }
-        case 'shallow':
-          return null;
-        case 'monsters': {
-          const action: HexFightMonsterAction = {
-            type: 'hex',
-            subType: 'fightMonster',
-            coordinates,
-            spend: resource,
-          };
-          return action;
-        }
-        case 'offerings': {
-          const action: HexLoadCubeAction = {
-            type: 'hex',
-            subType: 'loadCube',
-            coordinates,
-            spend: uiState.getSelectedResource(),
-          };
-          return action;
-        }
-        case 'temple': {
-          const action: HexDropCubeAction = {
-            type: 'hex',
-            subType: 'dropCube',
-            coordinates,
-            spend: uiState.getSelectedResource(),
-          };
-          return action;
-        }
-        case 'shrine': {
-          const action: HexExploreShrineAction = {
-            type: 'hex',
-            subType: 'exploreShrine',
-            coordinates,
-            spend: uiState.getSelectedResource(),
-          };
-          return action;
-        }
-        case 'city': {
-          const action: HexLoadStatueAction = {
-            type: 'hex',
-            subType: 'loadStatue',
-            coordinates,
-            spend: uiState.getSelectedResource(),
-          };
-          return action;
-        }
-        case 'statue': {
-          const action: HexDropStatueAction = {
-            type: 'hex',
-            subType: 'dropStatue',
-            coordinates,
-            spend: uiState.getSelectedResource(),
-          };
-          return action;
-        }
-      }
-    }
-
-    return null;
+    this.gameManager.doHexClickAction(favorCost);
   }
 
   private startNewGame(): void {
