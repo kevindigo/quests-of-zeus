@@ -238,10 +238,6 @@ export class Controller {
     this.gameManager.startNewGame();
   }
 
-  private clearResourceSelection(): void {
-    this.getUiState().clearResourceSelection();
-  }
-
   private selectResource(resourceToSelect: Resource): void {
     const currentPlayer = this.getGameState().getCurrentPlayer();
 
@@ -250,18 +246,19 @@ export class Controller {
       return;
     }
 
-    const alreadySelected = this.getUiState().getSelectedResource();
+    const uiState = this.getUiState();
+    const alreadySelected = uiState.getSelectedResource();
     if (resourceToSelect.equals(alreadySelected)) {
-      this.clearResourceSelection();
+      uiState.clearResourceSelection();
       this.showMessage('Resource selection cleared');
-      this.renderGameState(this.getGameState(), this.getUiState());
+      this.renderGameState(this.getGameState(), uiState);
       return;
     }
 
-    this.getUiState().clearResourceSelection();
-    this.getUiState().setSelectedResource(resourceToSelect);
+    uiState.clearResourceSelection();
+    uiState.setSelectedResource(resourceToSelect);
     this.showMessage(`Selected ${resourceToSelect.getBaseColor()}`);
-    this.renderGameState(this.getGameState(), this.getUiState());
+    this.renderGameState(this.getGameState(), uiState);
   }
 
   private setRecolorIntention(favorCost: number): void {
@@ -273,21 +270,22 @@ export class Controller {
       return;
     }
 
-    const selectedResource = this.getUiState().getSelectedResource();
+    const uiState = this.getUiState();
+    const selectedResource = uiState.getSelectedResource();
     const baseColor = selectedResource.getBaseColor();
     const resource = selectedResource.isDie()
       ? Resource.createRecoloredDie(baseColor, favorCost)
       : selectedResource.isCard()
       ? Resource.createRecoloredCard(baseColor, favorCost)
       : Resource.none;
-    this.getUiState().setSelectedResource(resource);
+    uiState.setSelectedResource(resource);
 
     const result = new Success(
       `Will recolor ${baseColor} to ${resource.getEffectiveColor()}`,
     );
 
     if (result.success) {
-      this.renderGameState(this.getGameState(), this.getUiState());
+      this.renderGameState(this.getGameState(), uiState);
     }
     this.showMessage(result.message);
   }
