@@ -38,6 +38,7 @@ import { ViewGame } from './ViewGame.ts';
 
 //NOTE: This class is referenced by build.ts
 export class Controller {
+  //NOTE: This is invoked directly by index.html
   constructor(gameManager: GameManager) {
     this.gameManager = gameManager;
     this.gameState = this.gameManager.getGameState();
@@ -47,14 +48,6 @@ export class Controller {
     );
     this.uiState = this.gameManager.getUiState();
     this.viewGame = new ViewGame(this.gameState, this.uiState);
-  }
-
-  private getGameState(): GameState {
-    return this.gameState;
-  }
-
-  private getUiState(): UiState {
-    return this.uiState;
   }
 
   //NOTE: This is invoked directly by index.html
@@ -538,6 +531,14 @@ export class Controller {
 
   private showMessage(message: string): void {
     this.viewGame.showMessage(message);
+  }
+
+  private getGameState(): GameState {
+    return this.gameState;
+  }
+
+  private getUiState(): UiState {
+    return this.uiState;
   }
 
   private gameManager: GameManager;
