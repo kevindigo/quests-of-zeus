@@ -1,4 +1,5 @@
 // Game initialization and setup for Quests of Zeus
+import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCell } from './hexmap/HexCell.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
@@ -130,17 +131,7 @@ export class GameStateInitializer {
   }
 
   private rollInitialDice(player: Player): void {
-    // Roll initial oracle dice for all players during setup
-    const initialDice: CoreColor[] = [];
-    for (let j = 0; j < 3; j++) {
-      const randomColor =
-        COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
-      if (randomColor) {
-        initialDice.push(randomColor);
-      }
-    }
-
-    player.oracleDice = initialDice;
+    player.oracleDice = GameEngine.rollPlayerDice();
   }
 
   /**

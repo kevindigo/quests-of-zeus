@@ -123,4 +123,17 @@ export class GameEngine {
     }
     return newColor;
   }
+
+  public static rollPlayerDice(): CoreColor[] {
+    const dice: CoreColor[] = [];
+    for (let j = 0; j < 3; j++) {
+      const randomColor =
+        COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
+      if (randomColor) {
+        dice.push(randomColor);
+      }
+    }
+
+    return dice;
+  }
 }

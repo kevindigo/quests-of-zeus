@@ -4,13 +4,13 @@ import {
   type FreeAction,
   type FreeEndTurnAction,
 } from './actions.ts';
+import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import {
   Failure,
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
-import { COLOR_WHEEL, type CoreColor } from './types.ts';
 
 export class GameEngineFree {
   public static getFreeActions(
@@ -53,25 +53,16 @@ export class GameEngineFree {
     action: FreeAction,
     gameState: GameState,
   ): ResultWithMessage {
-    const availableActions = GameEngineFree.getFreeActions(gameState);
+    const availableActions = GameEngine.getAvailableActions(gameState);
     const found = Actions.find(availableActions, action as Action);
     if (!found) {
       return new Failure('End turn not available');
     }
 
-    const newDice: CoreColor[] = [];
-    for (let i = 0; i < 3; i++) {
-      const randomColor =
-        COLOR_WHEEL[Math.floor(Math.random() * COLOR_WHEEL.length)];
-      if (randomColor) {
-        newDice.push(randomColor);
-      }
-    }
-
     const currentPlayer = gameState.getCurrentPlayer();
     if (currentPlayer) {
       currentPlayer.usedOracleCardThisTurn = false;
-      currentPlayer.oracleDice = newDice;
+      currentPlayer.oracleDice = GameEngine.rollPlayerDice();
     }
 
     const nextPlayerIndex = (gameState.getCurrentPlayerIndex() + 1) %
