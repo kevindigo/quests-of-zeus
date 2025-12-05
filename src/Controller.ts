@@ -12,9 +12,6 @@ import type {
   HexLoadStatueAction,
   HexPeekShrineAction,
   MoveShipAction,
-  ResourceGainFavorAction,
-  ResourceGainOracleCardAction,
-  ResourceGainTwoPeeks,
 } from './actions.ts';
 import { ControllerHighlighter } from './ControllerHighlighter.ts';
 import { GameEngine } from './GameEngine.ts';
@@ -212,11 +209,11 @@ export class Controller {
     );
 
     if (target.id === 'spendResourceForFavor') {
-      this.dospendResourceForFavor();
+      this.gameManager.dospendResourceForFavor();
     } else if (target.id === 'drawOracleCard') {
-      this.doSpendResourceForCard();
+      this.gameManager.doSpendResourceForCard();
     } else if (target.id === 'peekShrine') {
-      this.doSpendResourceForTwoPeeks();
+      this.gameManager.doSpendResourceForTwoPeeks();
     } else if (target.id === 'endTurn') {
       this.doEndTurn();
     } else if (target.classList.contains('die')) {
@@ -450,36 +447,6 @@ export class Controller {
       this.renderGameState(this.getGameState());
     }
     this.showMessage(result.message);
-  }
-
-  private dospendResourceForFavor(): void {
-    const selectedResource = this.getUiState().getSelectedResource();
-    const action: ResourceGainFavorAction = {
-      type: 'resource',
-      subType: 'gainFavor',
-      spend: selectedResource,
-    };
-    this.doAction(action);
-  }
-
-  private doSpendResourceForCard(): void {
-    const selectedResource = this.getUiState().getSelectedResource();
-    const action: ResourceGainOracleCardAction = {
-      type: 'resource',
-      subType: 'gainOracleCard',
-      spend: selectedResource,
-    };
-    this.doAction(action);
-  }
-
-  private doSpendResourceForTwoPeeks(): void {
-    const selectedResource = this.getUiState().getSelectedResource();
-    const action: ResourceGainTwoPeeks = {
-      type: 'resource',
-      subType: 'gainTwoPeeks',
-      spend: selectedResource,
-    };
-    this.doAction(action);
   }
 
   private doEndTurn(): void {

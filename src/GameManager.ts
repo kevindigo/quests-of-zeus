@@ -5,6 +5,9 @@ import type {
   Action,
   AdvanceGodAction,
   ColorActivateGodAction,
+  ResourceGainFavorAction,
+  ResourceGainOracleCardAction,
+  ResourceGainTwoPeeks,
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import { GameState } from './GameState.ts';
@@ -47,6 +50,37 @@ export class GameManager {
 
   public getUiState(): UiState {
     return this.uiState;
+  }
+
+  public dospendResourceForFavor(): void {
+    const selectedResource = this.getUiState().getSelectedResource();
+    const action: ResourceGainFavorAction = {
+      type: 'resource',
+      subType: 'gainFavor',
+      spend: selectedResource,
+    };
+    this.doAction(action);
+  }
+
+  public doSpendResourceForCard(): void {
+    const selectedResource = this.getUiState().getSelectedResource();
+    const action: ResourceGainOracleCardAction = {
+      type: 'resource',
+      subType: 'gainOracleCard',
+      spend: selectedResource,
+    };
+    this.doAction(action);
+  }
+
+  public doSpendResourceForTwoPeeks(): void {
+    this.showMessage('doSpendResourceForTwoPeeks');
+    const selectedResource = this.getUiState().getSelectedResource();
+    const action: ResourceGainTwoPeeks = {
+      type: 'resource',
+      subType: 'gainTwoPeeks',
+      spend: selectedResource,
+    };
+    this.doAction(action);
   }
 
   public doAdvanceGod(godColor: CoreColor): void {
