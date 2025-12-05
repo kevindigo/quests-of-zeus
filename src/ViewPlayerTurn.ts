@@ -192,7 +192,7 @@ export class ViewPlayerTurn {
         </div>
       `;
 
-    const maxFavorToShow = 5;
+    const maxFavorToShow = player.favor;
     // Add recolor options
     for (
       let favorCost = 1;
