@@ -33,6 +33,7 @@ export type GameStateSnapshot = {
   shrineHexes: ShrineHex[];
   oracleCardDeck: CoreColor[];
   woundDeck: CoreColor[];
+  lastRolled: CoreColor[][];
 };
 
 export class GameState {
@@ -52,6 +53,7 @@ export class GameState {
     this.resetOracleCardDeck();
     this.woundDeck = [];
     this.resetWoundDeck();
+    this.lastRolledColors = [];
   }
 
   public static fromSnapshot(snapshot: unknown): GameState {
@@ -70,6 +72,7 @@ export class GameState {
     state.shrineHexes = json.shrineHexes;
     state.oracleCardDeck = json.oracleCardDeck;
     state.woundDeck = json.woundDeck;
+    state.lastRolledColors = json.lastRolled;
     return state;
   }
 
@@ -90,6 +93,7 @@ export class GameState {
       shrineHexes: this.shrineHexes,
       oracleCardDeck: this.oracleCardDeck,
       woundDeck: this.woundDeck,
+      lastRolled: this.lastRolledColors,
     };
   }
 
@@ -280,6 +284,10 @@ export class GameState {
     UtilityService.shuffleArray(this.woundDeck);
   }
 
+  public getLastRolledColors(playerIndex: number): CoreColor[] {
+    return this.lastRolledColors[playerIndex] || [];
+  }
+
   private map: HexMap;
   private players: Player[];
   private currentPlayerIndex: number;
@@ -293,4 +301,5 @@ export class GameState {
   private shrineHexes: ShrineHex[];
   private oracleCardDeck: CoreColor[];
   private woundDeck: CoreColor[];
+  private lastRolledColors: CoreColor[][];
 }
