@@ -3,7 +3,6 @@
 
 import type {
   Action,
-  ColorActivateGodAction,
   FreeEndTurnAction,
   HexDropCubeAction,
   HexDropStatueAction,
@@ -101,7 +100,14 @@ export class Controller {
       if (godActionButton) {
         godActionButton.addEventListener('click', () => {
           const color = godActionButton.dataset['color'] as CoreColor;
-          this.doActivateGod(color);
+          const result = this.gameManager.doActivateGod(color);
+          if (result.success) {
+            this.clearResourceSelection();
+          }
+          this.showMessage(
+            'Clicked activate god ' + color + ': ' + result.message,
+          );
+          this.renderGameState(this.getGameState());
         });
       }
     }
@@ -479,21 +485,6 @@ export class Controller {
       subType: 'endTurn',
     };
     this.doAction(action);
-  }
-
-  private doActivateGod(color: CoreColor): void {
-    const action: ColorActivateGodAction = {
-      type: 'color',
-      subType: 'activateGod',
-      color: color,
-    };
-
-    const result = GameEngine.doAction(action, this.getGameState());
-    if (result.success) {
-      this.clearResourceSelection();
-    }
-    this.showMessage('Clicked activate god ' + color + ': ' + result.message);
-    this.renderGameState(this.getGameState());
   }
 
   private doAction(action: Action): void {

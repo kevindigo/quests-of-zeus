@@ -1,7 +1,7 @@
 // Quests of Zeus Game Engine - Core Orchestration
 // High-level game management and orchestration
 
-import type { AdvanceGodAction } from './actions.ts';
+import type { AdvanceGodAction, ColorActivateGodAction } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import { GameState } from './GameState.ts';
 import { GameStateInitializer } from './GameStateInitializer.ts';
@@ -50,6 +50,16 @@ export class GameManager {
       type: 'advance',
       godColor: godColor,
       spend: resource,
+    };
+
+    return GameEngine.doAction(action, this.getGameState());
+  }
+
+  public doActivateGod(godColor: CoreColor): ResultWithMessage {
+    const action: ColorActivateGodAction = {
+      type: 'color',
+      subType: 'activateGod',
+      color: godColor,
     };
 
     return GameEngine.doAction(action, this.getGameState());
