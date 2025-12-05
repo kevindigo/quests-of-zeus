@@ -17,7 +17,6 @@ export class Controller {
   //NOTE: This is invoked directly by index.html
   constructor(gameManager: GameManager) {
     this.gameManager = gameManager;
-    this.gameState = this.gameManager.getGameState();
     console.log(
       'Controller constructor: Current phase: ' +
         this.getGameState().getPhaseName(),
@@ -249,7 +248,7 @@ export class Controller {
   }
 
   private selectResource(resourceToSelect: Resource): void {
-    const currentPlayer = this.gameState.getCurrentPlayer();
+    const currentPlayer = this.getGameState().getCurrentPlayer();
 
     if (resourceToSelect.isCard() && currentPlayer.usedOracleCardThisTurn) {
       this.showMessage('Cannot use a second oracle card in one turn');
@@ -271,7 +270,7 @@ export class Controller {
   }
 
   private setRecolorIntention(favorCost: number): void {
-    const playerFavor = this.gameState.getCurrentPlayer().favor;
+    const playerFavor = this.getGameState().getCurrentPlayer().favor;
     if (favorCost > playerFavor) {
       this.showMessage(
         `Cannot spend(${favorCost}) favor when player only has (${playerFavor})`,
@@ -307,7 +306,7 @@ export class Controller {
   }
 
   private getGameState(): GameState {
-    return this.gameState;
+    return this.gameManager.getGameState();
   }
 
   private getUiState(): UiState {
@@ -315,7 +314,6 @@ export class Controller {
   }
 
   private gameManager: GameManager;
-  private gameState: GameState;
   private uiState: UiState;
   private viewGame: View;
 }
