@@ -44,6 +44,7 @@ export class GameManager {
     new GameStateInitializer().initializeGameState(this.state);
     this.uiState.reset();
     this.showMessage('New game started');
+    this.notifyStateChanged();
   }
 
   public onEvent(listener: (event: GameEvent) => void) {
