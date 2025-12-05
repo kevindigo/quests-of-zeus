@@ -44,7 +44,7 @@ export class ViewPlayerTurn {
           ${this.getCardButtonStatus(availableActions)}>
             +Oracle Card
         </button>
-        <button id="peek"              
+        <button id="peekShrine"              
           class="action-button" 
           ${this.getPeekButtonStatus(availableActions)}>
             Peek 2
