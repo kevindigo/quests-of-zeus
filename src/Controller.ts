@@ -21,7 +21,6 @@ export class Controller {
       'Controller constructor: Current phase: ' +
         this.getGameState().getPhaseName(),
     );
-    this.uiState = this.gameManager.getUiState();
     this.viewGame = new View();
   }
 
@@ -29,7 +28,7 @@ export class Controller {
   public initializeGameUI(): void {
     this.setupEventListeners();
     this.listenToGameManagerEvents();
-    this.renderGameState(this.getGameState());
+    this.renderGameState(this.getGameState(), this.getUiState());
   }
 
   private listenToGameManagerEvents() {
@@ -37,7 +36,7 @@ export class Controller {
     this.gameManager.onEvent((event) => {
       switch (event.type) {
         case 'stateChange':
-          this.renderGameState(event.gameState);
+          this.renderGameState(event.gameState, event.uiState);
           break;
         case 'message':
           this.showMessage(event.text);
@@ -46,12 +45,12 @@ export class Controller {
     });
   }
 
-  private renderGameState(gameState: GameState): void {
+  private renderGameState(gameState: GameState, uiState: UiState): void {
     const availableActions = GameEngine.getAvailableActions(gameState);
 
     this.viewGame.renderGameState(
       gameState,
-      this.getUiState(),
+      uiState,
       availableActions,
     );
 
@@ -62,7 +61,7 @@ export class Controller {
     const highligher = new ControllerHighlighter();
     highligher.highlightAvailableHexElements(
       gameState,
-      this.uiState,
+      uiState,
       availableActions,
     );
   }
@@ -229,7 +228,7 @@ export class Controller {
     >;
     const { q, r, favorCost } = customEvent.detail;
     const coordinates: HexCoordinates = { q, r };
-    this.uiState.setSelectedCoordinates(coordinates);
+    this.getUiState().setSelectedCoordinates(coordinates);
 
     this.gameManager.doHexClickAction(favorCost);
   }
@@ -237,7 +236,7 @@ export class Controller {
   private startNewGame(): void {
     this.clearMessagePanel();
     this.gameManager.startNewGame();
-    this.renderGameState(this.getGameState());
+    this.renderGameState(this.getGameState(), this.getUiState());
     this.showMessage(
       "New game started! All players have rolled their dice. Player 1's turn begins.",
     );
@@ -259,14 +258,14 @@ export class Controller {
     if (resourceToSelect.equals(alreadySelected)) {
       this.clearResourceSelection();
       this.showMessage('Resource selection cleared');
-      this.renderGameState(this.getGameState());
+      this.renderGameState(this.getGameState(), this.getUiState());
       return;
     }
 
     this.getUiState().clearResourceSelection();
     this.getUiState().setSelectedResource(resourceToSelect);
     this.showMessage(`Selected ${resourceToSelect.getBaseColor()}`);
-    this.renderGameState(this.getGameState());
+    this.renderGameState(this.getGameState(), this.getUiState());
   }
 
   private setRecolorIntention(favorCost: number): void {
@@ -292,7 +291,7 @@ export class Controller {
     );
 
     if (result.success) {
-      this.renderGameState(this.getGameState());
+      this.renderGameState(this.getGameState(), this.getUiState());
     }
     this.showMessage(result.message);
   }
@@ -310,10 +309,9 @@ export class Controller {
   }
 
   private getUiState(): UiState {
-    return this.uiState;
+    return this.gameManager.getUiState();
   }
 
   private gameManager: GameManager;
-  private uiState: UiState;
   private viewGame: View;
 }
