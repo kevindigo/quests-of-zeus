@@ -39,6 +39,10 @@ export class Resource {
     );
   }
 
+  public withRecoloring(favorCost: number): Resource {
+    return new Resource(this.type, this.baseColor, favorCost);
+  }
+
   public withoutRecoloring(): Resource {
     return new Resource(this.type, this.baseColor, 0);
   }
