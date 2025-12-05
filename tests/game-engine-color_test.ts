@@ -1,9 +1,9 @@
-import { assert, assertEquals } from '@std/assert';
+import { assertEquals } from '@std/assert';
 import { Actions, type ColorActivateGodAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineColor } from '../src/GameEngineColor.ts';
 import { PhaseExploring, PhaseTeleporting } from '../src/phases.ts';
-import { setupGame, testGameState } from './test-helpers.ts';
+import { assertSuccess, setupGame, testGameState } from './test-helpers.ts';
 
 Deno.test('GameEngineFree - getFreeActions god', () => {
   setupGame();
@@ -33,7 +33,7 @@ Deno.test('GameEngineFree - doAction activate blue god', () => {
   };
 
   const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertEquals(testGameState.getPhase().getName(), PhaseTeleporting.phaseName);
 });
 
@@ -49,6 +49,6 @@ Deno.test('GameEngineFree - doAction activate green god', () => {
   };
 
   const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertEquals(testGameState.getPhase().getName(), PhaseExploring.phaseName);
 });

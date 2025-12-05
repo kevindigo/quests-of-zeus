@@ -9,15 +9,19 @@ import type { ResultWithMessage } from '../src/ResultWithMessage.ts';
 import type { HexColor, TerrainType } from '../src/types.ts';
 import type { UiState } from '../src/UiState.ts';
 
+export function assertSuccess(result: ResultWithMessage): void {
+  assert(result.success, 'Should have succeeded: ' + result.message);
+}
+
 export function assertFailureContains(
   result: ResultWithMessage,
   fragment: string,
 ): void {
   assertFalse(
     result.success,
-    `Should not have succeeded. Success message: ${result.message}`,
+    `Should not have succeeded. Success message: ${result.message()}`,
   );
-  assertStringIncludes(result.message, fragment);
+  assertStringIncludes(result.message(), fragment);
 }
 
 export let testGameManager: GameManager;

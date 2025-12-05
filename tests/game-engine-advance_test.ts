@@ -8,6 +8,7 @@ import { Resource } from '../src/Resource.ts';
 import { COLOR_WHEEL } from '../src/types.ts';
 import {
   assertFailureContains,
+  assertSuccess,
   setupGame,
   testGameState,
   testPlayer,
@@ -126,7 +127,7 @@ Deno.test('GameEngineColor AdvanceGod doAction - success', () => {
   };
 
   const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertEquals(testPlayer.getGodLevel(color), maxGodLevel);
   assertEquals(testPlayer.oracleDice.length, 0);
 });
@@ -143,7 +144,7 @@ Deno.test('GameEngineResource - doAction free advance god', () => {
   };
 
   const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   const player = testGameState.getCurrentPlayer();
   assertEquals(player.getGodLevel('red'), 1);
   assertEquals(player.oracleDice.length, 3);

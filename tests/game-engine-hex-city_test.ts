@@ -17,7 +17,7 @@ import {
   type Item,
 } from '../src/types.ts';
 import { type UiState, UiStateClass } from '../src/UiState.ts';
-import { assertFailureContains } from './test-helpers.ts';
+import { assertFailureContains, assertSuccess } from './test-helpers.ts';
 
 let gameState: GameState;
 let uiState: UiState;
@@ -174,7 +174,7 @@ Deno.test('GameEngineHex - city successful load statue', () => {
   const action = createLoadStatueAction();
 
   const result = GameEngine.doAction(action, gameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
 
   assertEquals(cityHex.statues, 2);
 

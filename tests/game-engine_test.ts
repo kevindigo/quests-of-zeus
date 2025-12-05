@@ -12,7 +12,12 @@ import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { PhaseMain, PhaseTeleporting } from '../src/phases.ts';
 import { Resource } from '../src/Resource.ts';
-import { setupGame, testGameState, testPlayer } from './test-helpers.ts';
+import {
+  assertSuccess,
+  setupGame,
+  testGameState,
+  testPlayer,
+} from './test-helpers.ts';
 
 Deno.test('GameEngine - available simplest case', () => {
   const gameState = new GameState();
@@ -33,7 +38,7 @@ Deno.test('GameEngine - spend resource nothing selected', () => {
   new GameStateInitializer().initializeGameState(gameState);
 
   const result = GameEngine.spendResource(gameState, Resource.none);
-  assert(result.success, result.message);
+  assertSuccess(result);
 });
 
 Deno.test('GameEngine - spend resource with pending recolor', () => {
@@ -44,7 +49,7 @@ Deno.test('GameEngine - spend resource with pending recolor', () => {
     gameState,
     Resource.createRecoloredDie('red', 2),
   );
-  assert(result.success, result.message);
+  assertSuccess(result);
 });
 
 Deno.test('GameEngine - spend resource die success', () => {
@@ -55,8 +60,8 @@ Deno.test('GameEngine - spend resource die success', () => {
   const redDie = Resource.createDie('red');
 
   const result = GameEngine.spendResource(gameState, redDie);
-  assert(result.success, result.message);
-  assertStringIncludes(result.message, 'spent');
+  assertSuccess(result);
+  assertStringIncludes(result.message(), 'spent');
   assertEquals(player.oracleDice.length, 2);
   assertGreaterOrEqual(player.oracleDice.indexOf('blue'), 0);
   assertGreaterOrEqual(player.oracleDice.indexOf('red'), 0);
@@ -71,8 +76,8 @@ Deno.test('GameEngine - spend resource card success', () => {
   const redCard = Resource.createCard('red');
 
   const result = GameEngine.spendResource(gameState, redCard);
-  assert(result.success, result.message);
-  assertStringIncludes(result.message, 'spent');
+  assertSuccess(result);
+  assertStringIncludes(result.message(), 'spent');
   assertEquals(player.oracleCards.length, 2);
   assertGreaterOrEqual(player.oracleCards.indexOf('blue'), 0);
   assertGreaterOrEqual(player.oracleCards.indexOf('red'), 0);
@@ -108,7 +113,7 @@ Deno.test('GameEngine - doAction teleport', () => {
   };
 
   const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assert(HexGrid.isSameLocation(destination, player.getShipPosition()));
   assertEquals(testGameState.getPhase().getName(), PhaseMain.phaseName);
   assertEquals(testPlayer.getGod('blue').level, 0);

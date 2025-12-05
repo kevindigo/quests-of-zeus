@@ -8,7 +8,7 @@ import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { HexGrid } from '../src/hexmap/HexGrid.ts';
 import { Resource } from '../src/Resource.ts';
 import { COLOR_WHEEL } from '../src/types.ts';
-import { assertFailureContains } from './test-helpers.ts';
+import { assertFailureContains, assertSuccess } from './test-helpers.ts';
 
 let gameState: GameState;
 
@@ -275,7 +275,7 @@ Deno.test('GameEngineMove - do action card move favor worked', () => {
     favorToExtendRange: 1,
   };
   const result = GameEngine.doAction(moveRecoloredCardPlusRange, gameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assert(HexGrid.isSameLocation(player.getShipPosition(), destination));
   assertEquals(player.oracleCards.length, 0);
   assert(player.usedOracleCardThisTurn);

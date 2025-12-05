@@ -7,7 +7,7 @@ import { GameState } from '../src/GameState.ts';
 import { GameStateInitializer } from '../src/GameStateInitializer.ts';
 import { PhaseMain, PhasePeeking } from '../src/phases.ts';
 import { Resource } from '../src/Resource.ts';
-import { setupGame, testGameState } from './test-helpers.ts';
+import { assertSuccess, setupGame, testGameState } from './test-helpers.ts';
 
 Deno.test('GameEngineHex - available wrong phase', () => {
   const gameState = new GameState();
@@ -39,6 +39,6 @@ Deno.test('doAction peekShrine', () => {
   };
 
   const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertEquals(testGameState.getPhaseName(), PhaseMain.phaseName);
 });

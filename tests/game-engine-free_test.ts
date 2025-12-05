@@ -1,9 +1,8 @@
-import { assert } from '@std/assert/assert';
 import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
 import { Actions, type FreeEndTurnAction } from '../src/actions.ts';
 import { GameEngineFree } from '../src/GameEngineFree.ts';
-import { setupGame, testGameState } from './test-helpers.ts';
+import { assertSuccess, setupGame, testGameState } from './test-helpers.ts';
 
 Deno.test('GameEngineFree - getFreeActions cannot end with dice remaining', () => {
   setupGame();
@@ -29,7 +28,7 @@ Deno.test('GameEngineFree - end turn action success', () => {
   const action: FreeEndTurnAction = { type: 'free', subType: 'endTurn' };
 
   const result = GameEngineFree.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertEquals(oldPlayer.oracleDice.length, 3);
   assertEquals(oldPlayer.oracleCards.length, 1);
   assertFalse(oldPlayer.usedOracleCardThisTurn);

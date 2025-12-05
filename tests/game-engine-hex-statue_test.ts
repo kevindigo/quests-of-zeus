@@ -10,6 +10,7 @@ import { Resource } from '../src/Resource.ts';
 import type { CoreColor, Item, StatueHex } from '../src/types.ts';
 import {
   assertFailureContains,
+  assertSuccess,
   setupGame,
   testGameState,
   testMap,
@@ -145,7 +146,7 @@ Deno.test('GameEngineHex statue doAction - success', () => {
   };
 
   const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertFalse(player.isItemLoaded(statue));
 
   assertLess(statueHex.emptyBases.indexOf('red'), 0);
@@ -189,7 +190,7 @@ Deno.test('GameEngineHex statue doAction - success 2nd statue on hex', () => {
   };
 
   const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
 
   assertEquals(statueHex.emptyBases.length, 1);
   assertEquals(statueHex.raisedStatues.length, 2);

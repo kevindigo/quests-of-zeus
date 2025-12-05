@@ -12,6 +12,7 @@ import {
   type Item,
 } from '../src/types.ts';
 import { type UiState, UiStateClass } from '../src/UiState.ts';
+import { assertSuccess } from './test-helpers.ts';
 
 let gameState: GameState;
 let uiState: UiState;
@@ -176,7 +177,7 @@ Deno.test('GameEngineHex - doOfferingAction (existing quest)', () => {
 
   const action = createLoadCubeAction(color);
   const result = GameEngineHex.doAction(action, gameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertEquals(offeringHex.cubeColors.length, cubeCount - 1);
   const player = gameState.getCurrentPlayer();
   assertEquals(player.getItemCount(), 1);
@@ -198,7 +199,7 @@ Deno.test('GameEngineHex - doOfferingAction (wild quest)', () => {
 
   const action = createLoadCubeAction(color);
   const result = GameEngineHex.doAction(action, gameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertEquals(offeringHex.cubeColors.length, cubeCount - 1);
   const player = gameState.getCurrentPlayer();
   assertEquals(player.getItemCount(), 1);

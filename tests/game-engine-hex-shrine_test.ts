@@ -18,7 +18,12 @@ import {
   type ShrineReward,
 } from '../src/types.ts';
 import { type UiState, UiStateClass } from '../src/UiState.ts';
-import { setupGame, testGameState, testPlayer } from './test-helpers.ts';
+import {
+  assertSuccess,
+  setupGame,
+  testGameState,
+  testPlayer,
+} from './test-helpers.ts';
 
 let gameState: GameState;
 let uiState: UiState;
@@ -113,8 +118,8 @@ Deno.test('GameEngineHex - doShrineExplore (ours)', () => {
   const action = createExploreAction();
 
   const result = GameEngineHex.doAction(action, gameState);
-  assert(result.success, result.message);
-  assertStringIncludes(result.message, 'completed');
+  assertSuccess(result);
+  assertStringIncludes(result.message(), 'completed');
   assertEquals(shrineHex.status, 'filled');
   const player = gameState.getCurrentPlayer();
   const completedShrineQuests = player.getQuestsOfType('shrine').filter(
@@ -135,7 +140,7 @@ Deno.test('GameEngineHex - doShrineExplore (ours already visible)', () => {
 
   const action = createExploreAction();
   const result = GameEngineHex.doAction(action, gameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertEquals(shrineHex.status, 'filled');
   const player = gameState.getCurrentPlayer();
   const completedShrineQuests = player.getQuestsOfType('shrine').filter(
@@ -154,7 +159,7 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, favor)', () => {
 
   const action = createExploreAction();
   const result = GameEngineHex.doAction(action, gameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertEquals(shrineHex.status, 'visible');
   const player = gameState.getCurrentPlayer();
   const completedShrineQuests = player.getQuestsOfType('shrine').filter(
@@ -174,7 +179,7 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, shield)', () => {
 
   const action = createExploreAction();
   const result = GameEngineHex.doAction(action, gameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertEquals(shrineHex.status, 'visible');
   const player = gameState.getCurrentPlayer();
   const completedShrineQuests = player.getQuestsOfType('shrine').filter(
@@ -193,8 +198,8 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, god)', () => {
 
   const action = createExploreAction();
   const result = GameEngineHex.doAction(action, gameState);
-  assert(result.success, result.message);
-  assertStringIncludes(result.message, 'god');
+  assertSuccess(result);
+  assertStringIncludes(result.message(), 'god');
   assertEquals(shrineHex.status, 'visible');
   const player = gameState.getCurrentPlayer();
   const completedShrineQuests = player.getQuestsOfType('shrine').filter(
@@ -219,7 +224,7 @@ Deno.test('GameEngineHex - doShrineExplore (not ours, card)', () => {
 
   const action = createExploreAction();
   const result = GameEngineHex.doAction(action, gameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertEquals(shrineHex.status, 'visible');
   const player = gameState.getCurrentPlayer();
   const completedShrineQuests = player.getQuestsOfType('shrine').filter(
@@ -252,7 +257,7 @@ Deno.test('GameEngineHex - exploring phase doShrineExplore', () => {
   };
 
   const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertNotEquals(ShrineHex.status, 'hidden');
   assertEquals(testGameState.getPhaseName(), PhaseMain.phaseName);
   assertEquals(greenGod.level, 0);

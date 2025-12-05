@@ -8,6 +8,7 @@ import type { HexCell } from '../src/hexmap/HexCell.ts';
 import { Resource } from '../src/Resource.ts';
 import type { CoreColor, Item, Quest } from '../src/types.ts';
 import { type UiState, UiStateClass } from '../src/UiState.ts';
+import { assertSuccess } from './test-helpers.ts';
 
 let gameState: GameState;
 let uiState: UiState;
@@ -56,7 +57,7 @@ function loadCubeForWildQuest(color: CoreColor): Quest {
   const player = gameState.getCurrentPlayer();
   const cube: Item = { type: 'cube', color: color };
   const loaded = player.loadItem(cube);
-  assert(loaded.success, loaded.message);
+  assertSuccess(loaded);
   const wildQuest = player.getQuestsOfType('temple').find((quest) => {
     return quest.color === 'none';
   });
@@ -96,7 +97,7 @@ Deno.test('GameEngineHex - doTempleAction', () => {
 
   const action = createDropCubeAction(red);
   const result = GameEngineHex.doAction(action, gameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assert(quest.isCompleted);
   const player = gameState.getCurrentPlayer();
   assertEquals(player.favor, 3);

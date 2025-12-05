@@ -274,7 +274,9 @@ export class GameManager {
     if (result.success) {
       this.uiState.clearResourceSelection();
     }
-    this.showMessage(result.message);
+    result.getMessages().forEach((message) => {
+      this.showMessage(message);
+    });
     this.notifyStateChanged();
   }
 

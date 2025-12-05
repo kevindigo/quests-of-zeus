@@ -16,6 +16,7 @@ import { Resource } from '../src/Resource.ts';
 import type { CoreColor } from '../src/types.ts';
 import {
   assertFailureContains,
+  assertSuccess,
   setupGame,
   testGameState,
   testPlayer,
@@ -152,8 +153,8 @@ Deno.test('GameEngineAnyResource - gain favor with die success', () => {
     createGainFavorAction(Resource.createDie('red')),
     gameState,
   );
-  assert(result.success, result.message);
-  assertStringIncludes(result.message, 'gained');
+  assertSuccess(result);
+  assertStringIncludes(result.message(), 'gained');
   assertEquals(player.favor, oldFavor + 2);
   assertFalse(player.usedOracleCardThisTurn);
   assertEquals(player.oracleDice.length, oldDiceCount - 1);
@@ -168,8 +169,8 @@ Deno.test('GameEngineAnyResource - gain favor with card success', () => {
     createGainFavorAction(Resource.createCard('blue')),
     gameState,
   );
-  assert(result.success, result.message);
-  assertStringIncludes(result.message, 'gained');
+  assertSuccess(result);
+  assertStringIncludes(result.message(), 'gained');
   assertEquals(player.favor, oldFavor + 2);
   assert(player.usedOracleCardThisTurn);
   assertEquals(player.oracleCards.length, 1);
@@ -184,8 +185,8 @@ Deno.test('GameEngineAnyResource - gain favor ignore recolor', () => {
     createGainFavorAction(Resource.createRecoloredCard('blue', 2)),
     gameState,
   );
-  assert(result.success, result.message);
-  assertStringIncludes(result.message, 'gained');
+  assertSuccess(result);
+  assertStringIncludes(result.message(), 'gained');
   assertEquals(player.favor, oldFavor + 2);
 });
 
@@ -208,8 +209,8 @@ Deno.test('GameEngineAnyResource - gain card with die success', () => {
     createGainCardAction(Resource.createDie('red')),
     gameState,
   );
-  assert(result.success, result.message);
-  assertStringIncludes(result.message, 'gain');
+  assertSuccess(result);
+  assertStringIncludes(result.message(), 'gain');
   assertEquals(player.favor, oldFavor);
   assertFalse(player.usedOracleCardThisTurn);
   assertEquals(player.oracleDice.length, 1);
@@ -225,8 +226,8 @@ Deno.test('GameEngineAnyResource - gain card with card success', () => {
     createGainCardAction(Resource.createCard('blue')),
     gameState,
   );
-  assert(result.success, result.message);
-  assertStringIncludes(result.message, 'gain');
+  assertSuccess(result);
+  assertStringIncludes(result.message(), 'gain');
   assertEquals(player.favor, oldFavor);
   assert(player.usedOracleCardThisTurn);
   assertEquals(player.oracleDice.length, 2);
@@ -241,8 +242,8 @@ Deno.test('GameEngineAnyResource - gain card with die ignore recolor', () => {
     createGainCardAction(Resource.createRecoloredDie('red', 2)),
     gameState,
   );
-  assert(result.success, result.message);
-  assertStringIncludes(result.message, 'gain');
+  assertSuccess(result);
+  assertStringIncludes(result.message(), 'gain');
   assertEquals(player.oracleDice.length, 1);
   assertEquals(player.oracleCards.length, 3);
 });
@@ -261,7 +262,7 @@ Deno.test('doAction GainTwoPeeks - 1 hidden shrine', () => {
   };
 
   const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertEquals(testGameState.getPhaseName(), PhasePeeking.phaseName);
   testGameState.endPhase();
   assertEquals(testGameState.getPhaseName(), PhaseMain.phaseName);
@@ -278,7 +279,7 @@ Deno.test('doAction GainTwoPeeks - >2 hidden shrines', () => {
   };
 
   const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertEquals(testPlayer.oracleDice.length, 0);
   assertEquals(testGameState.getPhaseName(), PhasePeeking.phaseName);
   testGameState.endPhase();

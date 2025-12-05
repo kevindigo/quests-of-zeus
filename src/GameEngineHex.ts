@@ -402,9 +402,9 @@ export class GameEngineHex {
     if (result.success) {
       const spent = GameEngine.spendResource(gameState, action.spend);
       if (!spent.success) {
-        return new Failure(
-          'Built shrine, but failed spendResource: ' + spent.message,
-        );
+        const failure = new Failure(spent.message());
+        failure.addMessage('Built shrine, but failed spendResource');
+        return failure;
       }
       gameState.endPhase();
     }
@@ -508,9 +508,9 @@ export class GameEngineHex {
     GameEngine.updateWildQuestIfNecessary(player, item);
     const spent = GameEngine.spendResource(gameState, action.spend);
     if (!spent.success) {
-      return new Failure(
-        'Loaded cube but spend failed: ' + spent.message,
-      );
+      const failure = new Failure(spent.message());
+      failure.addMessage('Loaded cube, but failed spendResource');
+      return failure;
     }
     return new Success('Offering was loaded');
   }

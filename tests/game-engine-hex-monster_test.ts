@@ -10,6 +10,7 @@ import { Resource } from '../src/Resource.ts';
 import type { CoreColor, MonsterHex } from '../src/types.ts';
 import {
   assertFailureContains,
+  assertSuccess,
   setupGame,
   testGameState,
   testPlayer,
@@ -182,7 +183,7 @@ Deno.test('GameEngineHex monster - doAction wild success', () => {
   assert(wildQuest);
 
   const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
 
   assertEquals(monsterHex.monsterColors.length, originalMonsterCount - 1);
   assertLess(monsterHex.monsterColors.indexOf('red'), 0);
@@ -211,7 +212,7 @@ Deno.test('GameEngineHex monster - doAction required color success', () => {
   );
 
   const result = GameEngine.doAction(action, testGameState);
-  assert(result.success, result.message);
+  assertSuccess(result);
   assertLess(monsterHex.monsterColors.indexOf(monsterColor), 0);
   assert(colorMonsterQuest.isCompleted);
   assertEquals(testPlayer.oracleDice.length, 0);

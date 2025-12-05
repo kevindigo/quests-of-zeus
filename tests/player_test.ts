@@ -4,6 +4,7 @@ import { assertEquals } from '@std/assert/equals';
 import type { Item } from '../src/types.ts';
 import {
   assertFailureContains,
+  assertSuccess,
   setupGame,
   testPlayer,
 } from './test-helpers.ts';
@@ -23,7 +24,7 @@ Deno.test('Player - load cube valid', () => {
   const redCube: Item = { type: 'cube', color: 'red' };
   assert(testPlayer.validateItemIsLoadable(redCube).success);
   const result = testPlayer.loadItem(redCube);
-  assert(result.success, result.message);
+  assertSuccess(result);
   const items = testPlayer.getLoadedItems();
   assertEquals(items.length, 1);
   assertEquals(testPlayer.getItemCount(), items.length);
@@ -37,7 +38,7 @@ Deno.test('Player - load cube already present', () => {
 
   const validation = testPlayer.validateItemIsLoadable(redCube);
   assertFailureContains(validation, 'already');
-  assert(shouldWork, shouldWork.message);
+  assertSuccess(shouldWork);
   const result = testPlayer.loadItem(redCube);
   assertFailureContains(result, 'already');
 });
@@ -57,7 +58,7 @@ Deno.test('Player - load cube already full', () => {
     const item: Item = { type: 'cube', color: color };
     assert(testPlayer.validateItemIsLoadable(item).success);
     const result = testPlayer.loadItem(item);
-    assert(result.success, result.message);
+    assertSuccess(result);
   });
   const redCube: Item = { type: 'cube', color: 'red' };
   const validation = testPlayer.validateItemIsLoadable(redCube);
@@ -70,11 +71,11 @@ Deno.test('Player - load and unload a statue', () => {
   setupGame();
   const statue: Item = { type: 'statue', color: 'red' };
   const loaded = testPlayer.loadItem(statue);
-  assert(loaded.success, loaded.message);
+  assertSuccess(loaded);
   assert(testPlayer.isItemLoaded(statue));
   assertEquals(testPlayer.getItemCount(), 1);
   const unloaded = testPlayer.unloadItem(statue);
-  assert(unloaded.success, unloaded.message);
+  assertSuccess(unloaded);
   assertEquals(testPlayer.getItemCount(), 0);
   assertFalse(testPlayer.isItemLoaded(statue));
 });
