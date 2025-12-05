@@ -1,10 +1,12 @@
 // Game type definitions for Quests of Zeus
+import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
 import {
   Failure,
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
+import type { UiState } from './UiState.ts';
 
 // Terrain types for the hexagonal map
 export type TerrainType =
@@ -260,3 +262,7 @@ export interface God {
   color: CoreColor;
   level: number;
 }
+
+export type GameEvent =
+  | { type: 'stateChange'; gameState: GameState; uiState: UiState }
+  | { type: 'message'; text: string };

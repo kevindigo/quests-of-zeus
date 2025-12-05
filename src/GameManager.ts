@@ -9,18 +9,25 @@ import { PhaseAdvancingGod } from './phases.ts';
 import type { Player } from './Player.ts';
 import { Resource } from './Resource.ts';
 import type { ResultWithMessage } from './ResultWithMessage.ts';
-import type { CoreColor } from './types.ts';
+import type { CoreColor, GameEvent } from './types.ts';
 import { type UiState, UiStateClass } from './UiState.ts';
 
 export class GameManager {
   constructor() {
     this.state = new GameState();
     this.uiState = new UiStateClass();
+    this.listeners = [];
   }
 
   public startNewGame(): void {
     new GameStateInitializer().initializeGameState(this.state);
     this.uiState.reset();
+    this.showMessage('New game started');
+  }
+
+  public onEvent(listener: (event: GameEvent) => void) {
+    console.log('GameManager adding onEvent listener');
+    this.listeners.push(listener);
   }
 
   public getGameState(): GameState {
@@ -39,7 +46,7 @@ export class GameManager {
     return this.uiState;
   }
 
-  public doAdvanceGod(godColor: CoreColor): ResultWithMessage {
+  public doAdvanceGod(godColor: CoreColor): void {
     const phaseName = this.getGameState().getPhaseName();
     const isAdvancingGodPhase = phaseName === PhaseAdvancingGod.phaseName;
 
@@ -52,7 +59,12 @@ export class GameManager {
       spend: resource,
     };
 
-    return GameEngine.doAction(action, this.getGameState());
+    const result = GameEngine.doAction(action, this.getGameState());
+    if (result.success) {
+      this.uiState.clearResourceSelection();
+    }
+    this.showMessage('Clicked advance god: ' + result.message);
+    this.notifyStateChanged();
   }
 
   public doActivateGod(godColor: CoreColor): ResultWithMessage {
@@ -65,6 +77,23 @@ export class GameManager {
     return GameEngine.doAction(action, this.getGameState());
   }
 
+  private showMessage(message: string): void {
+    this.emit({ type: 'message', text: message });
+  }
+
+  private notifyStateChanged(): void {
+    this.emit({
+      type: 'stateChange',
+      gameState: this.getGameState(),
+      uiState: this.getUiState(),
+    });
+  }
+
+  private emit(event: GameEvent) {
+    this.listeners.forEach((cb) => cb(event));
+  }
+
   private state: GameState;
   private uiState: UiState;
+  private listeners: ((event: GameEvent) => void)[];
 }

@@ -50,7 +50,22 @@ export class Controller {
   //NOTE: This is invoked directly by index.html
   public initializeGameUI(): void {
     this.setupEventListeners();
+    this.listenToGameManagerEvents();
     this.renderGameState(this.getGameState());
+  }
+
+  private listenToGameManagerEvents() {
+    console.log('Controller listening to GameManager');
+    this.gameManager.onEvent((event) => {
+      switch (event.type) {
+        case 'stateChange':
+          this.renderGameState(event.gameState);
+          break;
+        case 'message':
+          this.showMessage(event.text);
+          break;
+      }
+    });
   }
 
   private renderGameState(gameState: GameState): void {
@@ -85,12 +100,7 @@ export class Controller {
         if (!square) return;
 
         const clickedColor = square.dataset['color'] as CoreColor;
-        const result = this.gameManager.doAdvanceGod(clickedColor);
-        if (result.success) {
-          this.clearResourceSelection();
-        }
-        this.showMessage('Clicked advance god: ' + result.message);
-        this.renderGameState(this.getGameState());
+        this.gameManager.doAdvanceGod(clickedColor);
       });
     }
     {
@@ -387,9 +397,9 @@ export class Controller {
   }
 
   private startNewGame(): void {
+    this.clearMessagePanel();
     this.gameManager.startNewGame();
     this.renderGameState(this.getGameState());
-    this.clearMessagePanel();
     this.showMessage(
       "New game started! All players have rolled their dice. Player 1's turn begins.",
     );
