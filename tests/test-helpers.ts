@@ -29,6 +29,7 @@ export let testPlayer: Player;
 
 export function setupGame(): void {
   testGameManager = new GameManager();
+  testGameManager.startNewGame();
   testGameState = testGameManager.getGameState();
   testUiState = testGameManager.getUiState();
   testMap = testGameState.getMap();

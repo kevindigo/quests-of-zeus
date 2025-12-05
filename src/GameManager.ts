@@ -10,7 +10,6 @@ export class GameManager {
   constructor() {
     this.state = new GameState();
     this.uiState = new UiStateClass();
-    this.startNewGame();
   }
 
   public startNewGame(): void {

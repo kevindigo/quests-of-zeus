@@ -135,6 +135,7 @@ Deno.test('GameEngineResource - doAction free advance god', () => {
   setupGame();
   testGameState.queuePhase(PhaseAdvancingGod.phaseName);
   testGameState.endPhase();
+  testPlayer.resetGod('red');
   const action: AdvanceGodAction = {
     type: 'advance',
     godColor: 'red',

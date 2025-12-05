@@ -3,8 +3,10 @@ import { GameManager } from '../src/GameManager.ts';
 import { COLOR_WHEEL, type CoreColor } from '../src/types.ts';
 
 Deno.test('Statue base distribution - 6 with 3 on each', () => {
-  const engine = new GameManager();
-  const state = engine.getGameState();
+  const manager = new GameManager();
+  manager.startNewGame();
+
+  const state = manager.getGameState();
   const statueHexes = state.getStatueHexes();
 
   assertEquals(statueHexes.length, 6);
@@ -14,8 +16,10 @@ Deno.test('Statue base distribution - 6 with 3 on each', () => {
 });
 
 Deno.test('Statue base distribution - no duplicates on a hex', () => {
-  const engine = new GameManager();
-  const state = engine.getGameState();
+  const manager = new GameManager();
+  manager.startNewGame();
+
+  const state = manager.getGameState();
   const statueHexes = state.getStatueHexes();
 
   statueHexes.forEach((statueHex) => {
@@ -28,8 +32,10 @@ Deno.test('Statue base distribution - no duplicates on a hex', () => {
 });
 
 Deno.test('Statue base distribution - exactly 3 of each color in total', () => {
-  const engine = new GameManager();
-  const state = engine.getGameState();
+  const manager = new GameManager();
+  manager.startNewGame();
+
+  const state = manager.getGameState();
   const statueHexes = state.getStatueHexes();
 
   const countByColor: Map<CoreColor, number> = new Map();

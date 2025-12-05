@@ -5,8 +5,8 @@ import { GameManager } from '../src/GameManager.ts';
 import type { HexColor } from '../src/types.ts';
 
 Deno.test('Quests - Each player has 12 quests, not yet completed', () => {
-  const engine = new GameManager();
-  const state = engine.getGameState().toSnapshot();
+  const manager = new GameManager();
+  const state = manager.getGameState().toSnapshot();
 
   state.players.forEach((player) => {
     const quests = player.quests;
@@ -18,8 +18,8 @@ Deno.test('Quests - Each player has 12 quests, not yet completed', () => {
 });
 
 Deno.test('Quests - Each player has 3 shrine quests', () => {
-  const engine = new GameManager();
-  const state = engine.getGameState().toSnapshot();
+  const manager = new GameManager();
+  const state = manager.getGameState().toSnapshot();
 
   state.players.forEach((player) => {
     const matchingQuests = player.quests.filter((quest) => {
@@ -35,8 +35,8 @@ Deno.test('Quests - Each player has 3 shrine quests', () => {
 });
 
 Deno.test('Quests - Each player has 3 statue quests', () => {
-  const engine = new GameManager();
-  const state = engine.getGameState().toSnapshot();
+  const manager = new GameManager();
+  const state = manager.getGameState().toSnapshot();
 
   state.players.forEach((player) => {
     const matchingQuests = player.quests.filter((quest) => {
@@ -52,8 +52,9 @@ Deno.test('Quests - Each player has 3 statue quests', () => {
 });
 
 Deno.test('Quests = Each player has 3 temple quests', () => {
-  const engine = new GameManager();
-  const state = engine.getGameState().toSnapshot();
+  const manager = new GameManager();
+  manager.startNewGame();
+  const state = manager.getGameState().toSnapshot();
 
   const colorsAcrossPlayers: Set<HexColor> = new Set();
   state.players.forEach((player) => {
@@ -82,8 +83,10 @@ Deno.test('Quests = Each player has 3 temple quests', () => {
 });
 
 Deno.test('Quests = Each player has 3 monster quests', () => {
-  const engine = new GameManager();
-  const state = engine.getGameState().toSnapshot();
+  const manager = new GameManager();
+  manager.startNewGame();
+
+  const state = manager.getGameState().toSnapshot();
 
   const colorsAcrossPlayers: Set<HexColor> = new Set();
   state.players.forEach((player) => {
@@ -112,8 +115,10 @@ Deno.test('Quests = Each player has 3 monster quests', () => {
 });
 
 Deno.test('Quest - monster and temple quest colors should not overlap', () => {
-  const engine = new GameManager();
-  const state = engine.getGameState().toSnapshot();
+  const manager = new GameManager();
+  manager.startNewGame();
+
+  const state = manager.getGameState().toSnapshot();
 
   const colorsAcrossPlayers: Set<HexColor> = new Set();
   state.players.forEach((player) => {
@@ -139,8 +144,10 @@ Deno.test('Quest - monster and temple quest colors should not overlap', () => {
 });
 
 Deno.test('Quest - monster and temple quest colors should not contain red or green', () => {
-  const engine = new GameManager();
-  const player = engine.getCurrentPlayer();
+  const manager = new GameManager();
+  manager.startNewGame();
+
+  const player = manager.getCurrentPlayer();
   const monsterAndTempleQuests = player.getQuests().filter((quest) => {
     return quest.type === 'monster' || quest.type === 'temple';
   });

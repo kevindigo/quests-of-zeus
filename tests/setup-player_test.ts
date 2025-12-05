@@ -3,9 +3,10 @@ import { GameManager } from '../src/GameManager.ts';
 import { Player } from '../src/Player.ts';
 
 Deno.test('Setup player - favor', () => {
-  const engine = new GameManager();
+  const manager = new GameManager();
+  manager.startNewGame();
 
-  const state = engine.getGameState();
+  const state = manager.getGameState();
   assertEquals(state.getPlayerCount(), 2);
 
   for (let playerId = 0; playerId < state.getPlayerCount(); ++playerId) {
@@ -15,8 +16,8 @@ Deno.test('Setup player - favor', () => {
 });
 
 Deno.test('Setup player - storage', () => {
-  const engine = new GameManager();
-  const state = engine.getGameState();
+  const manager = new GameManager();
+  const state = manager.getGameState();
   for (let playerId = 0; playerId < state.getPlayerCount(); ++playerId) {
     const player = state.getPlayer(playerId);
     assertEquals(player.getItemCapacity(), 2);
@@ -25,10 +26,11 @@ Deno.test('Setup player - storage', () => {
 });
 
 Deno.test('DiceRolling - all players start with dice rolled', () => {
-  const engine = new GameManager();
+  const manager = new GameManager();
+  manager.startNewGame();
 
   // Initialize the game
-  const state = engine.getGameState();
+  const state = manager.getGameState();
   const phase = state.getPhase();
   assertEquals(phase.getName(), 'main');
 
@@ -57,9 +59,10 @@ Deno.test('DiceRolling - all players start with dice rolled', () => {
 });
 
 Deno.test('Shield resource - players start with 0 shield', () => {
-  const gameEngine = new GameManager();
+  const manager = new GameManager();
+  manager.startNewGame();
 
-  const gameState = gameEngine.getGameState().toSnapshot();
+  const gameState = manager.getGameState().toSnapshot();
 
   gameState.players.forEach((player, index) => {
     assertEquals(

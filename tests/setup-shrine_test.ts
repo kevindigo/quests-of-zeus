@@ -40,8 +40,10 @@ Deno.test('Shrine hex color assignment', () => {
 });
 
 Deno.test('Shrine hex - each has a unique face-down shrine foundation', () => {
-  const engine = new GameManager();
-  const state = engine.getGameState();
+  const manager = new GameManager();
+  manager.startNewGame();
+
+  const state = manager.getGameState();
   const shrineHexes = state.getShrineHexes();
   assertEquals(shrineHexes.length, 12);
   for (let i = 0; i < PLAYER_COLORS.length; ++i) {
@@ -54,8 +56,10 @@ Deno.test('Shrine hex - each has a unique face-down shrine foundation', () => {
 });
 
 Deno.test('Shrine hex - 3 of each reward', () => {
-  const engine = new GameManager();
-  const state = engine.getGameState();
+  const manager = new GameManager();
+  manager.startNewGame();
+
+  const state = manager.getGameState();
   const shrineHexes = state.getShrineHexes();
   SHRINE_REWARDS.forEach((reward) => {
     const hexesWithThisReward = shrineHexes.filter((sh) => {
@@ -66,8 +70,10 @@ Deno.test('Shrine hex - 3 of each reward', () => {
 });
 
 Deno.test('Shrine hex - each player has no duplicate rewards', () => {
-  const engine = new GameManager();
-  const state = engine.getGameState();
+  const manager = new GameManager();
+  manager.startNewGame();
+
+  const state = manager.getGameState();
   const shrineHexes = state.getShrineHexes();
   PLAYER_COLORS.forEach((playerColor) => {
     const hexesForThisPlayer = shrineHexes.filter((sh) => {

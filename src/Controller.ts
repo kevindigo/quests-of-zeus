@@ -41,6 +41,10 @@ export class Controller {
   constructor(gameManager: GameManager) {
     this.gameManager = gameManager;
     this.gameState = this.gameManager.getGameState();
+    console.log(
+      'Controller constructor: Current phase: ' +
+        this.getGameState().getPhaseName(),
+    );
     this.uiState = this.gameManager.getUiState();
     this.viewGame = new ViewGame(this.gameState, this.uiState);
   }
@@ -55,8 +59,8 @@ export class Controller {
 
   //NOTE: This is invoked directly by index.html
   public initializeGameUI(): void {
-    this.viewGame.viewWelcome();
     this.setupEventListeners();
+    this.renderGameState(this.getGameState());
   }
 
   private clearResourceSelection(): void {

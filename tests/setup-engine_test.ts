@@ -4,10 +4,10 @@ import { GameManager } from '../src/GameManager.ts';
 import { Resource } from '../src/Resource.ts';
 
 Deno.test('GameEngine setup - initialization', () => {
-  const engine = new GameManager();
+  const manager = new GameManager();
+  manager.startNewGame();
 
-  // Initialize the game
-  const state = engine.getGameState();
+  const state = manager.getGameState();
 
   assert(state.getMap());
   assertEquals(state.getPlayerCount(), 2);
@@ -25,10 +25,11 @@ Deno.test('GameEngine setup - initialization', () => {
 });
 
 Deno.test('GameEngine setup - player creation', () => {
-  const engine = new GameManager();
+  const manager = new GameManager();
+  manager.startNewGame();
 
-  const player1 = engine.getPlayer(0);
-  const player2 = engine.getPlayer(1);
+  const player1 = manager.getPlayer(0);
+  const player2 = manager.getPlayer(1);
 
   assert(player1);
   assert(player2);
@@ -44,18 +45,20 @@ Deno.test('GameEngine setup - player creation', () => {
 });
 
 Deno.test('GameEngine setup - roll dice during setup', () => {
-  const engine = new GameManager();
+  const manager = new GameManager();
+  manager.startNewGame();
 
-  const player = engine.getPlayer(0);
+  const player = manager.getPlayer(0);
   assert(player);
   assertEquals(player?.oracleDice.length, 3);
 });
 
 Deno.test('GameEngine setup - initialize shield', () => {
-  const engine = new GameManager();
+  const manager = new GameManager();
+  manager.startNewGame();
 
-  const player1 = engine.getPlayer(0);
-  const player2 = engine.getPlayer(1);
+  const player1 = manager.getPlayer(0);
+  const player2 = manager.getPlayer(1);
 
   assert(player1);
   assert(player2);
@@ -63,7 +66,7 @@ Deno.test('GameEngine setup - initialize shield', () => {
   assertEquals(player1.shield, 0, 'Player 1 shield should be 0');
   assertEquals(player2.shield, 0, 'Player 2 shield should be 0');
 
-  const gameState = engine.getGameState();
+  const gameState = manager.getGameState();
   const serializedPlayer1 = gameState.getPlayer(player1.id);
   const serializedPlayer2 = gameState.getPlayer(player2.id);
 
@@ -82,17 +85,18 @@ Deno.test('GameEngine setup - initialize shield', () => {
 });
 
 Deno.test('GameEngine - all players start on Zeus hex', () => {
-  const engine = new GameManager();
+  const manager = new GameManager();
+  manager.startNewGame();
 
   // Get all players
-  const player1 = engine.getPlayer(0);
-  const player2 = engine.getPlayer(1);
+  const player1 = manager.getPlayer(0);
+  const player2 = manager.getPlayer(1);
 
   assert(player1);
   assert(player2);
 
   // Find the Zeus hex in the map
-  const state = engine.getGameState();
+  const state = manager.getGameState();
   const zeusCells = state.getMap().getCellsByTerrain('zeus');
   assertEquals(zeusCells.length, 1, 'There should be exactly one Zeus hex');
 
@@ -133,12 +137,14 @@ Deno.test('GameEngine - all players start on Zeus hex', () => {
 });
 
 Deno.test('GameEngine - initializes oracle card deck', () => {
-  const engine = new GameManager();
-  assertEquals(engine.getGameState().getOracleCardDeck().length, 30);
+  const manager = new GameManager();
+  manager.startNewGame();
+  assertEquals(manager.getGameState().getOracleCardDeck().length, 30);
 });
 
 Deno.test('GameEngine - starting a new game resets the oracle card deck', () => {
   const manager = new GameManager();
+  manager.startNewGame();
   const gameState = manager.getGameState();
   const uiState = manager.getUiState();
   const player = manager.getCurrentPlayer();
