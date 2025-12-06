@@ -28,6 +28,8 @@ export function createPhase(phaseName: string): Phase {
       return new PhaseAdvancingGod();
     case PhaseExploring.phaseName:
       return new PhaseExploring();
+    case PhaseFreeloading.phaseName:
+      return new PhaseFreeloading();
     case PhaseMain.phaseName:
       return new PhaseMain();
     case PhasePeeking.phaseName:
@@ -205,6 +207,30 @@ export class PhasePeeking implements Phase {
   }
 
   public static readonly phaseName = 'peeking';
+}
+
+export class PhaseFreeloading implements Phase {
+  getName(): string {
+    return PhaseFreeloading.phaseName;
+  }
+
+  getAvailableActions(_gameState: GameState): Action[] {
+    const actions: Action[] = [];
+
+    // const playerCount = gameState.getPlayerCount();
+    // const playerIndex = gameState.getCurrentPlayerIndex();
+    // for (
+    //   let otherPlayerOffset = 1;
+    //   otherPlayerOffset < gameState.getPlayerCount;
+    //   ++otherPlayerOffset
+    // ) {
+    //   const otherPlayerIndex = (playerIndex + otherPlayerOffset) % playerCount;
+    //   const
+    // }
+    return actions;
+  }
+
+  public static readonly phaseName = 'freeloading';
 }
 
 // export class PhaseGrabbingStatue implements Phase {
