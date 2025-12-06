@@ -3,6 +3,7 @@ import { GameEngine } from './GameEngine.ts';
 import type { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import type { HexCoordinates } from './hexmap/HexGrid.ts';
+import { PhaseMain } from './phases.ts';
 import { Resource } from './Resource.ts';
 import type { CoreColor, TerrainType } from './types.ts';
 import type { UiState } from './UiState.ts';
@@ -235,6 +236,11 @@ export class Controller {
   }
 
   private selectResource(resourceToSelect: Resource): void {
+    if (this.getGameState().getPhaseName() !== PhaseMain.phaseName) {
+      this.showMessage('Cannot change resource selection in this phase');
+      return;
+    }
+
     const currentPlayer = this.getGameState().getCurrentPlayer();
 
     if (resourceToSelect.isCard() && currentPlayer.usedOracleCardThisTurn) {
