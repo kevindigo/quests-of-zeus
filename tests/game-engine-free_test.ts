@@ -1,4 +1,4 @@
-import { assert } from '@std/assert';
+import { assert, assertStringIncludes } from '@std/assert';
 import { assertEquals } from '@std/assert/equals';
 import { assertFalse } from '@std/assert/false';
 import { Actions, type FreeEndTurnAction } from '../src/actions.ts';
@@ -103,9 +103,18 @@ Deno.test('GameEngineFree - end turn end round distribute wounds', () => {
   player1.oracleDice = [];
   GameEngine.titanDieQueue = [1];
 
-  assertSuccess(
-    GameEngine.doAction({ type: 'free', subType: 'endTurn' }, testGameState),
+  const result = GameEngine.doAction(
+    { type: 'free', subType: 'endTurn' },
+    testGameState,
   );
+  assertSuccess(result);
+  const messages = result.getMessages();
+  const joined = messages.join('\n');
+  assertStringIncludes(joined, 'turn ended');
+  assertStringIncludes(joined, 'rolled');
+  assertStringIncludes(joined, 'titan');
+  assertStringIncludes(joined, 'took wound');
+
   assertEquals(testGameState.getPhaseName(), PhaseMain.phaseName);
 
   assertEquals(player0.getTotalWoundCount(), 1);

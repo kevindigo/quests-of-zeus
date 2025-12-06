@@ -9,8 +9,8 @@ import type { GameState } from './GameState.ts';
 import { PhaseFreeloading } from './phases.ts';
 import {
   Failure,
+  Result,
   type ResultWithMessage,
-  Success,
 } from './ResultWithMessage.ts';
 import type { CoreColor } from './types.ts';
 
@@ -61,14 +61,23 @@ export class GameEngineFree {
       return Failure.create('End turn not available');
     }
 
-    const currentPlayer = gameState.getCurrentPlayer();
-    if (!currentPlayer) {
+    const previousPlayer = gameState.getCurrentPlayer();
+    if (!previousPlayer) {
       return Failure.create('There was no current player');
     }
 
-    currentPlayer.usedOracleCardThisTurn = false;
-    currentPlayer.oracleDice = GameEngine.rollPlayerDice();
-    this.addFreeloadingOpportunities(gameState, currentPlayer.oracleDice);
+    const result = new Result(
+      true,
+      `Player ${previousPlayer.color} turn ended`,
+    );
+    previousPlayer.usedOracleCardThisTurn = false;
+    previousPlayer.oracleDice = GameEngine.rollPlayerDice();
+    result.addMessage(
+      `Player ${previousPlayer.color} rolled ${
+        previousPlayer.oracleDice.join(',')
+      }`,
+    );
+    this.addFreeloadingOpportunities(gameState, previousPlayer.oracleDice);
 
     const nextPlayerIndex = (gameState.getCurrentPlayerIndex() + 1) %
       gameState.getPlayerCount();
@@ -79,15 +88,19 @@ export class GameEngineFree {
     }
 
     if (nextPlayerIndex === 0) {
-      this.rollTitanDieAndApplyWounds(gameState);
+      result.addMessages(
+        this.rollTitanDieAndApplyWounds(gameState).getMessages(),
+      );
     }
 
-    if (gameState.getCurrentPlayer().getCurrentFreeloadOpportunities()) {
+    const nextPlayer = gameState.getCurrentPlayer();
+    result.addMessage(`Starting turn for player ${nextPlayer.color}`);
+    if (nextPlayer.getCurrentFreeloadOpportunities()) {
       gameState.queuePhase(PhaseFreeloading.phaseName);
     }
     gameState.endPhase();
 
-    return Success.create(`Player ${currentPlayer.color} turn ended`);
+    return result;
   }
 
   private static addFreeloadingOpportunities(
@@ -115,8 +128,11 @@ export class GameEngineFree {
     }
   }
 
-  private static rollTitanDieAndApplyWounds(gameState: GameState): void {
+  private static rollTitanDieAndApplyWounds(
+    gameState: GameState,
+  ): ResultWithMessage {
     const titanRoll = GameEngine.rollTitanDie();
+    const result = new Result(true, `Rolled titan die ${titanRoll}`);
     for (
       let playerIndex = 0;
       playerIndex < gameState.getPlayerCount();
@@ -129,7 +145,9 @@ export class GameEngineFree {
           throw new Error('Wound deck is empty');
         }
         player.addWound(wound);
+        result.addMessage(`Player ${player.color} took wound ${wound}`);
       }
     }
+    return result;
   }
 }

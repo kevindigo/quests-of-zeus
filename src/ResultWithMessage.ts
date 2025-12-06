@@ -5,7 +5,7 @@ export interface ResultWithMessage {
   addMessage(message: string): void;
 }
 
-class Result implements ResultWithMessage {
+export class Result implements ResultWithMessage {
   public constructor(status: boolean, message: string) {
     this.success = status;
     this.text = [message];
@@ -21,6 +21,10 @@ class Result implements ResultWithMessage {
 
   public addMessage(message: string): void {
     this.text.push(message);
+  }
+
+  public addMessages(messages: string[]): void {
+    this.text.push(...messages);
   }
 
   public success: boolean;
