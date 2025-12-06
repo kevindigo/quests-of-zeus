@@ -6,11 +6,13 @@ import {
 } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
+import { PhaseFreeloading } from './phases.ts';
 import {
   Failure,
   type ResultWithMessage,
   Success,
 } from './ResultWithMessage.ts';
+import type { CoreColor } from './types.ts';
 
 export class GameEngineFree {
   public static getFreeActions(
@@ -60,10 +62,13 @@ export class GameEngineFree {
     }
 
     const currentPlayer = gameState.getCurrentPlayer();
-    if (currentPlayer) {
-      currentPlayer.usedOracleCardThisTurn = false;
-      currentPlayer.oracleDice = GameEngine.rollPlayerDice();
+    if (!currentPlayer) {
+      return new Failure('There was no current player');
     }
+
+    currentPlayer.usedOracleCardThisTurn = false;
+    currentPlayer.oracleDice = GameEngine.rollPlayerDice();
+    this.addFreeloadingOpportunities(gameState, currentPlayer.oracleDice);
 
     const nextPlayerIndex = (gameState.getCurrentPlayerIndex() + 1) %
       gameState.getPlayerCount();
@@ -72,7 +77,37 @@ export class GameEngineFree {
     if (gameState.getCurrentPlayerIndex() === 0) {
       gameState.advanceRound();
     }
+
+    if (gameState.getCurrentPlayer().getCurrentFreeloadOpportunities()) {
+      gameState.queuePhase(PhaseFreeloading.phaseName);
+    }
     gameState.endPhase();
+
     return new Success(`Player ${currentPlayer.color} turn ended`);
+  }
+
+  private static addFreeloadingOpportunities(
+    gameState: GameState,
+    dice: CoreColor[],
+  ): void {
+    for (
+      let playerIndex = 0;
+      playerIndex < gameState.getPlayerCount();
+      ++playerIndex
+    ) {
+      const maxGodLevel = GameEngine.getMaxGodLevel(gameState);
+
+      if (playerIndex !== gameState.getCurrentPlayerIndex()) {
+        const player = gameState.getPlayer(playerIndex);
+        const diceForThisPlayer = dice.filter((color) => {
+          const level = player.getGodLevel(color);
+          return level > 0 && level < maxGodLevel;
+        });
+
+        if (diceForThisPlayer.length > 0) {
+          player.addFreeloadOpportunities(diceForThisPlayer);
+        }
+      }
+    }
   }
 }

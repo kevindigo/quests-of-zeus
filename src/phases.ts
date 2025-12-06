@@ -214,19 +214,21 @@ export class PhaseFreeloading implements Phase {
     return PhaseFreeloading.phaseName;
   }
 
-  getAvailableActions(_gameState: GameState): Action[] {
+  getAvailableActions(gameState: GameState): Action[] {
     const actions: Action[] = [];
 
-    // const playerCount = gameState.getPlayerCount();
-    // const playerIndex = gameState.getCurrentPlayerIndex();
-    // for (
-    //   let otherPlayerOffset = 1;
-    //   otherPlayerOffset < gameState.getPlayerCount;
-    //   ++otherPlayerOffset
-    // ) {
-    //   const otherPlayerIndex = (playerIndex + otherPlayerOffset) % playerCount;
-    //   const
-    // }
+    const player = gameState.getCurrentPlayer();
+    const opportunities = player.getCurrentFreeloadOpportunities();
+    opportunities?.forEach((color) => {
+      const action: AdvanceGodAction = {
+        type: 'advance',
+        godColor: color,
+        spend: Resource.none,
+      };
+      if (player.getGodLevel(color) > 0) {
+        actions.push(action);
+      }
+    });
     return actions;
   }
 

@@ -29,6 +29,7 @@ export type PlayerSnapshot = {
   quests: Quest[];
   gods: God[];
   wounds: CoreColor[];
+  freeloadOpportunities: Set<CoreColor>[];
 };
 
 export class Player {
@@ -51,6 +52,7 @@ export class Player {
     this.quests = [];
     this.gods = Player.createGods();
     this.wounds = [];
+    this.freeloadOpportunities = [];
   }
 
   public static fromSnapshot(json: PlayerSnapshot): Player {
@@ -71,6 +73,7 @@ export class Player {
       player.gods.set(god.color, god);
     });
     player.wounds = json.wounds;
+    player.freeloadOpportunities = json.freeloadOpportunities;
     return player;
   }
 
@@ -89,6 +92,7 @@ export class Player {
       quests: this.quests,
       gods: [...this.gods.values()],
       wounds: [...this.wounds],
+      freeloadOpportunities: this.freeloadOpportunities,
     };
   }
 
@@ -252,6 +256,18 @@ export class Player {
     }).length;
   }
 
+  public getCurrentFreeloadOpportunities(): Set<CoreColor> | null {
+    return this.freeloadOpportunities[0] ?? null;
+  }
+
+  public addFreeloadOpportunities(dice: CoreColor[]): void {
+    this.freeloadOpportunities.push(new Set<CoreColor>(dice));
+  }
+
+  public removeCurrentFreeloadOpportunities(): void {
+    this.freeloadOpportunities.shift();
+  }
+
   public readonly id: number;
   public readonly name: string;
   public readonly color: PlayerColorName;
@@ -265,4 +281,5 @@ export class Player {
   private quests: Quest[];
   private gods: Map<CoreColor, God>;
   private wounds: CoreColor[];
+  private freeloadOpportunities: Set<CoreColor>[];
 }

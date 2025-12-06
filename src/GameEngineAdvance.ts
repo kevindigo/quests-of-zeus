@@ -1,6 +1,7 @@
 import { type Action, Actions, type AdvanceGodAction } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
+import { PhaseFreeloading } from './phases.ts';
 import {
   Failure,
   type ResultWithMessage,
@@ -61,6 +62,11 @@ export class GameEngineAdvance {
       return new Failure(
         'Impossible: Unable to spend for action ' + JSON.stringify(action),
       );
+    }
+
+    player.removeCurrentFreeloadOpportunities();
+    if (player.getCurrentFreeloadOpportunities()) {
+      gameState.queuePhase(PhaseFreeloading.phaseName);
     }
 
     gameState.endPhase();

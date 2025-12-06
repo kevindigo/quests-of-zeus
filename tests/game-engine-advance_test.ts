@@ -3,7 +3,11 @@ import { Actions, type AdvanceGodAction } from '../src/actions.ts';
 import { GameEngine } from '../src/GameEngine.ts';
 import { GameEngineAdvance } from '../src/GameEngineAdvance.ts';
 import { GameEngineResource } from '../src/GameEngineResource.ts';
-import { PhaseAdvancingGod, PhaseMain } from '../src/phases.ts';
+import {
+  PhaseAdvancingGod,
+  PhaseFreeloading,
+  PhaseMain,
+} from '../src/phases.ts';
 import { Resource } from '../src/Resource.ts';
 import { COLOR_WHEEL } from '../src/types.ts';
 import {
@@ -14,7 +18,7 @@ import {
   testPlayer,
 } from './test-helpers.ts';
 
-Deno.test('GameEngineResource - Actions.areEqual', () => {
+Deno.test('GameEngineAdvance - Actions.areEqual', () => {
   const redCard: AdvanceGodAction = {
     type: 'advance',
     godColor: 'red',
@@ -67,7 +71,7 @@ Deno.test('GameEngineResource - Actions.areEqual', () => {
   assertFalse(Actions.areEqual(blackNone, pinkNone));
 });
 
-Deno.test('GameEngineColor AdvanceGod available - god already at top', () => {
+Deno.test('GameEngineAdvance AdvanceGod available - god already at top', () => {
   setupGame();
   COLOR_WHEEL.forEach((color) => {
     const god = testPlayer.getGod(color);
@@ -83,7 +87,7 @@ Deno.test('GameEngineColor AdvanceGod available - god already at top', () => {
   assertEquals(advanceGodActions.length, 0);
 });
 
-Deno.test('GameEngineColor AdvanceGod available - can advance', () => {
+Deno.test('GameEngineAdvance AdvanceGod available - can advance', () => {
   setupGame();
   const color = 'blue';
   testPlayer.oracleDice = [color];
@@ -114,7 +118,7 @@ Deno.test('GameEngineColor AdvanceGod doAction - not available', () => {
   assertFailureContains(result, 'not available');
 });
 
-Deno.test('GameEngineColor AdvanceGod doAction - success', () => {
+Deno.test('GameEngineAdvance AdvanceGod doAction - success', () => {
   setupGame();
   const maxGodLevel = GameEngine.getMaxGodLevel(testGameState);
   const color = 'blue';
@@ -132,7 +136,7 @@ Deno.test('GameEngineColor AdvanceGod doAction - success', () => {
   assertEquals(testPlayer.oracleDice.length, 0);
 });
 
-Deno.test('GameEngineResource - doAction free advance god', () => {
+Deno.test('GameEngineAdvance - doAction free advance god', () => {
   setupGame();
   testGameState.queuePhase(PhaseAdvancingGod.phaseName);
   testGameState.endPhase();
@@ -148,5 +152,35 @@ Deno.test('GameEngineResource - doAction free advance god', () => {
   const player = testGameState.getCurrentPlayer();
   assertEquals(player.getGodLevel('red'), 1);
   assertEquals(player.oracleDice.length, 3);
+  assertEquals(testGameState.getPhaseName(), PhaseMain.phaseName);
+});
+
+Deno.test('GameEngineAdvance - Freeloading doAction', () => {
+  setupGame();
+  testPlayer.advanceGod('red');
+  testPlayer.addFreeloadOpportunities(['red']);
+  testPlayer.advanceGod('blue');
+  testPlayer.addFreeloadOpportunities(['blue']);
+  testGameState.queuePhase(PhaseFreeloading.phaseName);
+  testGameState.endPhase();
+
+  const redLevel = testPlayer.getGodLevel('red');
+  const redAction: AdvanceGodAction = {
+    type: 'advance',
+    godColor: 'red',
+    spend: Resource.none,
+  };
+  assertSuccess(GameEngine.doAction(redAction, testGameState));
+  assertEquals(testPlayer.getGodLevel('red'), redLevel + 1);
+  assertEquals(testGameState.getPhaseName(), PhaseFreeloading.phaseName);
+
+  const blueLevel = testPlayer.getGodLevel('blue');
+  const blueAction: AdvanceGodAction = {
+    type: 'advance',
+    godColor: 'blue',
+    spend: Resource.none,
+  };
+  assertSuccess(GameEngine.doAction(blueAction, testGameState));
+  assertEquals(testPlayer.getGodLevel('blue'), blueLevel + 1);
   assertEquals(testGameState.getPhaseName(), PhaseMain.phaseName);
 });

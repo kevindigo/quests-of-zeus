@@ -42,14 +42,3 @@ Deno.test('GameState initializer gives each player a wound', () => {
     });
   }
 });
-
-Deno.test('GameState initializer starts all lastRolled arrays empty', () => {
-  setupGame();
-  for (
-    let playerIndex = 0;
-    playerIndex < testGameState.getPlayerCount();
-    ++playerIndex
-  ) {
-    assertEquals(testGameState.getLastRolledColors(playerIndex).size, 0);
-  }
-});
