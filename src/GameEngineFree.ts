@@ -78,6 +78,10 @@ export class GameEngineFree {
       gameState.advanceRound();
     }
 
+    if (nextPlayerIndex === 0) {
+      this.rollTitanDieAndApplyWounds(gameState);
+    }
+
     if (gameState.getCurrentPlayer().getCurrentFreeloadOpportunities()) {
       gameState.queuePhase(PhaseFreeloading.phaseName);
     }
@@ -107,6 +111,24 @@ export class GameEngineFree {
         if (diceForThisPlayer.length > 0) {
           player.addFreeloadOpportunities(diceForThisPlayer);
         }
+      }
+    }
+  }
+
+  private static rollTitanDieAndApplyWounds(gameState: GameState): void {
+    const titanRoll = GameEngine.rollTitanDie();
+    for (
+      let playerIndex = 0;
+      playerIndex < gameState.getPlayerCount();
+      ++playerIndex
+    ) {
+      const player = gameState.getPlayer(playerIndex);
+      if (titanRoll >= player.shield) {
+        const wound = gameState.drawWound();
+        if (!wound) {
+          throw new Error('Wound deck is empty');
+        }
+        player.addWound(wound);
       }
     }
   }

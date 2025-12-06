@@ -136,4 +136,10 @@ export class GameEngine {
 
     return dice;
   }
+
+  public static rollTitanDie(): number {
+    return this.titanDieQueue.shift() ?? Math.floor(Math.random() * 6) + 1;
+  }
+
+  public static titanDieQueue: number[] = [];
 }

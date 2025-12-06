@@ -83,3 +83,31 @@ Deno.test('GameEngineFree - end turn skip freeloading if none available', () => 
   );
   assertEquals(testGameState.getPhaseName(), PhaseMain.phaseName);
 });
+
+Deno.test('GameEngineFree - end turn end round distribute wounds', () => {
+  setupGame();
+  const player0 = testGameState.getPlayer(0);
+  const player1 = testGameState.getPlayer(1);
+  COLOR_WHEEL.forEach((color) => {
+    player0.resetGod(color);
+    player1.resetGod(color);
+  });
+
+  player0.oracleDice = [];
+  assertSuccess(
+    GameEngine.doAction({ type: 'free', subType: 'endTurn' }, testGameState),
+  );
+  assertEquals(testGameState.getPhaseName(), PhaseMain.phaseName);
+
+  player0.shield = 3;
+  player1.oracleDice = [];
+  GameEngine.titanDieQueue = [1];
+
+  assertSuccess(
+    GameEngine.doAction({ type: 'free', subType: 'endTurn' }, testGameState),
+  );
+  assertEquals(testGameState.getPhaseName(), PhaseMain.phaseName);
+
+  assertEquals(player0.getTotalWoundCount(), 1);
+  assertEquals(player1.getTotalWoundCount(), 2);
+});
