@@ -85,7 +85,7 @@ export class GameEngineResource {
     const availableActions = this.getResourceActions(gameState);
     const found = Actions.find(availableActions, action);
     if (!found) {
-      return new Failure('Action not available');
+      return Failure.create('Action not available');
     }
 
     const result = GameEngine.spendResource(gameState, action.spend);
@@ -96,7 +96,7 @@ export class GameEngineResource {
     const player = gameState.getCurrentPlayer();
     player.favor += 2;
 
-    return new Success(
+    return Success.create(
       `Resource spent (${action.spend.getBaseColor()}); favor gained`,
     );
   }
@@ -110,13 +110,13 @@ export class GameEngineResource {
     const availableActions = this.getResourceActions(gameState);
     const found = Actions.find(availableActions, action);
     if (!found) {
-      return new Failure('Gain oracle card not available');
+      return Failure.create('Gain oracle card not available');
     }
 
     const deck = gameState.getOracleCardDeck();
     const card = deck.pop();
     if (!card) {
-      return new Failure('Oracle card deck was empty');
+      return Failure.create('Oracle card deck was empty');
     }
 
     const result = GameEngine.spendResource(gameState, action.spend);
@@ -127,7 +127,7 @@ export class GameEngineResource {
     const player = gameState.getCurrentPlayer();
     player.oracleCards.push(card);
 
-    return new Success(
+    return Success.create(
       `Spent ${action.spend.getBaseColor()} to gain ${card} card`,
     );
   }
@@ -141,7 +141,7 @@ export class GameEngineResource {
     const availableActions = this.getResourceActions(gameState);
     const found = Actions.find(availableActions, action);
     if (!found) {
-      return new Failure('Action not available');
+      return Failure.create('Action not available');
     }
 
     const hiddenShrineHexes = this.getHiddenShrineHexes(gameState);
@@ -152,7 +152,7 @@ export class GameEngineResource {
 
     GameEngine.spendResource(gameState, action.spend);
     gameState.endPhase();
-    return new Success(`Granted ${count} peeks`);
+    return Success.create(`Granted ${count} peeks`);
   }
 
   private static removeColoringFrom(action: ResourceAction): void {

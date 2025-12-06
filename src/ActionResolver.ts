@@ -1,12 +1,9 @@
 import type { Action } from './actions.ts';
-import type { GameManager } from './GameManager.ts';
 import type { GameState } from './GameState.ts';
 import { Failure, type ResultWithMessage } from './ResultWithMessage.ts';
 
 export class ActionResolver {
-  public constructor(engine: GameManager) {
-    this.engine = engine;
-    console.log(`Just here to avoid a compiler error: ${this.engine}`);
+  public constructor() {
   }
 
   public getLegalActions(_state: GameState): Action[] {
@@ -14,12 +11,10 @@ export class ActionResolver {
   }
 
   public applyAction(_state: GameState, _action: Action): ResultWithMessage {
-    return new Failure('applyAction not implemented yet');
+    return Failure.create('applyAction not implemented yet');
   }
 
   public isTerminal(_state: GameState): boolean {
     return false;
   }
-
-  private readonly engine: GameManager;
 }

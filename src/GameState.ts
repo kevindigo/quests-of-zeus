@@ -234,7 +234,7 @@ export class GameState {
     resource: Resource,
   ): ResultWithMessage {
     if (!resource.hasColor()) {
-      return new Failure('Impossible: no resource was selected');
+      return Failure.create('Impossible: no resource was selected');
     }
     const resourceArray = resource.isDie()
       ? player.oracleDice
@@ -242,13 +242,13 @@ export class GameState {
     const originalColor = resource.getBaseColor();
     const index = resourceArray.indexOf(originalColor);
     if (index < 0) {
-      return new Failure(
+      return Failure.create(
         `Could not remove ${originalColor} from ${resourceArray}`,
       );
     }
 
     resourceArray.splice(index, 1);
-    return new Success('Resource was spent');
+    return Success.create('Resource was spent');
   }
 
   public resetOracleCardDeck(): void {

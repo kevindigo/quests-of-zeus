@@ -57,29 +57,29 @@ export class GameEngineColor {
     const color = action.color;
     switch (color) {
       case 'black':
-        return new Failure('Activate god not implemented :' + color);
+        return Failure.create('Activate god not implemented :' + color);
       case 'pink':
-        return new Failure('Activate god not implemented :' + color);
+        return Failure.create('Activate god not implemented :' + color);
       case 'blue':
         return this.doTeleport(gameState);
       case 'yellow':
-        return new Failure('Activate god not implemented :' + color);
+        return Failure.create('Activate god not implemented :' + color);
       case 'green':
         return this.doExplore(gameState);
       case 'red':
-        return new Failure('Activate god not implemented :' + color);
+        return Failure.create('Activate god not implemented :' + color);
     }
   }
 
   private static doTeleport(gameState: GameState): ResultWithMessage {
     gameState.queuePhase(PhaseTeleporting.phaseName);
     gameState.endPhase();
-    return new Success('Switched phase to teleport');
+    return Success.create('Switched phase to teleport');
   }
 
   private static doExplore(gameState: GameState): ResultWithMessage {
     gameState.queuePhase(PhaseExploring.phaseName);
     gameState.endPhase();
-    return new Success('Switched phase to explore');
+    return Success.create('Switched phase to explore');
   }
 }

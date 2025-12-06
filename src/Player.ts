@@ -166,13 +166,13 @@ export class Player {
 
   public validateItemIsLoadable(item: Item): ResultWithMessage {
     if (this.getItemCount() >= this.getItemCapacity()) {
-      return new Failure(`Storage is already full`);
+      return Failure.create(`Storage is already full`);
     }
     if (this.isItemLoaded(item)) {
-      return new Failure(`Item already loaded: ${JSON.stringify(item)}`);
+      return Failure.create(`Item already loaded: ${JSON.stringify(item)}`);
     }
 
-    return new Success(`OK to load ${JSON.stringify(item)}`);
+    return Success.create(`OK to load ${JSON.stringify(item)}`);
   }
 
   public loadItem(item: Item): ResultWithMessage {
@@ -181,7 +181,7 @@ export class Player {
       return validation;
     }
     this.items.push(item);
-    return new Success(`Player loaded item ${JSON.stringify(item)}`);
+    return Success.create(`Player loaded item ${JSON.stringify(item)}`);
   }
 
   public isItemLoaded(item: Item): boolean {
@@ -197,7 +197,7 @@ export class Player {
 
   public unloadItem(itemToUnload: Item): ResultWithMessage {
     if (!this.isItemLoaded(itemToUnload)) {
-      return new Failure(
+      return Failure.create(
         `Item ${JSON.stringify(itemToUnload)} not found in cargo`,
       );
     }
@@ -207,13 +207,13 @@ export class Player {
         item.color === itemToUnload.color;
     });
     if (at < 0) {
-      return new Failure(
+      return Failure.create(
         `Impossible: ${JSON.stringify(itemToUnload)} loaded but not in array`,
       );
     }
     this.items.splice(at, 1);
 
-    return new Success('Unloaded');
+    return Success.create('Unloaded');
   }
 
   public getGod(color: CoreColor): God {

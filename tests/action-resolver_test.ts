@@ -5,7 +5,7 @@ import { GameManager } from '../src/GameManager.ts';
 Deno.test('Resolver - For now, should never be terminal', () => {
   const engine = new GameManager();
   const gameState = engine.getGameState();
-  const resolver = new ActionResolver(engine);
+  const resolver = new ActionResolver();
   assertFalse(resolver.isTerminal(gameState));
 });
 

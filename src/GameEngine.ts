@@ -41,7 +41,7 @@ export class GameEngine {
         return GameEngineMove.doAction(action, gameState);
     }
 
-    return new Failure(
+    return Failure.create(
       `GameEngine.doAction(${JSON.stringify(action)} not implemented yet)`,
     );
   }
@@ -55,7 +55,7 @@ export class GameEngine {
     const player = gameState.getCurrentPlayer();
 
     if (!resource.hasColor()) {
-      return new Success('Nothing spent');
+      return Success.create('Nothing spent');
     }
 
     player.favor -= resource.getRecolorCost();
@@ -76,7 +76,7 @@ export class GameEngine {
       player.usedOracleCardThisTurn = true;
     }
 
-    return new Success(`Resource ${JSON.stringify(resource)} was spent`);
+    return Success.create(`Resource ${JSON.stringify(resource)} was spent`);
   }
 
   public static updateWildQuestIfNecessary(player: Player, item: Item): void {

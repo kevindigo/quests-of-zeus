@@ -2,11 +2,7 @@ import { type Action, Actions, type AdvanceGodAction } from './actions.ts';
 import { GameEngine } from './GameEngine.ts';
 import type { GameState } from './GameState.ts';
 import { PhaseFreeloading } from './phases.ts';
-import {
-  Failure,
-  type ResultWithMessage,
-  Success,
-} from './ResultWithMessage.ts';
+import { Failure, type ResultWithMessage, Success } from './ResultWithMessage.ts';
 
 export class GameEngineAdvance {
   public static getAdvanceActions(gameState: GameState): Action[] {
@@ -47,7 +43,7 @@ export class GameEngineAdvance {
           action.type === 'advance';
         },
       );
-      return new Failure(
+      return Failure.create(
         `Advance god ${JSON.stringify(action)} not available in ${
           JSON.stringify(advanceActions)
         }`,
@@ -59,7 +55,7 @@ export class GameEngineAdvance {
 
     const spent = GameEngine.spendResource(gameState, action.spend);
     if (!spent.success) {
-      return new Failure(
+      return Failure.create(
         'Impossible: Unable to spend for action ' + JSON.stringify(action),
       );
     }
@@ -70,6 +66,6 @@ export class GameEngineAdvance {
     }
 
     gameState.endPhase();
-    return new Success('Advanced god ' + effectiveColor);
+    return Success.create('Advanced god ' + effectiveColor);
   }
 }

@@ -64,7 +64,7 @@ export class GameEngineHex {
       case 'peekShrine':
         return this.doPeekShrine(action, gameState);
     }
-    return new Failure(
+    return Failure.create(
       `GameHexAction.doAction(${JSON.stringify(action)}) not yet implemented`,
     );
   }
@@ -373,18 +373,18 @@ export class GameEngineHex {
   ): ResultWithMessage {
     const availableActions = GameEngine.getAvailableActions(gameState);
     if (!Actions.find(availableActions, action)) {
-      return new Failure(`Action not available ${JSON.stringify(action)}`);
+      return Failure.create(`Action not available ${JSON.stringify(action)}`);
     }
 
     const selectedCoordinates = action.coordinates;
     if (!selectedCoordinates) {
-      return new Failure(
+      return Failure.create(
         `No coordinates selected for action ${JSON.stringify(action)}`,
       );
     }
     const shrineHex = gameState.findShrineHexAt(selectedCoordinates);
     if (!shrineHex) {
-      return new Failure(
+      return Failure.create(
         `Explore shrine not where expected: ${JSON.stringify(action)}`,
       );
     }
@@ -402,7 +402,7 @@ export class GameEngineHex {
     if (result.success) {
       const spent = GameEngine.spendResource(gameState, action.spend);
       if (!spent.success) {
-        const failure = new Failure(spent.message());
+        const failure = Failure.create(spent.message());
         failure.addMessage('Built shrine, but failed spendResource');
         return failure;
       }
@@ -422,13 +422,13 @@ export class GameEngineHex {
       },
     );
     if (!unfilledShrineQuest) {
-      return new Failure('All shrines were already built!?');
+      return Failure.create('All shrines were already built!?');
     }
     unfilledShrineQuest.isCompleted = true;
     shrineHex.status = 'filled';
 
     gameState.queuePhase(PhaseAdvancingGod.phaseName);
-    return new Success(`Shrine quest completed`);
+    return Success.create(`Shrine quest completed`);
   }
 
   private static exploreShrineNotOurs(
@@ -446,7 +446,7 @@ export class GameEngineHex {
         for (let i = 0; i < 2; ++i) {
           const card = deck.pop();
           if (!card) {
-            return new Failure('Oracle card deck is empty');
+            return Failure.create('Oracle card deck is empty');
           }
           player.oracleCards.push(card);
         }
@@ -463,7 +463,7 @@ export class GameEngineHex {
         break;
     }
 
-    return new Success(`Cloud flipped -- reward ${shrineHex.reward}`);
+    return Success.create(`Cloud flipped -- reward ${shrineHex.reward}`);
   }
 
   private static doLoadCube(
@@ -472,17 +472,21 @@ export class GameEngineHex {
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
     if (!Actions.find(availableActions, action)) {
-      return new Failure(`Action not available ${JSON.stringify(action)}`);
+      return Failure.create(`Action not available ${JSON.stringify(action)}`);
     }
 
     const coordinates = action.coordinates;
     if (!coordinates) {
-      return new Failure('doLoadCube failed because no location was selected');
+      return Failure.create(
+        'doLoadCube failed because no location was selected',
+      );
     }
 
     const effectiveColor = action.spend.getEffectiveColor();
     if (!effectiveColor) {
-      return new Failure('doLoadCube failed because no resource was selected');
+      return Failure.create(
+        'doLoadCube failed because no resource was selected',
+      );
     }
     const item: Item = {
       type: 'cube',
@@ -491,7 +495,7 @@ export class GameEngineHex {
 
     const offeringHex = gameState.findCubeHexAt(coordinates);
     if (!offeringHex) {
-      return new Failure(
+      return Failure.create(
         'doLoadCube failed because the offering hex was not found',
       );
     }
@@ -508,11 +512,11 @@ export class GameEngineHex {
     GameEngine.updateWildQuestIfNecessary(player, item);
     const spent = GameEngine.spendResource(gameState, action.spend);
     if (!spent.success) {
-      const failure = new Failure(spent.message());
+      const failure = Failure.create(spent.message());
       failure.addMessage('Loaded cube, but failed spendResource');
       return failure;
     }
-    return new Success('Offering was loaded');
+    return Success.create('Offering was loaded');
   }
 
   private static doDropCube(
@@ -521,20 +525,20 @@ export class GameEngineHex {
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
     if (!Actions.find(availableActions, action)) {
-      return new Failure(`Action not available ${JSON.stringify(action)}`);
+      return Failure.create(`Action not available ${JSON.stringify(action)}`);
     }
 
     const player = gameState.getCurrentPlayer();
     const effectiveColor = action.spend.getEffectiveColor();
     if (!effectiveColor) {
-      return new Failure('Drop cube no resource selected');
+      return Failure.create('Drop cube no resource selected');
     }
     const quests = player.getQuestsOfType('temple');
     const quest = quests.find((quest) => {
       return quest.color === effectiveColor;
     });
     if (!quest) {
-      return new Failure(
+      return Failure.create(
         `Drop cube ${effectiveColor} quest not found in ${
           JSON.stringify(quests)
         }`,
@@ -547,7 +551,7 @@ export class GameEngineHex {
 
     GameEngine.spendResource(gameState, action.spend);
 
-    return new Success(
+    return Success.create(
       `Dropped cube ${effectiveColor} at temple; gained favor`,
     );
   }
@@ -558,12 +562,12 @@ export class GameEngineHex {
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
     if (!Actions.find(availableActions, action)) {
-      return new Failure(`Action not available ${JSON.stringify(action)}`);
+      return Failure.create(`Action not available ${JSON.stringify(action)}`);
     }
 
     const cityHex = gameState.findCityHexAt(action.coordinates);
     if (!cityHex) {
-      return new Failure(`No city hex at ${action.coordinates}`);
+      return Failure.create(`No city hex at ${action.coordinates}`);
     }
     cityHex.statues -= 1;
 
@@ -571,7 +575,7 @@ export class GameEngineHex {
     const resource = action.spend;
     const effectiveColor = resource.getEffectiveColor();
     if (!effectiveColor) {
-      return new Failure(`No resource selected`);
+      return Failure.create(`No resource selected`);
     }
     const statue: Item = { type: 'statue', color: effectiveColor };
     player.loadItem(statue);
@@ -581,13 +585,13 @@ export class GameEngineHex {
       return quest.color === 'none';
     });
     if (!wildQuest) {
-      return new Failure('No wild quests available');
+      return Failure.create('No wild quests available');
     }
     wildQuest.color = effectiveColor;
 
     GameEngine.spendResource(gameState, resource);
 
-    return new Success(
+    return Success.create(
       `Dropped cube ${effectiveColor} at temple; gained favor`,
     );
   }
@@ -598,12 +602,12 @@ export class GameEngineHex {
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
     if (!Actions.find(availableActions, action)) {
-      return new Failure(`Action not available ${JSON.stringify(action)}`);
+      return Failure.create(`Action not available ${JSON.stringify(action)}`);
     }
 
     const effectiveColor = action.spend.getEffectiveColor();
     if (!effectiveColor) {
-      return new Failure('Cannot raise statue -- no resource selected');
+      return Failure.create('Cannot raise statue -- no resource selected');
     }
 
     const statue: Item = { type: 'statue', color: effectiveColor };
@@ -616,13 +620,13 @@ export class GameEngineHex {
     const statueCoordinates = action.coordinates;
     const statueHex = gameState.findStatueHexAt(statueCoordinates);
     if (!statueHex) {
-      return new Failure(
+      return Failure.create(
         'Impossible: statueHex not at ' + JSON.stringify(statueCoordinates),
       );
     }
     const thisIndex = statueHex.emptyBases.indexOf(effectiveColor);
     if (thisIndex < 0) {
-      return new Failure('Impossible: no empty base ' + effectiveColor);
+      return Failure.create('Impossible: no empty base ' + effectiveColor);
     }
     statueHex.emptyBases.splice(thisIndex, 1);
     statueHex.raisedStatues.push(effectiveColor);
@@ -631,7 +635,7 @@ export class GameEngineHex {
       return quest.color === effectiveColor;
     });
     if (!thisQuest) {
-      return new Failure('Impossible: no quest of ' + effectiveColor);
+      return Failure.create('Impossible: no quest of ' + effectiveColor);
     }
     thisQuest.isCompleted = true;
 
@@ -640,7 +644,7 @@ export class GameEngineHex {
       return spent;
     }
 
-    return new Success(
+    return Success.create(
       `Successfully raised ${effectiveColor} statue (but no companion reward)`,
     );
   }
@@ -651,25 +655,25 @@ export class GameEngineHex {
   ): ResultWithMessage {
     const availableActions = GameEngineHex.getHexActions(gameState);
     if (!Actions.find(availableActions, action)) {
-      return new Failure(`Action not available ${JSON.stringify(action)}`);
+      return Failure.create(`Action not available ${JSON.stringify(action)}`);
     }
 
     const monsterCoordinates = action.coordinates;
     const monsterHex = gameState.findMonsterHexAt(monsterCoordinates);
     if (!monsterHex) {
-      return new Failure(
+      return Failure.create(
         'Impossible: no monster hex at ' + JSON.stringify(monsterCoordinates),
       );
     }
     const effectiveColor = action.spend.getEffectiveColor();
     if (!effectiveColor) {
-      return new Failure(
+      return Failure.create(
         'Impossible: no resource selected',
       );
     }
     const at = monsterHex.monsterColors.indexOf(effectiveColor);
     if (at < 0) {
-      return new Failure(
+      return Failure.create(
         `Impossible: ${effectiveColor} not a monster in ${monsterHex.monsterColors}`,
       );
     }
@@ -679,12 +683,12 @@ export class GameEngineHex {
     const monsterQuests = player.getQuestsOfType('monster');
     const quest = this.findMatchingQuest(monsterQuests, effectiveColor);
     if (!quest) {
-      return new Failure(
+      return Failure.create(
         'Impossible: no quest found matching ' + effectiveColor,
       );
     }
     if (quest.isCompleted) {
-      return new Failure(
+      return Failure.create(
         'Impossible: quest already completed for ' + effectiveColor,
       );
     }
@@ -696,7 +700,9 @@ export class GameEngineHex {
       return spent;
     }
 
-    return new Success(`Fight monster ${effectiveColor} succeeded (no reward)`);
+    return Success.create(
+      `Fight monster ${effectiveColor} succeeded (no reward)`,
+    );
   }
 
   private static doPeekShrine(
@@ -705,24 +711,24 @@ export class GameEngineHex {
   ): ResultWithMessage {
     const availableActions = GameEngine.getAvailableActions(gameState);
     if (!Actions.find(availableActions, action)) {
-      return new Failure(`Action not available ${JSON.stringify(action)}`);
+      return Failure.create(`Action not available ${JSON.stringify(action)}`);
     }
 
     const selectedCoordinates = action.coordinates;
     if (!selectedCoordinates) {
-      return new Failure(
+      return Failure.create(
         `No coordinates selected for action ${JSON.stringify(action)}`,
       );
     }
     const shrineHex = gameState.findShrineHexAt(selectedCoordinates);
     if (!shrineHex) {
-      return new Failure(
+      return Failure.create(
         `Explore shrine not where expected: ${JSON.stringify(action)}`,
       );
     }
 
     gameState.endPhase();
-    return new Success(
+    return Success.create(
       `Peek revealed ${shrineHex.owner} ${shrineHex.reward}` +
         ` at ${JSON.stringify(shrineHex.getCoordinates())}`,
     );

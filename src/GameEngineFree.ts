@@ -46,7 +46,7 @@ export class GameEngineFree {
         return GameEngineFree.endTurn(action, gameState);
     }
 
-    return new Failure(
+    return Failure.create(
       `Free action ${JSON.stringify(action)} not implemented yet`,
     );
   }
@@ -58,12 +58,12 @@ export class GameEngineFree {
     const availableActions = GameEngine.getAvailableActions(gameState);
     const found = Actions.find(availableActions, action as Action);
     if (!found) {
-      return new Failure('End turn not available');
+      return Failure.create('End turn not available');
     }
 
     const currentPlayer = gameState.getCurrentPlayer();
     if (!currentPlayer) {
-      return new Failure('There was no current player');
+      return Failure.create('There was no current player');
     }
 
     currentPlayer.usedOracleCardThisTurn = false;
@@ -87,7 +87,7 @@ export class GameEngineFree {
     }
     gameState.endPhase();
 
-    return new Success(`Player ${currentPlayer.color} turn ended`);
+    return Success.create(`Player ${currentPlayer.color} turn ended`);
   }
 
   private static addFreeloadingOpportunities(

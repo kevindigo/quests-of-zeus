@@ -27,14 +27,14 @@ class Result implements ResultWithMessage {
   public text: string[];
 }
 
-export class Success extends Result {
-  public constructor(message: string) {
-    super(true, message);
+export class Success {
+  public static create(message: string) {
+    return new Result(true, message);
   }
 }
 
-export class Failure extends Result {
-  public constructor(message: string) {
-    super(false, message);
+export class Failure {
+  public static create(message: string) {
+    return new Result(false, message);
   }
 }

@@ -45,7 +45,7 @@ export class GameEngineMove {
   ): ResultWithMessage {
     const availableActions = GameEngine.getAvailableActions(gameState);
     if (!Actions.find(availableActions, action)) {
-      return new Failure(
+      return Failure.create(
         `ShipMoveAction not available ${JSON.stringify(action)}`,
       );
     }
@@ -59,7 +59,7 @@ export class GameEngineMove {
     }
 
     gameState.endPhase();
-    return new Success(`Ship moved per ${JSON.stringify(action)}`);
+    return Success.create(`Ship moved per ${JSON.stringify(action)}`);
   }
 
   public static areEqualMoveActions(aa: Action, action: Action): boolean {

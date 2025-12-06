@@ -90,7 +90,7 @@ export class CubeHex {
   public remove(color: CoreColor): ResultWithMessage {
     const index = this.cubeColors.indexOf(color);
     if (index < 0) {
-      return new Failure(
+      return Failure.create(
         `Could not remove ${color} from ${this.r},${this.q} (${
           JSON.stringify(this.cubeColors)
         })`,
@@ -98,7 +98,7 @@ export class CubeHex {
     }
 
     this.cubeColors.splice(index, 1);
-    return new Success(`${color} was removed from ${this.r},${this.q}`);
+    return Success.create(`${color} was removed from ${this.r},${this.q}`);
   }
 
   q: number;
